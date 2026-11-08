@@ -1,0 +1,100 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const C=require('../src/core.js');
+const fs=require('node:fs');const path=require('node:path');
+const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-7,`${a} ≠ ${b}`);
+function graph(){
+ const p=C.createBlankProject('decision'),u=p.users[0];p.settings.assessmentWeighting='structural';
+ const root=C.rootNode(p),a=C.addChild(p,root.id,'option',u.id),b=C.addChild(p,root.id,'option',u.id);
+ a.title='Option A';b.title='Option B';
+ const source=C.addChild(p,b.id,'support',u.id);source.title='One fact';source.confidence=100;source.impact=0;
+ return {p,u,a,b,source};
+}
+test('dev26: signed -5/0/+5 slider values create separate score-bearing secondary links',()=>{
+ const {p,a,b,source}=graph();
+ near(C.evaluate(p).get(a.id).score,50);
+ const link=C.addSignedLink(p,source.id,a.id,5);
+ near(C.evaluate(p).get(a.id).score,75);
+ assert.equal(C.evaluate(p).get(a.id).contributions.at(-1).subjectType,'secondary');
+ assert.equal(C.evaluate(p).get(a.id).contributions.at(-1).id,link.id);
+ C.updateSignedLink(p,link.id,0);near(C.evaluate(p).get(a.id).score,50);
+ C.updateSignedLink(p,link.id,-5);near(C.evaluate(p).get(a.id).score,25);
+ assert.equal(link.relation,'oppose');assert.equal(link.impact,5);
+ assert.equal(C.signedLinkImpact(link),-5);
+ assert.equal(C.secondaryOverlapWarning(p,link),false,'across different concrete options');
+ assert.equal(p.nodes.filter(n=>n.id===source.id).length,1,'credence remains one node');
+ assert.throws(()=>C.addSignedLink(p,source.id,a.id,5),/syklin|olemassa/);
+ assert.throws(()=>C.updateSignedLink(p,link.id,-4.7),/−5…\+5/);
+ assert.deepEqual(C.validateProject(p).links,p.links);
+ assert.equal(C.evaluate(p).get(b.id).score,50,'separate target score does not inherit A relation');
+});
+test('dev26: collective secondary reviews are independently weighted in equal vs shares modes',()=>{
+ const {p,u,a,source}=graph();const other={id:C.uid(),role:'editor',name:'Other',shares:1};p.users.push(other);u.shares=5;
+ const link=C.addSignedLink(p,source.id,a.id,5);
+ C.upsertVote(p,source.id,u.id,100);C.upsertVote(p,source.id,other.id,0);
+ C.upsertEdgeAssessment(p,'secondary',link.id,u.id,5);
+ C.upsertEdgeAssessment(p,'secondary',link.id,other.id,-5);
+ p.settings.assessmentWeighting='equal';near(C.evaluate(p).get(a.id).score,50);
+ p.settings.assessmentWeighting='shares';near(C.evaluate(p).get(a.id).score,50+5*(20/6)*(500/6/100));
+ near(C.evaluateAssessor(p,u.id).get(a.id).score,75);
+ near(C.evaluateAssessor(p,other.id).get(a.id).score,50);
+ assert.equal(C.evaluate(p).get(a.id).incomplete,false);
+ const broken=C.personalInfluence(p,'secondary',link.id,u.id).record;
+ broken.fingerprint='stale';
+ assert.equal(C.evaluate(p).get(a.id).incomplete,true);
+ // A user's old relation review cannot silently become a current signed review.
+ near(C.evaluateAssessor(p,u.id).get(a.id).score,50);
+ assert.equal(C.evaluateAssessor(p,u.id).get(a.id).incomplete,true);
+});
+test('dev26: deep link results propagate into ancestors, and repeated paths are explicit and flagged',()=>{
+ const p=C.createBlankProject('argument');p.settings.assessmentWeighting='structural';
+ const root=C.rootNode(p),middle=C.addChild(p,root.id,'support'),source=C.addChild(p,middle.id,'support');
+ root.confidence=50;middle.confidence=50;middle.impact=5;source.confidence=100;source.impact=5;
+ near(C.evaluate(p).get(middle.id).score,75);
+ near(C.evaluate(p).get(root.id).score,68.75);
+ const link=C.addSignedLink(p,source.id,root.id,5);
+ near(C.evaluate(p).get(root.id).score,93.75);
+ assert.equal(C.secondaryOverlapWarning(p,link),true);
+ const original=JSON.stringify(p);
+ const primary=C.evaluate(p).get(root.id).contributions.filter(c=>c.id===middle.id);
+ const secondary=C.evaluate(p).get(root.id).contributions.filter(c=>c.id===link.id);
+ assert.equal(primary.length,1);assert.equal(secondary.length,1);
+ assert.equal(JSON.stringify(p),original,'score is read-only');
+ C.removeLink(p,link.id);near(C.evaluate(p).get(root.id).score,68.75);
+});
+test('dev26: source without assessed credence does not silently take its authored baseline in human modes',()=>{
+ const {p,u,a,source}=graph(),link=C.addSignedLink(p,source.id,a.id,5);
+ p.settings.assessmentWeighting='equal';
+ C.upsertEdgeAssessment(p,'secondary',link.id,u.id,5);
+ assert.equal(C.evaluate(p).get(a.id).score,50);
+ assert.equal(C.evaluate(p).get(a.id).incomplete,true);
+ C.upsertVote(p,source.id,u.id,100);
+ near(C.evaluate(p).get(a.id).score,75);
+ assert.equal(C.evaluate(p).get(a.id).incomplete,false);
+});
+test('dev26: optional decision root and value relationships stay outside factual numeric score',()=>{
+ const {p,u,a,b}=graph();
+ const value=C.addChild(p,a.id,'support',u.id);value.semanticType='value';value.confidence=100;
+ const link=C.addSignedLink(p,value.id,b.id,5);
+ const without=C.evaluate(p).get(b.id).score;
+ assert.equal(without,50,'a value claim is not a factual credibility score');
+ assert.equal(C.evaluate(p).get(b.id).contributions.some(c=>c.id===link.id),false);
+ assert.equal(C.optionValueProfile(p,b.id,u.id).items.some(x=>x.relationId===link.id),true);
+});
+test('dev26: Bitberg, creation-on-empty, routing matrix, signed link axes are present in both surfaces',()=>{
+ const root=path.resolve(__dirname,'..');
+ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+ const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
+ const css=fs.readFileSync(path.join(root,'src/styles.css'),'utf8');
+ for(const id of ['homeThemeSelect','themeSelect'])assert.match(html,new RegExp(`id="${id}"[^>]*>[\\s\\S]*?value="bitberg"`));
+ for(const key of ['linkImpact','repeatSecondaryCards','repeatCreateForm','btnRepeatCreate'])assert.ok(html.includes(`id="${key}"`),key);
+ assert.match(html,/id="linkImpact"[^>]*min="-5" max="5"/);
+ assert.match(app,/\$\('btnRepeatCreate'\)\.onclick=createLibraryReason/);
+ assert.match(app,/repeatDefaultTitle/);
+ assert.match(app,/Core\.upsertEdgeAssessment\(project,'secondary',link\.id,actorId,influence\)/);
+ assert.match(app,/Core\.secondaryOverlapWarning/);
+ assert.match(app,/Core\.updateSignedLink\(project,link\.id,strength\)/);
+ assert.match(app,/Core\.upsertEdgeAssessment\(project,'secondary',link\.id,actorId,strength\)/);
+ assert.match(css,/body\[data-theme="bitberg"\]/);
+ assert.doesNotMatch(html,/id="linkRelation"/);
+});

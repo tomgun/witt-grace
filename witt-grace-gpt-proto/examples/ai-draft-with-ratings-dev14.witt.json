@@ -1,0 +1,78 @@
+{
+  "format": "witt-ai-draft-v2",
+  "title": "Mitä tekisin lauantaina?",
+  "mode": "decision",
+  "assessor": "Esimerkki-AI",
+  "root": {
+    "id": "root",
+    "title": "Mikä on paras tapa käyttää lauantai?"
+  },
+  "claims": [
+    {
+      "id": "family",
+      "parentId": "root",
+      "relation": "option",
+      "title": "Uimahalliin lasten kanssa"
+    },
+    {
+      "id": "familytime",
+      "parentId": "family",
+      "relation": "support",
+      "title": "Voimme saada perheen yhteistä aikaa",
+      "semanticType": "fact",
+      "credence": 70,
+      "influence": 4,
+      "comment": "Toteutumiseen liittyy epävarmuutta."
+    },
+    {
+      "id": "alone",
+      "parentId": "root",
+      "relation": "option",
+      "title": "Uimahalliin yksin"
+    },
+    {
+      "id": "exercise",
+      "parentId": "alone",
+      "relation": "support",
+      "title": "Pääsen kuntoilemaan rauhassa",
+      "semanticType": "fact",
+      "credence": 90,
+      "influence": 4
+    },
+    {
+      "id": "clean",
+      "parentId": "root",
+      "relation": "option",
+      "title": "Siivoamaan"
+    },
+    {
+      "id": "cleanhouse",
+      "parentId": "clean",
+      "relation": "support",
+      "title": "Koti siistiytyy",
+      "semanticType": "fact",
+      "credence": 85,
+      "influence": 3
+    }
+  ],
+  "sharedReasons": [
+    {
+      "id": "travel",
+      "title": "Matkakustannuksia syntyy",
+      "credence": 90,
+      "influence": -2
+    }
+  ],
+  "sharedAttachments": [
+    {
+      "reasonId": "travel",
+      "parentId": "family"
+    },
+    {
+      "reasonId": "travel",
+      "parentId": "alone"
+    }
+  ],
+  "links": [],
+  "comments": []
+}

@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 8,
+  "id": "7b2cb4eb-8e9c-46d7-80e7-7eddeb6d3238",
+  "title": "GRACE – perustelusaldo −100…+100",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "name": "Minä",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Miten perustelut vaikuttavat valintaan?",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 757.3333333333334
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "2951f72c-4eb0-486e-b56c-9018b8f915ea",
+      "parentId": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "relation": "option",
+      "kind": "option",
+      "title": "Yksi 100 % / +5 puolto → +50",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 90
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "1bd2bb61-71fa-47db-a7f4-ece13ed3bdb8",
+      "parentId": "2951f72c-4eb0-486e-b56c-9018b8f915ea",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vahva puolto",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 90
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "1dfbbcc7-217a-4fc6-8411-b4458087d26b",
+      "parentId": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "relation": "option",
+      "kind": "option",
+      "title": "Kaksi erillistä puoltoa → +100",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 363
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "63854769-b5c6-45ce-9847-bf67c2b2dd2d",
+      "parentId": "1dfbbcc7-217a-4fc6-8411-b4458087d26b",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ensimmäinen puolto",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 272
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "ec523e2a-42e2-46d8-9bfb-7d264cf45728",
+      "parentId": "1dfbbcc7-217a-4fc6-8411-b4458087d26b",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Toinen puolto",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 454
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "123f9737-84cf-45eb-885f-3f3626fdabd7",
+      "parentId": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "relation": "option",
+      "kind": "option",
+      "title": "Yksi 100 % / −5 vastaperustelu → −50",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 636
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "84dfcabf-eebe-4f5f-b9cb-e6e5bd079022",
+      "parentId": "123f9737-84cf-45eb-885f-3f3626fdabd7",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vahva vastaperustelu",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 636
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "e5b1e4fe-2a2e-4a9e-99c2-0097b11c2cca",
+      "parentId": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "relation": "option",
+      "kind": "option",
+      "title": "Täysin tasapainossa → 0",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 909
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "5875bb6f-5043-458b-a61c-0a9d179097b7",
+      "parentId": "e5b1e4fe-2a2e-4a9e-99c2-0097b11c2cca",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Puoltava peruste",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 818
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "efff2f37-2922-4724-8498-e72f5b77d3e9",
+      "parentId": "e5b1e4fe-2a2e-4a9e-99c2-0097b11c2cca",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vastustava peruste",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1000
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "75f11704-5520-4a54-824a-0f318c636107",
+      "parentId": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "relation": "option",
+      "kind": "option",
+      "title": "Lapsenlapsen vaikutus → +37,5",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1182
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "2592d310-e7f7-474a-b2d8-eb3672661228",
+      "parentId": "75f11704-5520-4a54-824a-0f318c636107",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Väliväite (oma uskottavuus 50 %)",
+      "details": "",
+      "confidence": 50,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1182
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "40695f9f-0800-4ca2-911c-9801ee18ff71",
+      "parentId": "2592d310-e7f7-474a-b2d8-eb3672661228",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vahva aliperustelu",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1182
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    },
+    {
+      "id": "c352cc19-0dc5-4c41-b310-f45aa77692e8",
+      "parentId": "5a8c40be-9793-4fbd-b370-37e3afb09a3a",
+      "relation": "option",
+      "kind": "option",
+      "title": "Ei arvioitu → —",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1364
+      },
+      "createdBy": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+    {
+      "id": "04f279b4-5d49-491b-8f9d-2f5a4f224987",
+      "nodeId": "1bd2bb61-71fa-47db-a7f4-ece13ed3bdb8",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "001088eb-aa3b-445d-b8f7-e2402f47589c",
+      "nodeId": "63854769-b5c6-45ce-9847-bf67c2b2dd2d",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "7238b0a3-f887-4475-be5c-09947305703c",
+      "nodeId": "ec523e2a-42e2-46d8-9bfb-7d264cf45728",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "172805c4-7457-4634-a75d-f9a6fcb9543d",
+      "nodeId": "84dfcabf-eebe-4f5f-b9cb-e6e5bd079022",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "f4975982-05ff-40b5-961d-6b575e3cb580",
+      "nodeId": "5875bb6f-5043-458b-a61c-0a9d179097b7",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "2102802a-f505-46df-9554-6607b27c1ffd",
+      "nodeId": "efff2f37-2922-4724-8498-e72f5b77d3e9",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    },
+    {
+      "id": "c4331cf3-4342-4f00-b556-82ec07ff45bf",
+      "nodeId": "2592d310-e7f7-474a-b2d8-eb3672661228",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 50,
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    },
+    {
+      "id": "37d62e98-4775-4e44-b98b-52277b0dff58",
+      "nodeId": "40695f9f-0800-4ca2-911c-9801ee18ff71",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "confidence": 100,
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "260c930c-4146-4b64-9c1d-700bee7949c3",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "1bd2bb61-71fa-47db-a7f4-ece13ed3bdb8",
+      "influence": 5,
+      "fingerprint": "[\"1bd2bb61-71fa-47db-a7f4-ece13ed3bdb8\",\"2951f72c-4eb0-486e-b56c-9018b8f915ea\",\"Vahva puolto\",\"Yksi 100 % / +5 puolto → +50\",\"support\"]",
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "2bbd234d-1b03-4f3a-aa39-25f23190780c",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "63854769-b5c6-45ce-9847-bf67c2b2dd2d",
+      "influence": 5,
+      "fingerprint": "[\"63854769-b5c6-45ce-9847-bf67c2b2dd2d\",\"1dfbbcc7-217a-4fc6-8411-b4458087d26b\",\"Ensimmäinen puolto\",\"Kaksi erillistä puoltoa → +100\",\"support\"]",
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "b3c3831f-99e7-4685-81a1-bdbdeeda9714",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "ec523e2a-42e2-46d8-9bfb-7d264cf45728",
+      "influence": 5,
+      "fingerprint": "[\"ec523e2a-42e2-46d8-9bfb-7d264cf45728\",\"1dfbbcc7-217a-4fc6-8411-b4458087d26b\",\"Toinen puolto\",\"Kaksi erillistä puoltoa → +100\",\"support\"]",
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "facfa54a-66d7-41d0-a0de-8e62393b11ca",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "84dfcabf-eebe-4f5f-b9cb-e6e5bd079022",
+      "influence": -5,
+      "fingerprint": "[\"84dfcabf-eebe-4f5f-b9cb-e6e5bd079022\",\"123f9737-84cf-45eb-885f-3f3626fdabd7\",\"Vahva vastaperustelu\",\"Yksi 100 % / −5 vastaperustelu → −50\",\"oppose\"]",
+      "updatedAt": "2026-11-07T15:19:08.324Z"
+    },
+    {
+      "id": "a3b46c41-c4f7-4483-8ef2-193dab686705",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "5875bb6f-5043-458b-a61c-0a9d179097b7",
+      "influence": 5,
+      "fingerprint": "[\"5875bb6f-5043-458b-a61c-0a9d179097b7\",\"e5b1e4fe-2a2e-4a9e-99c2-0097b11c2cca\",\"Puoltava peruste\",\"Täysin tasapainossa → 0\",\"support\"]",
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    },
+    {
+      "id": "931cf7de-22d7-46f2-98ca-482813859401",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "efff2f37-2922-4724-8498-e72f5b77d3e9",
+      "influence": -5,
+      "fingerprint": "[\"efff2f37-2922-4724-8498-e72f5b77d3e9\",\"e5b1e4fe-2a2e-4a9e-99c2-0097b11c2cca\",\"Vastustava peruste\",\"Täysin tasapainossa → 0\",\"oppose\"]",
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    },
+    {
+      "id": "bdb22800-c068-48c6-9f80-a55cdf3ddcb1",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "2592d310-e7f7-474a-b2d8-eb3672661228",
+      "influence": 5,
+      "fingerprint": "[\"2592d310-e7f7-474a-b2d8-eb3672661228\",\"75f11704-5520-4a54-824a-0f318c636107\",\"Väliväite (oma uskottavuus 50 %)\",\"Lapsenlapsen vaikutus → +37,5\",\"support\"]",
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    },
+    {
+      "id": "4fddf2bc-1356-492a-948e-a2a35bf390ff",
+      "userId": "9de25f81-5fb0-4f48-93a2-6e5b11677fe9",
+      "subjectType": "primary",
+      "subjectId": "40695f9f-0800-4ca2-911c-9801ee18ff71",
+      "influence": 5,
+      "fingerprint": "[\"40695f9f-0800-4ca2-911c-9801ee18ff71\",\"2592d310-e7f7-474a-b2d8-eb3672661228\",\"Vahva aliperustelu\",\"Väliväite (oma uskottavuus 50 %)\",\"support\"]",
+      "updatedAt": "2026-11-07T15:19:08.325Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T15:19:08.323Z",
+  "updatedAt": "2026-11-07T15:19:08.324Z"
+}

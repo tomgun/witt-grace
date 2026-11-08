@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 8,
+  "id": "5f3ec6f9-60b6-4a45-971b-e1242e602aaf",
+  "title": "Lisäyhteydet: sama perustelu useaan kohteeseen",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "structural",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "1fa6fcc6-3d1a-4ac9-b4a0-5ef89f550ba8",
+      "name": "Minä",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "e70d99c0-4260-4b94-b0ad-64ddf5ca5e1d",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Järjestelmä kannattaa hankkia",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 130
+      },
+      "createdBy": "1fa6fcc6-3d1a-4ac9-b4a0-5ef89f550ba8"
+    },
+    {
+      "id": "5caaa4af-4f86-47e5-9213-6712ed7c5ed7",
+      "parentId": "e70d99c0-4260-4b94-b0ad-64ddf5ca5e1d",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Järjestelmä on liian kallis",
+      "details": "",
+      "confidence": 50,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 130
+      },
+      "createdBy": "1fa6fcc6-3d1a-4ac9-b4a0-5ef89f550ba8"
+    },
+    {
+      "id": "af408c73-6466-4403-969d-cd8852acec2e",
+      "parentId": "5caaa4af-4f86-47e5-9213-6712ed7c5ed7",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Säästöt ylittävät kustannukset",
+      "details": "",
+      "confidence": 100,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 130
+      },
+      "createdBy": "1fa6fcc6-3d1a-4ac9-b4a0-5ef89f550ba8"
+    },
+    {
+      "id": "e552cf62-5981-4009-a715-aaddb158b8a4",
+      "parentId": "e70d99c0-4260-4b94-b0ad-64ddf5ca5e1d",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Parantaa käyttöä",
+      "details": "",
+      "confidence": 100,
+      "impact": 1,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 300
+      },
+      "createdBy": "1fa6fcc6-3d1a-4ac9-b4a0-5ef89f550ba8"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T20:28:42.103Z",
+  "updatedAt": "2026-11-07T20:28:42.104Z"
+}

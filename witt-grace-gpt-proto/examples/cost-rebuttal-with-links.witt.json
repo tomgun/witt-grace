@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 8,
+  "id": "f1733fcc-adbe-42ce-93d6-f841dd5146bd",
+  "title": "Esimerkki: kustannusväite ja sen vastaperuste",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "3be5136b-c08f-4335-acd2-1683d582d0e5",
+      "name": "Minä",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Uusi järjestelmä kannattaa hankkia",
+      "details": "",
+      "confidence": 60,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 90
+      },
+      "createdBy": "3be5136b-c08f-4335-acd2-1683d582d0e5"
+    },
+    {
+      "id": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+      "parentId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Järjestelmä on liian kallis",
+      "details": "",
+      "confidence": 78,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 90
+      },
+      "createdBy": "3be5136b-c08f-4335-acd2-1683d582d0e5"
+    },
+    {
+      "id": "a4edcdf9-0024-4865-a623-44095ef270fe",
+      "parentId": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kolmen vuoden säästöt ylittävät hankintakulut",
+      "details": "",
+      "confidence": 80,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 90
+      },
+      "createdBy": "3be5136b-c08f-4335-acd2-1683d582d0e5"
+    }
+  ],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [
+    {
+      "id": "900a5b15-00be-4a44-b74e-9a5cd3abc32d",
+      "sourceId": "a4edcdf9-0024-4865-a623-44095ef270fe",
+      "targetId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+      "relation": "support",
+      "impact": 3
+    }
+  ],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-05T21:54:07.547Z",
+  "updatedAt": "2026-11-05T21:54:07.547Z"
+}

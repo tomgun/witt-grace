@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 8,
+  "id": "e8583fcf-861d-4e4e-952b-ff7fb1d965e7",
+  "title": "Yhteistyötesti",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "9f068584-747a-4651-8920-82b9b1597057",
+      "name": "Aino",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Mikä on tarkasteltava väite?",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 130
+      },
+      "createdBy": "9f068584-747a-4651-8920-82b9b1597057"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T22:00:32.590Z",
+  "updatedAt": "2026-11-07T22:00:32.591Z"
+}

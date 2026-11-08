@@ -1,0 +1,55 @@
+name: Verify WITT
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check runtime, schema, docs, and Node regressions
+        run: npm run check
+      - name: Validate active documents and source-of-truth boundaries
+        run: node tools/check-handoff-docs.cjs && node tools/verify-current-guidance.cjs
+      - name: Build static Pages and standalone distributions
+        run: npm run build
+      - name: Verify Pages static assets and public-only contents
+        run: node tools/verify-pages-build.cjs
+
+  browser-smoke:
+    name: browser-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned Playwright and Chromium
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Build the exact site tested in browser
+        run: npm run build && node tools/verify-pages-build.cjs
+      - name: Test project-path hosting, keyboard/panels, authors, repeated reasons, and AI tasks
+        run: |
+          python tools/smoke-pages-handoff.py
+          python tools/smoke-dock-header-dev32.py
+          python tools/smoke-multi-author-dev31.py
+          python tools/smoke-unified-reuse-dev29.py
+          python tools/smoke-ai-task-choices-dev28.py

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+<html lang="fi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#f7f8fc" name="theme-color"/>
+<meta content="WITT – väitteiden ja perusteiden kartoittamiseen, punnintaan ja harkittuun päätöksentekoon GRACE-menetelmän avulla" name="description"/>
+<title>WITT · GRACE Method</title>
+<link href="src/styles.css" rel="stylesheet"/>
+<script defer="" src="src/core.js"></script>
+<script defer="" src="src/view-layout.js"></script>
+<script defer="" src="src/i18n.js"></script>
+<script defer="" src="src/keyboard-nav.js"></script>
+<script defer="" src="src/history.js"></script>
+<script defer="" src="src/table-model.js"></script>
+<script defer="" src="src/examples.js"></script>
+<script defer="" src="src/review-lens.js"></script>
+<script defer="" src="src/workspace.js"></script>
+<script defer="" src="src/ai-starter.js"></script>
+<script defer="" src="src/ai-roundtrip.js"></script>
+<script defer="" src="src/ai-draft-v2.js"></script>
+<script defer="" src="src/contributions.js"></script>
+<script defer="" src="src/document-library.js"></script>
+<script defer="" src="src/diagram-export.js"></script>
+<script defer="" src="src/assessor-view.js"></script>
+<script defer="" src="src/project-import-schema.js"></script>
+<script defer="" src="src/import-validation.js"></script>
+<script defer="" src="src/app.js"></script>
+</head>
+<body data-theme="light" class="home-active">
+<input accept=".json,.witt.json,.peruste.json,application/json" class="visually-hidden" id="fileInput" type="file"/>
+<section id="homeScreen" class="home-screen" aria-labelledby="homeTitle">
+  <nav class="home-nav" aria-label="WITT">
+    <button type="button" id="btnHomeLogo" class="home-brand" data-i18n-aria="acronymDetails" aria-label="WITT- ja GRACE-lyhenteiden selitykset" title="WITT = Web Interactive Thinking Tool · GRACE = Günther’s Reflective Argumentation & Collaborative Evaluation Method">
+      <span class="home-brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>WITT<span class="brand-dot">.</span> <small>GRACE Method</small></span><span class="home-info-mark" aria-hidden="true">ⓘ</span>
+    </button>
+    <div class="home-nav-actions">
+      <label class="visually-hidden" for="homeLocaleSelect" data-i18n="language">Kieli</label>
+      <select id="homeLocaleSelect" data-i18n-aria="language" aria-label="Kieli"><option value="fi">Suomi</option><option value="de">Deutsch</option><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="ru">Русский</option><option value="zh-Hans">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option></select>
+      <label class="visually-hidden" data-i18n="theme" for="homeThemeSelect">Theme</label><select id="homeThemeSelect" data-i18n-title="theme" title="Theme"><option data-i18n="light" value="light">Light</option><option data-i18n="dark" value="dark">Dark</option><option data-i18n="paper" value="paper">Paper</option><option data-i18n="cosmos" value="cosmos">Star map</option><option data-i18n="hologram" value="hologram">Hologram</option><option data-i18n="manuscriptBook" value="manuscript-book">Manuscript / Book</option><option data-i18n="manuscriptPen" value="manuscript-pen">Manuscript / Quill</option><option data-i18n="bitbergTheme" value="bitberg">Bitberg</option></select>
+      <button type="button" class="btn quiet" data-i18n="homeAbout" id="btnHomeAbout">Tietoa menetelmästä</button>
+    </div>
+  </nav>
+  <main class="home-main">
+    <div class="home-hero">
+      <div class="home-hero-copy">
+        <p class="home-eyebrow" data-i18n="homeEyebrow">SELKEÄMPÄÄ AJATTELUA · GRACE-MENETELMÄ</p>
+        <h1 id="homeTitle"><span class="home-hero-line" data-i18n="homeHeroFirst">Ajattele selkeästi.</span><span class="home-hero-line accent" data-i18n="homeHeroSecond">Päätä viisaasti.</span></h1>
+        <p class="home-lead" data-i18n="homeLead">Kartoita väitteet, vaihtoehdot ja oletukset. Punnitse perustelut ja tee harkittuja päätöksiä.</p>
+        <div class="home-main-actions">
+          <button class="btn quiet home-secondary" id="btnHomeContinue" data-i18n="homeContinue" type="button" hidden>Jatka edellistä työtä</button>
+          <button class="btn primary home-primary" id="btnHomeNew" data-i18n="homeNew" type="button">+ Aloita uusi puu</button>
+        </div>
+        <div class="home-other-actions home-primary-options" role="group" aria-label="Aloita työ">
+          <button type="button" id="btnHomeOpen" data-i18n="homeOpen">Avaa tiedosto</button>
+          <button type="button" id="btnHomeDemo" data-i18n="homeDemo">Kokeile esimerkkiä</button>
+          <button type="button" id="btnHomeTutorial" data-i18n="tutorialStart">Opastettu harjoitus</button>
+        </div>
+        <details class="home-extra-menu">
+          <summary data-i18n="homeMore">Muut toiminnot</summary>
+          <div class="home-other-actions home-extra-options">
+            <button type="button" id="btnHomeLibrary" data-i18n="documentLibrary">Asiakirjakirjasto</button>
+            <button type="button" id="btnHomeAI" data-i18n="newWithAI">Luo uusi puu AI:n avulla</button>
+            <button type="button" id="btnHomeAIReview" data-i18n="aiProposalMenu">AI:n tai toisen käyttäjän muutosehdotus</button>
+          </div>
+        </details>
+        <section class="home-workspace" id="homeCurrentWork" hidden aria-labelledby="homeSavedHeading">
+          <h2 id="homeSavedHeading" data-i18n="homeSavedHeading">Jatka edellistä asiakirjaa</h2>
+          <strong id="homeCurrentTitle"></strong>
+          <dl>
+            <div><dt id="homeBrowserSaveLabel" data-i18n="homeBrowserSaveLabel">Selaimen viimeisin tallennus</dt><dd id="homeBrowserSave"></dd></div>
+            <div><dt data-i18n="homeOpenLabel">Viimeksi avattu JSON</dt><dd id="homeLatestOpen"></dd></div>
+            <div><dt data-i18n="homeExportLabel">Viimeisin JSON-vienti</dt><dd id="homeLatestExport"></dd></div>
+          </dl>
+        </section>
+        <p id="homeSaveWarning" class="home-save-warning" data-i18n="homeUnreadableWarning" hidden>Selaimessa on tallennus, jota ei voitu avata. Alkuperäisiä tietoja ei ole korvattu.</p>
+        <p id="homeSessionWarning" class="home-save-warning" data-i18n="sessionOnlyWarning" hidden>Selaimen tallennus on estetty. Työ säilyy vain avoimessa istunnossa – vie se JSON-tiedostoksi ennen sulkemista.</p>
+        <p class="home-privacy" data-i18n="homePrivacy">Voit käyttää työkalua ilman kirjautumista. Vie työsi tiedostoksi milloin tahansa.</p>
+      </div>
+      <div class="home-visual" aria-hidden="true">
+        <span class="visual-kicker" data-i18n="homeCanvasLabel">AJATTELUN TYÖTILA</span>
+        <div class="visual-root"><span class="visual-mini-icon">◇</span> <span data-i18n="homeCanvasRoot">Kannattaako uusi tuote julkaista?</span></div>
+        <div class="visual-branches">
+          <div class="visual-node supporting"><small data-i18n="homeCanvasFor">+ PUOLTAA</small><strong data-i18n="homeCanvasForTitle">Saamme palautetta oikeilta käyttäjiltä</strong><span class="visual-node-child" data-i18n="homeCanvasForDetail">↳ Varhainen palaute auttaa parantamaan tuotetta</span></div>
+          <div class="visual-node opposing"><small data-i18n="homeCanvasAgainst">− VASTUSTAA</small><strong data-i18n="homeCanvasAgainstTitle">Kaikkia riskejä ei vielä tunneta</strong><span class="visual-node-child" data-i18n="homeCanvasAgainstDetail">↳ Testataan tärkeimmät oletukset ensin</span></div>
+        </div>
+        <div class="visual-footer"><span class="visual-dot"></span> <span data-i18n="homeCanvasSteps">Kartoita · Punnitse · Päätä</span></div>
+      </div>
+    </div>
+    <div class="home-features" data-i18n-aria="homeStagesLabel" aria-label="GRACE-menetelmän työskentelyvaiheet">
+      <article><span class="feature-number">01</span><h2 data-i18n="homeStageMap">Kartoita</h2><p data-i18n="homeExplore">Tuo ajatukset näkyviin: puoltavat ja vastustavat perusteet, alipuut ja kommentit.</p></article>
+      <article><span class="feature-number">02</span><h2 data-i18n="homeStageEvaluate">Punnitse</h2><p data-i18n="homeEvaluate">Arvioi erikseen perusteiden uskottavuus ja merkitys — ilman väittelykiirettä.</p></article>
+      <article><span class="feature-number">03</span><h2 data-i18n="homeStageDecide">Päätä yhdessä</h2><p data-i18n="homeDecide">Paikalliset arvioijaprofiilit ja painotettu päätösäänestys. Verkossa tapahtuva yhteiskäyttö tulee myöhemmin.</p><span class="home-soon" data-i18n="homeSoon">Paikallinen</span></article>
+    </div>
+    <div class="home-bottom"><span><b data-i18n="methodName">GRACE-menetelmä</b> <span data-i18n="homeMethodNote">Menetelmä harkitsevaan argumentointiin ja yhteiseen arviointiin.</span></span><button type="button" id="btnHomeHelp" data-i18n="homeLearn">Tutustu menetelmään</button></div>
+  </main>
+</section>
+<div class="app-shell">
+<header class="topbar">
+<div aria-label="WITT" class="brand"><button class="btn icon-btn" id="btnBackHome" aria-label="Home" data-i18n-title="homeBack" title="Aloitussivulle" type="button">⌂</button>
+<div aria-hidden="true" class="logo"><span></span><span></span><span></span></div>
+<button class="brand-title" id="btnEditorAbout" type="button" title="WITT = Web Interactive Thinking Tool · GRACE = Günther’s Reflective Argumentation & Collaborative Evaluation Method"><strong>WITT<span class="brand-dot">.</span></strong><small>GRACE Method ⓘ</small></button>
+</div>
+<div class="doc-header">
+<label class="visually-hidden" data-i18n="docName" for="projectTitle">Asiakirjan nimi</label>
+<input data-i18n-title="docName" id="projectTitle" maxlength="200" title="Asiakirjan nimi" value="Esimerkki: uuden tuotteen julkaisu"/>
+
+</div>
+<div class="header-right">
+<div class="zone-controls" role="group" aria-label="Työtilan paneelit">
+  <button id="btnZoneLeft" class="zone-toggle" type="button" aria-pressed="true" title="Vasen sivupalkki (Alt+1)">◧</button>
+  <button id="btnZoneTop" class="zone-toggle" type="button" aria-pressed="true" title="Yläpalkki (Alt+2)">▤</button>
+  <button id="btnZoneRight" class="zone-toggle" type="button" aria-pressed="true" title="Oikea sivupalkki (Alt+3)">◨</button>
+  <button id="btnZoneBottom" class="zone-toggle" type="button" aria-pressed="false" title="Alapalkki (Alt+4)">▥</button>
+</div>
+<label class="visually-hidden" data-i18n="language" for="localeSelect">Kieli</label>
+<select aria-label="Language / Kieli" id="localeSelect" data-i18n-aria="language" aria-label="Kieli" data-i18n-title="language" title="Kieli">
+<option value="fi">Suomi</option><option value="de">Deutsch</option><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="ru">Русский</option><option value="zh-Hans">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option>
+</select>
+<label class="visually-hidden" data-i18n="theme" for="themeSelect">Ulkoasuteema</label>
+<select data-i18n-title="theme" id="themeSelect" title="Ulkoasuteema"><option data-i18n="light" value="light">Light</option><option data-i18n="dark" value="dark">Dark</option><option data-i18n="paper" value="paper">Paper</option><option data-i18n="cosmos" value="cosmos">Star map</option><option data-i18n="hologram" value="hologram">Hologram</option><option data-i18n="manuscriptBook" value="manuscript-book">Manuscript / Book</option><option data-i18n="manuscriptPen" value="manuscript-pen">Manuscript / Quill</option><option data-i18n="bitbergTheme" value="bitberg">Bitberg</option></select>
+
+</div>
+</header>
+<div aria-label="Työkalut" class="toolbar witt-simplified-toolbar">
+  <div class="toolbar-group toolbar-purpose" role="group" aria-label="Argumentointi tai päätös">
+    <div aria-label="Työtila" class="mode-switch" role="group">
+<button data-i18n="modeArgument" id="modeArgument" type="button">Argumentointi</button>
+<button class="active" data-i18n="modeDecision" id="modeDecision" type="button">Päätös</button>
+</div>
+  </div>
+  <div class="toolbar-group toolbar-flow" role="group" aria-label="Työvaiheet">
+    <span class="toolbar-caption" data-i18n="stageLabel">TYÖVAIHE</span>
+    <label class="visually-hidden" data-i18n="workflow" for="workflowSelect">Työskentelytila</label>
+    <select class="visually-hidden" data-i18n-title="workflow" id="workflowSelect" title="Workflow"><option data-i18n="explore" value="explore">Kartoita</option><option data-i18n="evaluate" value="evaluate">Punnitse</option></select>
+    <div class="workflow-switch workflow-stages" role="group" data-i18n-aria="workflow" aria-label="Työvaihe">
+      <button id="btnWorkflowExplore" data-workflow="explore" aria-pressed="true" type="button" data-i18n="explore">Kartoita</button>
+      <button id="btnWorkflowEvaluate" data-workflow="evaluate" aria-pressed="false" type="button" data-i18n="evaluate">Punnitse</button>
+      <button class="workflow-vote" data-i18n="votingButton" id="btnVoting" type="button">Äänestä</button>
+    </div>
+    <label class="visually-hidden" for="actorSelect" data-i18n="profileSelect">Arvioija</label>
+    <select class="profile-select" id="actorSelect" data-i18n-title="profileSelect" title="Arvioija"></select>
+  </div>
+  <div class="toolbar-group toolbar-presentation" role="group" aria-label="Puu ja taulukko">
+    <div class="table-switch" role="group" data-i18n-aria="tableViewGroup" aria-label="Näkymän muoto"><button type="button" id="btnTreeView" class="btn quiet active" aria-pressed="true" data-i18n="treeView">Puu</button><button type="button" id="btnTableView" class="btn quiet" aria-pressed="false" data-i18n="tableView">Taulukko</button></div>
+    <button class="btn quiet" id="btnViewSettings" data-i18n="viewSettingsButton" type="button" aria-controls="viewDock" aria-expanded="false" aria-pressed="false">Näkymäasetukset</button>
+    <button class="btn quiet ai-results-shortcut" id="btnAIResults" type="button" hidden data-i18n="aiAssessmentsButton">AI:n arviot</button>
+  </div>
+  <div class="toolbar-group toolbar-simple-menus">
+    <details id="fileMenu" class="toolbar-popover">
+      <summary data-i18n="toolbarFileGroup">Tiedosto</summary>
+      <div class="toolbar-popup">
+        <button class="btn quiet" data-i18n="new" id="btnNew" type="button">+ Uusi</button>
+        <button class="btn quiet" data-i18n="openJson" id="btnOpen" type="button">Avaa JSON</button>
+        <button class="btn quiet" data-i18n="saveFile" id="btnSave" title="Ctrl/Cmd+S" type="button">↓ Tallenna tiedosto</button><kbd>Ctrl/Cmd+S</kbd>
+        <button class="btn quiet" data-i18n="exportVisual" id="btnExportVisual" type="button">Vie kuva / PDF</button>
+        <button class="btn quiet" data-i18n="documentLibrary" id="btnLibrary" type="button">Asiakirjakirjasto</button>
+        <div class="menu-divider"></div>
+        <button class="btn quiet" data-i18n="aiProposalMenu" id="btnAIReview" type="button">AI:n tai toisen käyttäjän muutosehdotus</button>
+        <div class="menu-divider"></div>
+        <span class="save-status" id="saveStatus" role="status">Vain tällä laitteella</span>
+      </div>
+    </details>
+    <details id="editMenu" class="toolbar-popover">
+      <summary data-i18n="toolbarEditGroup">Muokkaa</summary>
+      <div class="toolbar-popup">
+        <button class="btn quiet" id="btnEditMenuSelected" type="button" data-i18n="editArgument">Muokkaa argumenttia</button>
+        <button class="btn quiet" id="btnEditMenuSupport" type="button" data-i18n="supportAdd">+ Puoltava</button><kbd>+</kbd>
+        <button class="btn quiet" id="btnEditMenuOppose" type="button" data-i18n="opposeAdd">− Vastustava</button><kbd>−</kbd>
+        <button class="btn quiet" id="btnEditMenuNeutral" type="button" data-i18n="neutralAdd">Neutraali</button>
+        <button class="btn quiet" id="btnEditMenuOption" type="button" data-i18n="optionShort">Vaihtoehto</button>
+        <div class="menu-divider"></div>
+        <button class="btn quiet" data-i18n="contextOpen" id="btnContextMenu" type="button">Toistuvat perustelut</button>
+        <button class="btn quiet" data-i18n="sharedOpen" id="btnSharedMenu" type="button" hidden>Yhteisperusteet</button>
+        <button class="btn quiet" id="btnEditMenuMove" type="button" data-i18n="moveSubtree">Siirrä alipuu</button>
+        <button class="btn quiet" id="btnEditMenuCollapse" type="button" data-i18n="collapseSubtree">Sulje alipuu</button>
+        <button class="btn quiet" id="btnEditMenuDelete" type="button" data-i18n="deleteSubtree">Poista alipuu</button><kbd>Del</kbd>
+        <div class="menu-divider"></div>
+        <button class="btn quiet" data-i18n="undo" id="btnUndo" type="button">Kumoa</button><kbd>Ctrl/Cmd+Z</kbd>
+        <button class="btn quiet" data-i18n="redo" id="btnRedo" type="button">Tee uudelleen</button><kbd>Ctrl/Cmd+Shift+Z</kbd>
+      </div>
+    </details>
+    <details id="assessmentMenu" class="toolbar-popover">
+      <summary data-i18n="toolbarAssessGroup">Arviointi</summary>
+      <div class="toolbar-popup">
+        <button class="btn quiet" id="btnPeople" data-i18n="profileManage" type="button">Arvioijaprofiilit</button>
+        <button class="btn quiet" id="btnAssess" data-i18n="assessmentStart" type="button">Arviointikierros</button><kbd id="assessmentShortcutHint">R</kbd>
+        <button class="btn quiet" id="btnReviewLens" data-i18n="reviewLens" type="button">Arvioijien näkymä</button>
+        <label class="menu-label" for="indexModeSelect" data-i18n="indexDisplay">Indeksi</label>
+        <select id="indexModeSelect" data-i18n-aria="indexDisplay" aria-label="Arvioijan näkökulma"><option value="shared" data-i18n="indexShared">Yhteinen</option><option value="personal" data-i18n="indexPersonal">Oma</option></select>
+
+      </div>
+    </details>
+    <details id="viewMenu" class="toolbar-popover">
+      <summary data-i18n="toolbarViewGroup">Näkymä</summary>
+      <div class="toolbar-popup">
+        <button class="btn quiet" data-i18n="viewSettingsButton" id="btnViewPanelMenu" type="button">Näkymäasetukset</button><kbd>Alt+V</kbd>
+        <button class="btn quiet" data-i18n="focusTree" id="btnFocusView" title="F" type="button">Vain puu</button><kbd id="focusShortcutHint">F</kbd>
+        <label class="toolbar-importance"><input type="checkbox" id="aiOptionHighlights"/><span data-i18n="highlightTopOptions">Korosta vahvimmat vaihtoehdot</span></label>
+        <label class="toolbar-importance"><input type="checkbox" id="importantToggle"/><span data-i18n="importantHighlight">Korosta tärkeimmät</span></label>
+        <label class="toolbar-importance"><input type="checkbox" id="showAuthors"/><span data-i18n="showAuthors">Näytä tekijän nimet</span></label>
+      </div>
+    </details>
+    <details id="helpMenu" class="toolbar-popover">
+      <summary data-i18n="toolbarHelpGroup">Apua</summary>
+      <div class="toolbar-popup">
+        <button class="btn quiet" data-i18n="example" id="btnDemo" type="button">Esimerkit</button>
+        <button class="btn quiet" data-i18n="tutorialStart" id="btnTutorial" type="button">Opastettu harjoitus</button>
+        <button class="btn quiet" id="btnKeyboardTop" type="button" data-i18n="shortcutsButton">Pikanäppäimet</button><kbd id="helpShortcutHint">?</kbd>
+      </div>
+    </details>
+  </div>
+</div>
+<div id="analysisPerspectiveBanner" class="analysis-perspective-banner" hidden role="status"><span id="analysisPerspectiveLabel"></span><button type="button" id="btnPerspectiveOwn" class="btn quiet" data-i18n="backToOwnReviews">Palaa omiin arvioihin</button></div>
+<main class="workspace" id="workspaceMain">
+<aside aria-label="Puun rakenne" class="sidepanel leftpanel">
+<div class="panel-heading"><div><div class="eyebrow" data-i18n="workArea">TYÖTILA</div><h2 data-i18n="tree">Argumenttipuu</h2></div><span class="count-pill" id="nodeCount">0</span></div>
+<div class="left-panel-tabs" role="group" aria-label="Puu ja perustelukirjasto">
+  <button type="button" id="btnOutlineTab" class="active" aria-pressed="true" data-i18n="repeatTreeTab">Puurakenne</button>
+  <button type="button" id="btnRepeatTab" aria-pressed="false" data-i18n="repeatTab">Yhteydet ja perustelut</button>
+</div>
+<div id="outlinePane" class="outline-pane">
+  <div class="left-intro" data-i18n="nodeIntro">Valitse solmu muokataksesi sitä. Siirrä laatikoita hiirellä, tai tartu tyhjään taustaan siirtääksesi näkymää.</div>
+  <div class="sidepanel-label" data-i18n="structure">RAKENNE</div>
+  <nav aria-label="Argumenttien hierarkia" id="treeOutline"></nav>
+</div>
+<section id="repeatLibraryPane" class="repeat-library-pane" hidden aria-label="Toistuvat perustelut">
+  <p class="repeat-library-intro" data-i18n="repeatIntro">Kirjastossa olevat perustelut voidaan liittää useaan solmuun. Vedä kortti kohdesolmuun tai valitse kortti ja liitä se oikeasta sivupalkista.</p>
+  <form id="repeatCreateForm" class="repeat-create-form" novalidate>
+    
+    <label for="repeatNewTitle" data-i18n="repeatNewTitle">Uusi perustelu kirjastoon</label>
+    <input id="repeatNewTitle" type="text" maxlength="200" required autocomplete="off" data-i18n-placeholder="repeatTitlePlaceholder" placeholder="Kirjoita perustelu"/>
+    <details class="repeat-advanced"><summary data-i18n="repeatAdvanced">Lisäasetukset (valinnainen)</summary>
+      <label for="repeatNewSemantic" data-i18n="repeatSemantic">Perustelun luonne</label>
+      <p data-i18n="repeatSemanticHelp">Tavallinen väite arvioidaan uskottavuudella. Arvostus ilmaisee mieltymyksen, eikä sille anneta totuusarviota.</p>
+      <select id="repeatNewSemantic"><option value="fact" data-i18n="contextFact">Tosiasiaväite tai mahdollinen seuraus</option><option value="assumption" data-i18n="contextAssumption">Oletus</option><option value="value" data-i18n="contextValue">Arvostus (ei totuusarviota)</option></select>
+      <label for="repeatNewMode" data-i18n="repeatMode">Arviointien jakaminen</label>
+      <select id="repeatNewMode"><option value="concept" data-i18n="repeatIndependent">Arviot kohteittain</option><option value="locked" data-i18n="repeatLocked">Sama lukittu arvio</option></select>
+      <div id="repeatNewLockedFields" hidden>
+        <label for="repeatNewConfidence" data-i18n="sharedProb">Uskottavuus (%)</label><input id="repeatNewConfidence" type="number" min="0" max="100" value="100" step="1"/>
+        <label for="repeatNewImpact" data-i18n="sharedImpact">Vaikutus (−5…+5)</label><input id="repeatNewImpact" type="number" min="-5" max="5" value="3" step="0.5"/>
+      </div>
+    </details>
+    <button type="button" class="btn primary" id="btnRepeatCreate" data-i18n="repeatCreate">Luo kirjastoon</button>
+    <p id="repeatLibraryStatus" class="repeat-library-status" role="status" aria-live="polite"></p>
+  </form>
+  <div class="repeat-library-heading" data-i18n="repeatExisting">Kirjaston perustelut</div>
+  <div id="repeatCards" class="repeat-cards" role="list"></div>
+  <section id="repeatMultiUse" class="repeat-multi-use" aria-labelledby="repeatMultiTitle">
+    <h3 id="repeatMultiTitle" data-i18n="multiUseTitle">Väitteet, joilla on useita yhteyksiä</h3>
+    <p class="repeat-library-intro" data-i18n="multiUseIntro">Sama väite vaikuttaa useaan kohteeseen. Väite arvioidaan kerran; kunkin yhteyden vaikutus arvioidaan erikseen.</p>
+    <div id="repeatMultiCards" class="repeat-cards" role="list"></div>
+  </section>
+  <details id="repeatCrossLinks" class="repeat-cross-links">
+    <summary><span data-i18n="multiUseRoutes">Yhteysreitit (yksityiskohtaiset)</span> <span id="repeatSecondaryCount">0</span></summary>
+    <p data-i18n="repeatCrossLinkHelp" class="repeat-library-intro">Saman väitteen toinen yhteys toiseen kohteeseen. Näkyy laskennassa.</p>
+    <div id="repeatSecondaryCards" class="repeat-secondary-cards" role="list"></div>
+  </details>
+  <button type="button" class="btn quiet repeat-promote" id="btnRepeatPromote" data-i18n="repeatPromote">Tee valitusta perustelusta toistuva</button>
+
+</section>
+<div class="left-bottom">
+<div class="sidepanel-label" data-i18n="addToSelected">LISÄÄ VALITTUUN SOLMUUN</div>
+<div class="add-row"><button class="btn support-add" data-i18n="supportAdd" id="btnSupport">+ Puoltava</button><button class="btn oppose-add" data-i18n="opposeAdd" id="btnOppose">− Vastainen</button><button class="btn neutral-add" data-i18n-title="neutralAdd" id="btnNeutral" title="Neutraali">0</button></div>
+<button class="btn option-add" data-i18n="optionAdd" id="btnOption">+ Päätösvaihtoehto</button>
+<button class="btn option-add" data-i18n="optionGroupAdd" id="btnOptionGroup" type="button">+ Vaihtoehtoryhmä</button>
+<button class="btn quiet shared-library-open" id="btnSharedReasons" data-i18n="sharedOpen" type="button" hidden>+ Yhteisperusteet</button>
+<button class="btn quiet reuse-reason-open" id="btnContextReasons" data-i18n="contextOpen" type="button">Toistuvat perustelut</button>
+<p class="quiet-note" data-i18n="localHint">Muutokset tallentuvat selaimeen automaattisesti. Vie JSON-tiedosto erilliseksi varmuuskopioksi.</p>
+</div>
+</aside>
+<section id="tableArea" class="table-area" data-i18n-aria="tableTitle" aria-label="Argumenttitaulukko" hidden>
+  <div class="table-header"><div><div class="eyebrow" data-i18n="tableEyebrow">ARGUMENTIT</div><h2 data-i18n="tableTitle">Argumentit taulukkona</h2><p data-i18n="tableIntro">Rivit ovat puun järjestyksessä. Suhde koskee vanhempaa; suljetutkin haarat näkyvät.</p></div>
+    <div class="table-filters"><label><span class="visually-hidden" data-i18n="tableSearchLabel">Etsi väitteistä</span><input type="search" id="tableSearch" data-i18n-placeholder="tableSearchLabel" placeholder="Etsi väitteistä" autocomplete="off"/></label>
+      <label><span class="visually-hidden" data-i18n="tableFilterLabel">Näytä suhteet</span><select id="tableFilter" data-i18n-aria="tableFilterLabel" aria-label="Näytä suhteet"><option value="all" data-i18n="tableAll">Kaikki</option><option value="support" data-i18n="supportWord">Puoltavat</option><option value="oppose" data-i18n="opposeWord">Vastustavat</option><option value="option" data-i18n="optionWord">Vaihtoehdot</option></select></label>
+      <button class="btn quiet" data-i18n="reviewLens" id="btnReviewLensTable" type="button">Arvioijien näkymä</button>
+      <label class="table-comments-toggle"><input type="checkbox" id="tableComments"/><span data-i18n="tableShowComments">Näytä kommentit</span></label>
+    </div></div>
+  <div class="table-summary" id="tableSummary" role="status"></div>
+  <div class="review-lens-banner" id="reviewLensBanner" hidden></div>
+  <div id="mobileArguments" class="mobile-arguments" role="list" hidden></div>
+  <div class="table-scroll" id="tableScroll" tabindex="0"><table class="argument-table"><thead><tr>
+    <th scope="col" data-i18n="tableColClaim">Väite</th><th scope="col" data-i18n="tableColRelation">Suhde</th><th scope="col" data-i18n="tableColContext">Asiayhteys</th>
+    <th scope="col" data-i18n="tableColCredence" class="table-evaluation-col">Uskottavuus</th><th scope="col" data-i18n="tableColInfluence" class="table-evaluation-col">Vaikutus</th><th scope="col" data-i18n="tableColIndex" class="table-evaluation-col">Indeksi</th><th scope="col" data-i18n="tableColDetails">Tiedot</th>
+  </tr></thead><tbody id="argumentTableBody"></tbody></table></div>
+</section>
+<section aria-label="Argumenttien graafi" class="canvas-area">
+<div aria-label="Puun näkymäohjaimet" class="canvas-quick-controls">
+<button aria-pressed="false" class="btn quiet" id="btnFocusQuick" title="Näytä vain puu" type="button">⛶ Vain puu</button>
+<button aria-pressed="false" class="btn quiet" data-i18n-title="changeOrientation" id="btnOrientationQuick" title="Vaihda puun suunta" type="button">↓ Ylhäältä alas</button>
+<button class="btn quiet" id="btnArrangeQuick" type="button" data-i18n="arrange" title="Järjestä solmut">↹ Järjestä puu</button>
+<button class="btn quiet" id="btnUndoQuick" type="button" data-i18n="undo" title="Kumoa (Ctrl/Cmd+Z)">↶ Kumoa</button>
+<label class="visually-hidden" for="actorQuickSelect" data-i18n="profileSelect">Arvioija</label><select id="actorQuickSelect" class="quick-profile-select" data-i18n-title="profileSelect" title="Arvioija"></select>
+<button class="btn quiet" id="btnAssessQuick" type="button" data-i18n="assessmentStart">◉ Arviointikierros</button>
+<button class="btn quiet" id="btnEditQuick" type="button" data-i18n="editSelected" title="Muokkaa valittua väitettä (F2)">✎ Muokkaa</button>
+<button class="btn quiet" data-i18n="reviewLens" id="btnReviewLensQuick" type="button">Arvioijien näkymä</button>
+<button class="btn quiet" id="btnKeyboardQuick" type="button" data-i18n="shortcutsButton" title="Näppäimistön pikanäppäimet">⌨ Pikanäppäimet</button>
+</div>
+<div id="viewDock" aria-label="Näkymäkerrokset ja haarakorostus" class="view-dock">
+<div class="dock-topline">
+  <span class="dock-drag-handle" id="dockMove" tabindex="0" role="button" data-i18n-title="dockMove" title="Siirrä näkymäasetuksia">⠿ <span data-i18n="viewSettingsButton">Näkymäasetukset</span></span>
+  <div class="dock-action-buttons">
+    <button id="btnDockCollapse" class="btn quiet" type="button" data-i18n-title="dockCollapse" title="Pienennä paneeli">−</button>
+    <button id="btnDockClose" class="btn quiet dock-close" type="button" data-i18n-title="dockClose" data-i18n-aria="dockClose" aria-label="Sulje näkymäasetukset" title="Sulje näkymäasetukset">×</button>
+  </div>
+</div>
+<div class="dock-content" id="dockContent">
+<div class="dock-row">
+<span class="dock-label" data-i18n="layers">NÄKYMÄKERROKSET</span>
+<label class="visually-hidden" data-i18n="viewScope" for="viewPreset">Näkymän laajuus</label>
+<select aria-label="Näkymän laajuus" data-i18n-aria="viewScope" id="viewPreset">
+<option data-i18n="compactView" value="text">Tiivis</option>
+<option data-i18n="analysis" value="analysis">Analyysi</option>
+<option data-i18n="allDetails" value="all">Kaikki tiedot</option>
+<option data-i18n="custom" value="custom">Omat valinnat</option>
+</select>
+<button aria-controls="layersPanel" aria-expanded="false" class="btn quiet dock-button" data-i18n="customize" id="btnLayers" type="button">Säädä</button>
+</div>
+<div aria-label="Näytettävät tiedot" class="layers-panel" hidden="" id="layersPanel" role="group">
+<p data-i18n="layersHelp">Väitteen teksti näkyy aina. Valitse sen ympärille haluamasi lisätiedot.</p>
+<label><input data-layer="labels" type="checkbox"/><span data-i18n="layerLabels">Otsikkorivi ja argumenttityyppi</span></label>
+<label><input data-layer="details" type="checkbox"/><span data-i18n="layerDetails">Perustelut / muistiinpanot</span></label>
+<label><input data-layer="index" type="checkbox"/><span data-i18n="layerIndex">Perustelusaldo</span></label>
+<label><input data-layer="assessments" type="checkbox"/><span data-i18n="layerAssessments">Arviot tiiviisti (75%/+5)</span></label>
+<label><input data-layer="confidence" type="checkbox"/><span data-i18n="layerConfidence">Uskottavuusarvio</span></label>
+<label><input data-layer="impact" type="checkbox"/><span data-i18n="layerImpact">Vaikutuspaino</span></label>
+<label><input data-layer="comments" type="checkbox"/><span data-i18n="layerComments">Kommentit</span></label>
+<label><input data-layer="counts" type="checkbox"/><span data-i18n="layerCounts">Alisolmujen määrä</span></label>
+<label><input data-layer="links" type="checkbox"/><span data-i18n="layerLinks">Lisäyhteydet</span></label>
+<label><input id="showSharedReasons" type="checkbox"/><span data-i18n="sharedShowInTree">Näytä toistuvat perustelut myös puussa</span></label>
+<label><input id="dragFromText" type="checkbox"/><span data-i18n="dragFromText">Raahaa solmua myös tekstistä</span></label>
+</div>
+<div class="dock-tree-tools">
+<label for="orientationSelect" data-i18n="orientation">Puun suunta</label>
+<select aria-label="Puun suunta" data-i18n-aria="orientation" data-i18n-title="orientation" id="orientationSelect" title="Puun suunta"><option data-i18n="leftRight" value="horizontal">→ Vasemmalta oikealle</option><option data-i18n="topDown" value="vertical">↓ Ylhäältä alas</option><option data-i18n="fourDirections" value="four-way">✣ Neljä suuntaa</option></select>
+<button class="btn quiet" data-i18n="arrange" id="btnLayout" type="button">Järjestä puu</button>
+<button class="btn quiet" data-i18n="fit" id="btnFit" type="button">Sovita näkymään</button>
+<button class="btn quiet" id="btnCompactTree" type="button" data-i18n="compactVisibleTree" aria-pressed="false">Tiivistä näkyvä puu</button>
+<button class="btn quiet" id="btnCollapseOptions" type="button" data-i18n="collapseAllOptions" data-i18n-title="collapseOptionsShortcut" title="Alt+Shift+O">Näytä vain vaihtoehdot</button>
+</div>
+<div class="dock-depth-tools">
+  <div class="dock-depth-heading"><label for="treeDepthSlider" data-i18n="treeDepthLabel">Avaa puuta tasoittain</label><output id="treeDepthValue" for="treeDepthSlider" aria-live="polite">Omat avaukset</output></div>
+  <input id="treeDepthSlider" type="range" min="0" max="0" step="1" value="0" data-i18n-aria="treeDepthLabel" aria-label="Avaa puuta tasoittain"/>
+  <div class="dock-depth-extremes"><span data-i18n="treeDepthRoot">Vain juuri</span><span data-i18n="treeDepthAll">Kaikki lehdet</span></div>
+  <button class="btn quiet" id="btnDepthReset" type="button" data-i18n="treeDepthReset" hidden>Palauta omat avaukset</button>
+</div>
+<div class="dock-divider"></div>
+<div class="dock-row focus-head">
+<span class="dock-label" data-i18n="focusHeading">HAARAN KOROSTUS</span>
+<div aria-label="Korostettavat argumentit" class="focus-segments" role="group">
+<button aria-pressed="true" class="active" data-focus="all" data-i18n="all" id="focusAll" type="button">Kaikki</button>
+<button aria-pressed="false" data-focus="support" data-i18n="focusSupport" id="focusSupport" type="button">+ Puoltavat</button>
+<button aria-pressed="false" data-focus="oppose" data-i18n="focusOppose" id="focusOppose" type="button">− Vastustavat</button>
+</div>
+</div>
+<div class="focus-target">
+<button class="btn quiet dock-button" data-i18n="selectedBranch" id="btnFocusAnchor" title="Aseta korostuksen lähtökohdaksi nyt valittu solmu" type="button">◎ Valittu haara</button>
+<span id="focusAnchorText" title="Korostuksen lähtösolmu"></span>
+</div>
+<p class="focus-summary" id="focusSummary" role="status">Valitse puoltavat tai vastustavat korostaaksesi yhden haaran argumentteja.</p>
+</div>
+</div>
+<div aria-label="Siirrettävä ja zoomattava puunäkymä" id="viewport" tabindex="0">
+<div id="world">
+<svg aria-hidden="true" height="8000" id="edges" viewbox="0 0 8000 8000" width="8000"><defs><marker id="secondary-support-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" class="secondary-arrow-support"/></marker><marker id="secondary-oppose-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" class="secondary-arrow-oppose"/></marker></defs><g id="edgePaths"></g></svg>
+<div id="nodesLayer" role="tree" aria-label="Argumenttipuu"></div>
+</div>
+</div>
+<div id="keyboardStatus" aria-live="polite" class="visually-hidden"></div>
+<div class="zoom-controls"><button id="zoomOut" title="Loitonna" type="button">−</button><span id="zoomLabel">100 %</span><button id="zoomIn" title="Lähennä" type="button">+</button><button id="zoomReset" title="Sovita" type="button">⤢</button></div>
+<div class="legend"><span><i class="support-mark"></i><span data-i18n="supportWord">Puoltaa</span></span><span><i class="oppose-mark"></i><span data-i18n="opposeWord">Vastustaa</span></span><span><i class="option-mark"></i><span data-i18n="optionType">Vaihtoehto</span></span><span id="linkLegend" hidden><i class="secondary-mark"></i><span data-i18n="secondaryLinks">Lisäyhteydet</span></span></div>
+</section>
+<aside aria-label="Valitun solmun tiedot" class="sidepanel inspector-panel">
+<div class="panel-heading"><div><div class="eyebrow" data-i18n="selectedNode">VALITTU SOLMU</div><h2 data-i18n="editArgument">Muokkaa argumenttia</h2></div></div>
+<div id="inspector"></div>
+</aside>
+</main>
+<section id="bottomZone" class="bottom-zone" hidden aria-label="Rakenteen pikatoiminnot">
+  <div class="bottom-zone-title"><strong data-i18n="structureTitle">Rakenne</strong><span id="bottomSelectedNode"></span></div>
+  <div class="bottom-zone-actions">
+    <button class="btn support-add" id="btnBottomSupport" type="button" data-i18n="supportAdd">+ Puoltava</button>
+    <button class="btn oppose-add" id="btnBottomOppose" type="button" data-i18n="opposeAdd">− Vastustava</button>
+    <button class="btn quiet" id="btnBottomNeutral" type="button" data-i18n="neutralAdd">Neutraali</button>
+    <button class="btn quiet" id="btnBottomMove" type="button" data-i18n="moveSubtree">Siirrä alipuu</button>
+    <button class="btn quiet" id="btnBottomDelete" type="button" data-i18n="deleteSubtree">Poista alipuu</button>
+  </div>
+</section>
+<footer class="app-footer"><span>WITT <b>0.11.0-dev.32</b></span><span data-i18n="footerFriendly">Tallentuu selaimeesi · Ei kirjautumista · Argumentti-indeksi ei ole tilastollinen todennäköisyys.</span><button data-i18n="help" id="btnHelp" type="button">Miten tätä käytetään?</button></footer>
+</div>
+<dialog id="sharedReasonsDialog" class="action-dialog shared-reasons-dialog" aria-labelledby="sharedReasonsTitle">
+<div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="sharedReasonsTitle" data-i18n="sharedTitle">Käytä perustelua uudelleen</h2><button id="btnSharedClose" type="button" class="btn icon-btn" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <div class="reuse-mode-nav" role="group" data-i18n-aria="reuseModesLabel" aria-label="Arviointien jakaminen">
+    <button id="btnReuseContextFromShared" class="btn quiet" type="button" data-i18n="reuseIndependent">Arviot erikseen (suositus)</button>
+    <span class="reuse-mode-active" aria-current="true" data-i18n="reuseLocked">Sama lukittu arvio</span>
+  </div>
+  <p class="reuse-intro" data-i18n="sharedIntro">Tämä erikoistila kopioi täsmälleen saman uskottavuuden ja vaikutuksen jokaiseen käyttökohteeseen. Arvio on lukittu eikä ole kenenkään henkilökohtainen arvio.</p>
+  <p class="reuse-example" data-i18n="reuseLockedExample">Esimerkki: täysin sama yleinen lisenssimaksu kaikissa vaihtoehdoissa. Valitse tämä vain, jos myös arvion vaikutus on varmasti sama.</p>
+  <p class="inspector-note reuse-target" id="sharedTarget"></p>
+  <h3 class="reuse-section-heading" data-i18n="reuseNewHeading">1. Luo uusi uudelleen käytettävä perustelu</h3>
+  <form id="sharedCreateForm" class="shared-create-form">
+    <label><span data-i18n="sharedName">Perustelun teksti</span><input id="sharedNewTitle" type="text" maxlength="200" required placeholder="Kirjoita perustelu" data-i18n-placeholder="sharedNamePlaceholder"/></label>
+    <label><span data-i18n="sharedProb">Uskottavuus / todennäköisyys (%)</span><input id="sharedNewConfidence" type="number" min="0" max="100" step="1" value="100" required/></label>
+    <label><span data-i18n="sharedImpact">Vaikutus / merkitys (−5…+5)</span><input id="sharedNewInfluence" type="number" min="-5" max="5" step="0.5" value="3" required/></label>
+    <button class="btn primary" type="submit" data-i18n="sharedCreate">Tallenna lukittu perustelu</button>
+  </form>
+  <h3 class="reuse-section-heading" data-i18n="reuseExistingHeading">2. Valitse aiemmin luotu perustelu</h3>
+  <div id="sharedReasonsList" class="shared-reasons-list" role="list"></div>
+  <p class="inline-warning" data-i18n="sharedNotice">Sama arvio vaikuttaa kaikkiin valittuihin liitoksiin. Eri todennäköisyyttä tarvitseva käyttökohde tulee irrottaa omaksi solmukseen. Lukitut arvot eivät ole henkilökohtaisia arvioita.</p>
+  <div class="dialog-actions"><button class="btn primary" id="btnSharedDone" type="button" data-i18n="close">Sulje</button></div>
+</div>
+</dialog>
+<dialog id="contextReasonsDialog" class="action-dialog shared-reasons-dialog" aria-labelledby="contextReasonsTitle">
+<div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="contextReasonsTitle" data-i18n="contextTitle">Käytä perustelua uudelleen</h2><button id="btnContextClose" class="btn icon-btn" type="button" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <div class="reuse-mode-nav" role="group" data-i18n-aria="reuseModesLabel" aria-label="Arviointien jakaminen">
+    <span class="reuse-mode-active" aria-current="true" data-i18n="reuseIndependent">Arviot erikseen (suositus)</span>
+    <button id="btnReuseLockedFromContext" class="btn quiet" type="button" data-i18n="reuseLocked">Sama lukittu arvio</button>
+  </div>
+  <p class="reuse-intro" data-i18n="contextIntro">Lisää sama perustelun ajatus useaan paikkaan. Jokaisessa paikassa uskottavuus ja vaikutus arvioidaan itsenäisesti. Mitään arvioita tai ääniä ei kopioida.</p>
+  <p class="reuse-example" data-i18n="reuseIndependentExample">Esimerkki: ”Säästää aikaa”. Vaihtoehdossa A arvio 90 % / +4; vaihtoehdossa B 60 % / +2.</p>
+  <p id="contextTarget" class="inspector-note reuse-target"></p>
+  <h3 class="reuse-section-heading" data-i18n="reuseNewHeading">1. Luo uusi uudelleen käytettävä perustelu</h3>
+  <form id="contextCreateForm" class="shared-create-form">
+    <label><span data-i18n="contextName">Perustekäsite</span><input id="contextNewTitle" type="text" maxlength="200" required/></label>
+    <label><span data-i18n="contextKind">Perusteen luonne</span><select id="contextNewKind"><option value="fact" data-i18n="contextFact">Tosiasiaväite tai mahdollinen seuraus</option><option value="assumption" data-i18n="contextAssumption">Oletus</option><option value="value" data-i18n="contextValue">Arvostus (ei totuusarviota)</option></select></label>
+    <button class="btn primary" type="submit" id="contextCreateButton" data-i18n="contextCreate">Tallenna perustelu</button>
+  </form>
+  <h3 class="reuse-section-heading" data-i18n="reuseExistingHeading">2. Valitse aiemmin luotu perustelu</h3>
+  <div id="contextReasonsList" class="shared-reasons-list" role="list"></div>
+  <p class="inspector-note" data-i18n="contextNotice">Jokainen liitos on erillinen arvioitava solmu. Irrottaminen säilyttää solmun ja siihen tehdyt arviot. Muutos otsikkoon vanhentaa suhdearviot näkyvästi.</p>
+  <div class="dialog-actions"><button id="btnContextDone" type="button" class="btn primary" data-i18n="close">Sulje</button></div>
+</div>
+</dialog>
+<dialog id="linkDialog" class="link-dialog" aria-labelledby="linkDialogTitle">
+  <div class="link-dialog-shell">
+    <div class="link-dialog-head"><div>
+      <div class="eyebrow" data-i18n="linkPreviewLabel">AIEMMAN MALLIN YHTEYDET</div>
+      <h2 id="linkDialogTitle" data-i18n="secondaryLinks">Lisäyhteydet</h2>
+    </div><button id="linkClose" class="btn quiet" type="button" data-i18n="closeLinkDialog">Sulje</button></div>
+    <p id="linkSourceTitle" class="link-source-title"></p>
+    <p class="inline-warning" data-i18n="linkScoreNotice">Lisäyhteys vaikuttaa kohdesolmun perustelusaldoon. Sama perustelu voi vaikuttaa useaan kohteeseen, joten tarkista päällekkäiset vaikutuspolut.</p>
+    <div id="linkForm" class="link-add-form">
+      <label><span data-i18n="linkTargetLabel">Mihin väitteeseen tämä vaikuttaa?</span><select id="linkTarget"></select></label>
+      <div class="link-form-grid">
+        <label><span data-i18n="linkSignedAxis">Vaikutus: −5 vastustaa · 0 neutraali · +5 puoltaa</span>
+          <span class="inline-impact link-signed-slider"><span>−5</span><input id="linkImpact" type="range" min="-5" max="5" step="0.5" value="3"/><span>+5</span><output id="linkImpactValue">+3</output></span>
+          <span class="link-scale-labels"><span data-i18n="linkAxisOpposes">-5 opposes</span><span data-i18n="linkAxisNeutral">0 neutral</span><span data-i18n="linkAxisSupports">+5 supports</span></span>
+        </label>
+      </div>
+      <button id="linkAdd" type="button" class="btn primary" data-i18n="addLink">+ Lisää yhteys</button>
+    </div>
+    <h3 data-i18n="existingLinksHeading">Tähän väitteeseen liittyvät lisäyhteydet</h3>
+    <div id="existingLinks"></div>
+  </div>
+</dialog>
+<dialog id="examplesDialog" class="examples-dialog" aria-labelledby="examplesTitle"><div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="examplesTitle" data-i18n="examplesTitle">Harjoitusesimerkit</h2><button id="btnCloseExamples" type="button" class="btn icon-btn" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <p data-i18n="examplesIntro">Valitse kuvitteellinen kolmen arvioijan keskustelu. Arviot ovat esimerkkitietoa, eivät tutkimustuloksia.</p>
+  <div id="exampleCards" class="example-cards"></div>
+</div></dialog>
+<dialog id="reviewLensDialog" class="review-lens-dialog" aria-labelledby="reviewLensTitle"><div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="reviewLensTitle" data-i18n="reviewLens">Arvioijien näkymä</h2><button id="btnCloseLens" type="button" class="btn icon-btn" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <p data-i18n="reviewLensHelp">Valitse, kenen arviot näkyvät. Väitteet ja suhteet pysyvät yhteisinä; suodatus ei muuta dokumenttia eikä päätösääniä.</p>
+  <div class="review-lens-actions"><button id="btnLensAll" class="btn quiet" data-i18n="lensAll" type="button">Kaikki</button><button id="btnLensCurrent" class="btn quiet" data-i18n="lensCurrent" type="button">Vain nykyinen</button></div>
+  <div id="lensPeople" class="lens-people"></div><div id="lensInsights" class="lens-insights"></div>
+  <div class="dialog-actions"><button type="button" id="btnLensDone" class="btn primary" data-i18n="close">Valmis</button></div>
+</div></dialog>
+<aside id="tutorialPanel" class="tutorial-panel" aria-label="Opastettu harjoitus" aria-live="polite" hidden>
+  <div class="tutorial-head"><button type="button" class="tutorial-move" id="tutorialMove" data-i18n-title="tutorialMove" data-i18n-aria="tutorialMove" title="Siirrä opastusta" aria-label="Siirrä opastusta">⠿ <span id="tutorialProgress"></span></button><button type="button" id="tutorialClose" class="btn icon-btn" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <h2 id="tutorialHeading"></h2><p id="tutorialText"></p><div class="tutorial-actions">
+    <button type="button" class="btn quiet" id="tutorialTarget" data-i18n="tutorialShowTarget">Näytä kohde</button>
+    <button type="button" class="btn quiet" id="tutorialNext" data-i18n="tutorialSkip">Ohita vaihe</button>
+  </div>
+</aside>
+<div id="nodeContextMenu" class="node-context-menu" role="menu" aria-label="Node actions" data-i18n-aria="contextMenu" hidden></div>
+<dialog id="visualExportDialog" aria-labelledby="visualExportTitle">
+ <div class="dialog-inner" id="visualExportForm">
+  <div class="dialog-heading"><h2 id="visualExportTitle" data-i18n="exportVisualTitle">Vie puu kuvaksi tai PDF:ksi</h2><button type="button" class="btn quiet" id="btnExportClose" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <p data-i18n="exportVisualHelp">Vie koko puun valittu alue, myös kuvaruudun ulkopuoliset solmut. Vientiasetukset eivät muuta dokumenttia.</p>
+  <div class="visual-export-grid">
+   <label><span data-i18n="exportFormat">Muoto</span><select id="exportFormat"><option value="png">PNG</option><option value="svg">SVG</option><option value="pdf">PDF</option></select></label>
+   <label><span data-i18n="exportScope">Alue</span><select id="exportScope"><option value="visible" data-i18n="exportVisible">Näkyvä puu ja suodatus</option><option value="all" data-i18n="exportWhole">Koko puu (myös suljetut haarat)</option></select></label>
+   <label><span data-i18n="exportDetail">Tietojen määrä</span><select id="exportDetail"><option value="current" data-i18n="exportCurrent">Nykyiset näkymäkerrokset</option><option value="text" data-i18n="compactView">Tiivis</option><option value="analysis" data-i18n="analysis">Analyysi</option><option value="all" data-i18n="allDetails">Kaikki tiedot</option></select></label>
+   <label><span data-i18n="exportPalette">Värimaailma</span><select id="exportPalette"><option value="light" data-i18n="exportLight">Vaalea, tulostukseen</option><option value="dark" data-i18n="exportDark">Tumma</option></select></label>
+  </div>
+  <div class="visual-export-toggles">
+   <label><input type="checkbox" id="exportHighlights"/><span data-i18n="importantHighlight">Korosta tärkeimmät</span></label>
+   <label><input type="checkbox" id="exportLinks"/><span data-i18n="layerLinks">Lisäyhteydet</span></label>
+   <label><input type="checkbox" id="exportShared"/><span data-i18n="sharedShowInTree">Näytä yhteisperusteet puussa</span></label>
+   <label><input type="checkbox" id="exportCompact"/><span data-i18n="exportCompactVisible">Tiivistä näkyvä puu kuvassa</span></label>
+  </div>
+  <div id="exportPngOptions">
+  <label><span data-i18n="exportResolution">PNG-tarkkuus</span><select id="exportResolution"><option value="1">1×</option><option value="2" selected>2×</option><option value="3">3×</option></select></label>
+  <label><span data-i18n="exportPngMode">PNG-vientitapa</span><select id="exportPngMode"><option value="auto" data-i18n="exportPngAuto">Yksi PNG, jos selain pystyy (muuten ZIP)</option><option value="tiles" data-i18n="exportPngTiles">Jaa PNG-laatoiksi (ZIP)</option></select></label>
+  <p class="export-png-hint" id="exportPngEstimate" role="status"></p>
+  <p class="export-png-hint" data-i18n="exportPngTileHint">Yritetään yhtä suurta PNG:tä, jos muistiraja sallii; muuten tallennetaan laatat ZIP-tiedostoon.</p>
+</div>
+  <div id="exportPdfOptions" hidden><label><span data-i18n="exportPdfLayout">PDF-asettelu</span><select id="exportPdfLayout"><option value="pages-auto" data-i18n="exportPdfPages">A4 automaattisesti, usealle sivulle</option><option value="pages-portrait" data-i18n="exportPdfPortrait">A4 pystyyn, usealle sivulle</option><option value="pages-landscape" data-i18n="exportPdfLandscape">A4 vaakaan, usealle sivulle</option><option value="fit" data-i18n="exportPdfFit">Yksi sivu (suuri puu voi olla pieni)</option></select></label></div>
+  <p class="inline-warning" id="exportVisualStatus" role="status"></p>
+  <div class="dialog-actions"><button class="btn quiet" type="button" id="btnExportCancel" data-i18n="cancel">Peruuta</button><button class="btn primary" type="button" id="btnExportDownload" data-i18n="exportDownload">Lataa tiedosto</button></div>
+ </div>
+</dialog>
+<dialog id="assessmentDialog" class="assessment-dialog" aria-labelledby="assessmentTitle" aria-describedby="assessmentIntro">
+  <div class="assessment-shell">
+    <div class="assessment-topline">
+      <div><div class="eyebrow" data-i18n="assessmentEyebrow">GRACE · EVALUATE</div>
+        <h2 id="assessmentTitle" data-i18n="assessmentTitle">Arvioi yksi väite kerrallaan</h2></div>
+      <button type="button" class="btn icon-btn" id="btnAssessClose" data-i18n-aria="close" aria-label="Sulje">×</button>
+    </div>
+    <p id="assessmentProfile" class="assessment-profile"></p><p id="assessmentNotYet" class="assessment-muted"></p>
+    <p id="assessmentIntro" data-i18n="assessmentIntro" class="assessment-muted">Etene rauhassa. Voit ohittaa väitteen, palata taaksepäin tai jatkaa myöhemmin.</p>
+    <div class="assessment-progress-row"><span id="assessmentStep" aria-live="polite"></span><strong id="assessmentReviewed"></strong></div>
+    <progress id="assessmentProgress" max="1" value="0" aria-label="Arvioinnin edistyminen" data-i18n-aria="assessmentProgress"></progress>
+    <div id="assessmentQuestion" class="assessment-question">
+      <div id="assessmentContext" class="assessment-parent"></div>
+      <div class="assessment-claim" id="assessmentClaim"></div>
+      <p id="assessmentDetails" class="assessment-details"></p>
+      <div class="assessment-field" id="assessmentCredenceField">
+        <p class="assessment-axis" data-i18n="assessmentCredenceAxis">Uskottavuus / todennäköisyys (0–100 %)</p>
+        <label for="assessmentCredence" data-i18n="assessmentCredence">Kuinka todennäköisesti peruste pitää paikkansa tai sen kuvaama asia toteutuu?</label>
+        <div class="assessment-scale"><input type="range" id="assessmentCredence" min="0" max="100" step="1" value="65"/><input id="assessmentCredenceNumber" type="number" min="0" max="100" step="1" value="65" data-i18n-aria="assessmentCredenceAxis" aria-label="Uskottavuus / todennäköisyys (0–100 %)"/><span aria-hidden="true">/ 100</span></div>
+      </div>
+      <div class="assessment-field" id="assessmentImpactField">
+        <p class="assessment-axis" data-i18n="assessmentImpactAxis">Vaikutus / merkitys (−5…+5)</p>
+        <label for="assessmentInfluence" id="assessmentInfluenceLabel">Kuinka voimakkaasti peruste puoltaa tai vastustaa ylemmän väitteen paikkansapitävyyttä?</label>
+        <div id="assessmentImpactReflection" class="assessment-reflection">
+          <p data-i18n="assessmentImpactReflectSimple">Oleta, että peruste pitää paikkansa tai toteutuu. Arvioi merkitys erillään todennäköisyydestä.</p>
+        </div>
+        <div class="assessment-scale"><input type="range" id="assessmentInfluence" min="-5" max="5" step="0.5" value="0" aria-describedby="assessmentImpactReflection"/><output id="assessmentInfluenceValue" for="assessmentInfluence">0</output></div>
+        <div class="assessment-edge-labels"><span data-i18n="assessmentOppose">−5 vahvasti vastustaa</span><span data-i18n="assessmentNeutral">0 ei vaikutusta</span><span data-i18n="assessmentSupport">+5 vahvasti puoltaa</span></div>
+      </div>
+      <p class="assessment-muted" id="assessmentReviewedMarker"></p>
+    </div>
+    <div id="assessmentFinish" class="assessment-finish" hidden>
+      <h3 id="assessmentFinishTitle"></h3><p id="assessmentFinishText"></p>
+      <button type="button" class="btn quiet" id="btnAssessUnreviewed" data-i18n="assessmentContinue">Jatka keskeneräisistä</button>
+    </div>
+    <div class="assessment-bottom">
+      <button type="button" class="btn quiet" id="btnAssessRestart" data-i18n="assessmentRestart">Aloita uusi kierros</button>
+      <div class="assessment-nav">
+        <button type="button" class="btn quiet" id="btnAssessPrev" data-i18n="assessmentPrevious">← Edellinen</button>
+        <button type="button" class="btn quiet" id="btnAssessSkip" data-i18n="assessmentSkip">Ohita →</button>
+        <button type="button" class="btn primary" id="btnAssessNext" data-i18n="assessmentSaveNext">Tallenna ja seuraava →</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+<dialog id="moveNodeDialog" aria-labelledby="moveDialogTitle"><div class="dialog-inner">
+<div class="dialog-heading"><h2 id="moveDialogTitle" data-i18n="moveSubtree">Siirrä alipuu</h2><button type="button" id="btnMoveClose" class="btn icon-btn" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+<label for="moveTargetSelect" data-i18n="moveTarget">Uusi vanhempi</label>
+<select id="moveTargetSelect"></select>
+<div class="dialog-actions"><button type="button" class="btn quiet" id="btnMoveCancel" data-i18n="cancel">Peruuta</button><button type="button" class="btn primary" id="btnMoveConfirm" data-i18n="confirmMove">Siirrä</button></div>
+</div></dialog>
+<dialog id="newWorkDialog" class="action-dialog new-work-dialog" aria-labelledby="newWorkTitle"><div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="newWorkTitle" data-i18n="newWorkTitle">Uusi työ</h2><button type="button" class="btn icon-btn" id="btnNewWorkClose" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <p data-i18n="newWorkIntro">Aloita tyhjästä tai pyydä AI:ta rakentamaan kokonainen uusi argumentti- tai päätöspuu.</p>
+  <div class="new-work-actions">
+    <button id="btnNewWorkArgument" class="btn quiet" type="button" data-i18n="newBlankArgument">Tyhjä argumenttipuu</button>
+    <button id="btnNewWorkDecision" class="btn quiet" type="button" data-i18n="newBlankDecision">Tyhjä päätöspuu</button>
+    <button id="btnAIDraft" class="btn primary" type="button" data-i18n="newWithAI">Luo uusi puu AI:n avulla</button>
+  </div>
+  <p class="inspector-note" data-i18n="newWorkNoSend">AI-tehtävä kopioidaan tai ladataan tiedostoksi. WITT ei lähetä mitään AI-palvelulle.</p>
+</div></dialog>
+<input id="aiDraftInput" type="file" class="visually-hidden" accept="application/json,.json,.witt.json" />
+<dialog id="aiDialog" class="action-dialog ai-review-dialog" aria-labelledby="aiTitle"><div class="dialog-inner ai-dialog-inner">
+  <div class="dialog-heading"><h2 id="aiTitle" data-i18n="draftTitle">Luo uusi argumentti- tai päätöspuu kielimallilla</h2><button type="button" class="btn icon-btn" id="btnAIClose" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <p data-i18n="draftIntro">Valmistele uuden puun tehtävä tekoälylle ja tuo sen palauttama JSON takaisin WITTiin. WITT ei lähetä tietoja automaattisesti.</p>
+  <div class="ai-flow-tabs" role="group" aria-label="AI-työn vaiheet">
+    <button id="btnAIFlowPrompt" type="button" class="active" aria-pressed="true" data-i18n="aiDraftStepRequest">1. Luo tehtävä AI:lle</button>
+    <button id="btnAIFlowImport" type="button" aria-pressed="false" data-i18n="aiDraftStepImport">2. Avaa AI:n vastaus</button>
+  </div>
+  <section id="aiDraftPromptStep" class="ai-flow-step">
+  <p class="inspector-note" data-i18n="aiDraftStepHelp">Kirjoita puun aihe ja halutessasi taustatiedot.</p>
+  <label for="aiMode" data-i18n="draftMode">Puun tyyppi</label>
+  <select id="aiMode"><option value="argument" data-i18n="modeArgument">Argumentointi</option><option value="decision" data-i18n="modeDecision">Päätös</option></select>
+  <label for="aiTopic" data-i18n="aiTopicLabel">Aihe tai pääväite</label>
+  <textarea id="aiTopic" maxlength="5000" rows="2" data-i18n-placeholder="aiTopicPlaceholder"></textarea>
+  <label for="aiContext" data-i18n="draftContext">Pohja-aineisto: esimerkiksi keskustelukatkelmat (valinnainen)</label>
+  <textarea id="aiContext" maxlength="50000" rows="5" data-i18n-placeholder="draftContextPlaceholder"></textarea>
+  <p class="ai-task-choice-hint" data-i18n="aiTaskChoiceHint">Valitse vain toinen tavoista. Molemmat sisältävät saman AI-tehtävän ja JSON-skeeman.</p>
+  <div class="dialog-actions ai-actions ai-task-actions">
+    <button type="button" id="btnAICopy" class="btn primary" data-i18n="aiTaskCopy">Kopioi AI-tehtävä</button>
+    <button type="button" id="btnAIDownloadPrompt" class="btn quiet" data-i18n="aiTaskDownloadSame">Lataa sama tehtävä (TXT)</button>
+  </div>
+  <p id="aiDraftTaskStatus" class="ai-task-status" role="status" aria-live="polite"></p>
+  <details id="aiDraftPromptPreviewDetails" class="ai-task-detail"><summary data-i18n="aiTaskPreview">Katso AI-tehtävän koko sisältö</summary>
+    <textarea id="aiPromptPreview" readonly rows="9" style="width:100%" aria-label="AI-tehtävän koko sisältö"></textarea></details>
+  <details id="aiDraftAdvanced" class="ai-task-detail ai-task-advanced"><summary data-i18n="aiTaskAdvanced">Tekniset lisäasetukset (valinnainen)</summary>
+    <p data-i18n="aiTaskSchemaIncluded">JSON-skeema sisältyy jo tehtävään. Erillinen lataus on tarpeen vain teknisessä käytössä.</p>
+    <button type="button" id="btnAIDownloadSchema" class="btn quiet" data-i18n="aiTaskDownloadSchema">Lataa erillinen JSON-skeema</button>
+  </details>
+  <div class="dialog-actions"><button type="button" id="btnAIToImport" class="btn primary" data-i18n="aiDraftStepImport">2. Avaa AI:n vastaus</button></div>
+  </section>
+  <section id="aiDraftImportStep" class="ai-flow-step" hidden>
+  <p class="inspector-note" data-i18n="aiDraftImportHelp">Tuo AI:n palauttama uusi puu JSON-tiedostosta tai liitä vastaus. Esikatselussa voit päättää, hyväksytkö arvioinnit ja kommentit.</p>
+  <label for="aiDraftPaste" data-i18n="draftResponsePaste">AI:n palauttama valmis JSON</label>
+  <textarea id="aiDraftPaste" rows="3" placeholder="{ &quot;format&quot;: &quot;witt-ai-draft-v2&quot;, ... }"></textarea>
+  <div class="dialog-actions">
+    <button type="button" id="btnAIImport" class="btn quiet" data-i18n="draftChooseFile">Valitse AI:n vastaustiedosto</button>
+    <button type="button" id="btnAIShowPreview" class="btn primary" data-i18n="previewChanges">Esikatsele ennen hyväksyntää</button>
+  </div>
+  <p id="aiStatus" role="status" aria-live="polite"></p>
+  <div class="dialog-actions"><button type="button" class="btn quiet" id="btnAIToPrompt" data-i18n="aiBackToPrompt">← Takaisin tehtävän luontiin</button></div>
+  </section>
+</div></dialog>
+<dialog id="aiDraftPreviewDialog" class="action-dialog" aria-labelledby="aiDraftPreviewTitle"><div class="dialog-inner">
+  <h2 id="aiDraftPreviewTitle" data-i18n="draftPreviewTitle">Tarkista AI:n luoma uusi työ</h2>
+  <div id="aiDraftPreview" class="proposal-preview-lines"></div>
+  <div class="proposal-options">
+    <label><input type="checkbox" id="draftIncludeRatings" checked /> <span data-i18n="includeRatings">Tuo arvioinnit</span></label>
+    <label><input type="checkbox" id="draftIncludeComments" checked /> <span data-i18n="includeComments">Tuo kommentit</span></label>
+    <label><input type="checkbox" id="draftIncludeShared" checked /> <span data-i18n="includeShared">Tuo yhteisperusteet</span></label>
+  </div>
+  <p class="ai-caution" data-i18n="draftRatingNotice">Kun jätät AI:n arvioinnit tuomatta, myös sen lukitut yhteisperusteet jäävät pois.</p>
+  <div class="dialog-actions"><button id="btnDraftApply" type="button" class="btn primary" data-i18n="draftOpen">Avaa uusi työ</button><button id="btnDraftCancel" type="button" class="btn quiet" data-i18n="cancel">Peruuta</button></div>
+</div></dialog>
+<dialog id="aboutDialog" aria-labelledby="aboutTitle"><div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="aboutTitle" data-i18n="aboutTitle">WITT ja GRACE-menetelmä</h2><button type="button" class="btn icon-btn" id="btnAboutClose" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+  <p><b>WITT</b> — Web Interactive Thinking Tool</p>
+  <p><b data-i18n="methodName">GRACE-menetelmä</b> — Günther’s Reflective Argumentation &amp; Collaborative Evaluation Method</p>
+  <p data-i18n="aboutPurpose">GRACE auttaa muuttamaan polveilevan keskustelun harkittaviksi väitteiksi, puoltaviksi ja vastustaviksi perusteiksi sekä läpinäkyviksi arvioiksi.</p>
+  <p class="about-slogan"><span data-i18n="homeHeroFirst">Ajattele selkeästi.</span> <span data-i18n="homeHeroSecond">Päätä viisaasti.</span></p>
+  <div class="dialog-actions"><button type="button" class="btn primary" id="btnAboutDone" data-i18n="close">Sulje</button></div>
+</div></dialog>
+<dialog id="voteDialog" class="action-dialog vote-dialog" aria-labelledby="voteDialogTitle"><div class="dialog-inner">
+  <div class="dialog-heading"><h2 id="voteDialogTitle" data-i18n="votingButton">Päätösäänestys</h2><button type="button" class="btn icon-btn" id="btnVoteClose" data-i18n-aria="close" aria-label="Close">×</button></div>
+  <p data-i18n="voteLocalWarning" class="inline-warning">Paikallinen kierros ei tunnista äänestäjiä. Nimettömyys piilottaa nimet näkymästä, mutta tunnisteet säilyvät JSONissa. Älä käytä salaisiin tai sitoviin äänestyksiin.</p>
+  <p id="voteRoundStatus" class="vote-round-status" role="status"></p>
+  <div id="voteSettings" class="vote-settings">
+    <label><span data-i18n="voteWeighting">Äänipaino</span><select id="voteWeighting"><option value="equal" data-i18n="voteEqual">1 ääni / osallistuja</option><option value="shares" data-i18n="voteShares">Henkilökohtainen äänimäärä</option></select></label>
+    <label class="vote-check"><input id="voteHideResults" type="checkbox" checked/><span data-i18n="voteHideResults">Piilota tulokset kierroksen sulkemiseen asti</span></label>
+    <label class="vote-check"><input id="voteAnonymous" type="checkbox"/><span data-i18n="voteAnonymous">Nimetön tulosnäkymä</span></label>
+  </div>
+  <p id="voteWeightsHint" class="inspector-note" data-i18n="voteWeightsHint">Aseta osallistujien äänimäärät Arvioijat-ikkunassa ennen kierrosta. Painot lukitaan kierroksen alussa.</p>
+  <div class="dialog-actions"><button id="btnVotePeople" class="btn quiet" type="button" data-i18n="profileManage">Arvioijat</button><button id="btnVoteStart" class="btn primary" type="button" data-i18n="voteStart">Aloita kierros</button><button id="btnVoteEnd" class="btn primary" type="button" data-i18n="voteEnd">Sulje kierros ja näytä tulokset</button></div>
+  <h3 data-i18n="voteBallots">Omat äänet</h3><div id="voteBallotList" class="vote-ballot-list"></div>
+  <h3 data-i18n="voteResults">Tulokset ja laskenta</h3><div id="voteResults" class="vote-results" aria-live="polite"></div>
+  <details id="voteAuditDetails"><summary data-i18n="voteAudit">Kierroksen tapahtumahistoria</summary><div id="voteAuditRows"></div></details>
+  <details id="voteHistoryDetails" hidden><summary data-i18n="voteHistoryTitle">Aiemmat äänestyskierrokset</summary><div id="voteHistoryRows"></div></details>
+  <div class="dialog-actions"><button type="button" class="btn quiet" id="btnVoteDone" data-i18n="close">Sulje</button></div>
+</div></dialog>
+
+<dialog id="peopleDialog" aria-labelledby="peopleTitle"><div class="dialog-inner"><div class="dialog-heading"><h2 id="peopleTitle" data-i18n="profileManage">Käyttäjät</h2><button aria-label="Sulje" class="btn icon-btn" data-i18n-aria="close" id="btnClosePeople" type="button">×</button></div><p data-i18n="profilePrivacy">Nimet ja tunnisteet tallentuvat tähän WITT-tiedostoon ja liittyvät tekijyyteen, kommentteihin, arvioihin ja ääniin. Paikalliset käyttäjät eivät ole tunnistettuja verkkokäyttäjiä.</p>
+<div class="current-user-settings">
+  <label for="currentUserName" data-i18n="userRenameCurrent">Oma käyttäjänimi</label>
+  <input type="text" id="currentUserName" maxlength="120" autocomplete="nickname" />
+  <p class="inspector-note" data-i18n="userRenameHelp">Nimi näkyy solmujen, kommenttien ja arvioiden tekijänä. Tallennettuun tiedostoon jää käyttäjätunniste. Tämä ei vielä ole todennettu verkkokäyttäjä.</p>
+</div><div class="assessment-weight-controls"><label for="assessmentWeighting" data-i18n="assessmentWeightingLabel">Arviointien yhteistuloksen painotus</label><select id="assessmentWeighting"><option value="structural" data-i18n="assessmentWeightStructural">Rakenteellinen (aiempi laskenta)</option><option value="equal" data-i18n="assessmentWeightEqual">Arvioijien arviot, jokaisella paino 1</option><option value="shares" data-i18n="assessmentWeightShares">Arvioijien arviot, henkilökohtaiset äänimäärät</option></select><p class="inspector-note" data-i18n="assessmentWeightHint">Tämä vaikuttaa vain yhteiseen arviointitulokseen, ei henkilökohtaisiin näkymiin eikä päätösääniin. Puuttuvia arvioita ei lasketa nolliksi.</p></div><div id="peopleList"></div><div class="dialog-actions"><button class="btn quiet" id="btnAddPerson" data-i18n="profileAdd">+ Lisää arvioija</button><button class="btn primary" id="btnDialogClose" data-i18n="close">Valmis</button></div></div></dialog>
+<dialog id="helpDialog"><div class="dialog-inner"><div class="dialog-heading"><h2 data-i18n="helpTitle">WITT – pikaohje</h2><button aria-label="Sulje" class="btn icon-btn" data-i18n-aria="close" id="btnCloseHelp" type="button">×</button></div>
+<p data-i18n="helpMethod">GRACE-menetelmä tukee rauhallista ja rakenteista ajattelua. Kartoita-vaiheessa kirjataan kaikki olennaiset väitteet, ideat, oletukset ja perustelut. Punnitse-vaiheessa arvioidaan uskottavuus ja merkitys erikseen.</p>
+<p data-i18n="helpTree"><strong>Argumenttipuu:</strong> valitse solmu, lisää puoltava tai vastustava perustelu. Vastustajan vastustaja puoltaa alkuperäistä väitettä. Voit siirtää solmuja, sulkea oksia ja korostaa vain puoltavat tai vastustavat perustelut.</p>
+<p data-i18n="helpComments"><strong>Kommentit:</strong> ovat solmukohtaisia keskusteluhuomioita, eivät perustelupuun solmuja. Piilota ne näkymäkerroksista ilman tiedon poistamista.</p>
+<p data-i18n="assessmentHelpMain">Arviointikierros: käy väitteet läpi yksi kerrallaan, arvioi uskottavuus 0–100 sekä vaikutus vanhempaan −5…+5. Ohitetut väitteet jäävät keskeneräisiksi. Eteneminen säilyy tässä selaimessa.</p>
+<p data-i18n="helpIndex"><strong>Perustelutulos:</strong> kokeellinen argumentti-indeksi EI ole kalibroitu todennäköisyys, äänestys eikä automaattinen suositus. Uskottavuus, merkityspaino ja päätösvalta ovat eri asioita.</p>
+<p data-i18n="helpLocal"><strong>Paikallinen työ:</strong> tallennus tapahtuu selaimeen ja vie .witt.json varmuuskopioksi. Vanhat .peruste.json-tiedostot voidaan avata ja päivittää formaattiin v2.</p>
+<section aria-label="Keyboard shortcuts" class="shortcuts-help"><h3 data-i18n="shortcutTitle">Näppäimistökäyttö</h3>
+<p data-i18n="shortcutNavigation">G siirtyy puuhun. Home/End ensimmäiseen tai viimeiseen näkyvään väitteeseen.</p>
+<p data-i18n="canvasKeyboardHelp">Puunäkymän zoomaus: Ctrl/Cmd + + tai −. Siirrä näkymää: Alt + nuolinäppäimet. 0 sovittaa puun näkymään.</p>
+<p data-i18n="shortcutNavHorizontal">Sivusuunta: ↑/↓ liikkuu sisaruksissa, → avaa tai siirtyy lapsiin, ← sulkee tai siirtyy vanhempaan.</p>
+<p data-i18n="shortcutNavVertical">Pystysuunta: ←/→ liikkuu sisaruksissa, ↓ avaa tai siirtyy lapsiin, ↑ sulkee tai siirtyy vanhempaan.</p>
+<p data-i18n="shortcutNavFourWay">Neljä suuntaa: nuolinäppäin valitsee lähimmän näkyvän väitteen painettuun suuntaan.</p>
+<p data-i18n="shortcutNavToggle">Välilyönti avaa tai sulkee valitun alipuun kaikissa asetteluissa.</p>
+<p data-i18n="shortcutEditing">F2 tai Enter muokkaa valittua tekstiä. Enter tallentaa, Shift+Enter lisää rivin, Esc peruu. Kaksoisnapsautus ja kynäpainike toimivat myös.</p>
+<p data-i18n="shortcutAdding">Lisääminen kohdistuu valittuun väitteeseen. Ctrl/Cmd+S tallentaa tiedoston.</p>
+<p id="shortcutCurrentAdd" class="shortcut-current-add" aria-live="polite"></p>
+<p data-i18n="shortcutContext">Shift+F10 avaa solmun kontekstivalikon. Järjestä puu siistii asettelun, ja Ctrl/Cmd+Z palauttaa edellisen.</p>
+<p data-i18n="shortcutOther">F vaihtaa Vain puu -tilan; Esc poistuu siitä. Pikanäppäimet eivät kaappaa näppäimiä tekstikentissä.</p>
+<p data-i18n="shortcutTable">T vaihtaa puun ja taulukon välillä. Taulukkorivin voi avata Enter-näppäimellä.</p><div class="shortcut-settings">
+  <h4 data-i18n="shortcutCustomize">Muokattavat pikanäppäimet</h4>
+  <p data-i18n="shortcutCustomizeHelp">Valitse käyttöön sopivat pikanäppäimet. Pikanäppäimet tallentuvat vain tähän selaimeen. Tekstieditorin Enter/Esc, nuolinäppäimet ja Ctrl/Cmd+S/Z pysyvät vakioina.</p>
+  <div id="shortcutSettings" class="shortcut-settings-grid"></div>
+  <button type="button" id="btnShortcutsReset" class="btn quiet" data-i18n="shortcutReset">Palauta oletukset</button>
+  <p id="shortcutSettingsStatus" role="status"></p>
+</div></section>
+<p data-i18n="helpP2P"><strong>P2P:</strong> ei kuulu tähän ensimmäiseen yhden käyttäjän julkaisuun. Katso docs/ROADMAP.md.</p>
+<div class="dialog-actions"><button class="btn primary" data-i18n="close" id="btnHelpClose" type="button">Sulje</button></div></div></dialog>
+<dialog id="confirmDialog" class="action-dialog" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+  <div class="dialog-inner"><h2 id="confirmTitle" data-i18n="confirmationTitle">Vahvista toiminto</h2>
+    <p id="confirmText"></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn quiet" id="confirmCancel" value="cancel" data-i18n="cancel">Peruuta</button>
+      <button type="button" class="btn primary" id="confirmAccept" value="confirm">Jatka</button>
+    </div>
+  </div>
+</dialog>
+<dialog id="noticeDialog" class="action-dialog" aria-labelledby="noticeTitle" aria-describedby="noticeText">
+  <div class="dialog-inner"><h2 id="noticeTitle" data-i18n="noticeTitle">Ilmoitus</h2>
+    <p id="noticeText"></p><div class="dialog-actions">
+      <button type="button" class="btn primary" id="noticeClose" data-i18n="close">Sulje</button>
+    </div>
+  </div>
+</dialog>
+<dialog id="importReportDialog" class="action-dialog import-report-dialog" aria-labelledby="importReportTitle">
+  <div class="dialog-inner">
+    <div class="dialog-heading"><h2 id="importReportTitle" data-i18n="importValidationTitle">JSON-tuonnin tarkistus</h2><button class="btn icon-btn" id="btnImportReportCloseTop" type="button" data-i18n-aria="close" aria-label="Sulje">×</button></div>
+    <p id="importReportSummary" class="inspector-note" role="status"></p>
+    <div id="importReportIssues" class="import-report-issues" role="list" aria-label="Tiedostosta löydetyt virheet"></div>
+    <p class="inspector-note" data-i18n="importValidationNote">Alkuperäistä tiedostoa tai avointa asiakirjaa ei muuteta tarkistuksessa. Voit kopioida raportin kielimallille tai korjata JSON-tiedoston itse.</p>
+    <p id="importReportStatus" class="inspector-note" role="status"></p>
+    <div class="dialog-actions">
+      <button id="btnImportReportCopy" type="button" class="btn primary" data-i18n="importValidationCopy">Kopioi korjausraportti</button>
+      <button id="btnImportReportDownload" type="button" class="btn quiet" data-i18n="importValidationDownload">Lataa raportti .txt</button>
+      <button id="btnImportReportClose" type="button" class="btn quiet" data-i18n="close">Sulje</button>
+    </div>
+  </div>
+</dialog>
+<dialog id="replaceDialog" class="action-dialog" aria-labelledby="replaceTitle" aria-describedby="replaceDescription">
+  <div class="dialog-inner"><h2 id="replaceTitle" data-i18n="replaceTitle">Mitä tehdään nykyiselle työlle?</h2>
+    <section class="replace-current" aria-labelledby="replaceCurrentLabel">
+      <p id="replaceCurrentLabel" class="replace-current-kicker" data-i18n="replaceCurrentLabel">Nykyinen työ</p>
+      <strong id="replaceCurrentName" class="replace-current-name"></strong>
+      <p id="replaceCurrentInfo" class="replace-current-info"></p>
+      <dl class="replace-timestamps">
+        <dt data-i18n="replaceEditedLabel">Viimeksi muokattu</dt><dd id="replaceEditedAt"></dd>
+        <dt data-i18n="replaceAutosaveLabel">Automaattitallennus selaimeen</dt><dd id="replaceAutosavedAt"></dd>
+      </dl>
+    </section>
+    <p class="replace-next-label" data-i18n="replaceNextAction">Seuraava toiminto</p>
+    <p id="replaceDescription"></p>
+    <p class="inspector-note" data-i18n="replaceReminder">Vain aktiivinen työ tallentuu automaattisesti. Kirjastoon tallennus on erillinen valinta.</p>
+    <div class="dialog-actions replace-actions">
+      <button type="button" class="btn quiet" id="replaceCancel" data-i18n="cancel">Peruuta</button>
+      <button type="button" class="btn quiet" id="replaceForget" data-i18n="replaceForget">Hylkää nykyinen ja jatka</button>
+      <button type="button" class="btn primary" id="replaceKeep" data-i18n="replaceKeep">Tallenna kirjastoon ja jatka</button>
+    </div>
+  </div>
+</dialog>
+<dialog id="textDialog" class="action-dialog" aria-labelledby="textDialogTitle">
+  <div class="dialog-inner"><h2 id="textDialogTitle" data-i18n="textDialogGeneric">Anna nimi</h2>
+    <div class="text-dialog-form"><label for="textValue" id="textPrompt"></label>
+      <input id="textValue" type="text" maxlength="120" autocomplete="off" required />
+      <div class="dialog-actions">
+        <button type="button" id="textCancel" class="btn quiet" value="cancel" data-i18n="cancel">Peruuta</button>
+        <button type="button" id="textAccept" class="btn primary" value="confirm" data-i18n="confirmContinue">Jatka</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+<input type="file" id="aiReviewInput" class="visually-hidden" accept="application/json,.json" />
+<dialog id="libraryDialog" class="action-dialog library-dialog" aria-labelledby="libraryTitle">
+  <div class="dialog-inner">
+    <h2 id="libraryTitle" data-i18n="documentLibrary">Asiakirjakirjasto</h2>
+    <p data-i18n="libraryDisclaimer">Asiakirjat säilyvät tämän selaimen IndexedDB-tietokannassa. Se ei ole erillinen varmuuskopio: vie tärkeät työt myös JSONiksi.</p>
+    <p id="libraryStatus" role="status" aria-live="polite"></p>
+    <input type="file" id="libraryBackupInput" class="visually-hidden" accept="application/json,.json" />
+    <div class="dialog-actions"><button type="button" id="btnLibrarySaveCurrent" class="btn primary" data-i18n="librarySaveCurrent">Tallenna nykyinen kirjastoon</button><button type="button" id="btnLibraryBackup" class="btn quiet" data-i18n="libraryBackup">Vie kaikki JSONina</button><button type="button" id="btnLibraryRestore" class="btn quiet" data-i18n="libraryRestore">Tuo varmuuskopio</button><button type="button" id="btnLibraryRefresh" class="btn quiet" data-i18n="libraryRefresh">Päivitä</button><button type="button" id="btnLibraryClose" class="btn primary" data-i18n="close">Sulje</button></div>
+    <div id="libraryList" class="library-list" role="list"></div>
+  </div>
+</dialog>
+<input id="wittOriginalInput" class="visually-hidden" type="file" accept="application/json,.json,.witt.json" />
+<dialog id="aiReviewDialog" class="action-dialog ai-review-dialog" aria-labelledby="aiReviewTitle"><div class="dialog-inner">
+  <h2 id="aiReviewTitle" data-i18n="contributionTitle">Tuo tai vie muutoksia ja arviointeja</h2>
+  <p data-i18n="contributionIntro">Sama muutosehdotus voi tulla kielimallilta tai toisesta WITTistä. Koko nykyisen työn AI-vienti sisältää mahdollisesti henkilötietoja; mitään ei lähetetä automaattisesti.</p>
+  <div class="ai-flow-explainer" data-i18n="aiProposalExplainer">Tämä toiminto täydentää jo avointa puuta. Kokonaan uuden puun luonti löytyy kohdasta Tiedosto → Uusi.</div>
+  <details class="ai-proposal-step" open><summary data-i18n="aiProposalStep1">1. Pyydä AI:lta ehdotus nykyiseen puuhun</summary>
+  <label for="aiReviewMode" data-i18n="contributionTask">Pyydä kielimallilta</label>
+  <select id="aiReviewMode"><option value="extend" data-i18n="contributionExtend">Täydennä puuta ja ehdota korjauksia</option><option value="assess" data-i18n="contributionAssess">Tee vain oma arviointikierros</option></select>
+  <p class="ai-task-choice-hint" data-i18n="aiTaskChoiceHint">Valitse vain toinen tavoista. Molemmat sisältävät saman AI-tehtävän ja JSON-skeeman.</p>
+  <div class="dialog-actions ai-actions ai-task-actions">
+    <button id="btnAIReviewCopy" type="button" class="btn primary" data-i18n="aiTaskCopy">Kopioi AI-tehtävä</button>
+    <button id="btnAIReviewExport" type="button" class="btn quiet" data-i18n="aiTaskDownloadSame">Lataa sama tehtävä (TXT)</button>
+  </div>
+  <p id="aiReviewTaskStatus" class="ai-task-status" role="status" aria-live="polite"></p>
+  <details id="aiReviewPromptPreviewDetails" class="ai-task-detail"><summary data-i18n="aiTaskPreview">Katso AI-tehtävän koko sisältö</summary>
+    <textarea id="aiReviewPromptPreview" readonly rows="8" aria-label="AI-tehtävän koko sisältö"></textarea></details>
+  <details id="aiReviewAdvanced" class="ai-task-detail ai-task-advanced"><summary data-i18n="aiTaskAdvanced">Tekniset lisäasetukset (valinnainen)</summary>
+    <p data-i18n="aiTaskSchemaIncluded">JSON-skeema sisältyy jo tehtävään. Erillinen lataus on tarpeen vain teknisessä käytössä.</p>
+    <button id="btnAIReviewSchema" type="button" class="btn quiet" data-i18n="aiTaskDownloadSchema">Lataa erillinen JSON-skeema</button>
+  </details>
+  </details>
+  <details class="ai-proposal-step"><summary data-i18n="aiProposalStep2">2. Tarkista ja tuo saamasi muutokset ja arviot</summary>
+  <label for="aiReviewPaste" data-i18n="contributionPaste">Liitä muutosehdotus (AI tai toinen WITT)</label>
+  <textarea id="aiReviewPaste" rows="4" style="width:100%" placeholder="{ &quot;format&quot;: &quot;witt-contribution-v2&quot;, ... }"></textarea>
+  <div class="dialog-actions"><button id="btnAIReviewUpload" type="button" class="btn quiet" data-i18n="contributionChooseFile">Valitse ehdotustiedosto</button><button id="btnAIReviewImport" type="button" class="btn primary" data-i18n="previewChanges">Esikatsele ennen hyväksyntää</button><button id="btnAIReviewClose" type="button" class="btn quiet" data-i18n="close">Sulje</button></div>
+  <p id="aiReviewStatus" role="status" aria-live="polite"></p>
+  </details>
+  <details class="ai-proposal-step"><summary data-i18n="aiProposalStep3">3. Vie käyttäjien muutokset ja arviot</summary>
+  <p data-i18n="contributionMultiExportHelp">Valitse alkuperäinen WITT-tiedosto ja mukana vietävät paikalliset käyttäjät. Jokaisen perustelut, arviot ja kommentit säilyvät omalla nimellä ja tunnisteella. Mitään ei lähetetä automaattisesti.</p>
+  <div id="contributionExporterList" class="contribution-participants" role="group" aria-label="Vietävät käyttäjät"></div>
+  <p class="inspector-note" data-i18n="contributionNameHelp">Tekijöiden näyttönimet tulevat Käyttäjät-näkymästä. Voit korjata nimen siellä ennen vientiä. Tunniste säilyy samana.</p>
+  <button id="btnContributionEditUsers" class="btn quiet" type="button" data-i18n="contributionEditUsers">Muokkaa käyttäjien nimiä…</button>
+  <div class="dialog-actions"><button type="button" id="btnWITTExport" class="btn primary" data-i18n="contributionHumanExport">Valitse alkuperäinen JSON ja vie valittujen muutokset</button></div>
+  <p id="contributionExportStatus" role="status" aria-live="polite"></p>
+  </details>
+</div></dialog>
+<dialog id="aiResultsDialog" class="action-dialog ai-results-dialog" aria-labelledby="aiResultsTitle"><div class="dialog-inner">
+  <h2 id="aiResultsTitle" data-i18n="aiAssessmentsTitle">AI:n arviot ja päätösvaihtoehdot</h2>
+  <p data-i18n="aiReviewIsolation">AI:n arviot näkyvät omana näkökulmanaan. Ne eivät ole mukana ihmisten yhteisindeksissä eivätkä päätösäänestyksessä.</p>
+  <label for="aiResultsAssessorSelect" data-i18n="aiReviewerLabel">AI-arvioija</label>
+  <select id="aiResultsAssessorSelect"></select>
+  <p id="aiResultsCounts" role="status"></p>
+  <p id="aiResultsEmpty" data-i18n="aiNoImportedRatings" hidden>Tässä tiedostossa ei ole tämän AI:n arvioita, tai niitä ei hyväksytty tuonnissa. Tarkista JSON:n credence/influence-kentät ja Tuo arvioinnit -valinta.</p>
+  <h3 id="aiResultsRankingHeader" data-i18n="aiOptionRankingTitle">Vaihtoehtojen indeksit tämän AI:n arvioilla</h3>
+  <div id="aiResultsRanking" class="ai-assessor-ranking"></div>
+  <p id="aiResultsRankingHint" class="inspector-note"></p>
+  <label class="ai-highlight-control"><input id="aiResultsHighlight" type="checkbox" checked/><span data-i18n="highlightTopOptions">Korosta vahvimmat vaihtoehdot</span></label>
+  <div class="dialog-actions"><button id="btnAIResultsShow" type="button" class="btn primary" data-i18n="aiShowInTree">Näytä AI:n näkökulma puussa</button><button id="btnAIResultsClose" type="button" class="btn quiet" data-i18n="close">Sulje</button></div>
+</div></dialog>
+<dialog id="aiReviewPreviewDialog" class="action-dialog contribution-preview-dialog" aria-labelledby="aiReviewPreviewTitle"><div class="dialog-inner">
+  <h2 id="aiReviewPreviewTitle" data-i18n="contributionPreviewTitle">Valitse hyväksyttävät muutokset</h2>
+  <div class="proposal-source" id="proposalSingleSource">
+    <label for="proposalSourceKind" data-i18n="contributionSource">Ehdotuksen lähde</label>
+    <select id="proposalSourceKind"><option value="human" data-i18n="contributionHuman">Ihminen / WITT</option><option value="ai" data-i18n="contributionAI">Kielimalli / AI</option></select>
+    <label for="proposalSourceName" data-i18n="contributionUsername">Käyttäjänimi tai AI:n nimi</label>
+    <input id="proposalSourceName" type="text" maxlength="120" required />
+    <small data-i18n="contributionSourceNote">Ihmisen nimimerkki näkyy tekijänä ja arvioijana, eikä sitä merkitä AI:ksi. Tiedosto ei todista henkilöllisyyttä.</small>
+  </div>
+  <div id="proposalGroupSources" class="contribution-participants" hidden></div>
+  <fieldset class="proposal-options"><legend data-i18n="contributionSelect">Hyväksy haluamasi sisältö</legend>
+    <label><input id="proposalClaims" type="checkbox" checked /> <span data-i18n="contributionClaims">Uudet solmut</span></label>
+    <label><input id="proposalEdits" type="checkbox" checked /> <span data-i18n="contributionEdits">Nykyisten solmujen muokkaukset</span></label>
+    <label><input id="proposalLinks" type="checkbox" checked /> <span data-i18n="contributionLinks">Lisäyhteydet</span></label>
+    <label><input id="proposalSharedReasons" type="checkbox" checked /> <span data-i18n="contributionShared">Yhteisperusteet</span></label>
+    <label><input id="proposalAssessments" type="checkbox" checked /> <span data-i18n="includeRatings">Tuo arvioinnit</span></label>
+    <label><input id="proposalComments" type="checkbox" checked /> <span data-i18n="includeComments">Tuo kommentit</span></label>
+  </fieldset>
+  <div id="proposalItemChoices" class="proposal-item-choices"></div>
+  <div id="aiReviewPreview" class="proposal-preview-lines" role="status" aria-live="polite"></div>
+  <p class="ai-caution" data-i18n="contributionWarning">Vain valitut muutokset lisätään. Muiden käyttäjien arviot ja päätösäänet eivät muutu. Tunnistevertailu estää vanhentuneen ehdotuksen hyväksymisen automaattisesti.</p>
+  <div class="dialog-actions"><button id="btnAIReviewApply" type="button" class="btn primary" data-i18n="aiReviewApply">Hyväksy ehdotukset</button><button id="btnAIReviewReject" type="button" class="btn quiet" data-i18n="cancel">Peruuta</button></div>
+</div></dialog>
+<div id="claimPreview" class="claim-preview" role="tooltip" hidden>
+  <div id="claimPreviewText" class="claim-preview-text"></div>
+  <div id="claimPreviewContext" class="claim-preview-context"></div>
+</div>
+</body>
+</html>

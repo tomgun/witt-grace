@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 8,
+  "id": "749e7e20-8309-4e38-bd1f-1000a4b8994f",
+  "title": "Esimerkki: pilvialustan valinta",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "name": "Aino",
+      "shares": 2,
+      "role": "owner"
+    },
+    {
+      "id": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "name": "Bertta",
+      "shares": 1,
+      "role": "editor"
+    },
+    {
+      "id": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "name": "Caro",
+      "shares": 3,
+      "role": "editor"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "72de9a8e-6874-4c0e-ae8f-5251e8bab8d2",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Minkä pilvialustan valitsemme?",
+      "details": "Erotetaan toisistaan faktojen uskottavuus, suhteen vaikutus, arvostukset ja ehdottomat ehdot.",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 130
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a"
+    },
+    {
+      "id": "bf86d41f-023f-4c68-96f7-d88e375e5f2c",
+      "parentId": "72de9a8e-6874-4c0e-ae8f-5251e8bab8d2",
+      "relation": "option",
+      "kind": "option",
+      "title": "Valitaan kotimainen alusta A",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 420,
+        "y": 100
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a"
+    },
+    {
+      "id": "c7f55b17-666e-4af3-a182-a6048d01d204",
+      "parentId": "72de9a8e-6874-4c0e-ae8f-5251e8bab8d2",
+      "relation": "option",
+      "kind": "option",
+      "title": "Valitaan kansainvälinen alusta B",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 420,
+        "y": 580
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a"
+    },
+    {
+      "id": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "parentId": "bf86d41f-023f-4c68-96f7-d88e375e5f2c",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Alusta A:n palvelinkeskukset ovat Suomessa",
+      "details": "",
+      "confidence": 95,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 30
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact"
+    },
+    {
+      "id": "51e5bd5f-b45c-4834-b017-18be1b518c87",
+      "parentId": "bf86d41f-023f-4c68-96f7-d88e375e5f2c",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kotimainen tietojen käsittely on meille arvokasta",
+      "details": "",
+      "confidence": 50,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 180
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "value"
+    },
+    {
+      "id": "31ce5044-dd6d-427e-bf17-799bf546be9e",
+      "parentId": "bf86d41f-023f-4c68-96f7-d88e375e5f2c",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Alusta A:n valmisintegraatiot ovat rajallisemmat",
+      "details": "",
+      "confidence": 75,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 330
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact"
+    },
+    {
+      "id": "3f36e388-cdb3-430c-b2d8-5a371bddb2c2",
+      "parentId": "bf86d41f-023f-4c68-96f7-d88e375e5f2c",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Pakollinen tietojen sijaintivaatimus täyttyy",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 475
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "constraint",
+      "constraintStatus": "met"
+    },
+    {
+      "id": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "parentId": "c7f55b17-666e-4af3-a182-a6048d01d204",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Alusta B:n integraatioekosysteemi on kattava",
+      "details": "",
+      "confidence": 90,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 640
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact"
+    },
+    {
+      "id": "94302721-1327-4cad-8f00-115b2b080a1b",
+      "parentId": "c7f55b17-666e-4af3-a182-a6048d01d204",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Alusta B:n tukipalvelu on toisella aikavyöhykkeellä",
+      "details": "",
+      "confidence": 65,
+      "impact": 2,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 810
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact"
+    },
+    {
+      "id": "d0b93773-5f1b-4578-8e7f-a2bf01ba5ef2",
+      "parentId": "31ce5044-dd6d-427e-bf17-799bf546be9e",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "A:n tarvitsemat perusintegraatiot voidaan toteuttaa helposti",
+      "details": "",
+      "confidence": 70,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1090,
+        "y": 330
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact"
+    },
+    {
+      "id": "c5b560a6-519e-446e-b055-0950c54426dc",
+      "parentId": "bf86d41f-023f-4c68-96f7-d88e375e5f2c",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kummankin alustan käyttöönotto vaatii henkilöstön koulutusta",
+      "details": "",
+      "confidence": 90,
+      "impact": 2,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 780
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact",
+      "sharedReasonId": "9347ab2b-b1e5-4d5b-8c69-c090bfd965a0"
+    },
+    {
+      "id": "9fb80830-adbe-49f3-bfed-a0fec954c52b",
+      "parentId": "c7f55b17-666e-4af3-a182-a6048d01d204",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kummankin alustan käyttöönotto vaatii henkilöstön koulutusta",
+      "details": "",
+      "confidence": 90,
+      "impact": 2,
+      "collapsed": false,
+      "position": {
+        "x": 770,
+        "y": 920
+      },
+      "createdBy": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "semanticType": "fact",
+      "sharedReasonId": "9347ab2b-b1e5-4d5b-8c69-c090bfd965a0"
+    }
+  ],
+  "sharedReasons": [
+    {
+      "id": "9347ab2b-b1e5-4d5b-8c69-c090bfd965a0",
+      "title": "Kummankin alustan käyttöönotto vaatii henkilöstön koulutusta",
+      "confidence": 90,
+      "influence": -2
+    }
+  ],
+  "votes": [
+    {
+      "id": "a16da2e8-70a3-40a8-9456-ce4a5aac6146",
+      "nodeId": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "confidence": 98,
+      "updatedAt": "2026-11-06T20:42:33.261Z"
+    },
+    {
+      "id": "7d88304c-9a4e-4532-aeee-98a8f7a4147c",
+      "nodeId": "31ce5044-dd6d-427e-bf17-799bf546be9e",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "confidence": 75,
+      "updatedAt": "2026-11-06T20:42:33.261Z"
+    },
+    {
+      "id": "0032472b-3742-4e77-a3c0-e6c041979f6a",
+      "nodeId": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "confidence": 88,
+      "updatedAt": "2026-11-06T20:42:33.261Z"
+    },
+    {
+      "id": "1141cd46-d439-4374-97ac-005315b10664",
+      "nodeId": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "confidence": 90,
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "4b4b2f55-8dd6-40ef-924c-2825fbd0c0df",
+      "nodeId": "31ce5044-dd6d-427e-bf17-799bf546be9e",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "confidence": 75,
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "a703cbba-bf7e-4500-8111-f6e1dee95234",
+      "nodeId": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "confidence": 88,
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "fac608d8-7b99-466d-b801-a07b641a1d4f",
+      "nodeId": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "confidence": 97,
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "2e802c3a-d3ae-49d9-800e-ffe389b14ac6",
+      "nodeId": "31ce5044-dd6d-427e-bf17-799bf546be9e",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "confidence": 75,
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "59fd2d80-8010-4ee4-a7a3-4bf973320e42",
+      "nodeId": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "confidence": 88,
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "662c930a-7076-4a54-911c-ed9d1c6657f1",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "subjectType": "primary",
+      "subjectId": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "influence": 5,
+      "fingerprint": "[\"26f7dd32-d7cb-4e0e-8818-0c87b5f8766f\",\"bf86d41f-023f-4c68-96f7-d88e375e5f2c\",\"Alusta A:n palvelinkeskukset ovat Suomessa\",\"Valitaan kotimainen alusta A\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.261Z"
+    },
+    {
+      "id": "0f28b66e-68d9-47aa-bad5-7434e4dfb382",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "subjectType": "primary",
+      "subjectId": "51e5bd5f-b45c-4834-b017-18be1b518c87",
+      "influence": 5,
+      "fingerprint": "[\"51e5bd5f-b45c-4834-b017-18be1b518c87\",\"bf86d41f-023f-4c68-96f7-d88e375e5f2c\",\"Kotimainen tietojen käsittely on meille arvokasta\",\"Valitaan kotimainen alusta A\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "4354169a-1ac4-4f3b-8b59-f4f62bbdbcbe",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "subjectType": "primary",
+      "subjectId": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "influence": 2,
+      "fingerprint": "[\"b45df6c9-a110-483b-9e0f-a8557e287010\",\"c7f55b17-666e-4af3-a182-a6048d01d204\",\"Alusta B:n integraatioekosysteemi on kattava\",\"Valitaan kansainvälinen alusta B\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "96c65449-d320-427d-b9b8-9400ec3fa27b",
+      "userId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "subjectType": "secondary",
+      "subjectId": "0ae7f187-5df7-4902-a6e7-80798607b746",
+      "influence": -5,
+      "fingerprint": "[\"51e5bd5f-b45c-4834-b017-18be1b518c87\",\"c7f55b17-666e-4af3-a182-a6048d01d204\",\"Kotimainen tietojen käsittely on meille arvokasta\",\"Valitaan kansainvälinen alusta B\",\"oppose\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "ab4b09e6-53ae-4fb2-bc9c-1e28ee477165",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "subjectType": "primary",
+      "subjectId": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "influence": 4,
+      "fingerprint": "[\"26f7dd32-d7cb-4e0e-8818-0c87b5f8766f\",\"bf86d41f-023f-4c68-96f7-d88e375e5f2c\",\"Alusta A:n palvelinkeskukset ovat Suomessa\",\"Valitaan kotimainen alusta A\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "3b264d17-7bf2-4111-a46a-59ffd01acf47",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "subjectType": "primary",
+      "subjectId": "51e5bd5f-b45c-4834-b017-18be1b518c87",
+      "influence": 1,
+      "fingerprint": "[\"51e5bd5f-b45c-4834-b017-18be1b518c87\",\"bf86d41f-023f-4c68-96f7-d88e375e5f2c\",\"Kotimainen tietojen käsittely on meille arvokasta\",\"Valitaan kotimainen alusta A\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "c23573f1-cdd0-4600-baa6-02cb65539ec0",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "subjectType": "primary",
+      "subjectId": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "influence": 5,
+      "fingerprint": "[\"b45df6c9-a110-483b-9e0f-a8557e287010\",\"c7f55b17-666e-4af3-a182-a6048d01d204\",\"Alusta B:n integraatioekosysteemi on kattava\",\"Valitaan kansainvälinen alusta B\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "9cea4166-4d87-4ede-a5bc-0b59b4a79f3f",
+      "userId": "d12fbe50-63db-4593-a873-3a6f3f138556",
+      "subjectType": "secondary",
+      "subjectId": "0ae7f187-5df7-4902-a6e7-80798607b746",
+      "influence": -1,
+      "fingerprint": "[\"51e5bd5f-b45c-4834-b017-18be1b518c87\",\"c7f55b17-666e-4af3-a182-a6048d01d204\",\"Kotimainen tietojen käsittely on meille arvokasta\",\"Valitaan kansainvälinen alusta B\",\"oppose\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "49e0bb0b-1ee2-418f-be6e-21b637343b91",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "subjectType": "primary",
+      "subjectId": "26f7dd32-d7cb-4e0e-8818-0c87b5f8766f",
+      "influence": 3,
+      "fingerprint": "[\"26f7dd32-d7cb-4e0e-8818-0c87b5f8766f\",\"bf86d41f-023f-4c68-96f7-d88e375e5f2c\",\"Alusta A:n palvelinkeskukset ovat Suomessa\",\"Valitaan kotimainen alusta A\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "8e13eb95-8cb0-4ea8-9500-add7ad1897bb",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "subjectType": "primary",
+      "subjectId": "51e5bd5f-b45c-4834-b017-18be1b518c87",
+      "influence": -1,
+      "fingerprint": "[\"51e5bd5f-b45c-4834-b017-18be1b518c87\",\"bf86d41f-023f-4c68-96f7-d88e375e5f2c\",\"Kotimainen tietojen käsittely on meille arvokasta\",\"Valitaan kotimainen alusta A\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "700bd546-98f4-4876-a78d-1e4f47b2316a",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "subjectType": "primary",
+      "subjectId": "b45df6c9-a110-483b-9e0f-a8557e287010",
+      "influence": 4,
+      "fingerprint": "[\"b45df6c9-a110-483b-9e0f-a8557e287010\",\"c7f55b17-666e-4af3-a182-a6048d01d204\",\"Alusta B:n integraatioekosysteemi on kattava\",\"Valitaan kansainvälinen alusta B\",\"support\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    },
+    {
+      "id": "a4c9bf9c-89e6-4047-aa4c-1d9bf9390763",
+      "userId": "0320b313-9faf-4c8a-b355-be6554664f1b",
+      "subjectType": "secondary",
+      "subjectId": "0ae7f187-5df7-4902-a6e7-80798607b746",
+      "influence": 1,
+      "fingerprint": "[\"51e5bd5f-b45c-4834-b017-18be1b518c87\",\"c7f55b17-666e-4af3-a182-a6048d01d204\",\"Kotimainen tietojen käsittely on meille arvokasta\",\"Valitaan kansainvälinen alusta B\",\"oppose\"]",
+      "updatedAt": "2026-11-06T20:42:33.262Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [
+    {
+      "id": "f7e4af90-71e6-475d-9c28-9ec5b945d596",
+      "nodeId": "51e5bd5f-b45c-4834-b017-18be1b518c87",
+      "body": "Kotimaisuus ei yksin ratkaise valintaa: tarkastelkaa erikseen vaikutusta kumpaankin vaihtoehtoon.",
+      "authorName": "Aino",
+      "authorId": "beb7aa4a-b5c5-4c5b-82ff-fbc4b83f137a",
+      "createdAt": "2026-11-06T20:42:33.262Z"
+    }
+  ],
+  "links": [
+    {
+      "id": "0ae7f187-5df7-4902-a6e7-80798607b746",
+      "sourceId": "51e5bd5f-b45c-4834-b017-18be1b518c87",
+      "targetId": "c7f55b17-666e-4af3-a182-a6048d01d204",
+      "relation": "oppose",
+      "impact": 3
+    }
+  ],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-06T20:42:33.260Z",
+  "updatedAt": "2026-11-06T20:42:33.261Z"
+}

@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 8,
+  "id": "3b60575b-7c92-4c00-bac5-95fc87ad8a85",
+  "title": "Esimerkki: uuden tuotteen julkaisu",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "c6b3011a-dbb0-479a-9488-f218fe7aed38",
+      "name": "Minä",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "3e581700-f9ce-4a5b-8dbd-bd1ad45a7eda",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Milloin uusi tuote kannattaa julkaista?",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 130
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    },
+    {
+      "id": "de08c5ea-5959-4035-935f-a538da8e0933",
+      "parentId": "3e581700-f9ce-4a5b-8dbd-bd1ad45a7eda",
+      "relation": "option",
+      "kind": "option",
+      "title": "Julkaistaan rajattu MVP",
+      "details": "",
+      "confidence": 55,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 440,
+        "y": 100
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    },
+    {
+      "id": "cbd1f30c-1ec8-46c6-b9eb-1746b96f8eee",
+      "parentId": "de08c5ea-5959-4035-935f-a538da8e0933",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Saadaan asiakaspalautetta aikaisemmin",
+      "details": "",
+      "confidence": 85,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 800,
+        "y": 30
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    },
+    {
+      "id": "aeb4d5ae-d217-4788-90a4-ce8d0d6971d3",
+      "parentId": "de08c5ea-5959-4035-935f-a538da8e0933",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Ensivaikutelma voi olla keskeneräinen",
+      "details": "",
+      "confidence": 70,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 800,
+        "y": 210
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    },
+    {
+      "id": "8322ae98-abd4-4d18-9c70-b62d91495c1d",
+      "parentId": "3e581700-f9ce-4a5b-8dbd-bd1ad45a7eda",
+      "relation": "option",
+      "kind": "option",
+      "title": "Rakennetaan laajempi versio ensin",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 440,
+        "y": 490
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    },
+    {
+      "id": "c6611bd1-50c4-40a4-9a23-1d40f6472a79",
+      "parentId": "8322ae98-abd4-4d18-9c70-b62d91495c1d",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokonaisuus on julkaistaessa valmiimpi",
+      "details": "",
+      "confidence": 75,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 800,
+        "y": 410
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    },
+    {
+      "id": "ac0db6da-15ef-42ca-a599-dfb71210cbab",
+      "parentId": "8322ae98-abd4-4d18-9c70-b62d91495c1d",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Oppiminen ja ensimmäiset tulot viivästyvät",
+      "details": "",
+      "confidence": 80,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 800,
+        "y": 590
+      },
+      "createdBy": "c6b3011a-dbb0-479a-9488-f218fe7aed38"
+    }
+  ],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [
+    {
+      "id": "58f5c2e2-b2b0-4693-99da-6f97f15f5f07",
+      "nodeId": "3e581700-f9ce-4a5b-8dbd-bd1ad45a7eda",
+      "body": "Which evidence supports the launch timeline?",
+      "authorName": "Minä",
+      "createdAt": "2026-11-05T18:00:23.870Z"
+    }
+  ],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-05T18:00:23.870Z",
+  "updatedAt": "2026-11-05T18:00:23.870Z"
+}

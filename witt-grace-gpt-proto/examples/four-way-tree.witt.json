@@ -1,0 +1,885 @@
+{
+  "schemaVersion": 8,
+  "id": "21b8d5d8-0ad6-4ebd-8c42-6fc23a61e81b",
+  "title": "WITT - 4-suuntainen rakenne (esimerkki)",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "40cc5864-43d3-4ed2-be41-e5e7d917a39f",
+      "name": "Minä",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Mihin suuntaan kehitämme tuotetta?",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 130
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Käytettävyys pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 130
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "ef1ce6aa-9e5b-466d-a687-9b112f4b7263",
+      "parentId": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 130
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+      "parentId": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 300
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "bf65b740-389c-443e-9fc1-b8e3788a4f6d",
+      "parentId": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vastaväite kannattaa tarkistaa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1110,
+        "y": 300
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "4fa82460-a782-46e2-9563-229e31f39540",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Asiakastarpeet pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 300
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "d9481dd4-0203-4b47-95a5-a1401a55e7eb",
+      "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 300
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "c83036a5-3a30-439e-863e-35dcb9e04f7e",
+      "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 470
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "f76345e1-218f-4e6c-8b84-9ba5b37feba3",
+      "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 640
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Tietoturva pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 470
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "8f868c8d-a46c-4338-985d-531025e725e7",
+      "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 470
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "1efc7299-4690-40c2-962c-7a107cf117b2",
+      "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 640
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031",
+      "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 810
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "0c59712e-e216-4011-92be-0335334f14a1",
+      "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tarvitsemme selkeät mittarit",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 980
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Ylläpidettävyys pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 640
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "886af760-b7cb-46da-8fd7-008f339f1fd1",
+      "parentId": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 640
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+      "parentId": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 810
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "5192e5ae-8210-4dd7-840c-f454d8ed65ac",
+      "parentId": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vastaväite kannattaa tarkistaa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1110,
+        "y": 810
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kustannukset pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 810
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "c7b624ea-902b-4eb5-9599-3df21ffb789b",
+      "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 810
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "71f21858-a412-4370-a65c-4d8fb435f410",
+      "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 980
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "41887011-89ef-4475-ab96-2e5dcb69219f",
+      "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1150
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Integraatiot pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 980
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "5c5eedb5-5bbe-417b-8972-944d93e14638",
+      "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 980
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "a98209fa-cb03-4de5-b2e7-1656980f29ad",
+      "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1150
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "b8a04a2f-62d6-42c5-a130-e2d803070495",
+      "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1320
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "d8cec7f4-10b7-4f33-a151-570a0c1504d5",
+      "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tarvitsemme selkeät mittarit",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1490
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Saavutettavuus pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 1150
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa",
+      "parentId": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1150
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+      "parentId": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1320
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "68cba852-47f9-4cba-83cf-aa777027bc34",
+      "parentId": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vastaväite kannattaa tarkistaa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1110,
+        "y": 1320
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Tietomalli pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 1320
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "9965bd58-2bbc-4935-812a-a2cb9e641bfa",
+      "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1320
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "6ac14f37-e645-4e42-b6e5-c09249b7b932",
+      "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1490
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "dd73f336-e867-445d-812a-5591cf56a01e",
+      "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1660
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Suorituskyky pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 1490
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "2d252c33-a8e4-419e-88fc-24c6320e6b5d",
+      "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1490
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "fcea8646-2500-43ed-b8d2-db98d6c17730",
+      "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1660
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "bac706a2-110a-4f43-b2b2-db70c7cd4880",
+      "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1830
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "daf88754-5fef-4726-9ac5-66f1a51cdee7",
+      "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tarvitsemme selkeät mittarit",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2000
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "6ba7f989-891c-4719-843f-2176c609dc9c",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Markkinointi pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 1660
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d",
+      "parentId": "6ba7f989-891c-4719-843f-2176c609dc9c",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1660
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "47447ad2-aaaa-45f0-809e-774c331c8836",
+      "parentId": "6ba7f989-891c-4719-843f-2176c609dc9c",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1830
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "2844c4fd-c282-4555-85a6-187568770656",
+      "parentId": "47447ad2-aaaa-45f0-809e-774c331c8836",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vastaväite kannattaa tarkistaa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1110,
+        "y": 1830
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Aikataulu pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 1830
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "597115f9-9fa5-45f5-b268-aa6f51110e7f",
+      "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 1830
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "8ca683fa-08b7-4faa-8602-8145d58906e4",
+      "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2000
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "24352af3-fde2-4395-b092-f6b197582f63",
+      "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2170
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+      "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Yhteistyö pitää huomioida",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 2000
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "6a14f977-a3cb-4f7a-be92-3867c7fce675",
+      "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Vaikuttaa asiakkaan kokemukseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2000
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "b834258f-0226-471d-9368-588d24fa94eb",
+      "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Riskit voidaan hallita",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2170
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "adc13d49-fb00-4ecf-b371-be0c5c4012c4",
+      "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokeilu lisää tietoa",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2340
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    },
+    {
+      "id": "11a94feb-0a23-4f33-a9bf-edae357cf1d4",
+      "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tarvitsemme selkeät mittarit",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 2510
+      },
+      "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+    }
+  ],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-05T18:59:41.932Z",
+  "updatedAt": "2026-11-05T18:59:41.932Z"
+}

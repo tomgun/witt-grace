@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 8,
+  "id": "f276a923-85ad-4e34-b4fa-7ec3ae973b4b",
+  "title": "Lauantain vaihtoehdot: uimahalli vai koti?",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "name": "Minä",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "fd023c9f-1bf1-4178-a4f5-107687caa914",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Mitä tekisin lauantaina?",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 787.6666666666666
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512"
+    },
+    {
+      "id": "f7dd4c3e-2227-4d0b-8748-e01b0f67910f",
+      "parentId": "fd023c9f-1bf1-4178-a4f5-107687caa914",
+      "relation": "option",
+      "kind": "option",
+      "title": "Uimahalliin yksin",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 272
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512"
+    },
+    {
+      "id": "fc4ea037-9fb8-4a68-938b-180a92127a74",
+      "parentId": "f7dd4c3e-2227-4d0b-8748-e01b0f67910f",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Liikunta edistää kuntoa",
+      "details": "",
+      "confidence": 85,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 90
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    },
+    {
+      "id": "5cdd3334-9aa8-42bd-a1f0-d63084ed24e6",
+      "parentId": "f7dd4c3e-2227-4d0b-8748-e01b0f67910f",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Omaa rauhaa ja palautumista",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 272
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "value"
+    },
+    {
+      "id": "f14d3216-398c-4a86-90c2-fa991057d6b5",
+      "parentId": "f7dd4c3e-2227-4d0b-8748-e01b0f67910f",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Yhteistä aikaa lasten kanssa ei synny",
+      "details": "",
+      "confidence": 85,
+      "impact": 2,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 454
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    },
+    {
+      "id": "d7791dd7-86ae-4f7a-b963-ddacc1473f90",
+      "parentId": "fd023c9f-1bf1-4178-a4f5-107687caa914",
+      "relation": "option",
+      "kind": "option",
+      "title": "Uimahalliin lasten kanssa",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 818
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512"
+    },
+    {
+      "id": "c6899ff3-01e9-438a-9e31-8d54465f7bd1",
+      "parentId": "d7791dd7-86ae-4f7a-b963-ddacc1473f90",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Lapset saavat liikuntaa",
+      "details": "",
+      "confidence": 85,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 636
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    },
+    {
+      "id": "55d6b935-a23d-4207-ab42-ff3c9ef08bed",
+      "parentId": "d7791dd7-86ae-4f7a-b963-ddacc1473f90",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Saamme perheen yhteistä aikaa",
+      "details": "Mahdollinen seuraus, ei varma: esimerkiksi joku voi riitaantua tai viettää ajan omissa oloissaan.",
+      "confidence": 70,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 818
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    },
+    {
+      "id": "cc637cd9-f1b3-4b5c-aa07-08ccca4bd1e5",
+      "parentId": "d7791dd7-86ae-4f7a-b963-ddacc1473f90",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Retki vaatii enemmän järjestelyä",
+      "details": "",
+      "confidence": 75,
+      "impact": 2,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1000
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    },
+    {
+      "id": "a0e44a9a-5780-4d79-a419-366a54dfe44a",
+      "parentId": "fd023c9f-1bf1-4178-a4f5-107687caa914",
+      "relation": "option",
+      "kind": "option",
+      "title": "Siivoan kotona",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1273
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512"
+    },
+    {
+      "id": "98205d06-be18-4a2d-8cad-783bfe6fd0b3",
+      "parentId": "a0e44a9a-5780-4d79-a419-366a54dfe44a",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Koti muuttuu viihtyisämmäksi",
+      "details": "",
+      "confidence": 90,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1182
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    },
+    {
+      "id": "44b175cf-a453-4e09-bf65-6ccf30e87ad9",
+      "parentId": "a0e44a9a-5780-4d79-a419-366a54dfe44a",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Liikunta jää vähemmälle",
+      "details": "",
+      "confidence": 75,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1364
+      },
+      "createdBy": "a14d3f32-35e8-4bed-b2b7-c6f532570512",
+      "semanticType": "fact"
+    }
+  ],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T08:22:17.372Z",
+  "updatedAt": "2026-11-07T08:22:17.372Z"
+}

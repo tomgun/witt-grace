@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WITT human or AI change proposal v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "projectId",
+    "baseFingerprint",
+    "author"
+  ],
+  "properties": {
+    "format": {
+      "const": "witt-contribution-v2"
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "baseFingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$"
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "ai",
+            "human"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "edits": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/edit"
+      }
+    },
+    "links": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/link"
+      }
+    },
+    "sharedReasons": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/shared"
+      }
+    },
+    "sharedAttachments": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/attachment"
+      }
+    },
+    "assessments": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/assessment"
+      }
+    },
+    "relationAssessments": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/relationAssessment"
+      }
+    },
+    "comments": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/comment"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "signed": {
+      "type": "number",
+      "minimum": -5,
+      "maximum": 5,
+      "multipleOf": 0.5
+    },
+    "credence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tempId",
+        "parentId",
+        "relation",
+        "title"
+      ],
+      "properties": {
+        "tempId": {
+          "$ref": "#/$defs/id"
+        },
+        "parentId": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "enum": [
+            "support",
+            "oppose",
+            "neutral",
+            "option"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "details": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "semanticType": {
+          "enum": [
+            "unspecified",
+            "fact",
+            "assumption",
+            "value",
+            "constraint",
+            "prerequisite"
+          ]
+        },
+        "constraintStatus": {
+          "enum": [
+            "met",
+            "unmet",
+            "unknown"
+          ]
+        },
+        "authorVisibility": {
+          "enum": [
+            "named",
+            "anonymous"
+          ]
+        }
+      }
+    },
+    "edit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId"
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "details": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "semanticType": {
+          "enum": [
+            "unspecified",
+            "fact",
+            "assumption",
+            "value",
+            "constraint",
+            "prerequisite"
+          ]
+        },
+        "constraintStatus": {
+          "enum": [
+            "met",
+            "unmet",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "targetId",
+        "relation"
+      ],
+      "properties": {
+        "sourceId": {
+          "$ref": "#/$defs/id"
+        },
+        "targetId": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "enum": [
+            "support",
+            "oppose"
+          ]
+        },
+        "influence": {
+          "$ref": "#/$defs/signed"
+        }
+      }
+    },
+    "shared": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tempId",
+        "title",
+        "credence",
+        "influence"
+      ],
+      "properties": {
+        "tempId": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "credence": {
+          "$ref": "#/$defs/credence"
+        },
+        "influence": {
+          "$ref": "#/$defs/signed"
+        }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reasonId",
+        "parentId"
+      ],
+      "properties": {
+        "reasonId": {
+          "$ref": "#/$defs/id"
+        },
+        "parentId": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "credence"
+          ]
+        },
+        {
+          "required": [
+            "primaryInfluence"
+          ]
+        }
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/id"
+        },
+        "credence": {
+          "$ref": "#/$defs/credence"
+        },
+        "primaryInfluence": {
+          "$ref": "#/$defs/signed"
+        }
+      }
+    },
+    "relationAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subjectType",
+        "subjectId",
+        "influence"
+      ],
+      "properties": {
+        "subjectType": {
+          "enum": [
+            "primary",
+            "secondary"
+          ]
+        },
+        "subjectId": {
+          "$ref": "#/$defs/id"
+        },
+        "influence": {
+          "$ref": "#/$defs/signed"
+        }
+      }
+    },
+    "comment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "body"
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/id"
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 8,
+  "id": "e8583fcf-861d-4e4e-952b-ff7fb1d965e7",
+  "title": "Yhteistyötesti",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "9f068584-747a-4651-8920-82b9b1597057",
+      "name": "Aino",
+      "shares": 1,
+      "role": "owner"
+    },
+    {
+      "id": "b_user",
+      "name": "Ben",
+      "shares": 1,
+      "role": "editor",
+      "profileKind": "human"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Benin muokkaama pääväite",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 130
+      },
+      "createdBy": "9f068584-747a-4651-8920-82b9b1597057",
+      "lastEditedBy": "b_user"
+    },
+    {
+      "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+      "parentId": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ainon perustelu",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 410,
+        "y": 130
+      },
+      "createdBy": "9f068584-747a-4651-8920-82b9b1597057"
+    },
+    {
+      "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+      "parentId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Benin vastaväite",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 760,
+        "y": 130
+      },
+      "createdBy": "b_user"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+    {
+      "id": "86c77a8d-b85d-413a-918f-3f476b6b50d2",
+      "nodeId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+      "userId": "9f068584-747a-4651-8920-82b9b1597057",
+      "confidence": 88,
+      "updatedAt": "2026-11-07T22:00:32.592Z"
+    },
+    {
+      "id": "72244720-5f55-4e83-99ba-b25ab2d3170e",
+      "nodeId": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+      "userId": "b_user",
+      "confidence": 55,
+      "updatedAt": "2026-11-07T22:00:32.592Z"
+    },
+    {
+      "id": "254d0250-1929-4591-86e6-eaa4411d659d",
+      "nodeId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+      "userId": "b_user",
+      "confidence": 60,
+      "updatedAt": "2026-11-07T22:00:32.592Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "86febd61-5d1b-4387-83ae-d7c7b61b25ee",
+      "userId": "9f068584-747a-4651-8920-82b9b1597057",
+      "subjectType": "primary",
+      "subjectId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+      "influence": 4,
+      "fingerprint": "[\"62c7498e-0f51-42b7-9d51-7fe517f81035\",\"43b602b0-ebf9-4112-8c03-b158c32c5a6a\",\"Ainon perustelu\",\"Mikä on tarkasteltava väite?\",\"support\"]",
+      "updatedAt": "2026-11-07T22:00:32.592Z"
+    },
+    {
+      "id": "abbd6e67-7e3c-4122-915c-28ebc649a434",
+      "userId": "b_user",
+      "subjectType": "primary",
+      "subjectId": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+      "influence": -2.5,
+      "fingerprint": "[\"5e7c7d6c-a15f-43dc-8938-fcf45618dd15\",\"62c7498e-0f51-42b7-9d51-7fe517f81035\",\"Benin vastaväite\",\"Ainon perustelu\",\"oppose\"]",
+      "updatedAt": "2026-11-07T22:00:32.592Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [
+    {
+      "id": "815da071-37d6-45c5-b06b-e049280ec1a2",
+      "nodeId": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+      "body": "Ben huomasi tämän",
+      "authorName": "Ben",
+      "authorId": "b_user",
+      "createdAt": "2026-11-07T22:00:32.592Z"
+    }
+  ],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T22:00:32.590Z",
+  "updatedAt": "2026-11-07T22:00:32.591Z"
+}

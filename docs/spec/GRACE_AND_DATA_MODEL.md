@@ -1,0 +1,79 @@
+# Current GRACE method and data contract — verified dev32
+
+> **Living specification.** Copied 2026-11-08 from the dev32 prototype handoff (`witt-grace-gpt-proto/docs/specifications/CURRENT_GRACE_AND_DATA.md`). Backticked source, test and tool paths (`src/…`, `tests/…`, `tools/…`) refer to the frozen prototype under `witt-grace-gpt-proto/` until the new implementation supplies its own evidence. Edit this file only through the change policy in `docs/spec/README.md`.
+
+**Status:** active baseline, compiled against v8 code and existing tests. This is a characterization of the working prototype, not an attempt to assert philosophical correctness for the numeric heuristic.
+
+## G-01: ontology and units
+
+- `decision`: a question/root, NOT a factual claim with a truth rating. Decision alternatives are `option` nodes; a `group` contains alternatives but does NOT become an additional rated/votable option. `argument` mode has a main claim/root with a computed explanatory balance.
+- A `claim` may be a fact, assumption, value, constraint or prerequisite; semantic type affects whether probability scoring and feasibility rules apply. A value judgement is not automatically a factual truth vote.
+- A premise has subjective **credibility/credence** `p` in 0..100% *where it is used*. A directed claim→target relationship has **signed impact** `w` in -5..+5, half-step increments. This is **one** signed scale: negative = opposes; zero = neutral; positive = supports. The +/- add buttons create initial relationships; subsequently the visible direction follows the current assessor's actual signed rating, without rewriting other people's ratings.
+- The **only two numeric input axes** for ordinary reasons are credibility and influence. Do not introduce a third global priority/utility slider or infer one from text.
+- A newly created premise has an editable 100% **template default** but no invented human assessment; unassessed inputs remain unassessed in human modes.
+- Structurally asserted support/oppose/neutral is distinct from each assessor's personally evaluated signed influence. Displaying another person's view must not mutate authored relations.
+
+## G-02: exact `evidence-v3-links` scoring (implementation baseline)
+
+**Internal** recursive `I(n)` is 0..100; public **argument balance** `S(n) = 2*I(n)-100` is -100..+100 with neutral zero. These are **not probabilities** that the decision is right. A node without enough data can show `—` and an incomplete indicator; never replace missing data with a fake zero.
+
+For a truth-assessable reason, its base is its own contextual, current `p` (individual or human mean), an explicit shared locked reason value, or its structural preview value, as appropriate. For a concrete option or an argument-mode main claim without its own credence vote, neutral internal base is 50. For every eligible incoming primary/secondary relationship `e`:
+
+```text
+strength(e) = clamp(I(source(e)) / 100, 0, 1)
+contribution(e) = w(e) * strength(e)
+I(target) = clamp(base(target) + 5 * SUM(contribution(e)), 0, 100)
+S(target) = 2*I(target) - 100
+```
+
+The source's `I` has already incorporated its own **recursively scored descendants**: grandchildren and deeper reasons propagate upward via each explicit intermediate edge. Don't add a grandchild directly to the grandparent unless there is a separately modeled direct relationship. Positive and negative contributions cancel algebraically before clamping. Clamp can conceal additional magnitude at ±100; UI diagnostic may report saturation.
+
+Examples pinned by existing tests:
+
+| Inputs | Internal `I` | Visible `S` |
+| --- | ---: | ---: |
+| No scored pro/con from neutral base | 50 | 0 (or `—` when unassessed/incomplete in UI) |
+| One assessed 100% / +5 premise at option | 75 | +50 |
+| Two independent 100% / +5 premises | 100 | +100 |
+| One assessed 100% / -5 objection | 25 | -50 |
+| 20% / +5 premise | 55 | +10 |
+| Premise at 50 with a 100%/+5 supporting grandchild, then +5 to root | 68.75 | +37.5 |
+
+The old `heuristic-v1` formula and v5/v6 scoring docs are **historical**, not a numerical contract for new work. Use tests such as `evidence-v2-dev21.test.cjs`, `weighted-upward-dev20.test.cjs`, `deep-argument-propagation-dev20.test.cjs`, `secondary-scoring-dev26.test.cjs`, `signed-balance-dev21.test.cjs`.
+
+## G-03: human aggregation and independent viewpoints
+
+- Default `assessmentWeighting = equal`: pool human credence and signed relationship reviews with equal **per-user** weights, not text authored impact values.
+- Optional `shares`: weight participating human reviews by each local user's document-level positive `shares` value. A five-share reviewer counts five units in averaging each input axis, not 5× a final score. A zero-share user has zero weighting in this mode. Different assessments may be absent/stale and stay incomplete; never substitute another person's assessment.
+- `structural` is a deliberate **author-provided preview**, not a collective human vote.
+- Individual human views use that human's own reviews. AI viewpoints are named, isolated, explicitly selected and excluded from human pooled results by default. AI responses are reviewable proposals, not automatic truth.
+- Voting-share weighting of **decision ballots** is a distinct field and frozen snapshot. It must not silently alter the argument-score setting.
+- For aggregated `75%/+5` UI notation, show individual entries normally and aggregate mean entries in italics with a readable tooltip/source indication; locked shared ratings are not falsely called averages.
+
+## G-04: structural and contextual reuse
+
+- All persisted node IDs are stable. `reasonConcepts[]` supply shared **text/semantic identity** without supplying global credibility. Each `reasonConceptId` **use node** is a distinct node under an explicit target with its **own** per-assessor credence vote and signed primary-impact assessment.
+- Example: "Saamme perheen yhteistä aikaa" under *Uimahalli* can be 70%/+4; under *Luontoretki* 90%/+3 or 90%/-3. Never transfer these ratings automatically, even when text matches. Renaming concept may invalidate stale impact fingerprints and requires reassessment.
+- The ordinary UX for new repeated reasons is one concept and independent primary-use nodes (dev29). Legacy secondary `links[]` are still validated/scored/readable; they use the source claim's one computed credibility and a separate per-edge signed influence. They are **not** silently converted or doubled. `sharedReasons[]` is an advanced, deliberately *locked* fixed master `p/w` reused by opted-in uses. It is not the default contextual model.
+- All explicitly modeled relationships contribute. If a premise reaches a thesis through more than one route, show a neutral informative note; don't delete or automatically attenuate intentionally assessed effects. The note must not falsely imply an error.
+- A reason can have multiple uses under different options; new use is immediately visible in tree (even if recurring branches were hidden); selection opens that use's reviews. Concept cards and the direct "Liitä myös muihin solmuihin…" action are part of the baseline.
+- Tree hiding, depth slider, group collapse, diagram visual links and layout never change the domain document or its scoring inputs.
+
+## G-05: option groups, gates, values and decision result
+
+- Hierarchical `group` nodes organize concrete options only; they receive **no** own rating, index or ballot slot. Moving an option between groups preserves ID, reviews, ballots and subtree.
+- Mandatory conditions and prerequisites (`constraint`, `prerequisite`) create **separate eligibility/feasibility** (met/unmet/unknown), not a numeric plus/minus that can be offset by enough positive reasons. Conditions deep in an option subtree apply to that option per current scope.
+- Do not propagate a condition on one **optional** alternative to all sibling alternatives without an explicitly approved AND/OR model; group-level semantics are future work.
+- Subjective `value` reasons can have qualitative signed influence and value profile but do not automatically contribute to the current factual evidence numeric score. Do not fabricate a probability for a value.
+- The computed option argument balance and the **optional decision ballot** answer different questions. A good numerical argument balance is not a legal/organizational vote result and does not override eligibility.
+
+## G-06: validity, persistence and change control
+
+- Native file format v8 is validated with `src/import-validation.js`, generated `src/project-import-schema.js` from `schemas/project.v8.schema.json`, and core domain validation. Invalid/cyclic/orphan/foreign-version imports must not partially mutate the active document.
+- Saved project includes human/AI profiles, node/link identities, contextual reviews, comments, ballot history, shared reasons and settings, where applicable. View-only preferences and local theme do **not** rewrite project content.
+- Changes to the numerical formula, missingness, weighting, context linking, eligibility, voting, serialization or AI isolation require a **new reviewed contract and golden tests**; scoring semantic changes need a new version identifier, not a silent reuse of `evidence-v3-links`.
+- In a multi-user future, every accepted command must pass authorization and be replayable deterministically through the same domain functions.
+
+## Explicit non-goals / future method decisions
+
+Generic criteria entity with inherited defaults, optional truly context-invariant *personal* probability reuse, group-level gate AND/OR, calibrated probability of a decision, automatic statistical deduplication of correlated argument routes, formal vote secrecy, live P2P sessions, and online authenticated ownership are **not** completed in dev32. Do not fill these gaps during a refactor without a separate product decision.

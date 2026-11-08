@@ -1,0 +1,25 @@
+# Local archives of GPT-era snapshots and handoff zips (not source of truth)
+_archive/
+
+# Build and dependency outputs
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+
+# OS and editor
+.DS_Store
+.vscode/
+.idea/
+
+# Generated browser-test artifacts
+__pycache__/
+*.pyc
+playwright-report/
+test-results/
+
+# Local copies of reference projects (read-only inspiration, not part of this repo)
+tmp-ref/

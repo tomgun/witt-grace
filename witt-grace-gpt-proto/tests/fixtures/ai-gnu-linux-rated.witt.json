@@ -1,0 +1,1028 @@
+{
+  "format": "witt-ai-draft-v2",
+  "title": "Kannattaako yleisen ohjelmistokonsultin siirtyä GNU/Linuxiin työssä ja vapaa-ajalla?",
+  "mode": "decision",
+  "assessor": "GPT-6 (tekoälyarvio)",
+  "root": {
+    "id": "root",
+    "title": "Mikä käyttöjärjestelmästrategia sopii yleiselle ohjelmistokonsultille parhaiten?",
+    "details": "Vertailu GNU/Linuxin, Windowsin ja macOS:n välillä työssä ja vapaa-ajalla. Arvioinnissa ei käytetä henkilötietoja, henkilökohtaista laitekantaa eikä henkilökohtaisia harrastuksia. Oletusprofiili on yleinen ohjelmistokonsultti, jonka asiakasympäristöt, teknologiat sekä työn ulkopuoliset ohjelmistot voivat vaihdella. Harrastusohjelmistojen ja pelien tuki erotellaan. Uskottavuus (0–100 %) on arvio väittämän toteutumisesta tässä yleisessä tapauksessa, ei mitattu tilasto. Merkitys (−5…+5) kuvaa väittämän välittömän suhteen vaikutusta sen omaan emoväitteeseen tai päätösvaihtoehtoon. Molemmat ovat tekoälyn arvioita 7.11.2026; arvottavia päätöskriteerejä tai vaihtoehtoja ei pisteytetä. Tulos riippuu erityisesti asiakasorganisaation päätelaitteiden hallintavaatimuksista, hankitun laitteiston ajureista, työprojektien käyttöjärjestelmäriippuvuuksista sekä tarvittavien peli- ja harrastusohjelmien täsmällisistä versioista."
+  },
+  "claims": [
+    {
+      "id": "linux_only",
+      "parentId": "root",
+      "relation": "option",
+      "title": "A. Kokonaan GNU/Linuxiin työssä ja vapaa-ajalla",
+      "details": "GNU/Linux ainoana päivittäisenä työpöytäjärjestelmänä; ei erillistä Windows- tai macOS-varajärjestelmää. Esimerkkinä ajantasainen yleisdistro. Ei edellytä tiettyä jakelua."
+    },
+    {
+      "id": "linux_with_fallback",
+      "parentId": "root",
+      "relation": "option",
+      "title": "B. GNU/Linux pääjärjestelmäksi, Windows/macOS varalle",
+      "details": "Linux arjen päätyöasema; tarvittaessa Windows/macOS toisella laitteella, kaksoiskäynnistyksellä tai erikseen soveltuvalla etätyöpöydällä. Lisäjärjestelmän omistus ja hallinta kuuluvat vaihtoehdon hintaan."
+    },
+    {
+      "id": "windows_wsl",
+      "parentId": "root",
+      "relation": "option",
+      "title": "C. Windows pääjärjestelmänä, Linux kehityksessä (WSL2/kontit)",
+      "details": "Windows on työpöytä ja pelialusta; Linux-työkalut käytössä WSL2:ssa, konteissa tai etäympäristöissä. Mieluiten projektit Linuxin tiedostojärjestelmässä."
+    },
+    {
+      "id": "macos_linux",
+      "parentId": "root",
+      "relation": "option",
+      "title": "D. macOS pääjärjestelmänä, Linux konteissa tai etänä",
+      "details": "macOS päivittäisenä työpöytänä Apple-yhteensopivalla koneella; Linux-palvelinympäristöt konteissa, virtuaalikoneessa tai etäkehityksessä."
+    },
+    {
+      "id": "a_dev",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Useimmat yleiset ohjelmistokehityksen CLI-työkalut toimivat Linuxissa suoraan",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 4.0,
+      "comment": "Esimerkiksi Git, SSH, Python, Node.js, Java, Rust, Docker/Podman ja monien IDE:iden Linux-julkaisut. Projektikohtaiset poikkeukset ratkaisevat."
+    },
+    {
+      "id": "a_dev_counter",
+      "parentId": "a_dev",
+      "relation": "oppose",
+      "title": "Windowsin WSL2 ja macOS tarjoavat jo samat keskeiset Unix-työkalut",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": -2.0,
+      "comment": "Natiivi Linux ei automaattisesti lisää arvoa kaikissa pilvi- ja web-projekteissa."
+    },
+    {
+      "id": "a_dev_counter2",
+      "parentId": "a_dev_counter",
+      "relation": "oppose",
+      "title": "Natiivissa Linuxissa vältetään osa isäntäjärjestelmän ja Linux-ympäristön välisistä rajapinnoista",
+      "semanticType": "fact",
+      "credence": 86,
+      "influence": -1.5,
+      "comment": "Erityisesti tiedostopolut, prosessit ja osa verkko- tai laiteintegraatioista."
+    },
+    {
+      "id": "a_parity",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Linux-työpöydällä ja Linux-palvelimilla voidaan käyttää läheistä käyttöjärjestelmä- ja työkalumallia",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": 3.0,
+      "comment": "Hyöty korostuu Linux-tuotantoympäristöissä, shell-skripteissä ja konttityössä; versiota ja jakelua ei silti pidä pitää identtisinä."
+    },
+    {
+      "id": "a_parity_counter",
+      "parentId": "a_parity",
+      "relation": "oppose",
+      "title": "Kontit, etäkehitys ja CI tarjoavat vastaavaa ympäristöpariteettia myös muilla työpöydillä",
+      "semanticType": "fact",
+      "credence": 93,
+      "influence": -2.5
+    },
+    {
+      "id": "a_openness",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Avoimet työkalut ja jakelut lisäävät käyttöjärjestelmän muokattavuutta ja toimittajavalinnan vapautta",
+      "semanticType": "fact",
+      "credence": 95,
+      "influence": 2.5
+    },
+    {
+      "id": "a_openness_counter",
+      "parentId": "a_openness",
+      "relation": "oppose",
+      "title": "Muokattavuudesta voi seurata lisää ylläpitoa ja valintojen hajautumista",
+      "semanticType": "fact",
+      "credence": 82,
+      "influence": -2.0,
+      "comment": "Hyöty ja kustannus vaihtelevat jakelun ja ylläpitomallin mukaan."
+    },
+    {
+      "id": "a_licence",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Monet Linux-jakelut voi asentaa ilman käyttöjärjestelmän erillistä lisenssimaksua",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": 1.5
+    },
+    {
+      "id": "a_licence_counter",
+      "parentId": "a_licence",
+      "relation": "oppose",
+      "title": "Säästyneen lisenssin voi ylittää migraatio- ja ylläpitotyön kustannus",
+      "semanticType": "fact",
+      "credence": 89,
+      "influence": -2.5
+    },
+    {
+      "id": "a_privacy",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Linuxissa on usein laajat keinot hallita järjestelmän palveluja, päivityksiä ja tiedonsiirtoa",
+      "semanticType": "fact",
+      "credence": 90,
+      "influence": 2.0
+    },
+    {
+      "id": "a_privacy_counter",
+      "parentId": "a_privacy",
+      "relation": "oppose",
+      "title": "Turvallisuus ja yksityisyys eivät parane automaattisesti ilman ylläpitoa ja oikeita asetuksia",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": -2.5
+    },
+    {
+      "id": "a_web",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Selainpohjaiset työpalvelut toimivat usein Linuxissa",
+      "semanticType": "fact",
+      "credence": 93,
+      "influence": 3.0,
+      "comment": "Esimerkiksi monet tiketöinti-, lähdekoodi-, pilvihallinta- ja viestintäpalvelut; tarkista asiakaskohtaiset kirjautumis- ja selainvaatimukset."
+    },
+    {
+      "id": "a_web_counter",
+      "parentId": "a_web",
+      "relation": "oppose",
+      "title": "Selaimen kautta käytettävä Microsoft Teams ei ole täysin sama kuin Windows/macOS-työpöytäsovellus",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": -2.0,
+      "comment": "Microsoftin dokumentoimia verkkoversion rajoituksia ovat osa usean tilin ilmoituksista ja joitakin ikkuna- ja videotoimintoja."
+    },
+    {
+      "id": "a_corp",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Asiakkaan päätelaitehallinta, VPN, sertifikaatit tai tietoturvaehdot voivat estää Linux-työaseman",
+      "semanticType": "assumption",
+      "credence": 82,
+      "influence": -4.5,
+      "comment": "Erityisen merkittävä konsultille, joka työskentelee eri asiakkaiden hallituissa ympäristöissä. Tämä on riski, ei väite jokaisesta asiakkuudesta."
+    },
+    {
+      "id": "a_corp_counter",
+      "parentId": "a_corp",
+      "relation": "oppose",
+      "title": "Selain- tai virtuaalityöpöytäyhteys voi vähentää paikallisen Linux-käyttöjärjestelmän esteitä",
+      "semanticType": "fact",
+      "credence": 78,
+      "influence": -2.0,
+      "comment": "Vain jos asiakas nimenomaisesti hyväksyy yhteystavan ja laitteen."
+    },
+    {
+      "id": "a_corp_counter2",
+      "parentId": "a_corp_counter",
+      "relation": "oppose",
+      "title": "Asiakaskäytäntö voi silti vaatia erikseen hallitun ja hyväksytyn päätelaitteen",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": -2.5
+    },
+    {
+      "id": "a_office",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Microsoft 365:n Windows/macOS-työpöytäsovellukset eivät ole natiivisti Linuxin perusvaihtoehto",
+      "semanticType": "fact",
+      "credence": 98,
+      "influence": -3.5,
+      "comment": "Verkkoversiot ja Linux-toimistopaketit eivät takaa täydellistä toiminnallista tai formaattiyhteensopivuutta."
+    },
+    {
+      "id": "a_office_counter",
+      "parentId": "a_office",
+      "relation": "oppose",
+      "title": "Useat tavalliset Word-, Excel- ja esitystehtävät onnistuvat selainversioilla",
+      "semanticType": "fact",
+      "credence": 94,
+      "influence": -2.5
+    },
+    {
+      "id": "a_office_counter2",
+      "parentId": "a_office_counter",
+      "relation": "oppose",
+      "title": "Makrot, laajat pohjat ja vaativa muotoilu voivat edellyttää natiivia Office-ympäristöä",
+      "semanticType": "fact",
+      "credence": 91,
+      "influence": -3.0
+    },
+    {
+      "id": "a_ios",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Applen Xcode- ja iOS/macOS-julkaisutyökalut voivat edellyttää macOS-ympäristöä",
+      "semanticType": "fact",
+      "credence": 98,
+      "influence": -3.5,
+      "comment": "Tämä koskee kyseisiä projekteja, ei kaikkea mobiili- tai web-kehitystä."
+    },
+    {
+      "id": "a_ios_counter",
+      "parentId": "a_ios",
+      "relation": "oppose",
+      "title": "Monissa muissa mobiili- ja backend-projekteissa Linux riittää kehitysalustaksi",
+      "semanticType": "fact",
+      "credence": 94,
+      "influence": -2.0
+    },
+    {
+      "id": "a_drivers",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Joillakin kannettavilla ja erikoislaitteilla ajurit, lepotila, telakat tai biometria eivät toimi täysin Linuxissa",
+      "semanticType": "assumption",
+      "credence": 76,
+      "influence": -3.0,
+      "comment": "Laitteiden mallit, näytönohjaimet ja jakelun kernel-versio vaikuttavat."
+    },
+    {
+      "id": "a_drivers_counter",
+      "parentId": "a_drivers",
+      "relation": "oppose",
+      "title": "Linux-tukea varten valittu ja ennakkotestattu laitteisto pienentää ajuririskiä",
+      "semanticType": "fact",
+      "credence": 92,
+      "influence": -2.5
+    },
+    {
+      "id": "a_gaming",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Steam Playn Protonin avulla Linuxissa toimii myös suuri joukko Windows-pelejä",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 3.0,
+      "comment": "Natiivien Linux-pelien lisäksi käytetään yhteensopivuuskerrosta; pelikohtainen toimivuus tarkistettava."
+    },
+    {
+      "id": "a_anticheat",
+      "parentId": "a_gaming",
+      "relation": "oppose",
+      "title": "Osa verkkomoninpeleistä ei toimi Linuxissa huijaukseneston tai julkaisijan rajoitusten vuoksi",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": -4.5,
+      "comment": "Tuki riippuu pelistä ja sen nykyisestä huijauksenestototeutuksesta, ei pelkästään jakelusta."
+    },
+    {
+      "id": "a_anticheat_counter",
+      "parentId": "a_anticheat",
+      "relation": "oppose",
+      "title": "Julkaisijat voivat lisätä Linux- tai Proton-tukea, joten estot eivät koske kaikkia pelejä pysyvästi",
+      "semanticType": "fact",
+      "credence": 85,
+      "influence": -1.5,
+      "comment": "Tuleva tuki on tarkistettava jokaiselle pelille erikseen."
+    },
+    {
+      "id": "a_gameperf",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Grafiikka-ajurien, DRM:n ja Proton-versioiden erot voivat tuoda peleihin poikkeavia suorituskyky- tai vakausongelmia",
+      "semanticType": "assumption",
+      "credence": 83,
+      "influence": -2.5,
+      "comment": "Ei väitettä yleisestä, kaikilla peleillä toteutuvasta hitaudesta."
+    },
+    {
+      "id": "a_gameperf_counter",
+      "parentId": "a_gameperf",
+      "relation": "oppose",
+      "title": "Hyvin tuettujen pelien suorituskyky voi olla käytännössä kilpailukykyinen",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": -2.0
+    },
+    {
+      "id": "a_multimedia",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Linuxille on vahvoja natiiveja 3D-, grafiikka- ja video-ohjelmia",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 2.5,
+      "comment": "Esimerkiksi Blender, Krita ja Kdenlive; myös DaVinci Resolve tarjoaa Linux-version laitteisto- ja jakeluvaatimuksin."
+    },
+    {
+      "id": "a_adobe",
+      "parentId": "a_multimedia",
+      "relation": "oppose",
+      "title": "Adobe Creative Cloudin työpöytäohjelmistojen täysi natiivi Linux-tuki puuttuu",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": -4.0,
+      "comment": "Photoshop/Illustrator/Premiere-kaltaisissa työnkuluissa korvaavuus ja tiedostomuotojen yhteensopivuus täytyy arvioida erikseen."
+    },
+    {
+      "id": "a_adobe_counter",
+      "parentId": "a_adobe",
+      "relation": "oppose",
+      "title": "Avoimet tai muilla tavoin Linuxia tukevat vaihtoehdot kattavat osan luovasta työstä",
+      "semanticType": "fact",
+      "credence": 95,
+      "influence": -2.0,
+      "comment": "Ei tarkoita kaikkien Adobe-projektien avaamista ongelmitta."
+    },
+    {
+      "id": "a_audio",
+      "parentId": "linux_only",
+      "relation": "support",
+      "title": "Linuxille on natiiveja musiikkituotannon DAW-ohjelmia",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": 2.5,
+      "comment": "Esimerkiksi REAPER, Bitwig Studio ja Ardour; yhteensopivuus arvioidaan työkalun ja liitännäisten tasolla."
+    },
+    {
+      "id": "a_audio_counter",
+      "parentId": "a_audio",
+      "relation": "oppose",
+      "title": "Monet kaupalliset DAW-ympäristöt ja Windows/macOS-liitännäiset eivät ole natiivisti Linux-yhteensopivia",
+      "semanticType": "fact",
+      "credence": 98,
+      "influence": -4.0,
+      "comment": "Esimerkiksi Steinberg Cubase, Ableton Live ja Apple Logic Pro eivät tarjoa yleistä natiivia Linux-työpöytäversiota; tarkista aina nykyiset julkaisut."
+    },
+    {
+      "id": "a_audio_counter2",
+      "parentId": "a_audio_counter",
+      "relation": "oppose",
+      "title": "Osa Windows-audioliitännäisistä toimii yhteensopivuuskerroksilla mutta ilman yleistä toimintatakuuta",
+      "semanticType": "fact",
+      "credence": 82,
+      "influence": -1.5
+    },
+    {
+      "id": "a_setuptime",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Täyssiirtymä vie todennäköisesti aikaa tiedonsiirtoon, työnkulkujen uudistamiseen ja yhteensopivuustesteihin",
+      "semanticType": "assumption",
+      "credence": 93,
+      "influence": -3.0
+    },
+    {
+      "id": "a_setuptime_counter",
+      "parentId": "a_setuptime",
+      "relation": "oppose",
+      "title": "Aiempi Linux-osaaminen, automatisoitu asennus ja standardilaitteisto pienentävät siirtymätyötä",
+      "semanticType": "fact",
+      "credence": 89,
+      "influence": -2.5
+    },
+    {
+      "id": "a_winonly",
+      "parentId": "linux_only",
+      "relation": "oppose",
+      "title": "Joidenkin toimeksiantojen Windows-kohtaiset työkalut ja käyttöliittymäteknologiat voivat vaatia Windowsia",
+      "semanticType": "assumption",
+      "credence": 93,
+      "influence": -3.5,
+      "comment": "Esimerkkejä: WPF, vanhat COM-sovellukset, valmistajakohtaiset SDK:t ja eräät laiteohjelmointityökalut."
+    },
+    {
+      "id": "a_winonly_counter",
+      "parentId": "a_winonly",
+      "relation": "oppose",
+      "title": "Pilvi-, web- ja palvelinprojekteissa käyttöjärjestelmäriippuvuus on usein pienempi",
+      "semanticType": "fact",
+      "credence": 90,
+      "influence": -2.0
+    },
+    {
+      "id": "b_native",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "GNU/Linuxin kehitysympäristön edut saadaan päivittäiseen käyttöön",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 4.0
+    },
+    {
+      "id": "b_native_counter",
+      "parentId": "b_native",
+      "relation": "oppose",
+      "title": "Muiden järjestelmien käyttö ajoittain katkaisee yhtenäisen työnkulun",
+      "semanticType": "fact",
+      "credence": 86,
+      "influence": -1.5
+    },
+    {
+      "id": "b_fallback",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "Varajärjestelmä vähentää asiakasohjelmien ja yhteensopimattomien sovellusten aiheuttamia umpikujia",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": 4.5
+    },
+    {
+      "id": "b_fallback_counter",
+      "parentId": "b_fallback",
+      "relation": "oppose",
+      "title": "Kahta käyttöjärjestelmää on päivitettävä, suojattava ja tarvittaessa lisensoitava",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": -2.5
+    },
+    {
+      "id": "b_safe",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "Siirtymä voidaan tehdä asteittain ja palauttaa ilman kaikkien tehtävien uusimista",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": 4.0
+    },
+    {
+      "id": "b_safe_counter",
+      "parentId": "b_safe",
+      "relation": "oppose",
+      "title": "Kahden järjestelmän käyttö kasvattaa tiedostojen, tunnusten ja asetusten synkronointitarvetta",
+      "semanticType": "fact",
+      "credence": 90,
+      "influence": -2.5
+    },
+    {
+      "id": "b_games",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "Linuxissa estyneet pelit voidaan pelata yhteensopivalla Windows-varajärjestelmällä",
+      "semanticType": "fact",
+      "credence": 94,
+      "influence": 3.5
+    },
+    {
+      "id": "b_games_counter",
+      "parentId": "b_games",
+      "relation": "oppose",
+      "title": "Pelaaminen voi edellyttää uudelleenkäynnistystä, toista laitetta tai erillistä käynnistysympäristöä",
+      "semanticType": "fact",
+      "credence": 92,
+      "influence": -2.0,
+      "comment": "Windows-pelit eivät toimi automaattisesti tavallisessa virtuaalikoneessa kilpailulliseen pelaamiseen sopivasti."
+    },
+    {
+      "id": "b_hobbies",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "Windows/macOS-varajärjestelmä voi säilyttää pääsyn natiivisti tuettuihin luoviin ohjelmistoihin",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": 3.5,
+      "comment": "Esimerkiksi Adobe Creative Cloud, osa audio-ohjelmista ja valmistajakohtaiset laitehallinnat."
+    },
+    {
+      "id": "b_hobbies_counter",
+      "parentId": "b_hobbies",
+      "relation": "oppose",
+      "title": "Luovien projektien liitännäiset, tiedostopolut ja käyttöoikeudet voivat vaikeuttaa ristiinkäyttöä",
+      "semanticType": "fact",
+      "credence": 84,
+      "influence": -2.0
+    },
+    {
+      "id": "b_corp",
+      "parentId": "linux_with_fallback",
+      "relation": "oppose",
+      "title": "Työnantaja tai asiakas ei välttämättä salli henkilökohtaista Linux-päätelaitetta edes pääasialliseksi työasemaksi",
+      "semanticType": "assumption",
+      "credence": 80,
+      "influence": -3.5,
+      "comment": "Organisaation hallinta- ja auditointikäytännöt ratkaisevat."
+    },
+    {
+      "id": "b_corp_counter",
+      "parentId": "b_corp",
+      "relation": "oppose",
+      "title": "Hyväksytty erillinen asiakastyöasema voi ratkaista vaatimuksen",
+      "semanticType": "fact",
+      "credence": 87,
+      "influence": -2.0
+    },
+    {
+      "id": "b_partition",
+      "parentId": "linux_with_fallback",
+      "relation": "oppose",
+      "title": "Kaksoiskäynnistys, levyjen salaus ja käynnistyslataajat tuovat lisähuoltoa ja palautumisriskejä",
+      "semanticType": "assumption",
+      "credence": 84,
+      "influence": -2.5,
+      "comment": "Koskee erityisesti dual-bootia, ei samalla tavalla kahta erillistä laitetta."
+    },
+    {
+      "id": "b_partition_counter",
+      "parentId": "b_partition",
+      "relation": "oppose",
+      "title": "Erilliset laitteet tai hallittu etätyöpöytä vähentävät dual-bootiin liittyviä ongelmia",
+      "semanticType": "fact",
+      "credence": 91,
+      "influence": -2.0
+    },
+    {
+      "id": "b_extra_cost",
+      "parentId": "linux_with_fallback",
+      "relation": "oppose",
+      "title": "Varaympäristön ylläpito tai toinen laite voi lisätä kustannuksia",
+      "semanticType": "assumption",
+      "credence": 90,
+      "influence": -2.5,
+      "comment": "Varajärjestelmää ei välttämättä tarvitse ostaa erikseen, jos se on jo saatavilla."
+    },
+    {
+      "id": "b_extra_cost_counter",
+      "parentId": "b_extra_cost",
+      "relation": "oppose",
+      "title": "Samalle yhteensopivalle laitteelle tehty kaksoiskäynnistys voi välttää toisen laitehankinnan",
+      "semanticType": "fact",
+      "credence": 94,
+      "influence": -1.5
+    },
+    {
+      "id": "b_learning",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "Linux-pääjärjestelmässä opitaan myös työpöytä- ja laiteympäristön käytännön ylläpitoa",
+      "semanticType": "fact",
+      "credence": 93,
+      "influence": 2.5
+    },
+    {
+      "id": "b_recovery",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "Kiireellisessä työtehtävässä voi vaihtaa etukäteen testattuun varaympäristöön",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": 3.0,
+      "comment": "Edellyttää toimivia kirjautumisia, lisenssejä ja asiakaslupia; käyttöjärjestelmä itsessään ei ohita näitä."
+    },
+    {
+      "id": "b_ios",
+      "parentId": "linux_with_fallback",
+      "relation": "support",
+      "title": "macOS-varavaihtoehto voi säilyttää Xcodeen perustuvat julkaisu- ja testityönkulut",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": 2.5,
+      "comment": "Ei koske pelkkää Windows-varajärjestelmää."
+    },
+    {
+      "id": "b_sync",
+      "parentId": "linux_with_fallback",
+      "relation": "oppose",
+      "title": "Kahden ympäristön konfiguraatiot voivat ajautua erilleen ja heikentää toistettavuutta",
+      "semanticType": "assumption",
+      "credence": 86,
+      "influence": -2.0
+    },
+    {
+      "id": "c_workplace",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "Windows tukee laajasti yritysten natiiveja M365-, VPN- ja päätelaitehallinnan ratkaisuja",
+      "semanticType": "fact",
+      "credence": 95,
+      "influence": 4.0,
+      "comment": "Asiakaskohtainen tuki on tarkistettava; ei tarkoita pääsyä jokaiseen asiakkaaseen."
+    },
+    {
+      "id": "c_workplace_counter",
+      "parentId": "c_workplace",
+      "relation": "oppose",
+      "title": "Joissakin asiakkuuksissa käyttöjärjestelmä ei ole rajoite, koska palvelut ovat selain- tai etäpohjaisia",
+      "semanticType": "fact",
+      "credence": 87,
+      "influence": -1.5
+    },
+    {
+      "id": "c_wsl",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "WSL2:ssa voi käyttää Linux-työkaluketjua ja Linux-ydintä Windows-työpöydällä",
+      "semanticType": "fact",
+      "credence": 98,
+      "influence": 4.0
+    },
+    {
+      "id": "c_wsl_fs",
+      "parentId": "c_wsl",
+      "relation": "oppose",
+      "title": "WSL2:n ja Windowsin tiedostojärjestelmien välillä työskentely voi hidastaa I/O-painotteisia kehitysprojekteja",
+      "semanticType": "fact",
+      "credence": 95,
+      "influence": -2.0,
+      "comment": "Microsoft suosittelee pitämään Linux-työkalujen projektit Linux-tiedostojärjestelmässä."
+    },
+    {
+      "id": "c_wsl_fs_counter",
+      "parentId": "c_wsl_fs",
+      "relation": "oppose",
+      "title": "Projektin sijoittaminen WSL:n Linux-tiedostojärjestelmään vähentää tavallista suorituskykyhaittaa",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": -2.5
+    },
+    {
+      "id": "c_wsl_edges",
+      "parentId": "c_wsl",
+      "relation": "oppose",
+      "title": "Osa laite-, kernel-, verkko- tai virtualisointitapauksista voi poiketa natiivista Linuxista",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": -2.5
+    },
+    {
+      "id": "c_games",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "Windows tarjoaa laajimman suoran yhteensopivuuden monille PC-peleille ja niiden huijauksenestojärjestelmille",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 4.0,
+      "comment": "Vertailu koskee yleistä PC-pelivalikoimaa, ei väitettä että jokainen peli toimisi ongelmitta."
+    },
+    {
+      "id": "c_games_counter",
+      "parentId": "c_games",
+      "relation": "oppose",
+      "title": "Myös Windowsissa osa peleistä voi kärsiä ajuri- ja päivitysongelmista",
+      "semanticType": "fact",
+      "credence": 87,
+      "influence": -1.0
+    },
+    {
+      "id": "c_creative",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "Adobe- ja monet ammattimaiset ääni-, video- ja grafiikkaohjelmistot ovat natiivisti Windowsissa tuettuja",
+      "semanticType": "fact",
+      "credence": 98,
+      "influence": 3.5
+    },
+    {
+      "id": "c_corpapps",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "Windows-kohtaiset kehitys- ja ylläpitotyökalut ovat suoraan käytettävissä",
+      "semanticType": "fact",
+      "credence": 95,
+      "influence": 3.0,
+      "comment": "Esimerkiksi WPF-, COM- tai Windows-ajurityönkulut."
+    },
+    {
+      "id": "c_hardware",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "Kuluttajalaitevalmistajien ajuri- ja oheislaiteohjelmistot tukevat usein Windowsia ensisijaisesti",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": 3.0
+    },
+    {
+      "id": "c_updates",
+      "parentId": "windows_wsl",
+      "relation": "oppose",
+      "title": "Käyttöjärjestelmän päivitykset ja laitevalmistajakohtaiset ohjelmistot voivat aiheuttaa työkatkoksia",
+      "semanticType": "assumption",
+      "credence": 84,
+      "influence": -1.5
+    },
+    {
+      "id": "c_lockin",
+      "parentId": "windows_wsl",
+      "relation": "oppose",
+      "title": "Windowsin suljettu alusta ja lisenssiehdot rajoittavat Linuxiin verrattuna järjestelmätason hallintaa",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": -2.0
+    },
+    {
+      "id": "c_linux_native",
+      "parentId": "windows_wsl",
+      "relation": "oppose",
+      "title": "WSL2 ei korvaa jokaista natiivin Linux-työpöydän, laiteajurin tai kernel-kehityksen käyttötapausta",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": -3.0
+    },
+    {
+      "id": "c_linux_native_counter",
+      "parentId": "c_linux_native",
+      "relation": "oppose",
+      "title": "Erillinen virtuaalikone tai etäkone voi kattaa osan puuttuvista Linux-testitapauksista",
+      "semanticType": "fact",
+      "credence": 92,
+      "influence": -2.0
+    },
+    {
+      "id": "c_ios",
+      "parentId": "windows_wsl",
+      "relation": "oppose",
+      "title": "Xcodeen sidottua iOS/macOS-kehitystä ei voi tehdä natiivisti Windowsissa",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": -3.0
+    },
+    {
+      "id": "c_ios_counter",
+      "parentId": "c_ios",
+      "relation": "oppose",
+      "title": "Mac-etäympäristö voi hoitaa osan Apple-julkaisu- ja testivaatimuksista",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": -1.5
+    },
+    {
+      "id": "c_prod",
+      "parentId": "windows_wsl",
+      "relation": "oppose",
+      "title": "Windows-isäntäjärjestelmästä voi jäädä piileviä eroja Linux-tuotantoon verrattuna",
+      "semanticType": "assumption",
+      "credence": 82,
+      "influence": -2.0,
+      "comment": "WSL2/kontit pienentävät mutta eivät poista kaikkia eroja."
+    },
+    {
+      "id": "c_mgmt",
+      "parentId": "windows_wsl",
+      "relation": "support",
+      "title": "Yhden työpöytäjärjestelmän ylläpito on usein yksinkertaisempaa kuin Linuxin ja varajärjestelmän rinnakkaiskäyttö",
+      "semanticType": "assumption",
+      "credence": 84,
+      "influence": 2.0,
+      "comment": "WSL2 ja kontit lisäävät silti oman ylläpitokerroksensa."
+    },
+    {
+      "id": "d_unix",
+      "parentId": "macos_linux",
+      "relation": "support",
+      "title": "macOS tarjoaa Unix-tyyppisen komentorivin ja laajan kehittäjätyökalujen tuen",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 3.5,
+      "comment": "Monet CLI-työkalut toimivat, mutta BSD/macOS- ja GNU/Linux-ympäristöjen erot voivat näkyä skripteissä."
+    },
+    {
+      "id": "d_unix_counter",
+      "parentId": "d_unix",
+      "relation": "oppose",
+      "title": "macOS:n järjestelmäkomennot, tiedostojärjestelmä ja kernel eivät ole sama asia kuin GNU/Linux",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": -2.0
+    },
+    {
+      "id": "d_containers",
+      "parentId": "macos_linux",
+      "relation": "support",
+      "title": "Linux-kontteja ja etäkehitysympäristöjä voi käyttää macOS-työpöydältä",
+      "semanticType": "fact",
+      "credence": 97,
+      "influence": 3.0
+    },
+    {
+      "id": "d_containers_counter",
+      "parentId": "d_containers",
+      "relation": "oppose",
+      "title": "Apple Siliconin arm64 ja mahdollisen Linux x86-64 -kohteen ero voi vaatia emulointia tai erillisiä build-ympäristöjä",
+      "semanticType": "fact",
+      "credence": 93,
+      "influence": -2.5,
+      "comment": "Koskee erityisesti arkkitehtuuriltaan eroavia kohteita."
+    },
+    {
+      "id": "d_containers_counter2",
+      "parentId": "d_containers_counter",
+      "relation": "oppose",
+      "title": "Etäkäytössä oleva x86-64 Linux-kone tai CI voi ratkaista kohdearkkitehtuurin buildit",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": -2.0
+    },
+    {
+      "id": "d_xcode",
+      "parentId": "macos_linux",
+      "relation": "support",
+      "title": "macOS mahdollistaa Xcoden ja Applen alustojen natiivin kehitystyön",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": 4.0
+    },
+    {
+      "id": "d_creative",
+      "parentId": "macos_linux",
+      "relation": "support",
+      "title": "MacOS:lle on laaja natiivien musiikki-, kuva- ja video-ohjelmien sekä liitännäisten valikoima",
+      "semanticType": "fact",
+      "credence": 98,
+      "influence": 3.5,
+      "comment": "Esimerkkejä ovat Logic Pro, Cubase, Ableton Live sekä Adobe-tuotteet; yksittäiset versiovaatimukset on tarkistettava."
+    },
+    {
+      "id": "d_games",
+      "parentId": "macos_linux",
+      "relation": "oppose",
+      "title": "macOS:llä ei ole suoraa tukea yhtä suurelle Windows-PC-pelivalikoimalle kuin Windowsissa",
+      "semanticType": "fact",
+      "credence": 95,
+      "influence": -3.5,
+      "comment": "Tämä koskee erityisesti Windows-only-pelejä ja kilpailullisia moninpelejä."
+    },
+    {
+      "id": "d_games_counter",
+      "parentId": "d_games",
+      "relation": "oppose",
+      "title": "Osa peleistä on saatavilla natiivisti macOS:lle tai etäpelattavaksi",
+      "semanticType": "fact",
+      "credence": 88,
+      "influence": -1.5
+    },
+    {
+      "id": "d_cost",
+      "parentId": "macos_linux",
+      "relation": "oppose",
+      "title": "Mac-laitteiston hankinta voi olla tietyssä hintaluokassa kalliimpi kuin vertailukelpoinen yleinen PC",
+      "semanticType": "assumption",
+      "credence": 82,
+      "influence": -2.0,
+      "comment": "Kokonaiskustannus riippuu mallista, käyttöajasta ja vaihtoehtoisista koneista."
+    },
+    {
+      "id": "d_cost_counter",
+      "parentId": "d_cost",
+      "relation": "oppose",
+      "title": "Pitkä käyttöikä ja jälleenmyyntiarvo voivat tasoittaa kokonaiskustannusta",
+      "semanticType": "assumption",
+      "credence": 74,
+      "influence": -1.5
+    },
+    {
+      "id": "d_hw",
+      "parentId": "macos_linux",
+      "relation": "support",
+      "title": "Applen omaan laitteistoon räätälöity macOS voi vähentää hajanaisen ajurituen ongelmia",
+      "semanticType": "assumption",
+      "credence": 87,
+      "influence": 2.5,
+      "comment": "Ei väitetä täydellistä virheettömyyttä, ja ulkoiset laitteet voivat silti vaatia ajureita."
+    },
+    {
+      "id": "d_vendor",
+      "parentId": "macos_linux",
+      "relation": "oppose",
+      "title": "Applen laite- ja ohjelmistoriippuvuus vähentää kokoonpanovapautta",
+      "semanticType": "fact",
+      "credence": 99,
+      "influence": -2.0
+    },
+    {
+      "id": "d_enterprise",
+      "parentId": "macos_linux",
+      "relation": "oppose",
+      "title": "Osa Windows-keskeisistä asiakasympäristöistä voi rajata myös macOS-laitteita",
+      "semanticType": "assumption",
+      "credence": 79,
+      "influence": -3.0
+    },
+    {
+      "id": "d_enterprise_counter",
+      "parentId": "d_enterprise",
+      "relation": "oppose",
+      "title": "Selainpalvelut, hyväksytty Mac-hallinta ja etätyöpöydät voivat helpottaa asiakasyhteensopivuutta",
+      "semanticType": "fact",
+      "credence": 85,
+      "influence": -2.0
+    },
+    {
+      "id": "d_cloud",
+      "parentId": "macos_linux",
+      "relation": "support",
+      "title": "Pilvi-, web- ja palvelinkehityksen työkalut tukevat laajasti macOS:ää",
+      "semanticType": "fact",
+      "credence": 96,
+      "influence": 3.0
+    },
+    {
+      "id": "d_linux_training",
+      "parentId": "macos_linux",
+      "relation": "oppose",
+      "title": "Linuxin päivittäisen työpöydän ja laiteympäristön osaaminen jää vähäisemmäksi kuin Linux-pääjärjestelmässä",
+      "semanticType": "fact",
+      "credence": 91,
+      "influence": -1.5,
+      "comment": "Linux-sovelluskehitys ja palvelinkokemus voivat silti olla korkealla tasolla."
+    },
+    {
+      "id": "d_winonly",
+      "parentId": "macos_linux",
+      "relation": "oppose",
+      "title": "Windows-natiivien yritys- ja harrastusohjelmien käyttö voi vaatia erillisen ympäristön",
+      "semanticType": "fact",
+      "credence": 91,
+      "influence": -2.5
+    }
+  ],
+  "sharedReasons": [],
+  "sharedAttachments": [],
+  "links": [
+    {
+      "sourceId": "a_office",
+      "targetId": "b_fallback",
+      "relation": "support",
+      "influence": 3.0
+    },
+    {
+      "sourceId": "a_anticheat",
+      "targetId": "b_games",
+      "relation": "support",
+      "influence": 3.0
+    },
+    {
+      "sourceId": "a_audio_counter",
+      "targetId": "b_hobbies",
+      "relation": "support",
+      "influence": 3.0
+    },
+    {
+      "sourceId": "a_parity_counter",
+      "targetId": "c_wsl",
+      "relation": "support",
+      "influence": 2.0
+    },
+    {
+      "sourceId": "a_ios",
+      "targetId": "d_xcode",
+      "relation": "support",
+      "influence": 2.0
+    },
+    {
+      "sourceId": "a_gameperf",
+      "targetId": "c_games",
+      "relation": "support",
+      "influence": 1.5
+    }
+  ],
+  "comments": [
+    {
+      "nodeId": "root",
+      "body": "Lähdehuomio: arviot ovat tekoälyn ehdottamia laadullisia arvioita; niitä ei pidä tulkita tutkimuksesta mitatuiksi prosenttiosuuksiksi eikä väittämien välisten riippuvuuksien poistamiseksi. Tarkistuspäivä 7.11.2026. Ohjelmistojen tuki voi muuttua."
+    },
+    {
+      "nodeId": "a_dev",
+      "body": "Microsoftin kuvaus WSL:stä vaihtoehtoisena Linux-kehitysympäristönä: https://developer.microsoft.com/en-us/windows/wsl"
+    },
+    {
+      "nodeId": "a_web_counter",
+      "body": "Microsoftin Teams-asiakasalustat: Linuxille web/PWA, ei tuettua natiivia desktop-asiakasta. https://learn.microsoft.com/en-us/microsoftteams/teams-client-desktop-admin ja verkkoversion rajaukset https://learn.microsoft.com/en-us/microsoftteams/new-teams-web"
+    },
+    {
+      "nodeId": "a_office",
+      "body": "Microsoft 365 -työpöytäsovellusten todellinen saatavuus ja verkkotoiminnallisuus tulee aina varmistaa lisenssi- ja sovelluskohtaisesti; toimivuudesta ei ole tehty käyttäjäkohtaista testausta."
+    },
+    {
+      "nodeId": "a_gaming",
+      "body": "Valven Proton mahdollistaa monien Windows-pelien käynnistämisen Linuxissa: https://github.com/ValveSoftware/Proton"
+    },
+    {
+      "nodeId": "a_anticheat",
+      "body": "Epic Online Servicesin 14.10.2026 tieto vahvistaa, että EAC/Proton-tuki on ollut pelikohtaisesti aktivoitava ja uudempaa Linux-suojausta kehitetään: https://onlineservices.epicgames.com/news/introducing-easy-anti-cheat-linux-v2 . Yleistystä kaikkien verkkopelien toimivuudesta ei tehdä."
+    },
+    {
+      "nodeId": "a_adobe",
+      "body": "Adoben Creative Cloud -työpöytäsovellusten viralliset 2026-käyttöjärjestelmävaatimukset painottuvat Windowsiin ja macOS:ään: https://helpx.adobe.com/download-install/apps/system-requirements/creative-cloud-requirements.html"
+    },
+    {
+      "nodeId": "a_audio",
+      "body": "Viralliset Linux-versiot: https://www.bitwig.com/support/technical_support/system-requirements-1/ ja https://www.cockos.com/reaper/download.php . Lisäohjelmilla, äänikorteilla ja plugineilla on erilliset vaatimukset."
+    },
+    {
+      "nodeId": "a_audio_counter",
+      "body": "Cubasen viralliset vaatimukset sisältävät Windows- ja macOS-alustat, ei Linuxia: https://www.steinberg.net/system-requirements/ . Muut ohjelmat ja lisäosat tarkistettava valmistajilta."
+    },
+    {
+      "nodeId": "a_multimedia",
+      "body": "Blenderin Linux-jakelu https://www.blender.org/download/ ja DaVinci Resolven Linux-jakelu sekä vaatimukset https://www.blackmagicdesign.com/event/davinciresolvedownload ."
+    },
+    {
+      "nodeId": "c_wsl_fs",
+      "body": "Microsoftin WSL-tiedostojärjestelmän suorituskykysuositus: https://learn.microsoft.com/en-us/windows/wsl/filesystems"
+    },
+    {
+      "nodeId": "d_games",
+      "body": "Pelituen vertailu on yleistasoinen arvio; yksittäiset nimikkeet, DRM, verkko- ja laitteistotuki sekä yhteensopivuus on tarkastettava erikseen ennen alustavalintaa."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: install (no-op until dependencies exist)
+        run: if [ -f package-lock.json ]; then npm ci; fi
+      - name: docs links, spec index, lens placeholders
+        run: node scripts/check-docs.mjs
+      - name: spec lock (a spec change carries a changelog line)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            node scripts/check-spec-lock.mjs --base "origin/${{ github.base_ref }}"
+          else
+            node scripts/check-spec-lock.mjs --base HEAD~1
+          fi
+      - name: lint, typecheck, format, unit and golden tests (from WG-003)
+        run: |
+          if node -e "const s=require('./package.json').scripts; process.exit(s.lint&&s.typecheck&&s.test?0:1)"; then
+            npm run lint && npm run typecheck && npm run format:check && npm test
+          else
+            echo "not-run: lint/typecheck/test scripts not defined yet (WG-003)"
+          fi
+  prototype:
+    name: prototype
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: the prototype's 372 tests, build and Pages preflight (frozen reference)
+        run: npm run proto:check && npm run proto:build

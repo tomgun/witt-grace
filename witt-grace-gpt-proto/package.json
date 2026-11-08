@@ -1,0 +1,19 @@
+{
+  "name": "witt-grace-starter",
+  "version": "0.11.0-dev.32",
+  "private": true,
+  "description": "WITT argument map with scenario library, guided tutorial, and local assessor comparisons; P2P planned",
+  "scripts": {
+    "dev": "node tools/server.cjs",
+    "i18n": "node tools/generate-locales.cjs",
+    "schema": "node tools/generate-import-schema.cjs",
+    "examples": "python3 tools/build-example-library.py",
+    "test": "node --test tests/*.test.cjs",
+    "check": "npm run i18n && npm run schema && node --check src/project-import-schema.js && node --check src/import-validation.js && node --check src/core.js && node --check src/view-layout.js && node --check src/i18n.js && node --check src/keyboard-nav.js && node --check src/history.js && node --check src/table-model.js && node --check src/examples.js && node --check src/review-lens.js && node --check src/workspace.js && node --check src/ai-starter.js && node --check src/ai-roundtrip.js && node --check src/ai-draft-v2.js && node --check src/contributions.js && node --check src/document-library.js && node --check src/diagram-export.js && node --check src/assessor-view.js && node --check src/p2p-host-engine.js && node --check src/app.js && node tools/check-docs.cjs && npm test",
+    "build": "npm run i18n && npm run schema && npm run examples && node tools/build.cjs",
+    "preview": "npm run build && node tools/server.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

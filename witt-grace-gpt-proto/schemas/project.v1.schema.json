@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/peruste/project.v1.schema.json",
+  "title": "Peruste project interchange schema v1",
+  "description": "JSON shape only. Parent references, graph cycles, user references, root uniqueness and duplicate ballots are verified by src/core.js.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "title", "mode", "theme", "settings", "users", "nodes", "votes", "ballots", "createdAt", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "$ref": "#/$defs/id" },
+    "title": { "$ref": "#/$defs/title" },
+    "mode": { "enum": ["argument", "decision"] },
+    "theme": { "enum": ["light", "dark", "paper"] },
+    "settings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["voteWeighting", "shareSnapshotDate", "scoring"],
+      "properties": {
+        "voteWeighting": { "enum": ["equal", "shares"] },
+        "shareSnapshotDate": { "type": ["string", "null"], "maxLength": 32 },
+        "scoring": { "const": "heuristic-v1" }
+      }
+    },
+    "users": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/$defs/user" } },
+    "nodes": { "type": "array", "minItems": 1, "maxItems": 1000, "items": { "$ref": "#/$defs/node" } },
+    "votes": { "type": "array", "maxItems": 10000, "items": { "$ref": "#/$defs/vote" } },
+    "ballots": { "type": "array", "maxItems": 10000, "items": { "$ref": "#/$defs/ballot" } },
+    "createdAt": { "type": "string", "maxLength": 50 },
+    "updatedAt": { "type": "string", "maxLength": 50 }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "user": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "shares", "role"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "shares": { "type": "number", "minimum": 0, "maximum": 1000000000000 },
+        "role": { "enum": ["owner", "editor", "viewer"] }
+      }
+    },
+    "node": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "parentId", "relation", "kind", "title", "details", "confidence", "impact", "collapsed", "position", "createdBy"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "parentId": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "relation": { "enum": ["root", "support", "oppose", "option"] },
+        "kind": { "enum": ["claim", "option", "decision"] },
+        "title": { "$ref": "#/$defs/title" },
+        "details": { "type": "string", "maxLength": 5000 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 100 },
+        "impact": { "type": "number", "minimum": 0, "maximum": 5 },
+        "collapsed": { "type": "boolean" },
+        "position": {
+          "type": "object", "additionalProperties": false,
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number", "minimum": -1000000, "maximum": 1000000 },
+            "y": { "type": "number", "minimum": -1000000, "maximum": 1000000 }
+          }
+        },
+        "createdBy": { "$ref": "#/$defs/id" }
+      }
+    },
+    "vote": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "nodeId", "userId", "confidence", "updatedAt"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nodeId": { "$ref": "#/$defs/id" },
+        "userId": { "$ref": "#/$defs/id" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 100 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      }
+    },
+    "ballot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "optionId", "userId", "preference", "updatedAt"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "optionId": { "$ref": "#/$defs/id" },
+        "userId": { "$ref": "#/$defs/id" },
+        "preference": { "type": "number", "minimum": 0, "maximum": 100 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+name: Task
+description: A unit of work with testable requirements (WG-NNN)
+labels: [P1]
+body:
+  - type: input
+    id: wg
+    attributes:
+      label: WG id
+      description: From docs/ISSUE-PLAN.md, or "new"
+      placeholder: WG-003
+  - type: textarea
+    id: must
+    attributes:
+      label: must / test / red-against
+      description: One behaviour per line, each with the test that proves it and the mistake that test catches; name the requirement ID (G-xx, UX-xx, U-xx, V-xx) where one exists
+      value: |
+        must: … · test: … · red-against: …
+    validations:
+      required: true
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Invariants, specs and lenses touched
+      description: Which CLAUDE.md invariants (1–11) apply, which docs/spec files the change reads (a spec *change* is its own issue), and which lenses the change earns
+  - type: textarea
+    id: scope
+    attributes:
+      label: Not in scope
+  - type: input
+    id: blocked
+    attributes:
+      label: Blocked by
+      placeholder: '#12'

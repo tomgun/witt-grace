@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 8,
+  "id": "81ca6a42-9d96-4a26-8d5f-f7e15a376458",
+  "title": "ESIMERKKI: Vaihtoehtoryhmät ja kontekstisidonnaiset perusteet",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "name": "Esimerkkiarvioija Aino",
+      "shares": 1,
+      "role": "owner"
+    },
+    {
+      "id": "sample-bertta",
+      "name": "Esimerkkiarvioija Bertta",
+      "shares": 1,
+      "role": "editor"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "6e8667fe-332f-4aa1-bda3-370feb314c0f",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Miten vietämme vapaan lauantain?",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 363
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    },
+    {
+      "id": "6a9e2091-f6fe-4fb7-914e-f1924af59860",
+      "parentId": "6e8667fe-332f-4aa1-bda3-370feb314c0f",
+      "relation": "group",
+      "kind": "group",
+      "title": "Yhteistä tekemistä",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 363
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    },
+    {
+      "id": "f203fe31-1d38-4be3-bc8b-a4594de81db5",
+      "parentId": "6a9e2091-f6fe-4fb7-914e-f1924af59860",
+      "relation": "option",
+      "kind": "option",
+      "title": "Uimahalliin lasten kanssa",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 181
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    },
+    {
+      "id": "51483ddd-102d-4506-8410-952c0787eaca",
+      "parentId": "6a9e2091-f6fe-4fb7-914e-f1924af59860",
+      "relation": "group",
+      "kind": "group",
+      "title": "Kotona",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 545
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    },
+    {
+      "id": "3a9bf679-5dad-42f9-aa66-19f95a0d6cbc",
+      "parentId": "51483ddd-102d-4506-8410-952c0787eaca",
+      "relation": "option",
+      "kind": "option",
+      "title": "Lautapelejä lasten kanssa",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 454
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    },
+    {
+      "id": "c271cfde-4401-4420-b3c1-e4b121697faf",
+      "parentId": "51483ddd-102d-4506-8410-952c0787eaca",
+      "relation": "option",
+      "kind": "option",
+      "title": "Siivoamaan",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 636
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    },
+    {
+      "id": "18fee02b-046f-412a-abf4-a787938e08ad",
+      "parentId": "f203fe31-1d38-4be3-bc8b-a4594de81db5",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Saamme perheen yhteistä aikaa",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 90
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "semanticType": "fact",
+      "reasonConceptId": "1ac39891-c4a2-40fd-8add-414282d98374"
+    },
+    {
+      "id": "6c48e7bc-82ce-47ec-a022-76a81b32bb8b",
+      "parentId": "3a9bf679-5dad-42f9-aa66-19f95a0d6cbc",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Saamme perheen yhteistä aikaa",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 454
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "semanticType": "fact",
+      "reasonConceptId": "1ac39891-c4a2-40fd-8add-414282d98374"
+    },
+    {
+      "id": "d4b6e892-d79a-45a9-8c9e-d6984e418a16",
+      "parentId": "f203fe31-1d38-4be3-bc8b-a4594de81db5",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Yhdessäolo on meille tärkeää",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 272
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "semanticType": "value",
+      "reasonConceptId": "ed9edee7-3649-447f-a0a1-0ae755b27c51"
+    },
+    {
+      "id": "94702ad4-6144-4b54-9c05-3a9c68a1efd7",
+      "parentId": "c271cfde-4401-4420-b3c1-e4b121697faf",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Koti tulee järjestykseen",
+      "details": "",
+      "confidence": 65,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 636
+      },
+      "createdBy": "94f7a739-2b4e-458c-a9b3-d9919cc751d6"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [
+    {
+      "id": "1ac39891-c4a2-40fd-8add-414282d98374",
+      "title": "Saamme perheen yhteistä aikaa",
+      "semanticType": "fact"
+    },
+    {
+      "id": "ed9edee7-3649-447f-a0a1-0ae755b27c51",
+      "title": "Yhdessäolo on meille tärkeää",
+      "semanticType": "value"
+    }
+  ],
+  "votes": [
+    {
+      "id": "8c915dad-8a41-4146-81eb-28e359da46fa",
+      "nodeId": "18fee02b-046f-412a-abf4-a787938e08ad",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "confidence": 70,
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "eb5e9f17-7078-48d6-b956-00ec5fda6fd6",
+      "nodeId": "6c48e7bc-82ce-47ec-a022-76a81b32bb8b",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "confidence": 90,
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "1206fb87-1a2b-4066-b9d3-d8e0dd8c7dfa",
+      "nodeId": "18fee02b-046f-412a-abf4-a787938e08ad",
+      "userId": "sample-bertta",
+      "confidence": 55,
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "47b08369-49bc-49b3-aef3-64e10d9fed6a",
+      "nodeId": "94702ad4-6144-4b54-9c05-3a9c68a1efd7",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "confidence": 85,
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "56e52b17-297e-4599-bd47-a6fe62188c60",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "subjectType": "primary",
+      "subjectId": "18fee02b-046f-412a-abf4-a787938e08ad",
+      "influence": 4,
+      "fingerprint": "[\"18fee02b-046f-412a-abf4-a787938e08ad\",\"f203fe31-1d38-4be3-bc8b-a4594de81db5\",\"Saamme perheen yhteistä aikaa\",\"Uimahalliin lasten kanssa\",\"neutral\"]",
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "71c79294-f5af-421d-853f-3af9b76b158a",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "subjectType": "primary",
+      "subjectId": "6c48e7bc-82ce-47ec-a022-76a81b32bb8b",
+      "influence": 5,
+      "fingerprint": "[\"6c48e7bc-82ce-47ec-a022-76a81b32bb8b\",\"3a9bf679-5dad-42f9-aa66-19f95a0d6cbc\",\"Saamme perheen yhteistä aikaa\",\"Lautapelejä lasten kanssa\",\"neutral\"]",
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "43fe2c6e-534f-418e-9cb4-3751a8049d39",
+      "userId": "sample-bertta",
+      "subjectType": "primary",
+      "subjectId": "18fee02b-046f-412a-abf4-a787938e08ad",
+      "influence": 2,
+      "fingerprint": "[\"18fee02b-046f-412a-abf4-a787938e08ad\",\"f203fe31-1d38-4be3-bc8b-a4594de81db5\",\"Saamme perheen yhteistä aikaa\",\"Uimahalliin lasten kanssa\",\"neutral\"]",
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "518e1d7d-75c3-40e7-a8a6-09689c4a2b51",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "subjectType": "primary",
+      "subjectId": "d4b6e892-d79a-45a9-8c9e-d6984e418a16",
+      "influence": 3,
+      "fingerprint": "[\"d4b6e892-d79a-45a9-8c9e-d6984e418a16\",\"f203fe31-1d38-4be3-bc8b-a4594de81db5\",\"Yhdessäolo on meille tärkeää\",\"Uimahalliin lasten kanssa\",\"neutral\"]",
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    },
+    {
+      "id": "8ddfe06c-3fb4-4855-8ba7-b406e7212c9f",
+      "userId": "94f7a739-2b4e-458c-a9b3-d9919cc751d6",
+      "subjectType": "primary",
+      "subjectId": "94702ad4-6144-4b54-9c05-3a9c68a1efd7",
+      "influence": 4,
+      "fingerprint": "[\"94702ad4-6144-4b54-9c05-3a9c68a1efd7\",\"c271cfde-4401-4420-b3c1-e4b121697faf\",\"Koti tulee järjestykseen\",\"Siivoamaan\",\"support\"]",
+      "updatedAt": "2026-11-07T13:35:14.137Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T13:35:14.136Z",
+  "updatedAt": "2026-11-07T13:35:14.136Z"
+}

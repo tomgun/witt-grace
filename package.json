@@ -1,0 +1,16 @@
+{
+  "name": "witt-grace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WITT: a local-first argument map and decision workbench for the GRACE method. Rebuild of the dev32 prototype kept in witt-grace-gpt-proto/.",
+  "engines": {
+    "node": ">=22.18 <27"
+  },
+  "scripts": {
+    "check": "node scripts/check-docs.mjs && node scripts/check-spec-lock.mjs",
+    "proto:check": "npm --prefix witt-grace-gpt-proto run check",
+    "proto:build": "npm --prefix witt-grace-gpt-proto run build && cd witt-grace-gpt-proto && node tools/verify-pages-build.cjs",
+    "proto:dev": "npm --prefix witt-grace-gpt-proto run dev"
+  }
+}

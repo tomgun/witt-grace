@@ -1,0 +1,2 @@
+# Pinned headless-browser test harness; no runtime dependency for the WITT app.
+playwright==1.57.0

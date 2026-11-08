@@ -1,0 +1,27 @@
+name: Bug
+description: Something behaves wrongly (in the new app; prototype behaviour is the oracle, not a bug)
+labels: [P1, bug]
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      description: Include what the prototype at /proto/ does with the same document, if it differs
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: A minimal synthetic .witt.json, the actions, the exact Finnish message shown; never a personal document or a real name
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+  - type: textarea
+    id: test
+    attributes:
+      label: The test that should have caught it
+      description: file and case, or "none yet"

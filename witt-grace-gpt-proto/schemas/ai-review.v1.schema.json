@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WITT AI review response, proposed changes only",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "projectId",
+    "baseFingerprint",
+    "assessor"
+  ],
+  "properties": {
+    "format": {
+      "const": "witt-ai-review-v1"
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "baseFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$"
+    },
+    "assessor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 70
+    },
+    "claims": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "links": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/link"
+      }
+    },
+    "assessments": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/assessment"
+      }
+    },
+    "relationAssessments": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/relationAssessment"
+      }
+    },
+    "comments": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/comment"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tempId",
+        "parentId",
+        "relation",
+        "title"
+      ],
+      "properties": {
+        "tempId": {
+          "$ref": "#/$defs/id"
+        },
+        "parentId": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "enum": [
+            "support",
+            "oppose",
+            "option"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "details": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "semanticType": {
+          "enum": [
+            "unspecified",
+            "fact",
+            "assumption",
+            "value",
+            "constraint",
+            "prerequisite"
+          ]
+        },
+        "constraintStatus": {
+          "enum": [
+            "unknown",
+            "met",
+            "unmet"
+          ]
+        },
+        "authorVisibility": {
+          "enum": [
+            "named",
+            "anonymous"
+          ]
+        },
+        "sources": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "url",
+              "note"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "maxLength": 1000,
+                "pattern": "^https?://"
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          }
+        }
+      }
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "targetId",
+        "relation"
+      ],
+      "properties": {
+        "sourceId": {
+          "$ref": "#/$defs/id"
+        },
+        "targetId": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "enum": [
+            "support",
+            "oppose"
+          ]
+        },
+        "influence": {
+          "type": "number",
+          "minimum": -5,
+          "maximum": 5,
+          "multipleOf": 0.5
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "credence"
+          ]
+        },
+        {
+          "required": [
+            "primaryInfluence"
+          ]
+        }
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/id"
+        },
+        "credence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "primaryInfluence": {
+          "type": "number",
+          "minimum": -5,
+          "maximum": 5,
+          "multipleOf": 0.5
+        }
+      }
+    },
+    "relationAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subjectType",
+        "subjectId",
+        "influence"
+      ],
+      "properties": {
+        "subjectType": {
+          "enum": [
+            "primary",
+            "secondary"
+          ]
+        },
+        "subjectId": {
+          "$ref": "#/$defs/id"
+        },
+        "influence": {
+          "type": "number",
+          "minimum": -5,
+          "maximum": 5,
+          "multipleOf": 0.5
+        }
+      }
+    },
+    "comment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "body"
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/id"
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        }
+      }
+    }
+  }
+}

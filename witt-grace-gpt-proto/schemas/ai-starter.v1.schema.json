@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:witt:ai-starter:v1",
+  "title": "WITT unassessed claim tree draft",
+  "description": "Unassessed claims only. Import creates editable WITT v4; no person, credence, relation-impact rating or ballot is accepted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "title",
+    "root",
+    "claims"
+  ],
+  "properties": {
+    "format": {
+      "const": "witt-ai-starter-v1"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "root": {
+      "$ref": "#/$defs/root"
+    },
+    "claims": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,39}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "details": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "$ref": "#/$defs/title"
+        },
+        "details": {
+          "$ref": "#/$defs/details"
+        }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "parentId",
+        "relation",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "parentId": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "enum": [
+            "support",
+            "oppose"
+          ]
+        },
+        "title": {
+          "$ref": "#/$defs/title"
+        },
+        "details": {
+          "$ref": "#/$defs/details"
+        }
+      }
+    }
+  }
+}

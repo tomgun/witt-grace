@@ -1,0 +1,66 @@
+name: Publish to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    name: pages-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: build the frozen prototype
+        run: npm run proto:check && npm run proto:build
+      - name: assemble the site (prototype at /proto/, landing page at /)
+        run: |
+          mkdir -p _site/proto
+          cp -R witt-grace-gpt-proto/dist/. _site/proto/
+          touch _site/.nojekyll
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="fi">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="robots" content="noindex, nofollow">
+            <title>WITT / GRACE</title>
+            <style>
+              body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.5; }
+              a { color: #0b5fa5; }
+            </style>
+          </head>
+          <body>
+            <h1>WITT / GRACE</h1>
+            <p>Uusi toteutus on rakenteilla. Toimiva prototyyppi (dev32) on käytettävissä osoitteessa
+              <a href="proto/">proto/</a>. Yhden tiedoston offline-versio:
+              <a href="proto/witt-standalone.html" download>witt-standalone.html</a>.</p>
+            <p>Selaimen tallennus on sivustokohtainen eikä varmuuskopio: vie työsi .witt.json-tiedostoksi.</p>
+          </body>
+          </html>
+          HTML
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    name: pages-deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

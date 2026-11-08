@@ -1,0 +1,10 @@
+node_modules
+dist
+witt-grace-gpt-proto
+tmp-ref
+_archive
+docs/principles
+docs/lenses
+*.md
+playwright-report
+test-results
