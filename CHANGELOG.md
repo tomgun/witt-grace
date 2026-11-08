@@ -4,6 +4,9 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ## [Unreleased]
 
+### Changed
+- WG-021: the locale catalog is split. `src/lib/i18n/catalog.ts` carries the languages, the typed key list and Finnish; `src/lib/i18n/messages/<lang>.ts` are generated per language and loaded on demand through `loaders.ts` (one chunk each); `translate(messages, key, params)` takes the loaded map and falls back to Finnish. The main bundle fell from 770 kB to 383 kB (119 kB gzip). The tests load every language and check completeness and placeholder parity per module; a browser walk switches to English and back.
+
 ### Added
 - WG-016 (part): the user guide in Finnish (`docs/KAYTTOOHJE.md`) and English (`docs/USER_GUIDE.md`) describing what the new app does today; `check-docs` fails when either is missing; `docs/ARCHITECTURE.md` now describes the implemented structure and names the command log as the future P2P event log.
 

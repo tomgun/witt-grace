@@ -3,8 +3,8 @@
 import { useSyncExternalStore } from 'react';
 import { applyCommand, createBlankProject, parseProject, rootNode } from '../domain/index.ts';
 import type { Command, Mode, Project } from '../domain/index.ts';
-import { DEFAULT_LANGUAGE, isLanguage, translator } from '../lib/i18n/i18n.ts';
-import type { Language, MessageKey } from '../lib/i18n/i18n.ts';
+import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
+import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import {
   APPEARANCE_KEY,
@@ -41,6 +41,8 @@ export interface AppState {
   selectedId: string;
   actorId: string;
   language: Language;
+  /** The active language's messages; Finnish until another language has loaded. */
+  messages: Messages;
   appearance: Appearance;
   view: ViewState;
   canUndo: boolean;
@@ -87,6 +89,7 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
     selectedId: (rootNode(initialProject) as { id: string }).id,
     actorId: (initialProject.users[0] as { id: string }).id,
     language: isLanguage(savedLanguage) ? savedLanguage : DEFAULT_LANGUAGE,
+    messages: FI,
     appearance: APPEARANCES.includes(savedAppearance as Appearance)
       ? (savedAppearance as Appearance)
       : 'light',
@@ -132,6 +135,10 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
     persist(project);
   };
 
+  if (state.language !== 'fi')
+    void loadMessages(state.language).then((messages) => {
+      if (state.messages === FI) set({ messages });
+    });
   const api = {
     subscribe(listener: () => void) {
       listeners.add(listener);
@@ -182,6 +189,9 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
     setLanguage(language: Language) {
       writePreference(store, LOCALE_KEY, language);
       set({ language });
+      void loadMessages(language).then((messages) => {
+        if (state.language === language) set({ messages });
+      });
     },
     setAppearance(appearance: Appearance) {
       writePreference(store, APPEARANCE_KEY, appearance);
@@ -214,6 +224,6 @@ export function useAppState(): AppState {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
 }
 export function useTranslator() {
-  const { language } = useAppState();
-  return translator(language);
+  const { messages } = useAppState();
+  return translator(messages);
 }

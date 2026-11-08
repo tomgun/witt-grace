@@ -13,3 +13,5 @@ test-results
 src/lib/i18n/catalog.ts
 playwright-report
 test-results
+src/lib/i18n/messages/
+src/lib/i18n/loaders.ts

@@ -131,3 +131,13 @@ test('the table view lists every claim with its relation, context and review', a
   await page.getByTestId('layout-tree').click();
   await expect(page.getByTestId('viewport')).toBeVisible();
 });
+
+test('switching the language loads its messages on demand', async ({ page }) => {
+  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('Tiedosto');
+  await page.getByTestId('language-select').selectOption('en');
+  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('File');
+  await page.reload();
+  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('File');
+  await page.getByTestId('language-select').selectOption('fi');
+  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('Tiedosto');
+});

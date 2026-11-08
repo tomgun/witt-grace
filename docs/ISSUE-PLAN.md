@@ -27,7 +27,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-018** Pin GitHub Actions by commit SHA; Dependabot triage policy.
 - [ ] **WG-022** PARTIAL 2026-11-08: at 390 px the canvas now keeps at least 40 vh (outline ≤ 22 vh, inspector ≤ 30 vh); open: collapsible sheets so a person can give the tree the whole height (UX-B08).
 - [ ] **WG-019** Accessibility pass (axe on every top-level view; keyboard-only walks; contrast of every theme) before calling the new app a replacement.
-- [ ] **WG-021** Split the locale catalog per language and load the active one lazily (the nine-language catalog is 490 kB of the 770 kB bundle).
+- [x] **WG-021** DONE 2026-11-08: Finnish ships in the main bundle (71 kB source), the other eight languages are separate chunks loaded on demand; the main bundle fell from 770 kB to 383 kB (119 kB gzip).
 - [ ] **WG-020** Prototype retirement criteria check: every golden fixture, every REQUIREMENTS row marked Implemented, every UX item walked; then decide whether `/proto/` stays as history.
 
 ## Future (not scheduled)
