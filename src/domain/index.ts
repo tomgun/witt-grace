@@ -37,3 +37,17 @@ export { optionPreference, optionPreferenceForRound } from './ballots.ts';
 export type { Preference } from './ballots.ts';
 export { decisionRanking, decisionRankingForAssessor } from './ranking.ts';
 export type { RankedOption, PersonalRankedOption } from './ranking.ts';
+export { createBlankProject, newNode, autoLayoutPositions } from './project.ts';
+export type { CreateInput, NewNodeInput } from './project.ts';
+export {
+  visibleNodes,
+  focusProjection,
+  respectExplicitCollapse,
+  optionGroupPath,
+  assessmentOrder,
+  optionValueProfile,
+  potentialEvidenceOverlap,
+} from './views.ts';
+export type { FocusProjection, FocusStance, ValueProfileItem } from './views.ts';
+export { applyCommand, applyCommands, canReparent, canAddLink, canAttachReasonConcept } from './commands.ts';
+export type { Command, CommandType, CommandContext } from './commands.ts';
