@@ -1,0 +1,2635 @@
+{
+ "name": "example-debate-tekoalykehitys",
+ "source": "witt-grace-gpt-proto/examples/debate-tekoalykehitys.witt.json",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "3b3914f2-3b6b-5197-9a35-33663cbf0341",
+  "title": "Tekoälyagentit ohjelmistokehityksessä",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "name": "Noora · turvallisuus",
+    "shares": 1,
+    "role": "owner"
+   },
+   {
+    "id": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "name": "Tuomas · kehittäjä",
+    "shares": 1,
+    "role": "editor"
+   },
+   {
+    "id": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "name": "Veera · toimitus",
+    "shares": 1,
+    "role": "editor"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "parentId": null,
+    "relation": "root",
+    "kind": "claim",
+    "title": "Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.",
+    "details": "",
+    "confidence": 50,
+    "impact": 0,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 100
+    },
+    "createdBy": "0b832d35-e0b4-568e-aaa9-03d15d8be329"
+   },
+   {
+    "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Agentit voivat nopeuttaa rutiinitehtäviä",
+    "details": "Vaikutus riippuu tehtävästä, mallista, testauksesta ja kontekstista.",
+    "confidence": 82,
+    "impact": 5,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 216
+    },
+    "createdBy": "b8270195-45e7-5dd0-8d7c-abbce522d4ef"
+   },
+   {
+    "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "parentId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Tarkistaminen voi syödä osan ajansäästöstä",
+    "details": "Erityisesti vaikeat tai huonosti rajatut muutokset.",
+    "confidence": 87,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 332
+    },
+    "createdBy": "55f66861-714a-5975-a8d6-4e08d87e3434"
+   },
+   {
+    "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Liian laajat käyttöoikeudet lisäävät tietoturvariskejä",
+    "details": "Rajoite: salaisuuksia ja lähdeaineistoa on suojattava.",
+    "confidence": 91,
+    "impact": 5,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 448
+    },
+    "createdBy": "0b832d35-e0b4-568e-aaa9-03d15d8be329"
+   },
+   {
+    "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "parentId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Eristys ja tiukat oikeudet voivat pienentää riskejä",
+    "details": "Ehdollinen väite: rajaukset on todennettava käytännössä.",
+    "confidence": 90,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 564
+    },
+    "createdBy": "b8270195-45e7-5dd0-8d7c-abbce522d4ef"
+   },
+   {
+    "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Generoitu koodi voi sisältää huomaamattomia virheitä",
+    "details": "Vaatii testit, katselmoinnin ja todentamisen.",
+    "confidence": 94,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 680
+    },
+    "createdBy": "55f66861-714a-5975-a8d6-4e08d87e3434"
+   },
+   {
+    "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "parentId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Regressiotestit ja rajatut muutokset voivat havaita virheitä",
+    "details": "Testit eivät todista ohjelmiston täydellistä virheettömyyttä.",
+    "confidence": 89,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 796
+    },
+    "createdBy": "0b832d35-e0b4-568e-aaa9-03d15d8be329"
+   },
+   {
+    "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Liiallinen delegointi voi heikentää osaamisen kertymistä",
+    "details": "Riippuu työnjaosta ja siitä, tekeekö ihminen tarkastelun ajatuksella.",
+    "confidence": 80,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 912
+    },
+    "createdBy": "b8270195-45e7-5dd0-8d7c-abbce522d4ef"
+   },
+   {
+    "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "parentId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Agentin ratkaisuja analysoimalla voi myös oppia",
+    "details": "Ehdollinen väite: aktiivinen oppiminen vaatii aikaa.",
+    "confidence": 80,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 1028
+    },
+    "createdBy": "55f66861-714a-5975-a8d6-4e08d87e3434"
+   },
+   {
+    "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Nopeampi toimitus voi auttaa asiakasta",
+    "details": "Arvostus: läpimenoaika ei korvaa luotettavuutta tai turvallisuutta.",
+    "confidence": 85,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 1144
+    },
+    "createdBy": "0b832d35-e0b4-568e-aaa9-03d15d8be329"
+   },
+   {
+    "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "parentId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Vastuut ja auditointi pitää silti määritellä",
+    "details": "Rajoite: kuka hyväksyy, dokumentoi ja kantaa vastuun tuotannossa.",
+    "confidence": 98,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 1260
+    },
+    "createdBy": "b8270195-45e7-5dd0-8d7c-abbce522d4ef"
+   }
+  ],
+  "votes": [
+   {
+    "id": "b4a19b25-2bbc-52aa-8bc6-624780089932",
+    "nodeId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "025393a2-4a56-581d-b197-486f0206b3db",
+    "nodeId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c333295d-b932-5c38-b68c-296c4812f89c",
+    "nodeId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "074b117c-68fe-5b2b-8132-6d2d95ee43c2",
+    "nodeId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 77,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9ade309c-c6a4-55e9-bdf1-109d9f305bb1",
+    "nodeId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 97,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "0dcfd45a-d88e-562c-8371-5daec3a947eb",
+    "nodeId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 91,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "27c66433-3885-5006-bb96-22c8e661f113",
+    "nodeId": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 93,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cfbafd60-96e1-545f-b303-285986caba6a",
+    "nodeId": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 82,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "59e9c2ca-4e8a-51ce-8c0e-06b7588241b6",
+    "nodeId": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 88,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "869180fb-9835-5cd1-b291-a23e8b3b01d9",
+    "nodeId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 99,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ec55d57c-e249-52f3-82c7-82c59290a21b",
+    "nodeId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 81,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "28964da8-4ea4-5aad-b63a-ddc98ba3e82b",
+    "nodeId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 90,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a74a8143-2ad0-5de7-947e-15d7aebe7b47",
+    "nodeId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d227d271-47d8-54db-800d-fe9f68258805",
+    "nodeId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "74710577-b7a7-5382-b962-a7e651198be9",
+    "nodeId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 91,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d210df49-fe92-5edb-a955-5c922af3f8a7",
+    "nodeId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "aefaa2d2-312e-5247-98a9-ee77346c6556",
+    "nodeId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 89,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "4ea1b954-be06-5fb4-8ac8-bc6b927dac33",
+    "nodeId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "25afbfb6-b036-5fa5-88de-ed6de483e69f",
+    "nodeId": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c0fcaf23-58a9-51d1-93f2-29578b39ce46",
+    "nodeId": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "30800d96-0f62-5faa-a3f4-64e73ba98535",
+    "nodeId": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 92,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a298a271-e799-5829-8a07-28c46ccd2e0c",
+    "nodeId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 85,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1ba7f315-ad0b-5e04-beb9-1566d041f53a",
+    "nodeId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 68,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9c9c6c5c-76de-5c10-b995-c12365b76f2d",
+    "nodeId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 77,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "b4b60917-4169-5a97-b396-724a221bd481",
+    "nodeId": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 75,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "3592bb3c-edc2-5589-b347-558a3bff1806",
+    "nodeId": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "b3d8c460-8370-557a-ab80-0463a190cda8",
+    "nodeId": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 86,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f5c59125-7be8-52ed-9997-da4cc2345042",
+    "nodeId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 64,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "851eb6c7-2873-52f2-851a-2b40117a4544",
+    "nodeId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 93,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "49d01b43-a205-5434-adbb-bcd058010f48",
+    "nodeId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 99,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c2e68cfc-3e81-5441-b4aa-dde6cfbc653b",
+    "nodeId": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "confidence": 99,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6b29c85f-e183-5b98-8128-eb80fe2cbe08",
+    "nodeId": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "confidence": 93,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f271465e-269d-5c96-a4e8-cb525ea1f492",
+    "nodeId": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   }
+  ],
+  "edgeAssessments": [
+   {
+    "id": "2ab9459f-2ade-5db4-9df8-23c6563a3086",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "influence": 3,
+    "fingerprint": "[\"2f5262ff-115e-5917-a43f-eced8271ed73\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Agentit voivat nopeuttaa rutiinitehtäviä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6b9de25e-f1c0-5f7d-8b7a-b88df67dec4e",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "influence": 5,
+    "fingerprint": "[\"2f5262ff-115e-5917-a43f-eced8271ed73\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Agentit voivat nopeuttaa rutiinitehtäviä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "b46f89a9-198f-5cdf-b116-fdb19d850bce",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+    "influence": 5,
+    "fingerprint": "[\"2f5262ff-115e-5917-a43f-eced8271ed73\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Agentit voivat nopeuttaa rutiinitehtäviä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "52da0f45-c4c0-5741-853a-fa4e8eeb596b",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "influence": -4,
+    "fingerprint": "[\"02aef6d6-67da-519a-ad08-19e755aab256\",\"2f5262ff-115e-5917-a43f-eced8271ed73\",\"Tarkistaminen voi syödä osan ajansäästöstä\",\"Agentit voivat nopeuttaa rutiinitehtäviä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "80043880-6857-501e-94df-5d236c300b7e",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "influence": -2,
+    "fingerprint": "[\"02aef6d6-67da-519a-ad08-19e755aab256\",\"2f5262ff-115e-5917-a43f-eced8271ed73\",\"Tarkistaminen voi syödä osan ajansäästöstä\",\"Agentit voivat nopeuttaa rutiinitehtäviä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1047b553-0ac7-5962-a6c6-f500bb25718b",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "02aef6d6-67da-519a-ad08-19e755aab256",
+    "influence": -3,
+    "fingerprint": "[\"02aef6d6-67da-519a-ad08-19e755aab256\",\"2f5262ff-115e-5917-a43f-eced8271ed73\",\"Tarkistaminen voi syödä osan ajansäästöstä\",\"Agentit voivat nopeuttaa rutiinitehtäviä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "def46354-13a1-5532-8500-f7f7b56051a0",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "influence": -5,
+    "fingerprint": "[\"f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Liian laajat käyttöoikeudet lisäävät tietoturvariskejä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c4defeed-40cf-5bb8-aa99-3ccd82fa8e99",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "influence": -3,
+    "fingerprint": "[\"f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Liian laajat käyttöoikeudet lisäävät tietoturvariskejä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "05bb78f9-b4d5-5b86-89c8-45cc439df8f5",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+    "influence": -4,
+    "fingerprint": "[\"f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Liian laajat käyttöoikeudet lisäävät tietoturvariskejä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a8bd6346-e159-5857-a8f7-b2b0b905816b",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "influence": -4,
+    "fingerprint": "[\"c199b3bb-56c8-5029-8576-e6f8d0399635\",\"f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff\",\"Eristys ja tiukat oikeudet voivat pienentää riskejä\",\"Liian laajat käyttöoikeudet lisäävät tietoturvariskejä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "5a402a19-b744-5bb9-89b4-4f6dfc7938d6",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "influence": -5,
+    "fingerprint": "[\"c199b3bb-56c8-5029-8576-e6f8d0399635\",\"f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff\",\"Eristys ja tiukat oikeudet voivat pienentää riskejä\",\"Liian laajat käyttöoikeudet lisäävät tietoturvariskejä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "3da365ef-d4c7-5721-80e7-fe873f916d2b",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "influence": -4,
+    "fingerprint": "[\"c199b3bb-56c8-5029-8576-e6f8d0399635\",\"f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff\",\"Eristys ja tiukat oikeudet voivat pienentää riskejä\",\"Liian laajat käyttöoikeudet lisäävät tietoturvariskejä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "fccdcd5f-70a7-52a7-a956-f7520b69fb3c",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "influence": -5,
+    "fingerprint": "[\"6aaf6080-07d7-520c-a428-79581ed3e39e\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Generoitu koodi voi sisältää huomaamattomia virheitä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "799c7d92-66c8-5df5-aaa8-f4987a9d01e4",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "influence": -3,
+    "fingerprint": "[\"6aaf6080-07d7-520c-a428-79581ed3e39e\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Generoitu koodi voi sisältää huomaamattomia virheitä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "123b2d88-9dff-5746-9132-7b2d7ccd4748",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+    "influence": -4,
+    "fingerprint": "[\"6aaf6080-07d7-520c-a428-79581ed3e39e\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Generoitu koodi voi sisältää huomaamattomia virheitä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c4ba84e0-ad3c-59d6-b909-eebcade679e0",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "influence": -4,
+    "fingerprint": "[\"68770431-a93c-500d-b24b-7a7f3d986681\",\"6aaf6080-07d7-520c-a428-79581ed3e39e\",\"Regressiotestit ja rajatut muutokset voivat havaita virheitä\",\"Generoitu koodi voi sisältää huomaamattomia virheitä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d273bbe8-da4d-5b00-a2f0-4c895caf681f",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "influence": -5,
+    "fingerprint": "[\"68770431-a93c-500d-b24b-7a7f3d986681\",\"6aaf6080-07d7-520c-a428-79581ed3e39e\",\"Regressiotestit ja rajatut muutokset voivat havaita virheitä\",\"Generoitu koodi voi sisältää huomaamattomia virheitä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "8584f499-d36f-5867-a694-22e65cbe72eb",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "68770431-a93c-500d-b24b-7a7f3d986681",
+    "influence": -4,
+    "fingerprint": "[\"68770431-a93c-500d-b24b-7a7f3d986681\",\"6aaf6080-07d7-520c-a428-79581ed3e39e\",\"Regressiotestit ja rajatut muutokset voivat havaita virheitä\",\"Generoitu koodi voi sisältää huomaamattomia virheitä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "10ea2643-847f-5287-94cd-32bbcb07e3a7",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "influence": -3,
+    "fingerprint": "[\"b6e2d7e2-8856-5679-8cfb-5825e4fea847\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Liiallinen delegointi voi heikentää osaamisen kertymistä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "771d7cb7-67c6-5357-9793-fd164a9a2664",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "influence": -2,
+    "fingerprint": "[\"b6e2d7e2-8856-5679-8cfb-5825e4fea847\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Liiallinen delegointi voi heikentää osaamisen kertymistä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6c7fb224-7c9c-5fe6-9cdb-0b8c8b57e244",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+    "influence": -2,
+    "fingerprint": "[\"b6e2d7e2-8856-5679-8cfb-5825e4fea847\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Liiallinen delegointi voi heikentää osaamisen kertymistä\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a68e0683-133c-5a4e-aced-449852e1eee2",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "influence": -2,
+    "fingerprint": "[\"aabf6e95-e60d-5862-af0b-76a8ec11d871\",\"b6e2d7e2-8856-5679-8cfb-5825e4fea847\",\"Agentin ratkaisuja analysoimalla voi myös oppia\",\"Liiallinen delegointi voi heikentää osaamisen kertymistä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "15bfe8e5-b440-511a-bf5c-3f5465710a3c",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "influence": -5,
+    "fingerprint": "[\"aabf6e95-e60d-5862-af0b-76a8ec11d871\",\"b6e2d7e2-8856-5679-8cfb-5825e4fea847\",\"Agentin ratkaisuja analysoimalla voi myös oppia\",\"Liiallinen delegointi voi heikentää osaamisen kertymistä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ac874023-a039-565d-b3a5-61bf9a6268a4",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+    "influence": -3,
+    "fingerprint": "[\"aabf6e95-e60d-5862-af0b-76a8ec11d871\",\"b6e2d7e2-8856-5679-8cfb-5825e4fea847\",\"Agentin ratkaisuja analysoimalla voi myös oppia\",\"Liiallinen delegointi voi heikentää osaamisen kertymistä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f3bbf42f-2000-5dde-8411-5cf0ae743ce6",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "influence": 2,
+    "fingerprint": "[\"0f533f44-f9ca-57d6-a2b2-1c1187d415b5\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Nopeampi toimitus voi auttaa asiakasta\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "30f6a620-08be-5f4f-92c5-b66d25918de2",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "influence": 5,
+    "fingerprint": "[\"0f533f44-f9ca-57d6-a2b2-1c1187d415b5\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Nopeampi toimitus voi auttaa asiakasta\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6cce0fb9-f981-5aa2-adff-5e845522435b",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+    "influence": 5,
+    "fingerprint": "[\"0f533f44-f9ca-57d6-a2b2-1c1187d415b5\",\"3b8f2454-1b22-5771-a3c4-10723136125e\",\"Nopeampi toimitus voi auttaa asiakasta\",\"Tiimin kannattaa ottaa AI-koodiagentit laajaan päivittäiseen käyttöön asiakasprojektissa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "10be6a5b-3bd8-5ba5-aad0-03feae1638d5",
+    "userId": "0b832d35-e0b4-568e-aaa9-03d15d8be329",
+    "subjectType": "primary",
+    "subjectId": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "influence": -5,
+    "fingerprint": "[\"da4629b9-800f-58da-9c96-dacd1a4f783d\",\"0f533f44-f9ca-57d6-a2b2-1c1187d415b5\",\"Vastuut ja auditointi pitää silti määritellä\",\"Nopeampi toimitus voi auttaa asiakasta\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e8c1449a-b7b3-5078-bcfd-02abdc3aca8d",
+    "userId": "b8270195-45e7-5dd0-8d7c-abbce522d4ef",
+    "subjectType": "primary",
+    "subjectId": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "influence": -4,
+    "fingerprint": "[\"da4629b9-800f-58da-9c96-dacd1a4f783d\",\"0f533f44-f9ca-57d6-a2b2-1c1187d415b5\",\"Vastuut ja auditointi pitää silti määritellä\",\"Nopeampi toimitus voi auttaa asiakasta\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cb47712f-f248-5ec7-933f-142e6e4b9f22",
+    "userId": "55f66861-714a-5975-a8d6-4e08d87e3434",
+    "subjectType": "primary",
+    "subjectId": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+    "influence": -4,
+    "fingerprint": "[\"da4629b9-800f-58da-9c96-dacd1a4f783d\",\"0f533f44-f9ca-57d6-a2b2-1c1187d415b5\",\"Vastuut ja auditointi pitää silti määritellä\",\"Nopeampi toimitus voi auttaa asiakasta\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [
+   {
+    "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+    "sourceId": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+    "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+    "relation": "support",
+    "impact": 2
+   }
+  ],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-06T08:00:00.000Z",
+  "updatedAt": "2026-11-06T08:00:00.000Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "score": 75.18333333333334,
+     "balance": 50.366666666666674,
+     "base": 88.33333333333333,
+     "delta": -13.149999999999991,
+     "positive": 0,
+     "negative": 2.63,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 87.66666666666667,
+       "magnitude": 2.63,
+       "missing": false
+      }
+     ]
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "score": 94.33333333333333,
+     "balance": 88.66666666666666,
+     "base": 94.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "score": 69.56111111111112,
+     "balance": 39.122222222222234,
+     "base": 90,
+     "delta": -20.438888888888883,
+     "positive": 0,
+     "negative": 4.087777777777777,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+       "subjectType": "primary",
+       "impact": -4.333333333333333,
+       "strength": 94.33333333333333,
+       "magnitude": 4.087777777777777,
+       "missing": false
+      }
+     ]
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "score": 94.33333333333333,
+     "balance": 88.66666666666666,
+     "base": 94.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "score": 72.89444444444445,
+     "balance": 45.78888888888889,
+     "base": 93.33333333333333,
+     "delta": -20.438888888888883,
+     "positive": 0,
+     "negative": 4.087777777777777,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+       "subjectType": "primary",
+       "impact": -4.333333333333333,
+       "strength": 94.33333333333333,
+       "magnitude": 4.087777777777777,
+       "missing": false
+      }
+     ]
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "score": 85.33333333333333,
+     "balance": 70.66666666666666,
+     "base": 85.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "score": 62.44444444444445,
+     "balance": 24.8888888888889,
+     "base": 76.66666666666667,
+     "delta": -14.222222222222221,
+     "positive": 0,
+     "negative": 2.8444444444444446,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 85.33333333333333,
+       "magnitude": 2.8444444444444446,
+       "missing": false
+      }
+     ]
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "score": 64.53333333333333,
+     "balance": 29.066666666666663,
+     "base": 85.33333333333333,
+     "delta": -20.799999999999997,
+     "positive": 0,
+     "negative": 4.159999999999999,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+       "subjectType": "primary",
+       "impact": -4.333333333333333,
+       "strength": 96,
+       "magnitude": 4.159999999999999,
+       "missing": false
+      }
+     ]
+    },
+    "3b8f2454-1b22-5771-a3c4-10723136125e": {
+     "score": 53.42009259259259,
+     "balance": 6.840185185185177,
+     "base": 60,
+     "delta": -6.579907407407411,
+     "positive": 5.839277777777777,
+     "negative": 7.155259259259259,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+       "subjectType": "primary",
+       "impact": 4.333333333333333,
+       "strength": 75.18333333333334,
+       "magnitude": 3.257944444444444,
+       "missing": false
+      },
+      {
+       "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 69.56111111111112,
+       "magnitude": 2.7824444444444447,
+       "missing": false
+      },
+      {
+       "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 72.89444444444445,
+       "magnitude": 2.915777777777778,
+       "missing": false
+      },
+      {
+       "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+       "subjectType": "primary",
+       "impact": -2.3333333333333335,
+       "strength": 62.44444444444445,
+       "magnitude": 1.4570370370370371,
+       "missing": false
+      },
+      {
+       "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 64.53333333333333,
+       "magnitude": 2.5813333333333333,
+       "missing": false
+      },
+      {
+       "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 94.33333333333333,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 16.289722222222217,
+     "delta": 16.289722222222217,
+     "provisional": true
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -13.91222222222222,
+     "delta": -13.91222222222222,
+     "provisional": true
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -14.57888888888889,
+     "delta": -14.57888888888889,
+     "provisional": true
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -7.285185185185185,
+     "delta": -7.285185185185185,
+     "provisional": true
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 12.906666666666666,
+     "delta": 12.906666666666666,
+     "provisional": true
+    },
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "parentId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -13.149999999999991,
+     "delta": -2.849166666666669,
+     "provisional": true
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "parentId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -20.438888888888883,
+     "delta": 4.087777777777774,
+     "provisional": true
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "parentId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -20.438888888888883,
+     "delta": 4.087777777777774,
+     "provisional": true
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "parentId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -14.222222222222221,
+     "delta": 1.6592592592592652,
+     "provisional": true
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "parentId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -20.799999999999997,
+     "delta": -4.160000000000004,
+     "provisional": true
+    }
+   },
+   "ranking": null
+  },
+  "shares": {
+   "nodes": {
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "score": 75.18333333333334,
+     "balance": 50.366666666666674,
+     "base": 88.33333333333333,
+     "delta": -13.149999999999991,
+     "positive": 0,
+     "negative": 2.63,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 87.66666666666667,
+       "magnitude": 2.63,
+       "missing": false
+      }
+     ]
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "score": 94.33333333333333,
+     "balance": 88.66666666666666,
+     "base": 94.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "score": 69.56111111111112,
+     "balance": 39.122222222222234,
+     "base": 90,
+     "delta": -20.438888888888883,
+     "positive": 0,
+     "negative": 4.087777777777777,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+       "subjectType": "primary",
+       "impact": -4.333333333333333,
+       "strength": 94.33333333333333,
+       "magnitude": 4.087777777777777,
+       "missing": false
+      }
+     ]
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "score": 94.33333333333333,
+     "balance": 88.66666666666666,
+     "base": 94.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "score": 72.89444444444445,
+     "balance": 45.78888888888889,
+     "base": 93.33333333333333,
+     "delta": -20.438888888888883,
+     "positive": 0,
+     "negative": 4.087777777777777,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+       "subjectType": "primary",
+       "impact": -4.333333333333333,
+       "strength": 94.33333333333333,
+       "magnitude": 4.087777777777777,
+       "missing": false
+      }
+     ]
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "score": 85.33333333333333,
+     "balance": 70.66666666666666,
+     "base": 85.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "score": 62.44444444444445,
+     "balance": 24.8888888888889,
+     "base": 76.66666666666667,
+     "delta": -14.222222222222221,
+     "positive": 0,
+     "negative": 2.8444444444444446,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 85.33333333333333,
+       "magnitude": 2.8444444444444446,
+       "missing": false
+      }
+     ]
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "score": 64.53333333333333,
+     "balance": 29.066666666666663,
+     "base": 85.33333333333333,
+     "delta": -20.799999999999997,
+     "positive": 0,
+     "negative": 4.159999999999999,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+       "subjectType": "primary",
+       "impact": -4.333333333333333,
+       "strength": 96,
+       "magnitude": 4.159999999999999,
+       "missing": false
+      }
+     ]
+    },
+    "3b8f2454-1b22-5771-a3c4-10723136125e": {
+     "score": 53.42009259259259,
+     "balance": 6.840185185185177,
+     "base": 60,
+     "delta": -6.579907407407411,
+     "positive": 5.839277777777777,
+     "negative": 7.155259259259259,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+       "subjectType": "primary",
+       "impact": 4.333333333333333,
+       "strength": 75.18333333333334,
+       "magnitude": 3.257944444444444,
+       "missing": false
+      },
+      {
+       "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 69.56111111111112,
+       "magnitude": 2.7824444444444447,
+       "missing": false
+      },
+      {
+       "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 72.89444444444445,
+       "magnitude": 2.915777777777778,
+       "missing": false
+      },
+      {
+       "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+       "subjectType": "primary",
+       "impact": -2.3333333333333335,
+       "strength": 62.44444444444445,
+       "magnitude": 1.4570370370370371,
+       "missing": false
+      },
+      {
+       "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 64.53333333333333,
+       "magnitude": 2.5813333333333333,
+       "missing": false
+      },
+      {
+       "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 94.33333333333333,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 16.289722222222217,
+     "delta": 16.289722222222217,
+     "provisional": true
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -13.91222222222222,
+     "delta": -13.91222222222222,
+     "provisional": true
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -14.57888888888889,
+     "delta": -14.57888888888889,
+     "provisional": true
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -7.285185185185185,
+     "delta": -7.285185185185185,
+     "provisional": true
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 12.906666666666666,
+     "delta": 12.906666666666666,
+     "provisional": true
+    },
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "parentId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -13.149999999999991,
+     "delta": -2.849166666666669,
+     "provisional": true
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "parentId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -20.438888888888883,
+     "delta": 4.087777777777774,
+     "provisional": true
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "parentId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -20.438888888888883,
+     "delta": 4.087777777777774,
+     "provisional": true
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "parentId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -14.222222222222221,
+     "delta": 1.6592592592592652,
+     "provisional": true
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "parentId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -20.799999999999997,
+     "delta": -4.160000000000004,
+     "provisional": true
+    }
+   },
+   "ranking": null
+  },
+  "structural": {
+   "nodes": {
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "score": 75.18333333333334,
+     "balance": 50.366666666666674,
+     "base": 88.33333333333333,
+     "delta": -13.149999999999991,
+     "positive": 0,
+     "negative": 2.63,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 87.66666666666667,
+       "magnitude": 2.63,
+       "missing": false
+      }
+     ]
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "score": 94.33333333333333,
+     "balance": 88.66666666666666,
+     "base": 94.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "score": 71.13333333333334,
+     "balance": 42.26666666666668,
+     "base": 90,
+     "delta": -18.86666666666666,
+     "positive": 0,
+     "negative": 3.773333333333333,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 94.33333333333333,
+       "magnitude": 3.773333333333333,
+       "missing": false
+      }
+     ]
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "score": 94.33333333333333,
+     "balance": 88.66666666666666,
+     "base": 94.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "score": 74.46666666666667,
+     "balance": 48.93333333333334,
+     "base": 93.33333333333333,
+     "delta": -18.86666666666666,
+     "positive": 0,
+     "negative": 3.773333333333333,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 94.33333333333333,
+       "magnitude": 3.773333333333333,
+       "missing": false
+      }
+     ]
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "score": 85.33333333333333,
+     "balance": 70.66666666666666,
+     "base": 85.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "score": 63.866666666666674,
+     "balance": 27.73333333333335,
+     "base": 76.66666666666667,
+     "delta": -12.799999999999997,
+     "positive": 0,
+     "negative": 2.5599999999999996,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 85.33333333333333,
+       "magnitude": 2.5599999999999996,
+       "missing": false
+      }
+     ]
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "score": 66.13333333333333,
+     "balance": 32.26666666666665,
+     "base": 85.33333333333333,
+     "delta": -19.200000000000003,
+     "positive": 0,
+     "negative": 3.84,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 96,
+       "magnitude": 3.84,
+       "missing": false
+      }
+     ]
+    },
+    "3b8f2454-1b22-5771-a3c4-10723136125e": {
+     "score": 59.199166666666656,
+     "balance": 18.398333333333312,
+     "base": 60,
+     "delta": -0.8008333333333439,
+     "positive": 8.291166666666665,
+     "negative": 8.451333333333334,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 75.18333333333334,
+       "magnitude": 3.7591666666666668,
+       "missing": false
+      },
+      {
+       "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 71.13333333333334,
+       "magnitude": 3.5566666666666666,
+       "missing": false
+      },
+      {
+       "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 74.46666666666667,
+       "magnitude": 2.978666666666667,
+       "missing": false
+      },
+      {
+       "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 63.866666666666674,
+       "magnitude": 1.9160000000000001,
+       "missing": false
+      },
+      {
+       "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 66.13333333333333,
+       "magnitude": 2.645333333333333,
+       "missing": false
+      },
+      {
+       "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+       "subjectType": "secondary",
+       "impact": 2,
+       "strength": 94.33333333333333,
+       "magnitude": 1.8866666666666665,
+       "missing": false,
+       "overlapWarning": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 18.795833333333334,
+     "delta": 18.795833333333334,
+     "provisional": false
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -17.78333333333333,
+     "delta": -17.78333333333333,
+     "provisional": false
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -14.89333333333333,
+     "delta": -14.89333333333333,
+     "provisional": false
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -9.579999999999998,
+     "delta": -9.579999999999998,
+     "provisional": false
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 13.226666666666667,
+     "delta": 13.226666666666667,
+     "provisional": false
+    },
+    "a8011741-e8e1-51ce-8b85-d9473a135951": {
+     "parentId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": 9.433333333333337,
+     "delta": 9.433333333333337,
+     "provisional": false
+    },
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "parentId": "2f5262ff-115e-5917-a43f-eced8271ed73",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -13.149999999999991,
+     "delta": -3.2874999999999943,
+     "provisional": false
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "parentId": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -18.86666666666666,
+     "delta": 4.716666666666669,
+     "provisional": false
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "parentId": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -18.86666666666666,
+     "delta": 3.7733333333333263,
+     "provisional": false
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "parentId": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -12.799999999999997,
+     "delta": 1.9200000000000017,
+     "provisional": false
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "parentId": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+     "targetId": "3b8f2454-1b22-5771-a3c4-10723136125e",
+     "localDelta": -19.200000000000003,
+     "delta": -3.8400000000000034,
+     "provisional": false
+    }
+   },
+   "ranking": null
+  }
+ },
+ "assessors": {
+  "0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "nodes": {
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "score": 93,
+     "balance": 86,
+     "base": 93,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "score": 58.4,
+     "balance": 16.799999999999997,
+     "base": 77,
+     "delta": -18.6,
+     "positive": 0,
+     "negative": 3.72,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 93,
+       "magnitude": 3.72,
+       "missing": false
+      }
+     ]
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "score": 79.8,
+     "balance": 59.599999999999994,
+     "base": 99,
+     "delta": -19.200000000000003,
+     "positive": 0,
+     "negative": 3.84,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 96,
+       "magnitude": 3.84,
+       "missing": false
+      }
+     ]
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "score": 76.8,
+     "balance": 53.599999999999994,
+     "base": 96,
+     "delta": -19.200000000000003,
+     "positive": 0,
+     "negative": 3.84,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 96,
+       "magnitude": 3.84,
+       "missing": false
+      }
+     ]
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "score": 75,
+     "balance": 50,
+     "base": 75,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "score": 77.5,
+     "balance": 55,
+     "base": 85,
+     "delta": -7.5,
+     "positive": 0,
+     "negative": 1.5,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 75,
+       "magnitude": 1.5,
+       "missing": false
+      }
+     ]
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "score": 99,
+     "balance": 98,
+     "base": 99,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "score": 39.25,
+     "balance": -21.5,
+     "base": 64,
+     "delta": -24.75,
+     "positive": 0,
+     "negative": 4.95,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 99,
+       "magnitude": 4.95,
+       "missing": false
+      }
+     ]
+    },
+    "3b8f2454-1b22-5771-a3c4-10723136125e": {
+     "score": 21.909999999999997,
+     "balance": -56.18000000000001,
+     "base": 60,
+     "delta": -38.09,
+     "positive": 2.537,
+     "negative": 10.155000000000001,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 58.4,
+       "magnitude": 1.7519999999999998,
+       "missing": false
+      },
+      {
+       "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 79.8,
+       "magnitude": 3.9899999999999998,
+       "missing": false
+      },
+      {
+       "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 76.8,
+       "magnitude": 3.84,
+       "missing": false
+      },
+      {
+       "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 77.5,
+       "magnitude": 2.325,
+       "missing": false
+      },
+      {
+       "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+       "subjectType": "primary",
+       "impact": 2,
+       "strength": 39.25,
+       "magnitude": 0.785,
+       "missing": false
+      },
+      {
+       "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 96,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "nodes": {
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "score": 82,
+     "balance": 64,
+     "base": 82,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "score": 88.8,
+     "balance": 77.6,
+     "base": 97,
+     "delta": -8.200000000000003,
+     "positive": 0,
+     "negative": 1.64,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 82,
+       "magnitude": 1.64,
+       "missing": false
+      }
+     ]
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "score": 57,
+     "balance": 14,
+     "base": 81,
+     "delta": -24,
+     "positive": 0,
+     "negative": 4.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 96,
+       "magnitude": 4.8,
+       "missing": false
+      }
+     ]
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "score": 65.25,
+     "balance": 30.5,
+     "base": 89,
+     "delta": -23.75,
+     "positive": 0,
+     "negative": 4.75,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 95,
+       "magnitude": 4.75,
+       "missing": false
+      }
+     ]
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "score": 44.25,
+     "balance": -11.5,
+     "base": 68,
+     "delta": -23.75,
+     "positive": 0,
+     "negative": 4.75,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 95,
+       "magnitude": 4.75,
+       "missing": false
+      }
+     ]
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "score": 93,
+     "balance": 86,
+     "base": 93,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "score": 74.4,
+     "balance": 48.80000000000001,
+     "base": 93,
+     "delta": -18.599999999999994,
+     "positive": 0,
+     "negative": 3.72,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 93,
+       "magnitude": 3.72,
+       "missing": false
+      }
+     ]
+    },
+    "3b8f2454-1b22-5771-a3c4-10723136125e": {
+     "score": 78.0375,
+     "balance": 56.07499999999999,
+     "base": 60,
+     "delta": 18.037499999999994,
+     "positive": 8.16,
+     "negative": 4.5525,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 88.8,
+       "magnitude": 4.44,
+       "missing": false
+      },
+      {
+       "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 57,
+       "magnitude": 1.71,
+       "missing": false
+      },
+      {
+       "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65.25,
+       "magnitude": 1.9575,
+       "missing": false
+      },
+      {
+       "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 44.25,
+       "magnitude": 0.885,
+       "missing": false
+      },
+      {
+       "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 74.4,
+       "magnitude": 3.7200000000000006,
+       "missing": false
+      },
+      {
+       "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 96,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "nodes": {
+    "02aef6d6-67da-519a-ad08-19e755aab256": {
+     "score": 88,
+     "balance": 76,
+     "base": 88,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "2f5262ff-115e-5917-a43f-eced8271ed73": {
+     "score": 77.8,
+     "balance": 55.599999999999994,
+     "base": 91,
+     "delta": -13.200000000000003,
+     "positive": 0,
+     "negative": 2.64,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "02aef6d6-67da-519a-ad08-19e755aab256",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 88,
+       "magnitude": 2.64,
+       "missing": false
+      }
+     ]
+    },
+    "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+     "score": 91,
+     "balance": 82,
+     "base": 91,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+     "score": 71.8,
+     "balance": 43.599999999999994,
+     "base": 90,
+     "delta": -18.200000000000003,
+     "positive": 0,
+     "negative": 3.64,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "c199b3bb-56c8-5029-8576-e6f8d0399635",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 91,
+       "magnitude": 3.64,
+       "missing": false
+      }
+     ]
+    },
+    "68770431-a93c-500d-b24b-7a7f3d986681": {
+     "score": 92,
+     "balance": 84,
+     "base": 92,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+     "score": 76.6,
+     "balance": 53.19999999999999,
+     "base": 95,
+     "delta": -18.400000000000006,
+     "positive": 0,
+     "negative": 3.68,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "68770431-a93c-500d-b24b-7a7f3d986681",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 92,
+       "magnitude": 3.68,
+       "missing": false
+      }
+     ]
+    },
+    "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+     "score": 86,
+     "balance": 72,
+     "base": 86,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+     "score": 64.1,
+     "balance": 28.19999999999999,
+     "base": 77,
+     "delta": -12.900000000000006,
+     "positive": 0,
+     "negative": 2.58,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "aabf6e95-e60d-5862-af0b-76a8ec11d871",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 86,
+       "magnitude": 2.58,
+       "missing": false
+      }
+     ]
+    },
+    "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+     "score": 79.8,
+     "balance": 59.599999999999994,
+     "base": 99,
+     "delta": -19.200000000000003,
+     "positive": 0,
+     "negative": 3.84,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "da4629b9-800f-58da-9c96-dacd1a4f783d",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 96,
+       "magnitude": 3.84,
+       "missing": false
+      }
+     ]
+    },
+    "3b8f2454-1b22-5771-a3c4-10723136125e": {
+     "score": 63.31,
+     "balance": 26.620000000000005,
+     "base": 60,
+     "delta": 3.3100000000000023,
+     "positive": 7.88,
+     "negative": 7.218,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "2f5262ff-115e-5917-a43f-eced8271ed73",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 77.8,
+       "magnitude": 3.89,
+       "missing": false
+      },
+      {
+       "id": "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 71.8,
+       "magnitude": 2.872,
+       "missing": false
+      },
+      {
+       "id": "6aaf6080-07d7-520c-a428-79581ed3e39e",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 76.6,
+       "magnitude": 3.0639999999999996,
+       "missing": false
+      },
+      {
+       "id": "b6e2d7e2-8856-5679-8cfb-5825e4fea847",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 64.1,
+       "magnitude": 1.2819999999999998,
+       "missing": false
+      },
+      {
+       "id": "0f533f44-f9ca-57d6-a2b2-1c1187d415b5",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 79.8,
+       "magnitude": 3.9899999999999998,
+       "missing": false
+      },
+      {
+       "id": "a8011741-e8e1-51ce-8b85-d9473a135951",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 91,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  }
+ },
+ "options": {},
+ "influence": {
+  "primary": {
+   "2f5262ff-115e-5917-a43f-eced8271ed73": {
+    "count": 3,
+    "mean": 4.333333333333333,
+    "min": 3,
+    "max": 5,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "02aef6d6-67da-519a-ad08-19e755aab256": {
+    "count": 3,
+    "mean": -3,
+    "min": -4,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff": {
+    "count": 3,
+    "mean": -4,
+    "min": -5,
+    "max": -3,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "c199b3bb-56c8-5029-8576-e6f8d0399635": {
+    "count": 3,
+    "mean": -4.333333333333333,
+    "min": -5,
+    "max": -4,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "6aaf6080-07d7-520c-a428-79581ed3e39e": {
+    "count": 3,
+    "mean": -4,
+    "min": -5,
+    "max": -3,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "68770431-a93c-500d-b24b-7a7f3d986681": {
+    "count": 3,
+    "mean": -4.333333333333333,
+    "min": -5,
+    "max": -4,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "b6e2d7e2-8856-5679-8cfb-5825e4fea847": {
+    "count": 3,
+    "mean": -2.3333333333333335,
+    "min": -3,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "aabf6e95-e60d-5862-af0b-76a8ec11d871": {
+    "count": 3,
+    "mean": -3.3333333333333335,
+    "min": -5,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "0f533f44-f9ca-57d6-a2b2-1c1187d415b5": {
+    "count": 3,
+    "mean": 4,
+    "min": 2,
+    "max": 5,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "da4629b9-800f-58da-9c96-dacd1a4f783d": {
+    "count": 3,
+    "mean": -4.333333333333333,
+    "min": -5,
+    "max": -4,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   }
+  },
+  "secondary": {
+   "a8011741-e8e1-51ce-8b85-d9473a135951": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  }
+ },
+ "directions": {
+  "2f5262ff-115e-5917-a43f-eced8271ed73:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "2f5262ff-115e-5917-a43f-eced8271ed73:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "2f5262ff-115e-5917-a43f-eced8271ed73:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "02aef6d6-67da-519a-ad08-19e755aab256:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "02aef6d6-67da-519a-ad08-19e755aab256:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "02aef6d6-67da-519a-ad08-19e755aab256:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "f93d3cdf-77e4-5658-a2cd-888fc0a1c2ff:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "c199b3bb-56c8-5029-8576-e6f8d0399635:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "c199b3bb-56c8-5029-8576-e6f8d0399635:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "c199b3bb-56c8-5029-8576-e6f8d0399635:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "6aaf6080-07d7-520c-a428-79581ed3e39e:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "6aaf6080-07d7-520c-a428-79581ed3e39e:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "6aaf6080-07d7-520c-a428-79581ed3e39e:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "68770431-a93c-500d-b24b-7a7f3d986681:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "68770431-a93c-500d-b24b-7a7f3d986681:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "68770431-a93c-500d-b24b-7a7f3d986681:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "b6e2d7e2-8856-5679-8cfb-5825e4fea847:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "b6e2d7e2-8856-5679-8cfb-5825e4fea847:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "b6e2d7e2-8856-5679-8cfb-5825e4fea847:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "aabf6e95-e60d-5862-af0b-76a8ec11d871:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "aabf6e95-e60d-5862-af0b-76a8ec11d871:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "aabf6e95-e60d-5862-af0b-76a8ec11d871:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "0f533f44-f9ca-57d6-a2b2-1c1187d415b5:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": 2,
+   "direction": "support"
+  },
+  "0f533f44-f9ca-57d6-a2b2-1c1187d415b5:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "0f533f44-f9ca-57d6-a2b2-1c1187d415b5:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "da4629b9-800f-58da-9c96-dacd1a4f783d:0b832d35-e0b4-568e-aaa9-03d15d8be329": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "da4629b9-800f-58da-9c96-dacd1a4f783d:b8270195-45e7-5dd0-8d7c-abbce522d4ef": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "da4629b9-800f-58da-9c96-dacd1a4f783d:55f66861-714a-5975-a8d6-4e08d87e3434": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  }
+ }
+}

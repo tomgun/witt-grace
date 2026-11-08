@@ -1,0 +1,2866 @@
+{
+ "name": "example-debate-etatyomalli",
+ "source": "witt-grace-gpt-proto/examples/debate-etatyomalli.witt.json",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "8d8b7afc-a57c-5537-9051-8226e1e8e381",
+  "title": "Etä- ja lähityö: yhteinen työskentelymalli",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "name": "Eeva · tiiminvetäjä",
+    "shares": 1,
+    "role": "owner"
+   },
+   {
+    "id": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "name": "Oskari · keskittymistehtävät",
+    "shares": 1,
+    "role": "editor"
+   },
+   {
+    "id": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "name": "Mira · pitkä työmatka",
+    "shares": 1,
+    "role": "editor"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "parentId": null,
+    "relation": "root",
+    "kind": "claim",
+    "title": "Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.",
+    "details": "",
+    "confidence": 50,
+    "impact": 0,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 100
+    },
+    "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+   },
+   {
+    "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Spontaani yhteistyö voi helpottua lähityössä",
+    "details": "Tämä riippuu työstä, tiimin koosta ja tavoitettavuudesta.",
+    "confidence": 85,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 216
+    },
+    "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+   },
+   {
+    "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Uusien työntekijöiden perehdytys voi sujua kasvokkain",
+    "details": "Ei tarkoita, että laadukas etäperehdytys olisi mahdoton.",
+    "confidence": 88,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 332
+    },
+    "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+   },
+   {
+    "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Yhteistyölle voi sopia myös sovittu lähipäivä",
+    "details": "Ehdollinen väite: yhteiset tapaamispäivät voivat vähentää pakollisten päivien määrää.",
+    "confidence": 87,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 448
+    },
+    "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+   },
+   {
+    "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Häiriöt voivat heikentää keskittymistä toimistolla",
+    "details": "Työtehtävien laatu vaikuttaa siihen, missä työtä on paras tehdä.",
+    "confidence": 87,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 564
+    },
+    "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+   },
+   {
+    "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "parentId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Rauhalliset työtilat voivat vähentää toimistohäiriöitä",
+    "details": "Rajoite: tällaisia tiloja pitää oikeasti olla.",
+    "confidence": 86,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 680
+    },
+    "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+   },
+   {
+    "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Pitkä työmatka vie aikaa ja voi kuormittaa",
+    "details": "Arvostus: ajankäytön ja perhe-elämän paino vaihtelee.",
+    "confidence": 94,
+    "impact": 5,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 796
+    },
+    "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+   },
+   {
+    "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "parentId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Osa työntekijöistä matkustaa yli tunnin suuntaansa",
+    "details": "Ehdollinen väite: ei koske kaikkia työntekijöitä.",
+    "confidence": 84,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 912
+    },
+    "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+   },
+   {
+    "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Yhteiset kohtaamiset voivat tukea luottamusta",
+    "details": "Vaikutusta ei voi irrottaa organisaatiokulttuurista.",
+    "confidence": 83,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 1028
+    },
+    "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+   },
+   {
+    "id": "6587417f-9184-5f30-b870-0381eaa15448",
+    "parentId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Luottamusta voidaan vahvistaa myös etäkäytännöillä",
+    "details": "Esimerkiksi säännöllisillä keskusteluilla ja yhteisillä pelisäännöillä.",
+    "confidence": 83,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 1144
+    },
+    "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+   },
+   {
+    "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa",
+    "details": "Arvostus: autonomia ja joustavuus voivat olla tärkeitä.",
+    "confidence": 86,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 1260
+    },
+    "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+   },
+   {
+    "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "parentId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista",
+    "details": "Rajoite: asiakkaiden ja tiimien kalenterit eivät aina jousta.",
+    "confidence": 77,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 1376
+    },
+    "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+   }
+  ],
+  "votes": [
+   {
+    "id": "e83c52ab-53d4-50d9-9535-df29f756f195",
+    "nodeId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a2ac2229-b170-5816-93b9-6849c238bce2",
+    "nodeId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "13dc991c-33e9-520a-99a6-c0e8b8dc2d9b",
+    "nodeId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1287311f-9c61-5460-b44d-ee4c50e55dcb",
+    "nodeId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 92,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "67f6faf4-56f7-5626-bf70-70db388cbdef",
+    "nodeId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 65,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ca3787fa-7933-5242-80bd-5782a9b47e44",
+    "nodeId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 64,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d7f20780-dd2a-5725-a736-28249da787c4",
+    "nodeId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 93,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6c1cf8d8-6d55-52dc-afeb-bdda9f05ac68",
+    "nodeId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 89,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cc1fcc88-05f8-5689-9373-af0edb2c7f91",
+    "nodeId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 86,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9d880e52-5c28-5eae-8b60-fd270d49e749",
+    "nodeId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 74,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1d79fb04-9308-5eb6-ab63-e93de25e3ec8",
+    "nodeId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7d7b498c-86fb-5254-b268-768ad945e9e8",
+    "nodeId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 93,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "2db205c4-8ef9-5cf0-8107-e903af464527",
+    "nodeId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 71,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "28d38aad-be3f-5328-be69-b96cd4bef59d",
+    "nodeId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 98,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a4ed6b26-ce21-5796-b3f6-79c4eb69ef2b",
+    "nodeId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 83,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "bca6e87b-5460-5a31-b6a4-7012801dedd3",
+    "nodeId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9059291e-f3e5-5be7-9476-e995c82bd13c",
+    "nodeId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 81,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a85ed62c-f569-538f-ad98-2db9d7432c56",
+    "nodeId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 79,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1facb5f5-754c-50cf-9a8c-bd2ed0bfaf5a",
+    "nodeId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 82,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "eddf008d-9f80-5790-92dd-4da7e6a70f67",
+    "nodeId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 84,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1611eb96-e643-5aab-8705-1e1e856c51f3",
+    "nodeId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 99,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e44426a0-1138-5186-b2d8-f5345f43265c",
+    "nodeId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 81,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "349123f1-34a6-504a-9bfc-6f67edf83022",
+    "nodeId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 84,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7fa728d1-8f0c-5bda-a36e-3be835ef35ef",
+    "nodeId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 98,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f87ef5f5-80ae-5608-99c6-2b80da02c83c",
+    "nodeId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 94,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "52311715-d41c-54a2-abf6-7f41ecf7f69a",
+    "nodeId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 70,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7d666fe8-e167-5119-9e5b-1008b3e6fd94",
+    "nodeId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 79,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9e225cd6-87c0-564a-b404-72d61a6bf500",
+    "nodeId": "6587417f-9184-5f30-b870-0381eaa15448",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 84,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cf006132-314a-5122-9dfe-725073ff45e7",
+    "nodeId": "6587417f-9184-5f30-b870-0381eaa15448",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 97,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "16756e41-d1d6-507d-92a9-d5a4c023c8c6",
+    "nodeId": "6587417f-9184-5f30-b870-0381eaa15448",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 89,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "81efc666-06dc-5421-8b62-e1a7fa9200df",
+    "nodeId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 64,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c1c2c54c-47b6-5fb2-9a80-4e33301b391b",
+    "nodeId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 98,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "347f4f79-e758-5216-bb91-b6fc913e78cb",
+    "nodeId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "5d244cf1-75d5-5662-bcf8-681477bbbd8b",
+    "nodeId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e6167e37-0077-5f08-afe9-536d68ac5e36",
+    "nodeId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "confidence": 72,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ee1d0292-3b38-51f1-ab3a-35285ce659bf",
+    "nodeId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "confidence": 80,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   }
+  ],
+  "edgeAssessments": [
+   {
+    "id": "33ed844a-b19b-5c89-ba30-b829a7a68623",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "influence": 5,
+    "fingerprint": "[\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "13cf81e9-cbef-5ffc-aebf-bfa772acff82",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "influence": 2,
+    "fingerprint": "[\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9e54b1bd-500b-5949-a220-749e893a2dc1",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+    "influence": 2,
+    "fingerprint": "[\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e1735fc8-f2e9-5883-861d-8cd342445e24",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "influence": 4,
+    "fingerprint": "[\"e10942e9-6e9a-5168-bd50-8628bcef3437\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Uusien työntekijöiden perehdytys voi sujua kasvokkain\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "fbbb6382-4eb1-5a1d-9f1a-69e903b7f975",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "influence": 3,
+    "fingerprint": "[\"e10942e9-6e9a-5168-bd50-8628bcef3437\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Uusien työntekijöiden perehdytys voi sujua kasvokkain\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a7002cfc-b3d7-5ab9-b9e3-5ccd608eb2d4",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+    "influence": 3,
+    "fingerprint": "[\"e10942e9-6e9a-5168-bd50-8628bcef3437\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Uusien työntekijöiden perehdytys voi sujua kasvokkain\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "745b68fa-25f2-5ae4-a781-cadbf3e82dc7",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "influence": -2,
+    "fingerprint": "[\"8ca31062-cf00-5e03-96bc-aaece3ea761b\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Yhteistyölle voi sopia myös sovittu lähipäivä\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7827876b-d16e-510a-8442-8f97739eb801",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "influence": -5,
+    "fingerprint": "[\"8ca31062-cf00-5e03-96bc-aaece3ea761b\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Yhteistyölle voi sopia myös sovittu lähipäivä\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "23659414-acdc-59b0-b44f-6ae55bf9d3d2",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "influence": -4,
+    "fingerprint": "[\"8ca31062-cf00-5e03-96bc-aaece3ea761b\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Yhteistyölle voi sopia myös sovittu lähipäivä\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "25e0a3c7-4f18-58d3-8369-08f86b4824d4",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "influence": -2,
+    "fingerprint": "[\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cbb31f2c-f2e9-55f6-a90f-0275663ddd58",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "influence": -5,
+    "fingerprint": "[\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "8c5a58b0-0915-5591-83c6-9449ac8f1f60",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+    "influence": -4,
+    "fingerprint": "[\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "093a7cce-8dd0-5274-b0e0-8ebf6c60763d",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "influence": -4,
+    "fingerprint": "[\"d60ea9da-31b1-5c78-a372-247da183c96c\",\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"Rauhalliset työtilat voivat vähentää toimistohäiriöitä\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "69de2d98-96a5-5e4c-8aac-e073fb6e4af4",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "influence": -2,
+    "fingerprint": "[\"d60ea9da-31b1-5c78-a372-247da183c96c\",\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"Rauhalliset työtilat voivat vähentää toimistohäiriöitä\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "8d7cb25b-fd67-557c-abfa-cd56b22f98d8",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+    "influence": -2,
+    "fingerprint": "[\"d60ea9da-31b1-5c78-a372-247da183c96c\",\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"Rauhalliset työtilat voivat vähentää toimistohäiriöitä\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f4a0dd55-61a0-51e5-87d5-9de79ee8c38a",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "influence": -3,
+    "fingerprint": "[\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "eb1b97b0-7cc7-5ace-babb-778f80c1fe54",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "influence": -3,
+    "fingerprint": "[\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "db5cc7f6-0813-5260-9c5c-1df87639798c",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+    "influence": -5,
+    "fingerprint": "[\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e1e12d27-bf27-55a3-ae3a-ffca068a35dc",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "influence": 3,
+    "fingerprint": "[\"5c2efa69-b5ce-5bc3-87b1-60769584b626\",\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"Osa työntekijöistä matkustaa yli tunnin suuntaansa\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e1ec5980-982c-527d-9293-bcb8b6bda430",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "influence": 4,
+    "fingerprint": "[\"5c2efa69-b5ce-5bc3-87b1-60769584b626\",\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"Osa työntekijöistä matkustaa yli tunnin suuntaansa\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "085c5200-dc20-5d12-a76f-04a419fa1cc2",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+    "influence": 5,
+    "fingerprint": "[\"5c2efa69-b5ce-5bc3-87b1-60769584b626\",\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"Osa työntekijöistä matkustaa yli tunnin suuntaansa\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "22e493d1-4aa2-5e5d-a763-7dad537546b6",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "influence": 4,
+    "fingerprint": "[\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "755fc49d-be54-5eb4-9ad6-4bfbeef5805a",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "influence": 2,
+    "fingerprint": "[\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6725362d-fc80-58e6-8edc-beef5be2adbb",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+    "influence": 3,
+    "fingerprint": "[\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "64ada96b-648f-584e-95de-4d688671089c",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "6587417f-9184-5f30-b870-0381eaa15448",
+    "influence": -3,
+    "fingerprint": "[\"6587417f-9184-5f30-b870-0381eaa15448\",\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"Luottamusta voidaan vahvistaa myös etäkäytännöillä\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "e000c351-3496-55c9-b54a-87c9fb660786",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "6587417f-9184-5f30-b870-0381eaa15448",
+    "influence": -4,
+    "fingerprint": "[\"6587417f-9184-5f30-b870-0381eaa15448\",\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"Luottamusta voidaan vahvistaa myös etäkäytännöillä\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "fbb11789-b4b7-5289-825e-1ba40124aa8e",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "6587417f-9184-5f30-b870-0381eaa15448",
+    "influence": -4,
+    "fingerprint": "[\"6587417f-9184-5f30-b870-0381eaa15448\",\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"Luottamusta voidaan vahvistaa myös etäkäytännöillä\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "b24f2563-88d1-5b51-ac5f-0c62b432c672",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "influence": -2,
+    "fingerprint": "[\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ebc332d1-c437-569e-9a45-91f2b18ab444",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "influence": -5,
+    "fingerprint": "[\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "dee6ca22-8744-54ce-be26-63d53a5367c3",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+    "influence": -5,
+    "fingerprint": "[\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "53da774c-5c31-549f-9180-e885bab677b7",
+    "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+    "subjectType": "primary",
+    "subjectId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "influence": -4,
+    "fingerprint": "[\"47fa88f1-0cc4-5af6-a31a-cca14b26086a\",\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1eb5fbd0-9c77-55b2-a32e-17869cfe863e",
+    "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+    "subjectType": "primary",
+    "subjectId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "influence": -2,
+    "fingerprint": "[\"47fa88f1-0cc4-5af6-a31a-cca14b26086a\",\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "df5714a0-5e64-59e6-bfa5-d05287d7c7a6",
+    "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+    "subjectType": "primary",
+    "subjectId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+    "influence": -3,
+    "fingerprint": "[\"47fa88f1-0cc4-5af6-a31a-cca14b26086a\",\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [
+   {
+    "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+    "sourceId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+    "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+    "relation": "oppose",
+    "impact": 3
+   }
+  ],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-06T08:00:00.000Z",
+  "updatedAt": "2026-11-06T08:00:00.000Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "score": 89.33333333333333,
+     "balance": 78.66666666666666,
+     "base": 89.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "score": 72.48333333333333,
+     "balance": 44.96666666666667,
+     "base": 73.66666666666667,
+     "delta": -1.1833333333333371,
+     "positive": 2.977777777777778,
+     "negative": 3.2144444444444447,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+       "subjectType": "primary",
+       "impact": 3.3333333333333335,
+       "strength": 89.33333333333333,
+       "magnitude": 2.977777777777778,
+       "missing": false
+      },
+      {
+       "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 87.66666666666667,
+       "magnitude": 3.2144444444444447,
+       "missing": false
+      }
+     ]
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "score": 85,
+     "balance": 70,
+     "base": 85,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "score": 72.66666666666667,
+     "balance": 45.33333333333334,
+     "base": 84,
+     "delta": -11.333333333333329,
+     "positive": 0,
+     "negative": 2.2666666666666666,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+       "subjectType": "primary",
+       "impact": -2.6666666666666665,
+       "strength": 85,
+       "magnitude": 2.2666666666666666,
+       "missing": false
+      }
+     ]
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "score": 100,
+     "balance": 100,
+     "base": 88.33333333333333,
+     "delta": 11.666666666666671,
+     "positive": 3.506666666666667,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 87.66666666666667,
+       "magnitude": 3.506666666666667,
+       "missing": false
+      }
+     ]
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "score": 90,
+     "balance": 80,
+     "base": 90,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "score": 64.5,
+     "balance": 29,
+     "base": 81,
+     "delta": -16.5,
+     "positive": 0,
+     "negative": 3.3,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "6587417f-9184-5f30-b870-0381eaa15448",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 90,
+       "magnitude": 3.3,
+       "missing": false
+      }
+     ]
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "score": 82.33333333333333,
+     "balance": 64.66666666666666,
+     "base": 82.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "score": 73.65,
+     "balance": 47.30000000000001,
+     "base": 86,
+     "delta": -12.349999999999994,
+     "positive": 0,
+     "negative": 2.4699999999999998,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 82.33333333333333,
+       "magnitude": 2.4699999999999998,
+       "missing": false
+      }
+     ]
+    },
+    "05ffb024-171a-56ca-8e0c-ea799f750fa4": {
+     "score": 34.161944444444444,
+     "balance": -31.676111111111112,
+     "base": 60,
+     "delta": -25.838055555555556,
+     "positive": 4.109500000000001,
+     "negative": 9.277111111111111,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 72.48333333333333,
+       "magnitude": 2.1745,
+       "missing": false
+      },
+      {
+       "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 72.66666666666667,
+       "magnitude": 2.6644444444444444,
+       "missing": false
+      },
+      {
+       "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 100,
+       "magnitude": 3.6666666666666665,
+       "missing": false
+      },
+      {
+       "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 64.5,
+       "magnitude": 1.935,
+       "missing": false
+      },
+      {
+       "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 73.65,
+       "magnitude": 2.946,
+       "missing": false
+      },
+      {
+       "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 87.66666666666667,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 10.872499999999995,
+     "delta": 10.872499999999995,
+     "provisional": true
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -13.322222222222223,
+     "delta": -13.322222222222223,
+     "provisional": true
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -18.333333333333336,
+     "delta": -18.333333333333336,
+     "provisional": true
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 9.674999999999997,
+     "delta": 9.674999999999997,
+     "provisional": true
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -14.730000000000004,
+     "delta": -14.730000000000004,
+     "provisional": true
+    },
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 14.888888888888886,
+     "delta": 2.2333333333333343,
+     "provisional": true
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -16.072222222222223,
+     "delta": -2.4108333333333363,
+     "provisional": true
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "parentId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -11.333333333333329,
+     "delta": 2.0777777777777686,
+     "provisional": true
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "parentId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 11.666666666666671,
+     "delta": -2.1388888888888857,
+     "provisional": true
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "parentId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -16.5,
+     "delta": -2.4750000000000085,
+     "provisional": true
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "parentId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -12.349999999999994,
+     "delta": 2.4699999999999953,
+     "provisional": true
+    }
+   },
+   "ranking": null
+  },
+  "shares": {
+   "nodes": {
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "score": 89.33333333333333,
+     "balance": 78.66666666666666,
+     "base": 89.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "score": 72.48333333333333,
+     "balance": 44.96666666666667,
+     "base": 73.66666666666667,
+     "delta": -1.1833333333333371,
+     "positive": 2.977777777777778,
+     "negative": 3.2144444444444447,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+       "subjectType": "primary",
+       "impact": 3.3333333333333335,
+       "strength": 89.33333333333333,
+       "magnitude": 2.977777777777778,
+       "missing": false
+      },
+      {
+       "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 87.66666666666667,
+       "magnitude": 3.2144444444444447,
+       "missing": false
+      }
+     ]
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "score": 85,
+     "balance": 70,
+     "base": 85,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "score": 72.66666666666667,
+     "balance": 45.33333333333334,
+     "base": 84,
+     "delta": -11.333333333333329,
+     "positive": 0,
+     "negative": 2.2666666666666666,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+       "subjectType": "primary",
+       "impact": -2.6666666666666665,
+       "strength": 85,
+       "magnitude": 2.2666666666666666,
+       "missing": false
+      }
+     ]
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "score": 100,
+     "balance": 100,
+     "base": 88.33333333333333,
+     "delta": 11.666666666666671,
+     "positive": 3.506666666666667,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 87.66666666666667,
+       "magnitude": 3.506666666666667,
+       "missing": false
+      }
+     ]
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "score": 90,
+     "balance": 80,
+     "base": 90,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "score": 64.5,
+     "balance": 29,
+     "base": 81,
+     "delta": -16.5,
+     "positive": 0,
+     "negative": 3.3,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "6587417f-9184-5f30-b870-0381eaa15448",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 90,
+       "magnitude": 3.3,
+       "missing": false
+      }
+     ]
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "score": 82.33333333333333,
+     "balance": 64.66666666666666,
+     "base": 82.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "score": 73.65,
+     "balance": 47.30000000000001,
+     "base": 86,
+     "delta": -12.349999999999994,
+     "positive": 0,
+     "negative": 2.4699999999999998,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 82.33333333333333,
+       "magnitude": 2.4699999999999998,
+       "missing": false
+      }
+     ]
+    },
+    "05ffb024-171a-56ca-8e0c-ea799f750fa4": {
+     "score": 34.161944444444444,
+     "balance": -31.676111111111112,
+     "base": 60,
+     "delta": -25.838055555555556,
+     "positive": 4.109500000000001,
+     "negative": 9.277111111111111,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 72.48333333333333,
+       "magnitude": 2.1745,
+       "missing": false
+      },
+      {
+       "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 72.66666666666667,
+       "magnitude": 2.6644444444444444,
+       "missing": false
+      },
+      {
+       "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 100,
+       "magnitude": 3.6666666666666665,
+       "missing": false
+      },
+      {
+       "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 64.5,
+       "magnitude": 1.935,
+       "missing": false
+      },
+      {
+       "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 73.65,
+       "magnitude": 2.946,
+       "missing": false
+      },
+      {
+       "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 87.66666666666667,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 10.872499999999995,
+     "delta": 10.872499999999995,
+     "provisional": true
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -13.322222222222223,
+     "delta": -13.322222222222223,
+     "provisional": true
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -18.333333333333336,
+     "delta": -18.333333333333336,
+     "provisional": true
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 9.674999999999997,
+     "delta": 9.674999999999997,
+     "provisional": true
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -14.730000000000004,
+     "delta": -14.730000000000004,
+     "provisional": true
+    },
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 14.888888888888886,
+     "delta": 2.2333333333333343,
+     "provisional": true
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -16.072222222222223,
+     "delta": -2.4108333333333363,
+     "provisional": true
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "parentId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -11.333333333333329,
+     "delta": 2.0777777777777686,
+     "provisional": true
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "parentId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 11.666666666666671,
+     "delta": -2.1388888888888857,
+     "provisional": true
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "parentId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -16.5,
+     "delta": -2.4750000000000085,
+     "provisional": true
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "parentId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -12.349999999999994,
+     "delta": 2.4699999999999953,
+     "provisional": true
+    }
+   },
+   "ranking": null
+  },
+  "structural": {
+   "nodes": {
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "score": 89.33333333333333,
+     "balance": 78.66666666666666,
+     "base": 89.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "score": 69.53333333333333,
+     "balance": 39.06666666666666,
+     "base": 73.66666666666667,
+     "delta": -4.13333333333334,
+     "positive": 2.6799999999999997,
+     "negative": 3.506666666666667,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 89.33333333333333,
+       "magnitude": 2.6799999999999997,
+       "missing": false
+      },
+      {
+       "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 87.66666666666667,
+       "magnitude": 3.506666666666667,
+       "missing": false
+      }
+     ]
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "score": 85,
+     "balance": 70,
+     "base": 85,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "score": 71.25,
+     "balance": 42.5,
+     "base": 84,
+     "delta": -12.75,
+     "positive": 0,
+     "negative": 2.55,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 85,
+       "magnitude": 2.55,
+       "missing": false
+      }
+     ]
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "score": 87.66666666666667,
+     "balance": 75.33333333333334,
+     "base": 87.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "score": 100,
+     "balance": 100,
+     "base": 88.33333333333333,
+     "delta": 11.666666666666671,
+     "positive": 3.506666666666667,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 87.66666666666667,
+       "magnitude": 3.506666666666667,
+       "missing": false
+      }
+     ]
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "score": 90,
+     "balance": 80,
+     "base": 90,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "score": 67.5,
+     "balance": 35,
+     "base": 81,
+     "delta": -13.5,
+     "positive": 0,
+     "negative": 2.7,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "6587417f-9184-5f30-b870-0381eaa15448",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 90,
+       "magnitude": 2.7,
+       "missing": false
+      }
+     ]
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "score": 82.33333333333333,
+     "balance": 64.66666666666666,
+     "base": 82.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "score": 73.65,
+     "balance": 47.30000000000001,
+     "base": 86,
+     "delta": -12.349999999999994,
+     "positive": 0,
+     "negative": 2.4699999999999998,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 82.33333333333333,
+       "magnitude": 2.4699999999999998,
+       "missing": false
+      }
+     ]
+    },
+    "05ffb024-171a-56ca-8e0c-ea799f750fa4": {
+     "score": 16.901666666666685,
+     "balance": -66.19666666666663,
+     "base": 60,
+     "delta": -43.098333333333315,
+     "positive": 4.806333333333334,
+     "negative": 13.425999999999998,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 69.53333333333333,
+       "magnitude": 2.7813333333333334,
+       "missing": false
+      },
+      {
+       "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 71.25,
+       "magnitude": 2.85,
+       "missing": false
+      },
+      {
+       "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 100,
+       "magnitude": 5,
+       "missing": false
+      },
+      {
+       "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 67.5,
+       "magnitude": 2.0250000000000004,
+       "missing": false
+      },
+      {
+       "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 73.65,
+       "magnitude": 2.946,
+       "missing": false
+      },
+      {
+       "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+       "subjectType": "secondary",
+       "impact": -3,
+       "strength": 87.66666666666667,
+       "magnitude": 2.63,
+       "missing": false,
+       "overlapWarning": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 13.906666666666673,
+     "delta": 13.906666666666673,
+     "provisional": false
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -14.24999999999999,
+     "delta": -14.24999999999999,
+     "provisional": false
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -24.999999999999993,
+     "delta": -24.999999999999993,
+     "provisional": false
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 10.125000000000014,
+     "delta": 10.125000000000014,
+     "provisional": false
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -14.72999999999999,
+     "delta": -14.72999999999999,
+     "provisional": false
+    },
+    "ce5524a8-cf80-5d2f-bea0-939b6545d6fd": {
+     "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -13.149999999999988,
+     "delta": -13.149999999999988,
+     "provisional": false
+    },
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 13.399999999999991,
+     "delta": 2.680000000000007,
+     "provisional": false
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -17.53333333333333,
+     "delta": -3.5066666666666606,
+     "provisional": false
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "parentId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -12.75,
+     "delta": 2.5500000000000114,
+     "provisional": false
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "parentId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": 11.666666666666671,
+     "delta": -2.916666666666657,
+     "provisional": false
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "parentId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -13.5,
+     "delta": -2.0249999999999915,
+     "provisional": false
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "parentId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+     "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+     "localDelta": -12.349999999999994,
+     "delta": 2.469999999999999,
+     "provisional": false
+    }
+   },
+   "ranking": null
+  }
+ },
+ "assessors": {
+  "d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "nodes": {
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "score": 93,
+     "balance": 86,
+     "base": 93,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "score": 74,
+     "balance": 48,
+     "base": 74,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "score": 100,
+     "balance": 100,
+     "base": 92,
+     "delta": 8,
+     "positive": 3.72,
+     "negative": 1.48,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 93,
+       "magnitude": 3.72,
+       "missing": false
+      },
+      {
+       "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 74,
+       "magnitude": 1.48,
+       "missing": false
+      }
+     ]
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "score": 52,
+     "balance": 4,
+     "base": 71,
+     "delta": -19,
+     "positive": 0,
+     "negative": 3.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 95,
+       "magnitude": 3.8,
+       "missing": false
+      }
+     ]
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "score": 81,
+     "balance": 62,
+     "base": 81,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "score": 94.15,
+     "balance": 88.30000000000001,
+     "base": 82,
+     "delta": 12.150000000000006,
+     "positive": 2.43,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 81,
+       "magnitude": 2.43,
+       "missing": false
+      }
+     ]
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "score": 84,
+     "balance": 68,
+     "base": 84,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "score": 81.4,
+     "balance": 62.80000000000001,
+     "base": 94,
+     "delta": -12.599999999999994,
+     "positive": 0,
+     "negative": 2.52,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "6587417f-9184-5f30-b870-0381eaa15448",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 84,
+       "magnitude": 2.52,
+       "missing": false
+      }
+     ]
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "score": 45,
+     "balance": -10,
+     "base": 64,
+     "delta": -19,
+     "positive": 0,
+     "negative": 3.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 95,
+       "magnitude": 3.8,
+       "missing": false
+      }
+     ]
+    },
+    "05ffb024-171a-56ca-8e0c-ea799f750fa4": {
+     "score": 77.45750000000001,
+     "balance": 54.91500000000002,
+     "base": 60,
+     "delta": 17.45750000000001,
+     "positive": 8.256,
+     "negative": 4.7645,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 100,
+       "magnitude": 5,
+       "missing": false
+      },
+      {
+       "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 52,
+       "magnitude": 1.04,
+       "missing": false
+      },
+      {
+       "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 94.15,
+       "magnitude": 2.8245,
+       "missing": false
+      },
+      {
+       "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 81.4,
+       "magnitude": 3.2560000000000002,
+       "missing": false
+      },
+      {
+       "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 45,
+       "magnitude": 0.9,
+       "missing": false
+      },
+      {
+       "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 74,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "nodes": {
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "score": 89,
+     "balance": 78,
+     "base": 89,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "score": 54.35,
+     "balance": 8.700000000000003,
+     "base": 65,
+     "delta": -10.649999999999999,
+     "positive": 2.67,
+     "negative": 4.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 89,
+       "magnitude": 2.67,
+       "missing": false
+      },
+      {
+       "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 96,
+       "magnitude": 4.8,
+       "missing": false
+      }
+     ]
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "score": 81,
+     "balance": 62,
+     "base": 81,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "score": 89.9,
+     "balance": 79.80000000000001,
+     "base": 98,
+     "delta": -8.099999999999994,
+     "positive": 0,
+     "negative": 1.62,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 81,
+       "magnitude": 1.62,
+       "missing": false
+      }
+     ]
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "score": 84,
+     "balance": 68,
+     "base": 84,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "score": 100,
+     "balance": 100,
+     "base": 84,
+     "delta": 16,
+     "positive": 3.36,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 84,
+       "magnitude": 3.36,
+       "missing": false
+      }
+     ]
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "score": 97,
+     "balance": 94,
+     "base": 97,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "score": 50.6,
+     "balance": 1.2000000000000028,
+     "base": 70,
+     "delta": -19.4,
+     "positive": 0,
+     "negative": 3.88,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "6587417f-9184-5f30-b870-0381eaa15448",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 97,
+       "magnitude": 3.88,
+       "missing": false
+      }
+     ]
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "score": 72,
+     "balance": 44,
+     "base": 72,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "score": 90.8,
+     "balance": 81.6,
+     "base": 98,
+     "delta": -7.200000000000003,
+     "positive": 0,
+     "negative": 1.44,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 72,
+       "magnitude": 1.44,
+       "missing": false
+      }
+     ]
+    },
+    "05ffb024-171a-56ca-8e0c-ea799f750fa4": {
+     "score": 10.32,
+     "balance": -79.36,
+     "base": 60,
+     "delta": -49.68,
+     "positive": 2.099,
+     "negative": 12.035,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+       "subjectType": "primary",
+       "impact": 2,
+       "strength": 54.35,
+       "magnitude": 1.087,
+       "missing": false
+      },
+      {
+       "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 89.9,
+       "magnitude": 4.495,
+       "missing": false
+      },
+      {
+       "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 100,
+       "magnitude": 3,
+       "missing": false
+      },
+      {
+       "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+       "subjectType": "primary",
+       "impact": 2,
+       "strength": 50.6,
+       "magnitude": 1.012,
+       "missing": false
+      },
+      {
+       "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 90.8,
+       "magnitude": 4.539999999999999,
+       "missing": false
+      },
+      {
+       "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 96,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "nodes": {
+    "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+     "score": 86,
+     "balance": 72,
+     "base": 86,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+     "score": 93,
+     "balance": 86,
+     "base": 93,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+     "score": 58.3,
+     "balance": 16.599999999999994,
+     "base": 64,
+     "delta": -5.700000000000003,
+     "positive": 2.58,
+     "negative": 3.72,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 86,
+       "magnitude": 2.58,
+       "missing": false
+      },
+      {
+       "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 93,
+       "magnitude": 3.72,
+       "missing": false
+      }
+     ]
+    },
+    "d60ea9da-31b1-5c78-a372-247da183c96c": {
+     "score": 79,
+     "balance": 58,
+     "base": 79,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+     "score": 75.1,
+     "balance": 50.19999999999999,
+     "base": 83,
+     "delta": -7.900000000000006,
+     "positive": 0,
+     "negative": 1.58,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 79,
+       "magnitude": 1.58,
+       "missing": false
+      }
+     ]
+    },
+    "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+     "score": 98,
+     "balance": 96,
+     "base": 98,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+     "score": 100,
+     "balance": 100,
+     "base": 99,
+     "delta": 1,
+     "positive": 4.9,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 98,
+       "magnitude": 4.9,
+       "missing": false
+      }
+     ]
+    },
+    "6587417f-9184-5f30-b870-0381eaa15448": {
+     "score": 89,
+     "balance": 78,
+     "base": 89,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+     "score": 61.2,
+     "balance": 22.400000000000006,
+     "base": 79,
+     "delta": -17.799999999999997,
+     "positive": 0,
+     "negative": 3.56,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "6587417f-9184-5f30-b870-0381eaa15448",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 89,
+       "magnitude": 3.56,
+       "missing": false
+      }
+     ]
+    },
+    "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+     "score": 80,
+     "balance": 60,
+     "base": 80,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+     "score": 84,
+     "balance": 68,
+     "base": 96,
+     "delta": -12,
+     "positive": 0,
+     "negative": 2.4000000000000004,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 80,
+       "magnitude": 2.4000000000000004,
+       "missing": false
+      }
+     ]
+    },
+    "05ffb024-171a-56ca-8e0c-ea799f750fa4": {
+     "score": 13.989999999999995,
+     "balance": -72.02000000000001,
+     "base": 60,
+     "delta": -46.010000000000005,
+     "positive": 3.002,
+     "negative": 12.204,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+       "subjectType": "primary",
+       "impact": 2,
+       "strength": 58.3,
+       "magnitude": 1.166,
+       "missing": false
+      },
+      {
+       "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 75.1,
+       "magnitude": 3.0039999999999996,
+       "missing": false
+      },
+      {
+       "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 100,
+       "magnitude": 5,
+       "missing": false
+      },
+      {
+       "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 61.2,
+       "magnitude": 1.8359999999999999,
+       "missing": false
+      },
+      {
+       "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 84,
+       "magnitude": 4.2,
+       "missing": false
+      },
+      {
+       "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 93,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  }
+ },
+ "options": {},
+ "influence": {
+  "primary": {
+   "a96661e4-90b5-5833-83ec-a5a401e39bec": {
+    "count": 3,
+    "mean": 3,
+    "min": 2,
+    "max": 5,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "e10942e9-6e9a-5168-bd50-8628bcef3437": {
+    "count": 3,
+    "mean": 3.3333333333333335,
+    "min": 3,
+    "max": 4,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "8ca31062-cf00-5e03-96bc-aaece3ea761b": {
+    "count": 3,
+    "mean": -3.6666666666666665,
+    "min": -5,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649": {
+    "count": 3,
+    "mean": -3.6666666666666665,
+    "min": -5,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "d60ea9da-31b1-5c78-a372-247da183c96c": {
+    "count": 3,
+    "mean": -2.6666666666666665,
+    "min": -4,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "09dcb80e-f85e-5a31-8174-8468360d36b1": {
+    "count": 3,
+    "mean": -3.6666666666666665,
+    "min": -5,
+    "max": -3,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "5c2efa69-b5ce-5bc3-87b1-60769584b626": {
+    "count": 3,
+    "mean": 4,
+    "min": 3,
+    "max": 5,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "e15146e7-7407-566a-837e-27f4b1af8dc5": {
+    "count": 3,
+    "mean": 3,
+    "min": 2,
+    "max": 4,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "6587417f-9184-5f30-b870-0381eaa15448": {
+    "count": 3,
+    "mean": -3.6666666666666665,
+    "min": -4,
+    "max": -3,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "bbf38880-28f1-5701-ac88-19cf3c1b75ae": {
+    "count": 3,
+    "mean": -4,
+    "min": -5,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "47fa88f1-0cc4-5af6-a31a-cca14b26086a": {
+    "count": 3,
+    "mean": -3,
+    "min": -4,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   }
+  },
+  "secondary": {
+   "ce5524a8-cf80-5d2f-bea0-939b6545d6fd": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  }
+ },
+ "directions": {
+  "a96661e4-90b5-5833-83ec-a5a401e39bec:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "a96661e4-90b5-5833-83ec-a5a401e39bec:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": 2,
+   "direction": "support"
+  },
+  "a96661e4-90b5-5833-83ec-a5a401e39bec:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": 2,
+   "direction": "support"
+  },
+  "e10942e9-6e9a-5168-bd50-8628bcef3437:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": 4,
+   "direction": "support"
+  },
+  "e10942e9-6e9a-5168-bd50-8628bcef3437:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "e10942e9-6e9a-5168-bd50-8628bcef3437:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "8ca31062-cf00-5e03-96bc-aaece3ea761b:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "8ca31062-cf00-5e03-96bc-aaece3ea761b:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "8ca31062-cf00-5e03-96bc-aaece3ea761b:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "d60ea9da-31b1-5c78-a372-247da183c96c:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "d60ea9da-31b1-5c78-a372-247da183c96c:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "d60ea9da-31b1-5c78-a372-247da183c96c:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "09dcb80e-f85e-5a31-8174-8468360d36b1:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "09dcb80e-f85e-5a31-8174-8468360d36b1:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "09dcb80e-f85e-5a31-8174-8468360d36b1:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "5c2efa69-b5ce-5bc3-87b1-60769584b626:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "5c2efa69-b5ce-5bc3-87b1-60769584b626:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": 4,
+   "direction": "support"
+  },
+  "5c2efa69-b5ce-5bc3-87b1-60769584b626:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "e15146e7-7407-566a-837e-27f4b1af8dc5:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": 4,
+   "direction": "support"
+  },
+  "e15146e7-7407-566a-837e-27f4b1af8dc5:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": 2,
+   "direction": "support"
+  },
+  "e15146e7-7407-566a-837e-27f4b1af8dc5:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "6587417f-9184-5f30-b870-0381eaa15448:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "6587417f-9184-5f30-b870-0381eaa15448:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "6587417f-9184-5f30-b870-0381eaa15448:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "bbf38880-28f1-5701-ac88-19cf3c1b75ae:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "bbf38880-28f1-5701-ac88-19cf3c1b75ae:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "bbf38880-28f1-5701-ac88-19cf3c1b75ae:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "47fa88f1-0cc4-5af6-a31a-cca14b26086a:d58ac68b-e3e8-578a-b6b5-1215950513f1": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "47fa88f1-0cc4-5af6-a31a-cca14b26086a:7b5292d5-fa2f-5c58-bbc5-4423b27aac4d": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "47fa88f1-0cc4-5af6-a31a-cca14b26086a:41cc361f-741b-5adf-aa5a-6baa25f5fa14": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  }
+ }
+}

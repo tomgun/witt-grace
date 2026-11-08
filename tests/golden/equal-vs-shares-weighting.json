@@ -1,0 +1,625 @@
+{
+ "name": "equal-vs-shares-weighting",
+ "source": "scripts/golden-from-proto.mjs",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "golden-0003",
+  "title": "Nimetön pohdinta",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "golden-0001",
+    "name": "Minä",
+    "shares": 5,
+    "role": "owner"
+   },
+   {
+    "id": "golden-0004",
+    "name": "Bea",
+    "shares": 1,
+    "role": "editor"
+   },
+   {
+    "id": "golden-0005",
+    "name": "Cem",
+    "shares": 1,
+    "role": "editor"
+   },
+   {
+    "id": "golden-0006",
+    "name": "Dee",
+    "shares": 1,
+    "role": "editor"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "golden-0002",
+    "parentId": null,
+    "relation": "root",
+    "kind": "decision",
+    "title": "Mikä on paras päätös?",
+    "details": "",
+    "confidence": 50,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 130
+    },
+    "createdBy": "golden-0001"
+   },
+   {
+    "id": "golden-0007",
+    "parentId": "golden-0002",
+    "relation": "option",
+    "kind": "option",
+    "title": "Uusi päätösvaihtoehto",
+    "details": "",
+    "confidence": 50,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 130
+    },
+    "createdBy": "golden-0001"
+   },
+   {
+    "id": "golden-0008",
+    "parentId": "golden-0007",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Puoltava argumentti",
+    "details": "",
+    "confidence": 100,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 130
+    },
+    "createdBy": "golden-0001"
+   }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+   {
+    "id": "golden-0009",
+    "nodeId": "golden-0008",
+    "userId": "golden-0001",
+    "confidence": 100,
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   },
+   {
+    "id": "golden-0011",
+    "nodeId": "golden-0008",
+    "userId": "golden-0004",
+    "confidence": 40,
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   },
+   {
+    "id": "golden-0013",
+    "nodeId": "golden-0008",
+    "userId": "golden-0005",
+    "confidence": 60,
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   },
+   {
+    "id": "golden-0015",
+    "nodeId": "golden-0008",
+    "userId": "golden-0006",
+    "confidence": 80,
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   }
+  ],
+  "edgeAssessments": [
+   {
+    "id": "golden-0010",
+    "userId": "golden-0001",
+    "subjectType": "primary",
+    "subjectId": "golden-0008",
+    "influence": 5,
+    "fingerprint": "[\"golden-0008\",\"golden-0007\",\"Puoltava argumentti\",\"Uusi päätösvaihtoehto\",\"support\"]",
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   },
+   {
+    "id": "golden-0012",
+    "userId": "golden-0004",
+    "subjectType": "primary",
+    "subjectId": "golden-0008",
+    "influence": -2,
+    "fingerprint": "[\"golden-0008\",\"golden-0007\",\"Puoltava argumentti\",\"Uusi päätösvaihtoehto\",\"support\"]",
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   },
+   {
+    "id": "golden-0014",
+    "userId": "golden-0005",
+    "subjectType": "primary",
+    "subjectId": "golden-0008",
+    "influence": 1,
+    "fingerprint": "[\"golden-0008\",\"golden-0007\",\"Puoltava argumentti\",\"Uusi päätösvaihtoehto\",\"support\"]",
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   },
+   {
+    "id": "golden-0016",
+    "userId": "golden-0006",
+    "subjectType": "primary",
+    "subjectId": "golden-0008",
+    "influence": 3,
+    "fingerprint": "[\"golden-0008\",\"golden-0007\",\"Puoltava argumentti\",\"Uusi päätösvaihtoehto\",\"support\"]",
+    "updatedAt": "2026-11-08T10:00:00.000Z"
+   }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-08T10:00:00.000Z",
+  "updatedAt": "2026-11-08T10:00:00.000Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 70,
+     "balance": 40,
+     "base": 70,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 4,
+     "totalPower": 4,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 56.125,
+     "balance": 12.25,
+     "base": 50,
+     "delta": 6.125,
+     "positive": 1.2249999999999999,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": 1.75,
+       "strength": 70,
+       "magnitude": 1.2249999999999999,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "golden-0008": {
+     "parentId": "golden-0007",
+     "targetId": "golden-0007",
+     "localDelta": 6.125,
+     "delta": 6.125,
+     "provisional": false
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  },
+  "shares": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 85,
+     "balance": 70,
+     "base": 85,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 4,
+     "totalPower": 8,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 64.34375,
+     "balance": 28.6875,
+     "base": 50,
+     "delta": 14.34375,
+     "positive": 2.86875,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": 3.375,
+       "strength": 85,
+       "magnitude": 2.86875,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "golden-0008": {
+     "parentId": "golden-0007",
+     "targetId": "golden-0007",
+     "localDelta": 14.34375,
+     "delta": 14.34375,
+     "provisional": false
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  },
+  "structural": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 70,
+     "balance": 40,
+     "base": 70,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 4,
+     "totalPower": 4,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 60.5,
+     "balance": 21,
+     "base": 50,
+     "delta": 10.5,
+     "positive": 2.0999999999999996,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 70,
+       "magnitude": 2.0999999999999996,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "golden-0008": {
+     "parentId": "golden-0007",
+     "targetId": "golden-0007",
+     "localDelta": 10.5,
+     "delta": 10.5,
+     "provisional": false
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  }
+ },
+ "assessors": {
+  "golden-0001": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 100,
+     "balance": 100,
+     "base": 100,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 75,
+     "balance": 50,
+     "base": 50,
+     "delta": 25,
+     "positive": 5,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 100,
+       "magnitude": 5,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  },
+  "golden-0004": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 40,
+     "balance": -20,
+     "base": 40,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 46,
+     "balance": -8,
+     "base": 50,
+     "delta": -4,
+     "positive": 0,
+     "negative": 0.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 40,
+       "magnitude": 0.8,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  },
+  "golden-0005": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 60,
+     "balance": 20,
+     "base": 60,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 53,
+     "balance": 6,
+     "base": 50,
+     "delta": 3,
+     "positive": 0.6,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": 1,
+       "strength": 60,
+       "magnitude": 0.6,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  },
+  "golden-0006": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0008": {
+     "score": 80,
+     "balance": 60,
+     "base": 80,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0007": {
+     "score": 62,
+     "balance": 24,
+     "base": 50,
+     "delta": 12,
+     "positive": 2.4000000000000004,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "golden-0008",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 80,
+       "magnitude": 2.4000000000000004,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": [
+    "golden-0007"
+   ]
+  }
+ },
+ "options": {
+  "golden-0007": {
+   "feasibility": {
+    "status": "feasible",
+    "gates": [],
+    "unmet": 0,
+    "unknown": 0
+   },
+   "preference": {
+    "preferenceScore": null,
+    "preferenceVoters": 0,
+    "preferenceTotalPower": 0,
+    "weightedSum": 0
+   }
+  }
+ },
+ "influence": {
+  "primary": {
+   "golden-0008": {
+    "count": 4,
+    "mean": 1.75,
+    "min": -2,
+    "max": 5,
+    "positive": 3,
+    "negative": 1,
+    "neutral": 0,
+    "status": "contradictory",
+    "signConflict": true
+   }
+  },
+  "secondary": {}
+ },
+ "directions": {
+  "golden-0008:golden-0001": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "golden-0008:golden-0004": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "golden-0008:golden-0005": {
+   "current": true,
+   "influence": 1,
+   "direction": "support"
+  },
+  "golden-0008:golden-0006": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  }
+ }
+}

@@ -1,0 +1,517 @@
+{
+ "name": "example-dev31-edited",
+ "source": "witt-grace-gpt-proto/examples/dev31-edited.witt.json",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "e8583fcf-861d-4e4e-952b-ff7fb1d965e7",
+  "title": "Yhteistyötesti",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "9f068584-747a-4651-8920-82b9b1597057",
+    "name": "Aino",
+    "shares": 1,
+    "role": "owner"
+   },
+   {
+    "id": "b_user",
+    "name": "Ben",
+    "shares": 1,
+    "role": "editor",
+    "profileKind": "human"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+    "parentId": null,
+    "relation": "root",
+    "kind": "claim",
+    "title": "Benin muokkaama pääväite",
+    "details": "",
+    "confidence": 50,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 130
+    },
+    "createdBy": "9f068584-747a-4651-8920-82b9b1597057",
+    "lastEditedBy": "b_user"
+   },
+   {
+    "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+    "parentId": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Ainon perustelu",
+    "details": "",
+    "confidence": 100,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 130
+    },
+    "createdBy": "9f068584-747a-4651-8920-82b9b1597057"
+   },
+   {
+    "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+    "parentId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Benin vastaväite",
+    "details": "",
+    "confidence": 100,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 130
+    },
+    "createdBy": "b_user"
+   }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+   {
+    "id": "86c77a8d-b85d-413a-918f-3f476b6b50d2",
+    "nodeId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+    "userId": "9f068584-747a-4651-8920-82b9b1597057",
+    "confidence": 88,
+    "updatedAt": "2026-11-07T22:00:32.592Z"
+   },
+   {
+    "id": "72244720-5f55-4e83-99ba-b25ab2d3170e",
+    "nodeId": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+    "userId": "b_user",
+    "confidence": 55,
+    "updatedAt": "2026-11-07T22:00:32.592Z"
+   },
+   {
+    "id": "254d0250-1929-4591-86e6-eaa4411d659d",
+    "nodeId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+    "userId": "b_user",
+    "confidence": 60,
+    "updatedAt": "2026-11-07T22:00:32.592Z"
+   }
+  ],
+  "edgeAssessments": [
+   {
+    "id": "86febd61-5d1b-4387-83ae-d7c7b61b25ee",
+    "userId": "9f068584-747a-4651-8920-82b9b1597057",
+    "subjectType": "primary",
+    "subjectId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+    "influence": 4,
+    "fingerprint": "[\"62c7498e-0f51-42b7-9d51-7fe517f81035\",\"43b602b0-ebf9-4112-8c03-b158c32c5a6a\",\"Ainon perustelu\",\"Mikä on tarkasteltava väite?\",\"support\"]",
+    "updatedAt": "2026-11-07T22:00:32.592Z"
+   },
+   {
+    "id": "abbd6e67-7e3c-4122-915c-28ebc649a434",
+    "userId": "b_user",
+    "subjectType": "primary",
+    "subjectId": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+    "influence": -2.5,
+    "fingerprint": "[\"5e7c7d6c-a15f-43dc-8938-fcf45618dd15\",\"62c7498e-0f51-42b7-9d51-7fe517f81035\",\"Benin vastaväite\",\"Ainon perustelu\",\"oppose\"]",
+    "updatedAt": "2026-11-07T22:00:32.592Z"
+   }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [
+   {
+    "id": "815da071-37d6-45c5-b06b-e049280ec1a2",
+    "nodeId": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+    "body": "Ben huomasi tämän",
+    "authorName": "Ben",
+    "authorId": "b_user",
+    "createdAt": "2026-11-07T22:00:32.592Z"
+   }
+  ],
+  "links": [],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-07T22:00:32.590Z",
+  "updatedAt": "2026-11-07T22:00:32.591Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+     "score": 55,
+     "balance": 10,
+     "base": 55,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 1,
+     "totalPower": 1,
+     "contributions": []
+    },
+    "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+     "score": 67.125,
+     "balance": 34.25,
+     "base": 74,
+     "delta": -6.875,
+     "positive": 0,
+     "negative": 1.375,
+     "incomplete": true,
+     "votesCount": 2,
+     "totalPower": 2,
+     "contributions": [
+      {
+       "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+       "subjectType": "primary",
+       "impact": -2.5,
+       "strength": 55,
+       "magnitude": 1.375,
+       "missing": false
+      }
+     ]
+    },
+    "43b602b0-ebf9-4112-8c03-b158c32c5a6a": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": 67.125,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": null
+  },
+  "shares": {
+   "nodes": {
+    "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+     "score": 55,
+     "balance": 10,
+     "base": 55,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 1,
+     "totalPower": 1,
+     "contributions": []
+    },
+    "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+     "score": 67.125,
+     "balance": 34.25,
+     "base": 74,
+     "delta": -6.875,
+     "positive": 0,
+     "negative": 1.375,
+     "incomplete": true,
+     "votesCount": 2,
+     "totalPower": 2,
+     "contributions": [
+      {
+       "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+       "subjectType": "primary",
+       "impact": -2.5,
+       "strength": 55,
+       "magnitude": 1.375,
+       "missing": false
+      }
+     ]
+    },
+    "43b602b0-ebf9-4112-8c03-b158c32c5a6a": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": 67.125,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": null
+  },
+  "structural": {
+   "nodes": {
+    "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+     "score": 55,
+     "balance": 10,
+     "base": 55,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 1,
+     "totalPower": 1,
+     "contributions": []
+    },
+    "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+     "score": 65.75,
+     "balance": 31.5,
+     "base": 74,
+     "delta": -8.25,
+     "positive": 0,
+     "negative": 1.6500000000000001,
+     "incomplete": false,
+     "votesCount": 2,
+     "totalPower": 2,
+     "contributions": [
+      {
+       "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 55,
+       "magnitude": 1.6500000000000001,
+       "missing": false
+      }
+     ]
+    },
+    "43b602b0-ebf9-4112-8c03-b158c32c5a6a": {
+     "score": 59.8625,
+     "balance": 19.724999999999994,
+     "base": 50,
+     "delta": 9.862499999999997,
+     "positive": 1.9725,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65.75,
+       "magnitude": 1.9725,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+     "parentId": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+     "targetId": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+     "localDelta": 9.862499999999997,
+     "delta": 9.862499999999997,
+     "provisional": false
+    },
+    "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+     "parentId": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+     "targetId": "43b602b0-ebf9-4112-8c03-b158c32c5a6a",
+     "localDelta": -8.25,
+     "delta": -1.2374999999999972,
+     "provisional": false
+    }
+   },
+   "ranking": null
+  }
+ },
+ "assessors": {
+  "9f068584-747a-4651-8920-82b9b1597057": {
+   "nodes": {
+    "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+     "score": 88,
+     "balance": 76,
+     "base": 88,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "43b602b0-ebf9-4112-8c03-b158c32c5a6a": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": 88,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "b_user": {
+   "nodes": {
+    "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+     "score": 55,
+     "balance": 10,
+     "base": 55,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+     "score": 53.125,
+     "balance": 6.25,
+     "base": 60,
+     "delta": -6.875,
+     "positive": 0,
+     "negative": 1.375,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5e7c7d6c-a15f-43dc-8938-fcf45618dd15",
+       "subjectType": "primary",
+       "impact": -2.5,
+       "strength": 55,
+       "magnitude": 1.375,
+       "missing": false
+      }
+     ]
+    },
+    "43b602b0-ebf9-4112-8c03-b158c32c5a6a": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "62c7498e-0f51-42b7-9d51-7fe517f81035",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": 53.125,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  }
+ },
+ "options": {},
+ "influence": {
+  "primary": {
+   "62c7498e-0f51-42b7-9d51-7fe517f81035": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "5e7c7d6c-a15f-43dc-8938-fcf45618dd15": {
+    "count": 1,
+    "mean": -2.5,
+    "min": -2.5,
+    "max": -2.5,
+    "positive": 0,
+    "negative": 1,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   }
+  },
+  "secondary": {}
+ },
+ "directions": {
+  "62c7498e-0f51-42b7-9d51-7fe517f81035:9f068584-747a-4651-8920-82b9b1597057": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "62c7498e-0f51-42b7-9d51-7fe517f81035:b_user": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "5e7c7d6c-a15f-43dc-8938-fcf45618dd15:9f068584-747a-4651-8920-82b9b1597057": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "5e7c7d6c-a15f-43dc-8938-fcf45618dd15:b_user": {
+   "current": true,
+   "influence": -2.5,
+   "direction": "oppose"
+  }
+ }
+}

@@ -1,0 +1,6398 @@
+{
+ "name": "example-four-way-tree",
+ "source": "witt-grace-gpt-proto/examples/four-way-tree.witt.json",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "21b8d5d8-0ad6-4ebd-8c42-6fc23a61e81b",
+  "title": "WITT - 4-suuntainen rakenne (esimerkki)",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "40cc5864-43d3-4ed2-be41-e5e7d917a39f",
+    "name": "Minä",
+    "shares": 1,
+    "role": "owner"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "parentId": null,
+    "relation": "root",
+    "kind": "claim",
+    "title": "Mihin suuntaan kehitämme tuotetta?",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 130
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Käytettävyys pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 130
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "ef1ce6aa-9e5b-466d-a687-9b112f4b7263",
+    "parentId": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 130
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+    "parentId": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 300
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "bf65b740-389c-443e-9fc1-b8e3788a4f6d",
+    "parentId": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Vastaväite kannattaa tarkistaa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 1110,
+     "y": 300
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "4fa82460-a782-46e2-9563-229e31f39540",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Asiakastarpeet pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 300
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "d9481dd4-0203-4b47-95a5-a1401a55e7eb",
+    "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 300
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "c83036a5-3a30-439e-863e-35dcb9e04f7e",
+    "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 470
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "f76345e1-218f-4e6c-8b84-9ba5b37feba3",
+    "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 640
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Tietoturva pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 470
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "8f868c8d-a46c-4338-985d-531025e725e7",
+    "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 470
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "1efc7299-4690-40c2-962c-7a107cf117b2",
+    "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 640
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031",
+    "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 810
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "0c59712e-e216-4011-92be-0335334f14a1",
+    "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Tarvitsemme selkeät mittarit",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 980
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Ylläpidettävyys pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 640
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "886af760-b7cb-46da-8fd7-008f339f1fd1",
+    "parentId": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 640
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+    "parentId": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 810
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "5192e5ae-8210-4dd7-840c-f454d8ed65ac",
+    "parentId": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Vastaväite kannattaa tarkistaa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 1110,
+     "y": 810
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kustannukset pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 810
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "c7b624ea-902b-4eb5-9599-3df21ffb789b",
+    "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 810
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "71f21858-a412-4370-a65c-4d8fb435f410",
+    "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 980
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "41887011-89ef-4475-ab96-2e5dcb69219f",
+    "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1150
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Integraatiot pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 980
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "5c5eedb5-5bbe-417b-8972-944d93e14638",
+    "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 980
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "a98209fa-cb03-4de5-b2e7-1656980f29ad",
+    "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1150
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "b8a04a2f-62d6-42c5-a130-e2d803070495",
+    "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1320
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "d8cec7f4-10b7-4f33-a151-570a0c1504d5",
+    "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Tarvitsemme selkeät mittarit",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1490
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Saavutettavuus pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 1150
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa",
+    "parentId": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1150
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+    "parentId": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1320
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "68cba852-47f9-4cba-83cf-aa777027bc34",
+    "parentId": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Vastaväite kannattaa tarkistaa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 1110,
+     "y": 1320
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Tietomalli pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 1320
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "9965bd58-2bbc-4935-812a-a2cb9e641bfa",
+    "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1320
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "6ac14f37-e645-4e42-b6e5-c09249b7b932",
+    "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1490
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "dd73f336-e867-445d-812a-5591cf56a01e",
+    "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1660
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Suorituskyky pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 1490
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "2d252c33-a8e4-419e-88fc-24c6320e6b5d",
+    "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1490
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "fcea8646-2500-43ed-b8d2-db98d6c17730",
+    "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1660
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "bac706a2-110a-4f43-b2b2-db70c7cd4880",
+    "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1830
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "daf88754-5fef-4726-9ac5-66f1a51cdee7",
+    "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Tarvitsemme selkeät mittarit",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2000
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "6ba7f989-891c-4719-843f-2176c609dc9c",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Markkinointi pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 1660
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d",
+    "parentId": "6ba7f989-891c-4719-843f-2176c609dc9c",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1660
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "47447ad2-aaaa-45f0-809e-774c331c8836",
+    "parentId": "6ba7f989-891c-4719-843f-2176c609dc9c",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1830
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "2844c4fd-c282-4555-85a6-187568770656",
+    "parentId": "47447ad2-aaaa-45f0-809e-774c331c8836",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Vastaväite kannattaa tarkistaa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 1110,
+     "y": 1830
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Aikataulu pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 1830
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "597115f9-9fa5-45f5-b268-aa6f51110e7f",
+    "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 1830
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "8ca683fa-08b7-4faa-8602-8145d58906e4",
+    "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2000
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "24352af3-fde2-4395-b092-f6b197582f63",
+    "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2170
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+    "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Yhteistyö pitää huomioida",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 2000
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "6a14f977-a3cb-4f7a-be92-3867c7fce675",
+    "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Vaikuttaa asiakkaan kokemukseen",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2000
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "b834258f-0226-471d-9368-588d24fa94eb",
+    "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Riskit voidaan hallita",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2170
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "adc13d49-fb00-4ecf-b371-be0c5c4012c4",
+    "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Kokeilu lisää tietoa",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2340
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   },
+   {
+    "id": "11a94feb-0a23-4f33-a9bf-edae357cf1d4",
+    "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Tarvitsemme selkeät mittarit",
+    "details": "",
+    "confidence": 65,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 2510
+    },
+    "createdBy": "40cc5864-43d3-4ed2-be41-e5e7d917a39f"
+   }
+  ],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-05T18:59:41.932Z",
+  "updatedAt": "2026-11-05T18:59:41.932Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "ef1ce6aa-9e5b-466d-a687-9b112f4b7263": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "bf65b740-389c-443e-9fc1-b8e3788a4f6d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "bf65b740-389c-443e-9fc1-b8e3788a4f6d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "90863e23-2ce6-455b-a495-4ee71cb2a815": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "ef1ce6aa-9e5b-466d-a687-9b112f4b7263",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "d9481dd4-0203-4b47-95a5-a1401a55e7eb": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "c83036a5-3a30-439e-863e-35dcb9e04f7e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "f76345e1-218f-4e6c-8b84-9ba5b37feba3": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "4fa82460-a782-46e2-9563-229e31f39540": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "d9481dd4-0203-4b47-95a5-a1401a55e7eb",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "c83036a5-3a30-439e-863e-35dcb9e04f7e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "f76345e1-218f-4e6c-8b84-9ba5b37feba3",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "8f868c8d-a46c-4338-985d-531025e725e7": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "1efc7299-4690-40c2-962c-7a107cf117b2": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "0c59712e-e216-4011-92be-0335334f14a1": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "aabd5059-5eb2-4232-8587-ddcf4a262189": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "8f868c8d-a46c-4338-985d-531025e725e7",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "1efc7299-4690-40c2-962c-7a107cf117b2",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "0c59712e-e216-4011-92be-0335334f14a1",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "886af760-b7cb-46da-8fd7-008f339f1fd1": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "5192e5ae-8210-4dd7-840c-f454d8ed65ac": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "f4b08b01-ee78-46bc-9cce-49394c0ed97e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "5192e5ae-8210-4dd7-840c-f454d8ed65ac",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "678a12ef-a8cc-4eb5-8a40-fa9df9c93809": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "886af760-b7cb-46da-8fd7-008f339f1fd1",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "c7b624ea-902b-4eb5-9599-3df21ffb789b": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "71f21858-a412-4370-a65c-4d8fb435f410": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "41887011-89ef-4475-ab96-2e5dcb69219f": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "9bdd3408-c75a-44f0-af52-8eeceaa39d40": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "c7b624ea-902b-4eb5-9599-3df21ffb789b",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "71f21858-a412-4370-a65c-4d8fb435f410",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "41887011-89ef-4475-ab96-2e5dcb69219f",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "5c5eedb5-5bbe-417b-8972-944d93e14638": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "a98209fa-cb03-4de5-b2e7-1656980f29ad": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b8a04a2f-62d6-42c5-a130-e2d803070495": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "d8cec7f4-10b7-4f33-a151-570a0c1504d5": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "c2427ac4-3a4b-4070-957d-a25358c94a48": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "5c5eedb5-5bbe-417b-8972-944d93e14638",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "a98209fa-cb03-4de5-b2e7-1656980f29ad",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b8a04a2f-62d6-42c5-a130-e2d803070495",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "d8cec7f4-10b7-4f33-a151-570a0c1504d5",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "68cba852-47f9-4cba-83cf-aa777027bc34": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "68cba852-47f9-4cba-83cf-aa777027bc34",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "0563d093-cf12-4c3e-9642-42a34c65e6cc": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "9965bd58-2bbc-4935-812a-a2cb9e641bfa": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "6ac14f37-e645-4e42-b6e5-c09249b7b932": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "dd73f336-e867-445d-812a-5591cf56a01e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "9e617780-dd51-4e85-8c4d-cf29eef088ee": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "9965bd58-2bbc-4935-812a-a2cb9e641bfa",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ac14f37-e645-4e42-b6e5-c09249b7b932",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "dd73f336-e867-445d-812a-5591cf56a01e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "2d252c33-a8e4-419e-88fc-24c6320e6b5d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "fcea8646-2500-43ed-b8d2-db98d6c17730": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "bac706a2-110a-4f43-b2b2-db70c7cd4880": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "daf88754-5fef-4726-9ac5-66f1a51cdee7": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "6ab0fa3f-c3f1-432b-a476-f15834d888d3": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "2d252c33-a8e4-419e-88fc-24c6320e6b5d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "fcea8646-2500-43ed-b8d2-db98d6c17730",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "bac706a2-110a-4f43-b2b2-db70c7cd4880",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "daf88754-5fef-4726-9ac5-66f1a51cdee7",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "2844c4fd-c282-4555-85a6-187568770656": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "47447ad2-aaaa-45f0-809e-774c331c8836": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "2844c4fd-c282-4555-85a6-187568770656",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "6ba7f989-891c-4719-843f-2176c609dc9c": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "47447ad2-aaaa-45f0-809e-774c331c8836",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "597115f9-9fa5-45f5-b268-aa6f51110e7f": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "8ca683fa-08b7-4faa-8602-8145d58906e4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "24352af3-fde2-4395-b092-f6b197582f63": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "2fa8c974-c3ca-44c0-a80f-213fc7601304": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "597115f9-9fa5-45f5-b268-aa6f51110e7f",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "8ca683fa-08b7-4faa-8602-8145d58906e4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "24352af3-fde2-4395-b092-f6b197582f63",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "6a14f977-a3cb-4f7a-be92-3867c7fce675": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b834258f-0226-471d-9368-588d24fa94eb": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "adc13d49-fb00-4ecf-b371-be0c5c4012c4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "11a94feb-0a23-4f33-a9bf-edae357cf1d4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "1092177f-fc35-411a-89d6-c4c8dc3788ef": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "6a14f977-a3cb-4f7a-be92-3867c7fce675",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b834258f-0226-471d-9368-588d24fa94eb",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "adc13d49-fb00-4ecf-b371-be0c5c4012c4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "11a94feb-0a23-4f33-a9bf-edae357cf1d4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "9decd5f1-8617-420c-8c9d-dee2c543d850": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "4fa82460-a782-46e2-9563-229e31f39540",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ba7f989-891c-4719-843f-2176c609dc9c",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": null
+  },
+  "shares": {
+   "nodes": {
+    "ef1ce6aa-9e5b-466d-a687-9b112f4b7263": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "bf65b740-389c-443e-9fc1-b8e3788a4f6d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "bf65b740-389c-443e-9fc1-b8e3788a4f6d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "90863e23-2ce6-455b-a495-4ee71cb2a815": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "ef1ce6aa-9e5b-466d-a687-9b112f4b7263",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "d9481dd4-0203-4b47-95a5-a1401a55e7eb": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "c83036a5-3a30-439e-863e-35dcb9e04f7e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "f76345e1-218f-4e6c-8b84-9ba5b37feba3": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "4fa82460-a782-46e2-9563-229e31f39540": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "d9481dd4-0203-4b47-95a5-a1401a55e7eb",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "c83036a5-3a30-439e-863e-35dcb9e04f7e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "f76345e1-218f-4e6c-8b84-9ba5b37feba3",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "8f868c8d-a46c-4338-985d-531025e725e7": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "1efc7299-4690-40c2-962c-7a107cf117b2": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "0c59712e-e216-4011-92be-0335334f14a1": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "aabd5059-5eb2-4232-8587-ddcf4a262189": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "8f868c8d-a46c-4338-985d-531025e725e7",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "1efc7299-4690-40c2-962c-7a107cf117b2",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "0c59712e-e216-4011-92be-0335334f14a1",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "886af760-b7cb-46da-8fd7-008f339f1fd1": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "5192e5ae-8210-4dd7-840c-f454d8ed65ac": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "f4b08b01-ee78-46bc-9cce-49394c0ed97e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "5192e5ae-8210-4dd7-840c-f454d8ed65ac",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "678a12ef-a8cc-4eb5-8a40-fa9df9c93809": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "886af760-b7cb-46da-8fd7-008f339f1fd1",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "c7b624ea-902b-4eb5-9599-3df21ffb789b": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "71f21858-a412-4370-a65c-4d8fb435f410": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "41887011-89ef-4475-ab96-2e5dcb69219f": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "9bdd3408-c75a-44f0-af52-8eeceaa39d40": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "c7b624ea-902b-4eb5-9599-3df21ffb789b",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "71f21858-a412-4370-a65c-4d8fb435f410",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "41887011-89ef-4475-ab96-2e5dcb69219f",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "5c5eedb5-5bbe-417b-8972-944d93e14638": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "a98209fa-cb03-4de5-b2e7-1656980f29ad": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b8a04a2f-62d6-42c5-a130-e2d803070495": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "d8cec7f4-10b7-4f33-a151-570a0c1504d5": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "c2427ac4-3a4b-4070-957d-a25358c94a48": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "5c5eedb5-5bbe-417b-8972-944d93e14638",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "a98209fa-cb03-4de5-b2e7-1656980f29ad",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b8a04a2f-62d6-42c5-a130-e2d803070495",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "d8cec7f4-10b7-4f33-a151-570a0c1504d5",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "68cba852-47f9-4cba-83cf-aa777027bc34": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "68cba852-47f9-4cba-83cf-aa777027bc34",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "0563d093-cf12-4c3e-9642-42a34c65e6cc": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "9965bd58-2bbc-4935-812a-a2cb9e641bfa": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "6ac14f37-e645-4e42-b6e5-c09249b7b932": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "dd73f336-e867-445d-812a-5591cf56a01e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "9e617780-dd51-4e85-8c4d-cf29eef088ee": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "9965bd58-2bbc-4935-812a-a2cb9e641bfa",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ac14f37-e645-4e42-b6e5-c09249b7b932",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "dd73f336-e867-445d-812a-5591cf56a01e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "2d252c33-a8e4-419e-88fc-24c6320e6b5d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "fcea8646-2500-43ed-b8d2-db98d6c17730": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "bac706a2-110a-4f43-b2b2-db70c7cd4880": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "daf88754-5fef-4726-9ac5-66f1a51cdee7": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "6ab0fa3f-c3f1-432b-a476-f15834d888d3": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "2d252c33-a8e4-419e-88fc-24c6320e6b5d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "fcea8646-2500-43ed-b8d2-db98d6c17730",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "bac706a2-110a-4f43-b2b2-db70c7cd4880",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "daf88754-5fef-4726-9ac5-66f1a51cdee7",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "2844c4fd-c282-4555-85a6-187568770656": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "47447ad2-aaaa-45f0-809e-774c331c8836": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "2844c4fd-c282-4555-85a6-187568770656",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "6ba7f989-891c-4719-843f-2176c609dc9c": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "47447ad2-aaaa-45f0-809e-774c331c8836",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "597115f9-9fa5-45f5-b268-aa6f51110e7f": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "8ca683fa-08b7-4faa-8602-8145d58906e4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "24352af3-fde2-4395-b092-f6b197582f63": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "2fa8c974-c3ca-44c0-a80f-213fc7601304": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "597115f9-9fa5-45f5-b268-aa6f51110e7f",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "8ca683fa-08b7-4faa-8602-8145d58906e4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "24352af3-fde2-4395-b092-f6b197582f63",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "6a14f977-a3cb-4f7a-be92-3867c7fce675": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b834258f-0226-471d-9368-588d24fa94eb": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "adc13d49-fb00-4ecf-b371-be0c5c4012c4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "11a94feb-0a23-4f33-a9bf-edae357cf1d4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "1092177f-fc35-411a-89d6-c4c8dc3788ef": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "6a14f977-a3cb-4f7a-be92-3867c7fce675",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b834258f-0226-471d-9368-588d24fa94eb",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "adc13d49-fb00-4ecf-b371-be0c5c4012c4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "11a94feb-0a23-4f33-a9bf-edae357cf1d4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "9decd5f1-8617-420c-8c9d-dee2c543d850": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "4fa82460-a782-46e2-9563-229e31f39540",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ba7f989-891c-4719-843f-2176c609dc9c",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": null
+  },
+  "structural": {
+   "nodes": {
+    "ef1ce6aa-9e5b-466d-a687-9b112f4b7263": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "bf65b740-389c-443e-9fc1-b8e3788a4f6d": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8": {
+     "score": 55.25,
+     "balance": 10.5,
+     "base": 65,
+     "delta": -9.75,
+     "positive": 0,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "bf65b740-389c-443e-9fc1-b8e3788a4f6d",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "90863e23-2ce6-455b-a495-4ee71cb2a815": {
+     "score": 66.4625,
+     "balance": 32.92500000000001,
+     "base": 65,
+     "delta": 1.4625000000000057,
+     "positive": 1.9500000000000002,
+     "negative": 1.6575,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "ef1ce6aa-9e5b-466d-a687-9b112f4b7263",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 55.25,
+       "magnitude": 1.6575,
+       "missing": false
+      }
+     ]
+    },
+    "d9481dd4-0203-4b47-95a5-a1401a55e7eb": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "c83036a5-3a30-439e-863e-35dcb9e04f7e": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "f76345e1-218f-4e6c-8b84-9ba5b37feba3": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "4fa82460-a782-46e2-9563-229e31f39540": {
+     "score": 74.75,
+     "balance": 49.5,
+     "base": 65,
+     "delta": 9.75,
+     "positive": 3.9000000000000004,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "d9481dd4-0203-4b47-95a5-a1401a55e7eb",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "c83036a5-3a30-439e-863e-35dcb9e04f7e",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "f76345e1-218f-4e6c-8b84-9ba5b37feba3",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "8f868c8d-a46c-4338-985d-531025e725e7": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "1efc7299-4690-40c2-962c-7a107cf117b2": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "0c59712e-e216-4011-92be-0335334f14a1": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "aabd5059-5eb2-4232-8587-ddcf4a262189": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 3.9000000000000004,
+     "negative": 3.9000000000000004,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "8f868c8d-a46c-4338-985d-531025e725e7",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "1efc7299-4690-40c2-962c-7a107cf117b2",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "0c59712e-e216-4011-92be-0335334f14a1",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "886af760-b7cb-46da-8fd7-008f339f1fd1": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "5192e5ae-8210-4dd7-840c-f454d8ed65ac": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "f4b08b01-ee78-46bc-9cce-49394c0ed97e": {
+     "score": 55.25,
+     "balance": 10.5,
+     "base": 65,
+     "delta": -9.75,
+     "positive": 0,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "5192e5ae-8210-4dd7-840c-f454d8ed65ac",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "678a12ef-a8cc-4eb5-8a40-fa9df9c93809": {
+     "score": 66.4625,
+     "balance": 32.92500000000001,
+     "base": 65,
+     "delta": 1.4625000000000057,
+     "positive": 1.9500000000000002,
+     "negative": 1.6575,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "886af760-b7cb-46da-8fd7-008f339f1fd1",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 55.25,
+       "magnitude": 1.6575,
+       "missing": false
+      }
+     ]
+    },
+    "c7b624ea-902b-4eb5-9599-3df21ffb789b": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "71f21858-a412-4370-a65c-4d8fb435f410": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "41887011-89ef-4475-ab96-2e5dcb69219f": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "9bdd3408-c75a-44f0-af52-8eeceaa39d40": {
+     "score": 74.75,
+     "balance": 49.5,
+     "base": 65,
+     "delta": 9.75,
+     "positive": 3.9000000000000004,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "c7b624ea-902b-4eb5-9599-3df21ffb789b",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "71f21858-a412-4370-a65c-4d8fb435f410",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "41887011-89ef-4475-ab96-2e5dcb69219f",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "5c5eedb5-5bbe-417b-8972-944d93e14638": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "a98209fa-cb03-4de5-b2e7-1656980f29ad": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b8a04a2f-62d6-42c5-a130-e2d803070495": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "d8cec7f4-10b7-4f33-a151-570a0c1504d5": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "c2427ac4-3a4b-4070-957d-a25358c94a48": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 3.9000000000000004,
+     "negative": 3.9000000000000004,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "5c5eedb5-5bbe-417b-8972-944d93e14638",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "a98209fa-cb03-4de5-b2e7-1656980f29ad",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "b8a04a2f-62d6-42c5-a130-e2d803070495",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "d8cec7f4-10b7-4f33-a151-570a0c1504d5",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "68cba852-47f9-4cba-83cf-aa777027bc34": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4": {
+     "score": 55.25,
+     "balance": 10.5,
+     "base": 65,
+     "delta": -9.75,
+     "positive": 0,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "68cba852-47f9-4cba-83cf-aa777027bc34",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "0563d093-cf12-4c3e-9642-42a34c65e6cc": {
+     "score": 66.4625,
+     "balance": 32.92500000000001,
+     "base": 65,
+     "delta": 1.4625000000000057,
+     "positive": 1.9500000000000002,
+     "negative": 1.6575,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 55.25,
+       "magnitude": 1.6575,
+       "missing": false
+      }
+     ]
+    },
+    "9965bd58-2bbc-4935-812a-a2cb9e641bfa": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "6ac14f37-e645-4e42-b6e5-c09249b7b932": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "dd73f336-e867-445d-812a-5591cf56a01e": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "9e617780-dd51-4e85-8c4d-cf29eef088ee": {
+     "score": 74.75,
+     "balance": 49.5,
+     "base": 65,
+     "delta": 9.75,
+     "positive": 3.9000000000000004,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "9965bd58-2bbc-4935-812a-a2cb9e641bfa",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "6ac14f37-e645-4e42-b6e5-c09249b7b932",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "dd73f336-e867-445d-812a-5591cf56a01e",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "2d252c33-a8e4-419e-88fc-24c6320e6b5d": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "fcea8646-2500-43ed-b8d2-db98d6c17730": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "bac706a2-110a-4f43-b2b2-db70c7cd4880": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "daf88754-5fef-4726-9ac5-66f1a51cdee7": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "6ab0fa3f-c3f1-432b-a476-f15834d888d3": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 3.9000000000000004,
+     "negative": 3.9000000000000004,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "2d252c33-a8e4-419e-88fc-24c6320e6b5d",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "fcea8646-2500-43ed-b8d2-db98d6c17730",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "bac706a2-110a-4f43-b2b2-db70c7cd4880",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "daf88754-5fef-4726-9ac5-66f1a51cdee7",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "2844c4fd-c282-4555-85a6-187568770656": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "47447ad2-aaaa-45f0-809e-774c331c8836": {
+     "score": 55.25,
+     "balance": 10.5,
+     "base": 65,
+     "delta": -9.75,
+     "positive": 0,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "2844c4fd-c282-4555-85a6-187568770656",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "6ba7f989-891c-4719-843f-2176c609dc9c": {
+     "score": 66.4625,
+     "balance": 32.92500000000001,
+     "base": 65,
+     "delta": 1.4625000000000057,
+     "positive": 1.9500000000000002,
+     "negative": 1.6575,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "47447ad2-aaaa-45f0-809e-774c331c8836",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 55.25,
+       "magnitude": 1.6575,
+       "missing": false
+      }
+     ]
+    },
+    "597115f9-9fa5-45f5-b268-aa6f51110e7f": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "8ca683fa-08b7-4faa-8602-8145d58906e4": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "24352af3-fde2-4395-b092-f6b197582f63": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "2fa8c974-c3ca-44c0-a80f-213fc7601304": {
+     "score": 74.75,
+     "balance": 49.5,
+     "base": 65,
+     "delta": 9.75,
+     "positive": 3.9000000000000004,
+     "negative": 1.9500000000000002,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "597115f9-9fa5-45f5-b268-aa6f51110e7f",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "8ca683fa-08b7-4faa-8602-8145d58906e4",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "24352af3-fde2-4395-b092-f6b197582f63",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "6a14f977-a3cb-4f7a-be92-3867c7fce675": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "b834258f-0226-471d-9368-588d24fa94eb": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "adc13d49-fb00-4ecf-b371-be0c5c4012c4": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "11a94feb-0a23-4f33-a9bf-edae357cf1d4": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "1092177f-fc35-411a-89d6-c4c8dc3788ef": {
+     "score": 65,
+     "balance": 30,
+     "base": 65,
+     "delta": 0,
+     "positive": 3.9000000000000004,
+     "negative": 3.9000000000000004,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "6a14f977-a3cb-4f7a-be92-3867c7fce675",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "b834258f-0226-471d-9368-588d24fa94eb",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "adc13d49-fb00-4ecf-b371-be0c5c4012c4",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "11a94feb-0a23-4f33-a9bf-edae357cf1d4",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "9decd5f1-8617-420c-8c9d-dee2c543d850": {
+     "score": 100,
+     "balance": 100,
+     "base": 65,
+     "delta": 35,
+     "positive": 16.77,
+     "negative": 7.9755,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 66.4625,
+       "magnitude": 1.993875,
+       "missing": false
+      },
+      {
+       "id": "4fa82460-a782-46e2-9563-229e31f39540",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 74.75,
+       "magnitude": 2.2425,
+       "missing": false
+      },
+      {
+       "id": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 66.4625,
+       "magnitude": 1.993875,
+       "missing": false
+      },
+      {
+       "id": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 74.75,
+       "magnitude": 2.2425,
+       "missing": false
+      },
+      {
+       "id": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 66.4625,
+       "magnitude": 1.993875,
+       "missing": false
+      },
+      {
+       "id": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 74.75,
+       "magnitude": 2.2425,
+       "missing": false
+      },
+      {
+       "id": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      },
+      {
+       "id": "6ba7f989-891c-4719-843f-2176c609dc9c",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 66.4625,
+       "magnitude": 1.993875,
+       "missing": false
+      },
+      {
+       "id": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 74.75,
+       "magnitude": 2.2425,
+       "missing": false
+      },
+      {
+       "id": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 65,
+       "magnitude": 1.9500000000000002,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "90863e23-2ce6-455b-a495-4ee71cb2a815": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": false
+    },
+    "4fa82460-a782-46e2-9563-229e31f39540": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 2.240000000000009,
+     "delta": 2.240000000000009,
+     "provisional": false
+    },
+    "aabd5059-5eb2-4232-8587-ddcf4a262189": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0.7775000000000034,
+     "delta": 0.7775000000000034,
+     "provisional": false
+    },
+    "678a12ef-a8cc-4eb5-8a40-fa9df9c93809": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": false
+    },
+    "9bdd3408-c75a-44f0-af52-8eeceaa39d40": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 2.240000000000009,
+     "delta": 2.240000000000009,
+     "provisional": false
+    },
+    "c2427ac4-3a4b-4070-957d-a25358c94a48": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0.7775000000000034,
+     "delta": 0.7775000000000034,
+     "provisional": false
+    },
+    "0563d093-cf12-4c3e-9642-42a34c65e6cc": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": false
+    },
+    "9e617780-dd51-4e85-8c4d-cf29eef088ee": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 2.240000000000009,
+     "delta": 2.240000000000009,
+     "provisional": false
+    },
+    "6ab0fa3f-c3f1-432b-a476-f15834d888d3": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0.7775000000000034,
+     "delta": 0.7775000000000034,
+     "provisional": false
+    },
+    "6ba7f989-891c-4719-843f-2176c609dc9c": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": false
+    },
+    "2fa8c974-c3ca-44c0-a80f-213fc7601304": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 2.240000000000009,
+     "delta": 2.240000000000009,
+     "provisional": false
+    },
+    "1092177f-fc35-411a-89d6-c4c8dc3788ef": {
+     "parentId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 0.7775000000000034,
+     "delta": 0.7775000000000034,
+     "provisional": false
+    },
+    "ef1ce6aa-9e5b-466d-a687-9b112f4b7263": {
+     "parentId": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.750000000000007,
+     "delta": 0,
+     "provisional": false
+    },
+    "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8": {
+     "parentId": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -8.287499999999994,
+     "delta": 0,
+     "provisional": false
+    },
+    "bf65b740-389c-443e-9fc1-b8e3788a4f6d": {
+     "parentId": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "d9481dd4-0203-4b47-95a5-a1401a55e7eb": {
+     "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "c83036a5-3a30-439e-863e-35dcb9e04f7e": {
+     "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "f76345e1-218f-4e6c-8b84-9ba5b37feba3": {
+     "parentId": "4fa82460-a782-46e2-9563-229e31f39540",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "8f868c8d-a46c-4338-985d-531025e725e7": {
+     "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "1efc7299-4690-40c2-962c-7a107cf117b2": {
+     "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031": {
+     "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "0c59712e-e216-4011-92be-0335334f14a1": {
+     "parentId": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "886af760-b7cb-46da-8fd7-008f339f1fd1": {
+     "parentId": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.750000000000007,
+     "delta": 0,
+     "provisional": false
+    },
+    "f4b08b01-ee78-46bc-9cce-49394c0ed97e": {
+     "parentId": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -8.287499999999994,
+     "delta": 0,
+     "provisional": false
+    },
+    "5192e5ae-8210-4dd7-840c-f454d8ed65ac": {
+     "parentId": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "c7b624ea-902b-4eb5-9599-3df21ffb789b": {
+     "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "71f21858-a412-4370-a65c-4d8fb435f410": {
+     "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "41887011-89ef-4475-ab96-2e5dcb69219f": {
+     "parentId": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "5c5eedb5-5bbe-417b-8972-944d93e14638": {
+     "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "a98209fa-cb03-4de5-b2e7-1656980f29ad": {
+     "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "b8a04a2f-62d6-42c5-a130-e2d803070495": {
+     "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "d8cec7f4-10b7-4f33-a151-570a0c1504d5": {
+     "parentId": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa": {
+     "parentId": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.750000000000007,
+     "delta": 0,
+     "provisional": false
+    },
+    "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4": {
+     "parentId": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -8.287499999999994,
+     "delta": 0,
+     "provisional": false
+    },
+    "68cba852-47f9-4cba-83cf-aa777027bc34": {
+     "parentId": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "9965bd58-2bbc-4935-812a-a2cb9e641bfa": {
+     "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "6ac14f37-e645-4e42-b6e5-c09249b7b932": {
+     "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "dd73f336-e867-445d-812a-5591cf56a01e": {
+     "parentId": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "2d252c33-a8e4-419e-88fc-24c6320e6b5d": {
+     "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "fcea8646-2500-43ed-b8d2-db98d6c17730": {
+     "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "bac706a2-110a-4f43-b2b2-db70c7cd4880": {
+     "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "daf88754-5fef-4726-9ac5-66f1a51cdee7": {
+     "parentId": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d": {
+     "parentId": "6ba7f989-891c-4719-843f-2176c609dc9c",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.750000000000007,
+     "delta": 0,
+     "provisional": false
+    },
+    "47447ad2-aaaa-45f0-809e-774c331c8836": {
+     "parentId": "6ba7f989-891c-4719-843f-2176c609dc9c",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -8.287499999999994,
+     "delta": 0,
+     "provisional": false
+    },
+    "2844c4fd-c282-4555-85a6-187568770656": {
+     "parentId": "47447ad2-aaaa-45f0-809e-774c331c8836",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "597115f9-9fa5-45f5-b268-aa6f51110e7f": {
+     "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "8ca683fa-08b7-4faa-8602-8145d58906e4": {
+     "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "24352af3-fde2-4395-b092-f6b197582f63": {
+     "parentId": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "6a14f977-a3cb-4f7a-be92-3867c7fce675": {
+     "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "b834258f-0226-471d-9368-588d24fa94eb": {
+     "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "adc13d49-fb00-4ecf-b371-be0c5c4012c4": {
+     "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": 9.75,
+     "delta": 0,
+     "provisional": false
+    },
+    "11a94feb-0a23-4f33-a9bf-edae357cf1d4": {
+     "parentId": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+     "targetId": "9decd5f1-8617-420c-8c9d-dee2c543d850",
+     "localDelta": -9.75,
+     "delta": 0,
+     "provisional": false
+    }
+   },
+   "ranking": null
+  }
+ },
+ "assessors": {
+  "40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "nodes": {
+    "ef1ce6aa-9e5b-466d-a687-9b112f4b7263": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "bf65b740-389c-443e-9fc1-b8e3788a4f6d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "bf65b740-389c-443e-9fc1-b8e3788a4f6d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "90863e23-2ce6-455b-a495-4ee71cb2a815": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "ef1ce6aa-9e5b-466d-a687-9b112f4b7263",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "d9481dd4-0203-4b47-95a5-a1401a55e7eb": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "c83036a5-3a30-439e-863e-35dcb9e04f7e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f76345e1-218f-4e6c-8b84-9ba5b37feba3": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "4fa82460-a782-46e2-9563-229e31f39540": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "d9481dd4-0203-4b47-95a5-a1401a55e7eb",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "c83036a5-3a30-439e-863e-35dcb9e04f7e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "f76345e1-218f-4e6c-8b84-9ba5b37feba3",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "8f868c8d-a46c-4338-985d-531025e725e7": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "1efc7299-4690-40c2-962c-7a107cf117b2": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "0c59712e-e216-4011-92be-0335334f14a1": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "aabd5059-5eb2-4232-8587-ddcf4a262189": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "8f868c8d-a46c-4338-985d-531025e725e7",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "1efc7299-4690-40c2-962c-7a107cf117b2",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "0c59712e-e216-4011-92be-0335334f14a1",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "886af760-b7cb-46da-8fd7-008f339f1fd1": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "5192e5ae-8210-4dd7-840c-f454d8ed65ac": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f4b08b01-ee78-46bc-9cce-49394c0ed97e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5192e5ae-8210-4dd7-840c-f454d8ed65ac",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "678a12ef-a8cc-4eb5-8a40-fa9df9c93809": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "886af760-b7cb-46da-8fd7-008f339f1fd1",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "f4b08b01-ee78-46bc-9cce-49394c0ed97e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "c7b624ea-902b-4eb5-9599-3df21ffb789b": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "71f21858-a412-4370-a65c-4d8fb435f410": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "41887011-89ef-4475-ab96-2e5dcb69219f": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "9bdd3408-c75a-44f0-af52-8eeceaa39d40": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "c7b624ea-902b-4eb5-9599-3df21ffb789b",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "71f21858-a412-4370-a65c-4d8fb435f410",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "41887011-89ef-4475-ab96-2e5dcb69219f",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "5c5eedb5-5bbe-417b-8972-944d93e14638": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "a98209fa-cb03-4de5-b2e7-1656980f29ad": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "b8a04a2f-62d6-42c5-a130-e2d803070495": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "d8cec7f4-10b7-4f33-a151-570a0c1504d5": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "c2427ac4-3a4b-4070-957d-a25358c94a48": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "5c5eedb5-5bbe-417b-8972-944d93e14638",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "a98209fa-cb03-4de5-b2e7-1656980f29ad",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b8a04a2f-62d6-42c5-a130-e2d803070495",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "d8cec7f4-10b7-4f33-a151-570a0c1504d5",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "68cba852-47f9-4cba-83cf-aa777027bc34": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "68cba852-47f9-4cba-83cf-aa777027bc34",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "0563d093-cf12-4c3e-9642-42a34c65e6cc": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "9965bd58-2bbc-4935-812a-a2cb9e641bfa": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6ac14f37-e645-4e42-b6e5-c09249b7b932": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "dd73f336-e867-445d-812a-5591cf56a01e": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "9e617780-dd51-4e85-8c4d-cf29eef088ee": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "9965bd58-2bbc-4935-812a-a2cb9e641bfa",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ac14f37-e645-4e42-b6e5-c09249b7b932",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "dd73f336-e867-445d-812a-5591cf56a01e",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "2d252c33-a8e4-419e-88fc-24c6320e6b5d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "fcea8646-2500-43ed-b8d2-db98d6c17730": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "bac706a2-110a-4f43-b2b2-db70c7cd4880": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "daf88754-5fef-4726-9ac5-66f1a51cdee7": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6ab0fa3f-c3f1-432b-a476-f15834d888d3": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "2d252c33-a8e4-419e-88fc-24c6320e6b5d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "fcea8646-2500-43ed-b8d2-db98d6c17730",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "bac706a2-110a-4f43-b2b2-db70c7cd4880",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "daf88754-5fef-4726-9ac5-66f1a51cdee7",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "2844c4fd-c282-4555-85a6-187568770656": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "47447ad2-aaaa-45f0-809e-774c331c8836": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "2844c4fd-c282-4555-85a6-187568770656",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "6ba7f989-891c-4719-843f-2176c609dc9c": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "47447ad2-aaaa-45f0-809e-774c331c8836",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "597115f9-9fa5-45f5-b268-aa6f51110e7f": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8ca683fa-08b7-4faa-8602-8145d58906e4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "24352af3-fde2-4395-b092-f6b197582f63": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "2fa8c974-c3ca-44c0-a80f-213fc7601304": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "597115f9-9fa5-45f5-b268-aa6f51110e7f",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "8ca683fa-08b7-4faa-8602-8145d58906e4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "24352af3-fde2-4395-b092-f6b197582f63",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "6a14f977-a3cb-4f7a-be92-3867c7fce675": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "b834258f-0226-471d-9368-588d24fa94eb": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "adc13d49-fb00-4ecf-b371-be0c5c4012c4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "11a94feb-0a23-4f33-a9bf-edae357cf1d4": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "1092177f-fc35-411a-89d6-c4c8dc3788ef": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "6a14f977-a3cb-4f7a-be92-3867c7fce675",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "b834258f-0226-471d-9368-588d24fa94eb",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "adc13d49-fb00-4ecf-b371-be0c5c4012c4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "11a94feb-0a23-4f33-a9bf-edae357cf1d4",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "9decd5f1-8617-420c-8c9d-dee2c543d850": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "90863e23-2ce6-455b-a495-4ee71cb2a815",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "4fa82460-a782-46e2-9563-229e31f39540",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "aabd5059-5eb2-4232-8587-ddcf4a262189",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "678a12ef-a8cc-4eb5-8a40-fa9df9c93809",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "9bdd3408-c75a-44f0-af52-8eeceaa39d40",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "c2427ac4-3a4b-4070-957d-a25358c94a48",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "0563d093-cf12-4c3e-9642-42a34c65e6cc",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "9e617780-dd51-4e85-8c4d-cf29eef088ee",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ab0fa3f-c3f1-432b-a476-f15834d888d3",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "6ba7f989-891c-4719-843f-2176c609dc9c",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "2fa8c974-c3ca-44c0-a80f-213fc7601304",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "1092177f-fc35-411a-89d6-c4c8dc3788ef",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  }
+ },
+ "options": {},
+ "influence": {
+  "primary": {
+   "90863e23-2ce6-455b-a495-4ee71cb2a815": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "ef1ce6aa-9e5b-466d-a687-9b112f4b7263": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "bf65b740-389c-443e-9fc1-b8e3788a4f6d": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "4fa82460-a782-46e2-9563-229e31f39540": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "d9481dd4-0203-4b47-95a5-a1401a55e7eb": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "c83036a5-3a30-439e-863e-35dcb9e04f7e": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "f76345e1-218f-4e6c-8b84-9ba5b37feba3": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "aabd5059-5eb2-4232-8587-ddcf4a262189": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "8f868c8d-a46c-4338-985d-531025e725e7": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "1efc7299-4690-40c2-962c-7a107cf117b2": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "0c59712e-e216-4011-92be-0335334f14a1": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "678a12ef-a8cc-4eb5-8a40-fa9df9c93809": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "886af760-b7cb-46da-8fd7-008f339f1fd1": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "f4b08b01-ee78-46bc-9cce-49394c0ed97e": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "5192e5ae-8210-4dd7-840c-f454d8ed65ac": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "9bdd3408-c75a-44f0-af52-8eeceaa39d40": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "c7b624ea-902b-4eb5-9599-3df21ffb789b": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "71f21858-a412-4370-a65c-4d8fb435f410": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "41887011-89ef-4475-ab96-2e5dcb69219f": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "c2427ac4-3a4b-4070-957d-a25358c94a48": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "5c5eedb5-5bbe-417b-8972-944d93e14638": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "a98209fa-cb03-4de5-b2e7-1656980f29ad": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "b8a04a2f-62d6-42c5-a130-e2d803070495": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "d8cec7f4-10b7-4f33-a151-570a0c1504d5": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "0563d093-cf12-4c3e-9642-42a34c65e6cc": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "68cba852-47f9-4cba-83cf-aa777027bc34": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "9e617780-dd51-4e85-8c4d-cf29eef088ee": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "9965bd58-2bbc-4935-812a-a2cb9e641bfa": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "6ac14f37-e645-4e42-b6e5-c09249b7b932": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "dd73f336-e867-445d-812a-5591cf56a01e": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "6ab0fa3f-c3f1-432b-a476-f15834d888d3": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "2d252c33-a8e4-419e-88fc-24c6320e6b5d": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "fcea8646-2500-43ed-b8d2-db98d6c17730": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "bac706a2-110a-4f43-b2b2-db70c7cd4880": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "daf88754-5fef-4726-9ac5-66f1a51cdee7": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "6ba7f989-891c-4719-843f-2176c609dc9c": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "47447ad2-aaaa-45f0-809e-774c331c8836": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "2844c4fd-c282-4555-85a6-187568770656": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "2fa8c974-c3ca-44c0-a80f-213fc7601304": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "597115f9-9fa5-45f5-b268-aa6f51110e7f": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "8ca683fa-08b7-4faa-8602-8145d58906e4": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "24352af3-fde2-4395-b092-f6b197582f63": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "1092177f-fc35-411a-89d6-c4c8dc3788ef": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "6a14f977-a3cb-4f7a-be92-3867c7fce675": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "b834258f-0226-471d-9368-588d24fa94eb": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "adc13d49-fb00-4ecf-b371-be0c5c4012c4": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "11a94feb-0a23-4f33-a9bf-edae357cf1d4": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  },
+  "secondary": {}
+ },
+ "directions": {
+  "90863e23-2ce6-455b-a495-4ee71cb2a815:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "ef1ce6aa-9e5b-466d-a687-9b112f4b7263:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "d2f79aa7-149c-4ad5-871b-3e6724f5a5a8:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "bf65b740-389c-443e-9fc1-b8e3788a4f6d:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "4fa82460-a782-46e2-9563-229e31f39540:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "d9481dd4-0203-4b47-95a5-a1401a55e7eb:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "c83036a5-3a30-439e-863e-35dcb9e04f7e:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "f76345e1-218f-4e6c-8b84-9ba5b37feba3:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "aabd5059-5eb2-4232-8587-ddcf4a262189:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "8f868c8d-a46c-4338-985d-531025e725e7:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "1efc7299-4690-40c2-962c-7a107cf117b2:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "a4bef66f-6d3a-4a7e-9c0e-fd4d09557031:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "0c59712e-e216-4011-92be-0335334f14a1:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "678a12ef-a8cc-4eb5-8a40-fa9df9c93809:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "886af760-b7cb-46da-8fd7-008f339f1fd1:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "f4b08b01-ee78-46bc-9cce-49394c0ed97e:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "5192e5ae-8210-4dd7-840c-f454d8ed65ac:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "9bdd3408-c75a-44f0-af52-8eeceaa39d40:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "c7b624ea-902b-4eb5-9599-3df21ffb789b:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "71f21858-a412-4370-a65c-4d8fb435f410:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "41887011-89ef-4475-ab96-2e5dcb69219f:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "c2427ac4-3a4b-4070-957d-a25358c94a48:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "5c5eedb5-5bbe-417b-8972-944d93e14638:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "a98209fa-cb03-4de5-b2e7-1656980f29ad:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "b8a04a2f-62d6-42c5-a130-e2d803070495:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "d8cec7f4-10b7-4f33-a151-570a0c1504d5:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "0563d093-cf12-4c3e-9642-42a34c65e6cc:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "cfcc38b5-1610-4e2e-bc8c-ec5c91054eaa:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "b3cd3145-fa23-4cfb-b40e-f0ecd1c100c4:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "68cba852-47f9-4cba-83cf-aa777027bc34:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "9e617780-dd51-4e85-8c4d-cf29eef088ee:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "9965bd58-2bbc-4935-812a-a2cb9e641bfa:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "6ac14f37-e645-4e42-b6e5-c09249b7b932:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "dd73f336-e867-445d-812a-5591cf56a01e:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "6ab0fa3f-c3f1-432b-a476-f15834d888d3:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "2d252c33-a8e4-419e-88fc-24c6320e6b5d:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "fcea8646-2500-43ed-b8d2-db98d6c17730:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "bac706a2-110a-4f43-b2b2-db70c7cd4880:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "daf88754-5fef-4726-9ac5-66f1a51cdee7:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "6ba7f989-891c-4719-843f-2176c609dc9c:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "e2d8d51f-11d6-4c0f-a715-e2a9fc95d39d:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "47447ad2-aaaa-45f0-809e-774c331c8836:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "2844c4fd-c282-4555-85a6-187568770656:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "2fa8c974-c3ca-44c0-a80f-213fc7601304:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "597115f9-9fa5-45f5-b268-aa6f51110e7f:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "8ca683fa-08b7-4faa-8602-8145d58906e4:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "24352af3-fde2-4395-b092-f6b197582f63:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "1092177f-fc35-411a-89d6-c4c8dc3788ef:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "6a14f977-a3cb-4f7a-be92-3867c7fce675:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "b834258f-0226-471d-9368-588d24fa94eb:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "adc13d49-fb00-4ecf-b371-be0c5c4012c4:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  },
+  "11a94feb-0a23-4f33-a9bf-edae357cf1d4:40cc5864-43d3-4ed2-be41-e5e7d917a39f": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  }
+ }
+}

@@ -1,0 +1,3097 @@
+{
+ "name": "example-debate-painonhallinta",
+ "source": "witt-grace-gpt-proto/examples/debate-painonhallinta.witt.json",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "9d157d2c-806b-5d1b-8ff2-492f252829b8",
+  "title": "Painonhallinta: mikä on kestävä tapa?",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "33906207-2d66-588a-8658-11ef2d622748",
+    "name": "Aada · aktiiviliikkuja",
+    "shares": 1,
+    "role": "owner"
+   },
+   {
+    "id": "eac086d7-4d4f-5399-b994-825221905af7",
+    "name": "Beni · kiireinen arki",
+    "shares": 1,
+    "role": "editor"
+   },
+   {
+    "id": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "name": "Caro · ruoan ilo ja terveys",
+    "shares": 1,
+    "role": "editor"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "parentId": null,
+    "relation": "root",
+    "kind": "claim",
+    "title": "Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.",
+    "details": "",
+    "confidence": 50,
+    "impact": 0,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 100
+    },
+    "createdBy": "33906207-2d66-588a-8658-11ef2d622748"
+   },
+   {
+    "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Runsas liikunta voi auttaa luomaan energiavajeen",
+    "details": "Väite ei yksin osoita, että tämä olisi paras tai ylläpidettävin tapa.",
+    "confidence": 82,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 216
+    },
+    "createdBy": "eac086d7-4d4f-5399-b994-825221905af7"
+   },
+   {
+    "id": "1062d932-0d0b-5aea-93c5-748012789614",
+    "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Liikunta lisää energiankulutusta",
+    "details": "Määrä ja pitkän aikavälin kompensaatio riippuvat tilanteesta.",
+    "confidence": 90,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 332
+    },
+    "createdBy": "69aeb58a-ed46-590b-a1c2-5faba35a1b08"
+   },
+   {
+    "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Valikoitu ruokavalio voi vähentää energiansaantia",
+    "details": "Ruokavalio on esimerkki, ei suositus eikä ainoa toimiva vaihtoehto.",
+    "confidence": 72,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 448
+    },
+    "createdBy": "33906207-2d66-588a-8658-11ef2d622748"
+   },
+   {
+    "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen",
+    "details": "Rajoite: 10 tunnin viikkoharjoittelu ei välttämättä ole mahdollista.",
+    "confidence": 78,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 564
+    },
+    "createdBy": "eac086d7-4d4f-5399-b994-825221905af7"
+   },
+   {
+    "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "parentId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Joillekin runsas liikunta on valmiiksi mieluisa rutiini",
+    "details": "Ehdollinen väite: koskee esimerkiksi liikkujaa, jolla on jo vakiintunut ohjelma.",
+    "confidence": 86,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 680
+    },
+    "createdBy": "69aeb58a-ed46-590b-a1c2-5faba35a1b08"
+   },
+   {
+    "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Liikunta ja energiavaje voivat joillakin lisätä nälkää",
+    "details": "Vaikutukset ruokahaluun vaihtelevat ihmisittäin ja aikajänteittäin. Ei yleinen laki.",
+    "confidence": 75,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 796
+    },
+    "createdBy": "33906207-2d66-588a-8658-11ef2d622748"
+   },
+   {
+    "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "parentId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Liikunnan vaikutukset ruokahaluun vaihtelevat",
+    "details": "Vastaväite väitteelle, että nälkä väistämättä kasvaisi kaikilla.",
+    "confidence": 91,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 912
+    },
+    "createdBy": "eac086d7-4d4f-5399-b994-825221905af7"
+   },
+   {
+    "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa",
+    "details": "Arvostus: ruoan maku ja monipuolisuus vaikuttavat valintaan.",
+    "confidence": 76,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 1028
+    },
+    "createdBy": "69aeb58a-ed46-590b-a1c2-5faba35a1b08"
+   },
+   {
+    "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "parentId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Osa ihmisistä nauttii yksinkertaisista aterioista",
+    "details": "Ehdollinen väite: yksilölliset mieltymykset ovat erilaisia.",
+    "confidence": 84,
+    "impact": 2,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 1144
+    },
+    "createdBy": "33906207-2d66-588a-8658-11ef2d622748"
+   },
+   {
+    "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa",
+    "details": "Pitkäaikainen käyttäytyminen on eri asia kuin lyhyen jakson painonpudotus.",
+    "confidence": 92,
+    "impact": 5,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 1260
+    },
+    "createdBy": "eac086d7-4d4f-5399-b994-825221905af7"
+   },
+   {
+    "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "parentId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Mieluisa liikunta voi jatkua vuosia",
+    "details": "Koskee niitä, joille liikunta on toistuvaa ja motivoivaa.",
+    "confidence": 85,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 620,
+     "y": 1376
+    },
+    "createdBy": "69aeb58a-ed46-590b-a1c2-5faba35a1b08"
+   },
+   {
+    "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Fyysiset rajoitteet voivat estää suuren liikuntamäärän",
+    "details": "Rajoite: menetelmän turvallisuus ja toteutettavuus vaihtelevat.",
+    "confidence": 89,
+    "impact": 5,
+    "collapsed": false,
+    "position": {
+     "x": 340,
+     "y": 1492
+    },
+    "createdBy": "33906207-2d66-588a-8658-11ef2d622748"
+   }
+  ],
+  "votes": [
+   {
+    "id": "dfa9df69-f894-580b-b2e9-060df06279e6",
+    "nodeId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "be79019e-698a-5152-8b61-1c979655ab45",
+    "nodeId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "948679c9-ae36-57a4-8092-6cf25b887afb",
+    "nodeId": "1f658fdf-985c-5349-8caa-7093af881b63",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 60,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "bd1a5444-0ed3-5170-96b5-6571aeb4b8d1",
+    "nodeId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 93,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "b0389c05-7369-5be8-9610-227e4cf42741",
+    "nodeId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 82,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "efdc2ec2-6797-57d9-ae92-55b8f4824664",
+    "nodeId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 86,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9764b521-78c9-57fd-a0d0-64fe8396e015",
+    "nodeId": "1062d932-0d0b-5aea-93c5-748012789614",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "76cac970-ac51-506b-bc8a-335ed1f5c2f8",
+    "nodeId": "1062d932-0d0b-5aea-93c5-748012789614",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 94,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cb5e7429-c8cf-5ebd-9cb6-85a24e882093",
+    "nodeId": "1062d932-0d0b-5aea-93c5-748012789614",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "edf21fb1-7dab-5d97-be7f-757a781be3f8",
+    "nodeId": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 79,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d0ee75b3-a052-50b7-ba68-8d0ad7599056",
+    "nodeId": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 78,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7012f975-61ec-599f-819c-41cc46f30714",
+    "nodeId": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 75,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "68233b02-e44c-57dc-8ed8-c678ad3b1cac",
+    "nodeId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 45,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cf9b4d5b-ea2e-5184-9a0b-0cd324015dc0",
+    "nodeId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 98,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7794c7ba-93a8-5250-9258-f0c132bad5b0",
+    "nodeId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 89,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "900211ea-75fc-561e-acc9-adb33ac1b0b0",
+    "nodeId": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 99,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "126bbf08-f638-5525-914e-74c531a55aa3",
+    "nodeId": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 81,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f8960cfc-385b-57ae-ad55-7b2668f6706e",
+    "nodeId": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 94,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "77de6c78-33d3-55f8-8dac-9ffb35736312",
+    "nodeId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 55,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "325109e3-a2f0-568d-9c3e-296fae08f455",
+    "nodeId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 88,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "55313176-6889-5f43-a126-0969c41f2730",
+    "nodeId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 72,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "bbd0f2b0-09ad-59f9-b943-ea918b371046",
+    "nodeId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "2d949793-e27c-5004-804b-f470dd7d2ead",
+    "nodeId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 92,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ee06b4d9-a7c0-5b4a-a79d-f6e0595b2660",
+    "nodeId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 95,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ae1c9b30-aacc-5542-a2ce-2a80b4a2efaf",
+    "nodeId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 46,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a0a86a05-2405-5f81-a705-2218085df5f9",
+    "nodeId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 97,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "88998a99-dd29-5acf-8165-5ef986c10529",
+    "nodeId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 99,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "dac38f61-52ef-5bdc-92b9-423f1a6826a9",
+    "nodeId": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 96,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a4622851-edf8-5748-8b1e-24ad8bda809c",
+    "nodeId": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 84,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a333eea9-8e14-5832-a70f-415aa280781e",
+    "nodeId": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 79,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "719706e0-7622-5e62-baca-2a2f3586af47",
+    "nodeId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 91,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "3c1e0edd-9b33-56aa-ab39-df306430833c",
+    "nodeId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 97,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "aa197dab-0b4e-5cdc-918f-9bc477641846",
+    "nodeId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 97,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d896d461-63f7-5925-92a6-d8b7401669cc",
+    "nodeId": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 98,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "0691a5a8-fe3f-55b6-9fde-92d23081418b",
+    "nodeId": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 80,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c5787c46-ed9d-5325-8cd4-0633e94c70ff",
+    "nodeId": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 94,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9fc2a282-eb77-5f2c-b4d0-f2fb3149a45c",
+    "nodeId": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "confidence": 74,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "da3dcb92-92de-52cc-8376-1c761515175e",
+    "nodeId": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "confidence": 98,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "6c89f5aa-2684-53f3-8e0d-2cbe320f0598",
+    "nodeId": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "confidence": 94,
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   }
+  ],
+  "edgeAssessments": [
+   {
+    "id": "52036b69-ee81-5138-b18b-ea64f4000e30",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "influence": 5,
+    "fingerprint": "[\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9109b1d6-42bd-5120-b460-e5b6cf38d1ad",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "influence": 2,
+    "fingerprint": "[\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a7d0aa53-de78-5682-8af2-35343aceda52",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+    "influence": 3,
+    "fingerprint": "[\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "2d311c72-8dea-5395-8940-c2380c0e08a7",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "1062d932-0d0b-5aea-93c5-748012789614",
+    "influence": 5,
+    "fingerprint": "[\"1062d932-0d0b-5aea-93c5-748012789614\",\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"Liikunta lisää energiankulutusta\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "847f1ed3-f632-5e60-8dd0-cb07afc44dd4",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "1062d932-0d0b-5aea-93c5-748012789614",
+    "influence": 4,
+    "fingerprint": "[\"1062d932-0d0b-5aea-93c5-748012789614\",\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"Liikunta lisää energiankulutusta\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "d5a975c5-b5fc-5090-aa1a-486d2f32f5cc",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "1062d932-0d0b-5aea-93c5-748012789614",
+    "influence": 4,
+    "fingerprint": "[\"1062d932-0d0b-5aea-93c5-748012789614\",\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"Liikunta lisää energiankulutusta\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "34fbad89-4dd5-5e52-a08a-d8fdb972987c",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "influence": 4,
+    "fingerprint": "[\"43ee9126-1861-5126-9c4d-c1f6de1c67d0\",\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"Valikoitu ruokavalio voi vähentää energiansaantia\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "2e689a6a-ad7b-546b-a9bd-7967793ecb19",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "influence": 3,
+    "fingerprint": "[\"43ee9126-1861-5126-9c4d-c1f6de1c67d0\",\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"Valikoitu ruokavalio voi vähentää energiansaantia\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a2f2f979-24b6-5170-a667-d196f4c5293d",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+    "influence": 2,
+    "fingerprint": "[\"43ee9126-1861-5126-9c4d-c1f6de1c67d0\",\"85e3046f-89c7-514e-ad69-9409aa0574dd\",\"Valikoitu ruokavalio voi vähentää energiansaantia\",\"Runsas liikunta voi auttaa luomaan energiavajeen\",\"support\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "81bcfe24-6e98-50e2-b017-2ad3a67240ea",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "influence": -1,
+    "fingerprint": "[\"96173e45-ec48-5a59-b509-89d66a905caa\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "66be75c5-ee5b-5706-83eb-af8bcb6e0d16",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "influence": -5,
+    "fingerprint": "[\"96173e45-ec48-5a59-b509-89d66a905caa\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7eacd198-7898-53cd-be85-22a769206672",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "influence": -4,
+    "fingerprint": "[\"96173e45-ec48-5a59-b509-89d66a905caa\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f007b047-dc4a-5dd3-800c-72b7a7943612",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "influence": -5,
+    "fingerprint": "[\"8de77038-0101-524c-9b3b-1e18014aa336\",\"96173e45-ec48-5a59-b509-89d66a905caa\",\"Joillekin runsas liikunta on valmiiksi mieluisa rutiini\",\"Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "4e6ee722-7382-5440-9df4-c5d6f53c85a0",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "influence": -2,
+    "fingerprint": "[\"8de77038-0101-524c-9b3b-1e18014aa336\",\"96173e45-ec48-5a59-b509-89d66a905caa\",\"Joillekin runsas liikunta on valmiiksi mieluisa rutiini\",\"Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "4cee1144-1d13-5c5b-9c9a-c0463bd9721f",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "8de77038-0101-524c-9b3b-1e18014aa336",
+    "influence": -3,
+    "fingerprint": "[\"8de77038-0101-524c-9b3b-1e18014aa336\",\"96173e45-ec48-5a59-b509-89d66a905caa\",\"Joillekin runsas liikunta on valmiiksi mieluisa rutiini\",\"Suuri harjoitusmäärä voi olla vaikea sovittaa arkeen\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "bacef3aa-6099-5348-8182-b930874f3fad",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "influence": -2,
+    "fingerprint": "[\"605bdd55-5a50-5cd0-9933-0e77bacd0f23\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Liikunta ja energiavaje voivat joillakin lisätä nälkää\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "c8ab0c93-f784-584b-b3f6-7b4550be01af",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "influence": -4,
+    "fingerprint": "[\"605bdd55-5a50-5cd0-9933-0e77bacd0f23\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Liikunta ja energiavaje voivat joillakin lisätä nälkää\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "cd635623-c8ad-51f5-8dc1-4975b6bf166f",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+    "influence": -3,
+    "fingerprint": "[\"605bdd55-5a50-5cd0-9933-0e77bacd0f23\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Liikunta ja energiavaje voivat joillakin lisätä nälkää\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "b3625757-91cf-5813-af86-5d518c28c19d",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "influence": -4,
+    "fingerprint": "[\"f15f296f-7992-5bc3-bee1-9d2e4ddf887b\",\"605bdd55-5a50-5cd0-9933-0e77bacd0f23\",\"Liikunnan vaikutukset ruokahaluun vaihtelevat\",\"Liikunta ja energiavaje voivat joillakin lisätä nälkää\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "1241db9b-6831-5d8d-830d-daa6edde87b8",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "influence": -3,
+    "fingerprint": "[\"f15f296f-7992-5bc3-bee1-9d2e4ddf887b\",\"605bdd55-5a50-5cd0-9933-0e77bacd0f23\",\"Liikunnan vaikutukset ruokahaluun vaihtelevat\",\"Liikunta ja energiavaje voivat joillakin lisätä nälkää\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "0fd98420-425c-513f-b637-5a30131e4ec2",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "influence": -3,
+    "fingerprint": "[\"f15f296f-7992-5bc3-bee1-9d2e4ddf887b\",\"605bdd55-5a50-5cd0-9933-0e77bacd0f23\",\"Liikunnan vaikutukset ruokahaluun vaihtelevat\",\"Liikunta ja energiavaje voivat joillakin lisätä nälkää\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "2e6b56b0-efef-5ba1-abcb-809a3f65ef36",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "influence": -1,
+    "fingerprint": "[\"8285a65f-c5ae-5d9d-855a-dab98a0d4e34\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "38b9e2ce-65d3-515e-80b4-2a8f2bc4c65d",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "influence": -4,
+    "fingerprint": "[\"8285a65f-c5ae-5d9d-855a-dab98a0d4e34\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "a70c893f-6359-5168-b7e3-3378f8a11c97",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+    "influence": -5,
+    "fingerprint": "[\"8285a65f-c5ae-5d9d-855a-dab98a0d4e34\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "ea9b9331-ef89-5028-985e-bec6ecf2b2d8",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "influence": -4,
+    "fingerprint": "[\"23af68db-70a9-5517-86cb-45b41b01cc7f\",\"8285a65f-c5ae-5d9d-855a-dab98a0d4e34\",\"Osa ihmisistä nauttii yksinkertaisista aterioista\",\"Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "691ee1d7-ed9d-5a5f-beb4-e072ddab67bf",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "influence": -2,
+    "fingerprint": "[\"23af68db-70a9-5517-86cb-45b41b01cc7f\",\"8285a65f-c5ae-5d9d-855a-dab98a0d4e34\",\"Osa ihmisistä nauttii yksinkertaisista aterioista\",\"Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9e5950d1-336f-53a6-bd4e-cfb7694d61ec",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+    "influence": -1,
+    "fingerprint": "[\"23af68db-70a9-5517-86cb-45b41b01cc7f\",\"8285a65f-c5ae-5d9d-855a-dab98a0d4e34\",\"Osa ihmisistä nauttii yksinkertaisista aterioista\",\"Hyvin yksipuolinen ruokavalio voi heikentää syömisen nautintoa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7acd5085-ebb4-5a94-8c31-35bed7561cf7",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "influence": -4,
+    "fingerprint": "[\"6adc0a17-23da-56ef-95be-3b7b11054f7e\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "5390c418-ed10-52a8-ada5-d337ca755cb3",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "influence": -5,
+    "fingerprint": "[\"6adc0a17-23da-56ef-95be-3b7b11054f7e\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "9eb924e8-1381-505b-9990-3e3d6eb3baf9",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+    "influence": -5,
+    "fingerprint": "[\"6adc0a17-23da-56ef-95be-3b7b11054f7e\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "263ebdb1-b3c1-5fd8-b9d1-8ff1a7f07dcb",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "influence": -5,
+    "fingerprint": "[\"9263a019-5725-5e20-bbc6-5598d6b60676\",\"6adc0a17-23da-56ef-95be-3b7b11054f7e\",\"Mieluisa liikunta voi jatkua vuosia\",\"Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "17854049-9e74-5a00-ac03-21b080d3440d",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "influence": -1,
+    "fingerprint": "[\"9263a019-5725-5e20-bbc6-5598d6b60676\",\"6adc0a17-23da-56ef-95be-3b7b11054f7e\",\"Mieluisa liikunta voi jatkua vuosia\",\"Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7086f224-2474-5874-858a-92e7a78964ce",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "9263a019-5725-5e20-bbc6-5598d6b60676",
+    "influence": -3,
+    "fingerprint": "[\"9263a019-5725-5e20-bbc6-5598d6b60676\",\"6adc0a17-23da-56ef-95be-3b7b11054f7e\",\"Mieluisa liikunta voi jatkua vuosia\",\"Tilapäinen kuuri ei takaa pitkäaikaista painonhallintaa\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "f5d2f4fd-56e6-59ce-8ea8-3be67df6dd9f",
+    "userId": "33906207-2d66-588a-8658-11ef2d622748",
+    "subjectType": "primary",
+    "subjectId": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "influence": -2,
+    "fingerprint": "[\"609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Fyysiset rajoitteet voivat estää suuren liikuntamäärän\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "7b8ad737-968b-5644-82cb-820d55d53804",
+    "userId": "eac086d7-4d4f-5399-b994-825221905af7",
+    "subjectType": "primary",
+    "subjectId": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "influence": -5,
+    "fingerprint": "[\"609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Fyysiset rajoitteet voivat estää suuren liikuntamäärän\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   },
+   {
+    "id": "69694fa3-3a9a-55e9-b8c5-6c3d6440bd8f",
+    "userId": "69aeb58a-ed46-590b-a1c2-5faba35a1b08",
+    "subjectType": "primary",
+    "subjectId": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+    "influence": -4,
+    "fingerprint": "[\"609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7\",\"1f658fdf-985c-5349-8caa-7093af881b63\",\"Fyysiset rajoitteet voivat estää suuren liikuntamäärän\",\"Runsas liikunta ja hyvin rajattu ruokavalio on paras tapa hallita painoa pitkäaikaisesti.\",\"oppose\"]",
+    "updatedAt": "2026-11-06T08:00:00.000Z"
+   }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [
+   {
+    "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+    "sourceId": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+    "targetId": "96173e45-ec48-5a59-b509-89d66a905caa",
+    "relation": "oppose",
+    "impact": 2
+   }
+  ],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-06T08:00:00.000Z",
+  "updatedAt": "2026-11-06T08:00:00.000Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "score": 77.33333333333333,
+     "balance": 54.66666666666666,
+     "base": 77.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "score": 100,
+     "balance": 100,
+     "base": 87,
+     "delta": 13,
+     "positive": 6.436666666666666,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "1062d932-0d0b-5aea-93c5-748012789614",
+       "subjectType": "primary",
+       "impact": 4.333333333333333,
+       "strength": 95,
+       "magnitude": 4.116666666666666,
+       "missing": false
+      },
+      {
+       "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 77.33333333333333,
+       "magnitude": 2.32,
+       "missing": false
+      }
+     ]
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "score": 91.33333333333333,
+     "balance": 82.66666666666666,
+     "base": 91.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "score": 62.11111111111111,
+     "balance": 24.222222222222214,
+     "base": 77.33333333333333,
+     "delta": -15.222222222222221,
+     "positive": 0,
+     "negative": 3.0444444444444447,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 91.33333333333333,
+       "magnitude": 3.0444444444444447,
+       "missing": false
+      },
+      {
+       "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 94,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "score": 56.00000000000001,
+     "balance": 12.000000000000014,
+     "base": 71.66666666666667,
+     "delta": -15.666666666666664,
+     "positive": 0,
+     "negative": 3.1333333333333333,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 94,
+       "magnitude": 3.1333333333333333,
+       "missing": false
+      }
+     ]
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "score": 86.33333333333333,
+     "balance": 72.66666666666666,
+     "base": 86.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "score": 70.59444444444445,
+     "balance": 41.1888888888889,
+     "base": 80.66666666666667,
+     "delta": -10.072222222222223,
+     "positive": 0,
+     "negative": 2.0144444444444445,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+       "subjectType": "primary",
+       "impact": -2.3333333333333335,
+       "strength": 86.33333333333333,
+       "magnitude": 2.0144444444444445,
+       "missing": false
+      }
+     ]
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "score": 90.66666666666667,
+     "balance": 81.33333333333334,
+     "base": 90.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "score": 81.4,
+     "balance": 62.80000000000001,
+     "base": 95,
+     "delta": -13.599999999999994,
+     "positive": 0,
+     "negative": 2.72,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 90.66666666666667,
+       "magnitude": 2.72,
+       "missing": false
+      }
+     ]
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "score": 88.66666666666667,
+     "balance": 77.33333333333334,
+     "base": 88.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "1f658fdf-985c-5349-8caa-7093af881b63": {
+     "score": 10.900185185185187,
+     "balance": -78.19962962962963,
+     "base": 60,
+     "delta": -49.09981481481481,
+     "positive": 3.3333333333333335,
+     "negative": 13.153296296296297,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+       "subjectType": "primary",
+       "impact": 3.3333333333333335,
+       "strength": 100,
+       "magnitude": 3.3333333333333335,
+       "missing": false
+      },
+      {
+       "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 62.11111111111111,
+       "magnitude": 2.0703703703703704,
+       "missing": false
+      },
+      {
+       "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 56.00000000000001,
+       "magnitude": 1.6800000000000002,
+       "missing": false
+      },
+      {
+       "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 70.59444444444445,
+       "magnitude": 2.3531481481481484,
+       "missing": false
+      },
+      {
+       "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+       "subjectType": "primary",
+       "impact": -4.666666666666667,
+       "strength": 81.4,
+       "magnitude": 3.798666666666667,
+       "missing": false
+      },
+      {
+       "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 88.66666666666667,
+       "magnitude": 3.2511111111111113,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 10.900185185185187,
+     "delta": 10.900185185185187,
+     "provisional": true
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -10.351851851851848,
+     "delta": -10.351851851851848,
+     "provisional": true
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -8.399999999999999,
+     "delta": -8.399999999999999,
+     "provisional": true
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -11.765740740740746,
+     "delta": -11.765740740740746,
+     "provisional": true
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -18.993333333333336,
+     "delta": -18.993333333333336,
+     "provisional": true
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -16.255555555555553,
+     "delta": -16.255555555555553,
+     "provisional": true
+    },
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 1.4000000000000057,
+     "delta": 0.23333333333333428,
+     "provisional": true
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": true
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "parentId": "96173e45-ec48-5a59-b509-89d66a905caa",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -15.222222222222221,
+     "delta": 2.537037037037045,
+     "provisional": true
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "parentId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -15.666666666666664,
+     "delta": 2.3499999999999943,
+     "provisional": true
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "parentId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -10.072222222222223,
+     "delta": 1.678703703703711,
+     "provisional": true
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "parentId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -13.599999999999994,
+     "delta": 3.173333333333332,
+     "provisional": true
+    }
+   },
+   "ranking": null
+  },
+  "shares": {
+   "nodes": {
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "score": 77.33333333333333,
+     "balance": 54.66666666666666,
+     "base": 77.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "score": 100,
+     "balance": 100,
+     "base": 87,
+     "delta": 13,
+     "positive": 6.436666666666666,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "1062d932-0d0b-5aea-93c5-748012789614",
+       "subjectType": "primary",
+       "impact": 4.333333333333333,
+       "strength": 95,
+       "magnitude": 4.116666666666666,
+       "missing": false
+      },
+      {
+       "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 77.33333333333333,
+       "magnitude": 2.32,
+       "missing": false
+      }
+     ]
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "score": 91.33333333333333,
+     "balance": 82.66666666666666,
+     "base": 91.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "score": 62.11111111111111,
+     "balance": 24.222222222222214,
+     "base": 77.33333333333333,
+     "delta": -15.222222222222221,
+     "positive": 0,
+     "negative": 3.0444444444444447,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 91.33333333333333,
+       "magnitude": 3.0444444444444447,
+       "missing": false
+      },
+      {
+       "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 94,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "score": 56.00000000000001,
+     "balance": 12.000000000000014,
+     "base": 71.66666666666667,
+     "delta": -15.666666666666664,
+     "positive": 0,
+     "negative": 3.1333333333333333,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 94,
+       "magnitude": 3.1333333333333333,
+       "missing": false
+      }
+     ]
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "score": 86.33333333333333,
+     "balance": 72.66666666666666,
+     "base": 86.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "score": 70.59444444444445,
+     "balance": 41.1888888888889,
+     "base": 80.66666666666667,
+     "delta": -10.072222222222223,
+     "positive": 0,
+     "negative": 2.0144444444444445,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+       "subjectType": "primary",
+       "impact": -2.3333333333333335,
+       "strength": 86.33333333333333,
+       "magnitude": 2.0144444444444445,
+       "missing": false
+      }
+     ]
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "score": 90.66666666666667,
+     "balance": 81.33333333333334,
+     "base": 90.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "score": 81.4,
+     "balance": 62.80000000000001,
+     "base": 95,
+     "delta": -13.599999999999994,
+     "positive": 0,
+     "negative": 2.72,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 90.66666666666667,
+       "magnitude": 2.72,
+       "missing": false
+      }
+     ]
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "score": 88.66666666666667,
+     "balance": 77.33333333333334,
+     "base": 88.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "1f658fdf-985c-5349-8caa-7093af881b63": {
+     "score": 10.900185185185187,
+     "balance": -78.19962962962963,
+     "base": 60,
+     "delta": -49.09981481481481,
+     "positive": 3.3333333333333335,
+     "negative": 13.153296296296297,
+     "incomplete": true,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+       "subjectType": "primary",
+       "impact": 3.3333333333333335,
+       "strength": 100,
+       "magnitude": 3.3333333333333335,
+       "missing": false
+      },
+      {
+       "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 62.11111111111111,
+       "magnitude": 2.0703703703703704,
+       "missing": false
+      },
+      {
+       "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 56.00000000000001,
+       "magnitude": 1.6800000000000002,
+       "missing": false
+      },
+      {
+       "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+       "subjectType": "primary",
+       "impact": -3.3333333333333335,
+       "strength": 70.59444444444445,
+       "magnitude": 2.3531481481481484,
+       "missing": false
+      },
+      {
+       "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+       "subjectType": "primary",
+       "impact": -4.666666666666667,
+       "strength": 81.4,
+       "magnitude": 3.798666666666667,
+       "missing": false
+      },
+      {
+       "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+       "subjectType": "primary",
+       "impact": -3.6666666666666665,
+       "strength": 88.66666666666667,
+       "magnitude": 3.2511111111111113,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 10.900185185185187,
+     "delta": 10.900185185185187,
+     "provisional": true
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -10.351851851851848,
+     "delta": -10.351851851851848,
+     "provisional": true
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -8.399999999999999,
+     "delta": -8.399999999999999,
+     "provisional": true
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -11.765740740740746,
+     "delta": -11.765740740740746,
+     "provisional": true
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -18.993333333333336,
+     "delta": -18.993333333333336,
+     "provisional": true
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -16.255555555555553,
+     "delta": -16.255555555555553,
+     "provisional": true
+    },
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 1.4000000000000057,
+     "delta": 0.23333333333333428,
+     "provisional": true
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": true
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "parentId": "96173e45-ec48-5a59-b509-89d66a905caa",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -15.222222222222221,
+     "delta": 2.537037037037045,
+     "provisional": true
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "parentId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -15.666666666666664,
+     "delta": 2.3499999999999943,
+     "provisional": true
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "parentId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -10.072222222222223,
+     "delta": 1.678703703703711,
+     "provisional": true
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "parentId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -13.599999999999994,
+     "delta": 3.173333333333332,
+     "provisional": true
+    }
+   },
+   "ranking": null
+  },
+  "structural": {
+   "nodes": {
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "score": 77.33333333333333,
+     "balance": 54.66666666666666,
+     "base": 77.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "score": 100,
+     "balance": 100,
+     "base": 87,
+     "delta": 13,
+     "positive": 6.119999999999999,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "1062d932-0d0b-5aea-93c5-748012789614",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 95,
+       "magnitude": 3.8,
+       "missing": false
+      },
+      {
+       "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 77.33333333333333,
+       "magnitude": 2.32,
+       "missing": false
+      }
+     ]
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "score": 91.33333333333333,
+     "balance": 82.66666666666666,
+     "base": 91.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "score": 49.666666666666664,
+     "balance": -0.6666666666666714,
+     "base": 77.33333333333333,
+     "delta": -27.666666666666664,
+     "positive": 0,
+     "negative": 5.533333333333333,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 91.33333333333333,
+       "magnitude": 3.6533333333333333,
+       "missing": false
+      },
+      {
+       "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+       "subjectType": "secondary",
+       "impact": -2,
+       "strength": 94,
+       "magnitude": 1.88,
+       "missing": false,
+       "overlapWarning": true
+      }
+     ]
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "score": 57.56666666666667,
+     "balance": 15.13333333333334,
+     "base": 71.66666666666667,
+     "delta": -14.100000000000001,
+     "positive": 0,
+     "negative": 2.82,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 94,
+       "magnitude": 2.82,
+       "missing": false
+      }
+     ]
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "score": 86.33333333333333,
+     "balance": 72.66666666666666,
+     "base": 86.33333333333333,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "score": 72.03333333333333,
+     "balance": 44.06666666666666,
+     "base": 80.66666666666667,
+     "delta": -8.63333333333334,
+     "positive": 0,
+     "negative": 1.7266666666666666,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 86.33333333333333,
+       "magnitude": 1.7266666666666666,
+       "missing": false
+      }
+     ]
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "score": 90.66666666666667,
+     "balance": 81.33333333333334,
+     "base": 90.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "score": 81.4,
+     "balance": 62.80000000000001,
+     "base": 95,
+     "delta": -13.599999999999994,
+     "positive": 0,
+     "negative": 2.72,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 90.66666666666667,
+       "magnitude": 2.72,
+       "missing": false
+      }
+     ]
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "score": 88.66666666666667,
+     "balance": 77.33333333333334,
+     "base": 88.66666666666667,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": []
+    },
+    "1f658fdf-985c-5349-8caa-7093af881b63": {
+     "score": 1.6300000000000026,
+     "balance": -96.74,
+     "base": 60,
+     "delta": -58.37,
+     "positive": 4,
+     "negative": 15.674,
+     "incomplete": false,
+     "votesCount": 3,
+     "totalPower": 3,
+     "contributions": [
+      {
+       "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 100,
+       "magnitude": 4,
+       "missing": false
+      },
+      {
+       "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 49.666666666666664,
+       "magnitude": 1.9866666666666666,
+       "missing": false
+      },
+      {
+       "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 57.56666666666667,
+       "magnitude": 2.3026666666666666,
+       "missing": false
+      },
+      {
+       "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 72.03333333333333,
+       "magnitude": 2.881333333333333,
+       "missing": false
+      },
+      {
+       "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 81.4,
+       "magnitude": 4.07,
+       "missing": false
+      },
+      {
+       "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 88.66666666666667,
+       "magnitude": 4.433333333333334,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 1.6300000000000026,
+     "delta": 1.6300000000000026,
+     "provisional": false
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -9.93333333333333,
+     "delta": -9.93333333333333,
+     "provisional": false
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -11.513333333333335,
+     "delta": -11.513333333333335,
+     "provisional": false
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -14.406666666666673,
+     "delta": -14.406666666666673,
+     "provisional": false
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -20.35,
+     "delta": -20.35,
+     "provisional": false
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "parentId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -22.166666666666664,
+     "delta": -22.166666666666664,
+     "provisional": false
+    },
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 1.4000000000000057,
+     "delta": 0.28000000000000824,
+     "provisional": false
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "parentId": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": 0,
+     "delta": 0,
+     "provisional": false
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "parentId": "96173e45-ec48-5a59-b509-89d66a905caa",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -18.266666666666673,
+     "delta": 1.6300000000000026,
+     "provisional": false
+    },
+    "7125d97e-379b-54d9-979b-4ce1769bf6b3": {
+     "parentId": "96173e45-ec48-5a59-b509-89d66a905caa",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -9.399999999999999,
+     "delta": 1.6300000000000026,
+     "provisional": false
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "parentId": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -14.100000000000001,
+     "delta": 1.6300000000000026,
+     "provisional": false
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "parentId": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -8.63333333333334,
+     "delta": 1.6300000000000026,
+     "provisional": false
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "parentId": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+     "targetId": "1f658fdf-985c-5349-8caa-7093af881b63",
+     "localDelta": -13.599999999999994,
+     "delta": 1.6300000000000026,
+     "provisional": false
+    }
+   },
+   "ranking": null
+  }
+ },
+ "assessors": {
+  "33906207-2d66-588a-8658-11ef2d622748": {
+   "nodes": {
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "score": 79,
+     "balance": 58,
+     "base": 79,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "score": 100,
+     "balance": 100,
+     "base": 93,
+     "delta": 7,
+     "positive": 7.91,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "1062d932-0d0b-5aea-93c5-748012789614",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 95,
+       "magnitude": 4.75,
+       "missing": false
+      },
+      {
+       "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 79,
+       "magnitude": 3.16,
+       "missing": false
+      }
+     ]
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "score": 99,
+     "balance": 98,
+     "base": 99,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "score": 20.25,
+     "balance": -59.5,
+     "base": 45,
+     "delta": -24.75,
+     "positive": 0,
+     "negative": 4.95,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 99,
+       "magnitude": 4.95,
+       "missing": false
+      },
+      {
+       "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 95,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "score": 36,
+     "balance": -28,
+     "base": 55,
+     "delta": -19,
+     "positive": 0,
+     "negative": 3.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 95,
+       "magnitude": 3.8,
+       "missing": false
+      }
+     ]
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "score": 26.8,
+     "balance": -46.4,
+     "base": 46,
+     "delta": -19.2,
+     "positive": 0,
+     "negative": 3.84,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 96,
+       "magnitude": 3.84,
+       "missing": false
+      }
+     ]
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "score": 98,
+     "balance": 96,
+     "base": 98,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "score": 66.5,
+     "balance": 33,
+     "base": 91,
+     "delta": -24.5,
+     "positive": 0,
+     "negative": 4.9,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 98,
+       "magnitude": 4.9,
+       "missing": false
+      }
+     ]
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "score": 74,
+     "balance": 48,
+     "base": 74,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "1f658fdf-985c-5349-8caa-7093af881b63": {
+     "score": 58.3475,
+     "balance": 16.694999999999993,
+     "base": 60,
+     "delta": -1.6525000000000034,
+     "positive": 5,
+     "negative": 5.330500000000001,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+       "subjectType": "primary",
+       "impact": 5,
+       "strength": 100,
+       "magnitude": 5,
+       "missing": false
+      },
+      {
+       "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+       "subjectType": "primary",
+       "impact": -1,
+       "strength": 20.25,
+       "magnitude": 0.2025,
+       "missing": false
+      },
+      {
+       "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 36,
+       "magnitude": 0.72,
+       "missing": false
+      },
+      {
+       "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+       "subjectType": "primary",
+       "impact": -1,
+       "strength": 26.8,
+       "magnitude": 0.268,
+       "missing": false
+      },
+      {
+       "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 66.5,
+       "magnitude": 2.66,
+       "missing": false
+      },
+      {
+       "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 74,
+       "magnitude": 1.48,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "eac086d7-4d4f-5399-b994-825221905af7": {
+   "nodes": {
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "score": 78,
+     "balance": 56,
+     "base": 78,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "score": 100,
+     "balance": 100,
+     "base": 82,
+     "delta": 18,
+     "positive": 6.1,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "1062d932-0d0b-5aea-93c5-748012789614",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 94,
+       "magnitude": 3.76,
+       "missing": false
+      },
+      {
+       "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 78,
+       "magnitude": 2.34,
+       "missing": false
+      }
+     ]
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "score": 81,
+     "balance": 62,
+     "base": 81,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "score": 92,
+     "balance": 84,
+     "base": 92,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "score": 89.9,
+     "balance": 79.80000000000001,
+     "base": 98,
+     "delta": -8.099999999999994,
+     "positive": 0,
+     "negative": 1.62,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 81,
+       "magnitude": 1.62,
+       "missing": false
+      },
+      {
+       "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 92,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "score": 74.2,
+     "balance": 48.400000000000006,
+     "base": 88,
+     "delta": -13.799999999999997,
+     "positive": 0,
+     "negative": 2.7600000000000002,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 92,
+       "magnitude": 2.7600000000000002,
+       "missing": false
+      }
+     ]
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "score": 84,
+     "balance": 68,
+     "base": 84,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "score": 88.6,
+     "balance": 77.19999999999999,
+     "base": 97,
+     "delta": -8.400000000000006,
+     "positive": 0,
+     "negative": 1.68,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+       "subjectType": "primary",
+       "impact": -2,
+       "strength": 84,
+       "magnitude": 1.68,
+       "missing": false
+      }
+     ]
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "score": 80,
+     "balance": 60,
+     "base": 80,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "score": 93,
+     "balance": 86,
+     "base": 97,
+     "delta": -4,
+     "positive": 0,
+     "negative": 0.8,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+       "subjectType": "primary",
+       "impact": -1,
+       "strength": 80,
+       "magnitude": 0.8,
+       "missing": false
+      }
+     ]
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "score": 98,
+     "balance": 96,
+     "base": 98,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "1f658fdf-985c-5349-8caa-7093af881b63": {
+     "score": 0,
+     "balance": -100,
+     "base": 60,
+     "delta": -60,
+     "positive": 2,
+     "negative": 20.557000000000002,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+       "subjectType": "primary",
+       "impact": 2,
+       "strength": 100,
+       "magnitude": 2,
+       "missing": false
+      },
+      {
+       "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 89.9,
+       "magnitude": 4.495,
+       "missing": false
+      },
+      {
+       "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 74.2,
+       "magnitude": 2.968,
+       "missing": false
+      },
+      {
+       "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 88.6,
+       "magnitude": 3.5439999999999996,
+       "missing": false
+      },
+      {
+       "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 93,
+       "magnitude": 4.65,
+       "missing": false
+      },
+      {
+       "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 98,
+       "magnitude": 4.9,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": null
+  },
+  "69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "nodes": {
+    "1062d932-0d0b-5aea-93c5-748012789614": {
+     "score": 96,
+     "balance": 92,
+     "base": 96,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+     "score": 75,
+     "balance": 50,
+     "base": 75,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+     "score": 100,
+     "balance": 100,
+     "base": 86,
+     "delta": 14,
+     "positive": 5.34,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "1062d932-0d0b-5aea-93c5-748012789614",
+       "subjectType": "primary",
+       "impact": 4,
+       "strength": 96,
+       "magnitude": 3.84,
+       "missing": false
+      },
+      {
+       "id": "43ee9126-1861-5126-9c4d-c1f6de1c67d0",
+       "subjectType": "primary",
+       "impact": 2,
+       "strength": 75,
+       "magnitude": 1.5,
+       "missing": false
+      }
+     ]
+    },
+    "8de77038-0101-524c-9b3b-1e18014aa336": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+     "score": 95,
+     "balance": 90,
+     "base": 95,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "96173e45-ec48-5a59-b509-89d66a905caa": {
+     "score": 74.9,
+     "balance": 49.80000000000001,
+     "base": 89,
+     "delta": -14.099999999999994,
+     "positive": 0,
+     "negative": 2.82,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "8de77038-0101-524c-9b3b-1e18014aa336",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 94,
+       "magnitude": 2.82,
+       "missing": false
+      },
+      {
+       "id": "7125d97e-379b-54d9-979b-4ce1769bf6b3",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": 95,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+     "score": 57.75,
+     "balance": 15.5,
+     "base": 72,
+     "delta": -14.25,
+     "positive": 0,
+     "negative": 2.8499999999999996,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "f15f296f-7992-5bc3-bee1-9d2e4ddf887b",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 95,
+       "magnitude": 2.8499999999999996,
+       "missing": false
+      }
+     ]
+    },
+    "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+     "score": 79,
+     "balance": 58,
+     "base": 79,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+     "score": 95.05,
+     "balance": 90.1,
+     "base": 99,
+     "delta": -3.950000000000003,
+     "positive": 0,
+     "negative": 0.79,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "23af68db-70a9-5517-86cb-45b41b01cc7f",
+       "subjectType": "primary",
+       "impact": -1,
+       "strength": 79,
+       "magnitude": 0.79,
+       "missing": false
+      }
+     ]
+    },
+    "9263a019-5725-5e20-bbc6-5598d6b60676": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+     "score": 82.9,
+     "balance": 65.80000000000001,
+     "base": 97,
+     "delta": -14.099999999999994,
+     "positive": 0,
+     "negative": 2.82,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "9263a019-5725-5e20-bbc6-5598d6b60676",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 94,
+       "magnitude": 2.82,
+       "missing": false
+      }
+     ]
+    },
+    "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+     "score": 94,
+     "balance": 88,
+     "base": 94,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "1f658fdf-985c-5349-8caa-7093af881b63": {
+     "score": 0,
+     "balance": -100,
+     "base": 60,
+     "delta": -60,
+     "positive": 3,
+     "negative": 17.386000000000003,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "85e3046f-89c7-514e-ad69-9409aa0574dd",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 100,
+       "magnitude": 3,
+       "missing": false
+      },
+      {
+       "id": "96173e45-ec48-5a59-b509-89d66a905caa",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 74.9,
+       "magnitude": 2.9960000000000004,
+       "missing": false
+      },
+      {
+       "id": "605bdd55-5a50-5cd0-9933-0e77bacd0f23",
+       "subjectType": "primary",
+       "impact": -3,
+       "strength": 57.75,
+       "magnitude": 1.7325,
+       "missing": false
+      },
+      {
+       "id": "8285a65f-c5ae-5d9d-855a-dab98a0d4e34",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 95.05,
+       "magnitude": 4.7525,
+       "missing": false
+      },
+      {
+       "id": "6adc0a17-23da-56ef-95be-3b7b11054f7e",
+       "subjectType": "primary",
+       "impact": -5,
+       "strength": 82.9,
+       "magnitude": 4.1450000000000005,
+       "missing": false
+      },
+      {
+       "id": "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 94,
+       "magnitude": 3.76,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "ranking": null
+  }
+ },
+ "options": {},
+ "influence": {
+  "primary": {
+   "85e3046f-89c7-514e-ad69-9409aa0574dd": {
+    "count": 3,
+    "mean": 3.3333333333333335,
+    "min": 2,
+    "max": 5,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "1062d932-0d0b-5aea-93c5-748012789614": {
+    "count": 3,
+    "mean": 4.333333333333333,
+    "min": 4,
+    "max": 5,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "43ee9126-1861-5126-9c4d-c1f6de1c67d0": {
+    "count": 3,
+    "mean": 3,
+    "min": 2,
+    "max": 4,
+    "positive": 3,
+    "negative": 0,
+    "neutral": 0,
+    "status": "support",
+    "signConflict": false
+   },
+   "96173e45-ec48-5a59-b509-89d66a905caa": {
+    "count": 3,
+    "mean": -3.3333333333333335,
+    "min": -5,
+    "max": -1,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "8de77038-0101-524c-9b3b-1e18014aa336": {
+    "count": 3,
+    "mean": -3.3333333333333335,
+    "min": -5,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "605bdd55-5a50-5cd0-9933-0e77bacd0f23": {
+    "count": 3,
+    "mean": -3,
+    "min": -4,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "f15f296f-7992-5bc3-bee1-9d2e4ddf887b": {
+    "count": 3,
+    "mean": -3.3333333333333335,
+    "min": -4,
+    "max": -3,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "8285a65f-c5ae-5d9d-855a-dab98a0d4e34": {
+    "count": 3,
+    "mean": -3.3333333333333335,
+    "min": -5,
+    "max": -1,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "23af68db-70a9-5517-86cb-45b41b01cc7f": {
+    "count": 3,
+    "mean": -2.3333333333333335,
+    "min": -4,
+    "max": -1,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "6adc0a17-23da-56ef-95be-3b7b11054f7e": {
+    "count": 3,
+    "mean": -4.666666666666667,
+    "min": -5,
+    "max": -4,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "9263a019-5725-5e20-bbc6-5598d6b60676": {
+    "count": 3,
+    "mean": -3,
+    "min": -5,
+    "max": -1,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   },
+   "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7": {
+    "count": 3,
+    "mean": -3.6666666666666665,
+    "min": -5,
+    "max": -2,
+    "positive": 0,
+    "negative": 3,
+    "neutral": 0,
+    "status": "oppose",
+    "signConflict": false
+   }
+  },
+  "secondary": {
+   "7125d97e-379b-54d9-979b-4ce1769bf6b3": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  }
+ },
+ "directions": {
+  "85e3046f-89c7-514e-ad69-9409aa0574dd:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "85e3046f-89c7-514e-ad69-9409aa0574dd:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": 2,
+   "direction": "support"
+  },
+  "85e3046f-89c7-514e-ad69-9409aa0574dd:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "1062d932-0d0b-5aea-93c5-748012789614:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": 5,
+   "direction": "support"
+  },
+  "1062d932-0d0b-5aea-93c5-748012789614:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": 4,
+   "direction": "support"
+  },
+  "1062d932-0d0b-5aea-93c5-748012789614:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": 4,
+   "direction": "support"
+  },
+  "43ee9126-1861-5126-9c4d-c1f6de1c67d0:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": 4,
+   "direction": "support"
+  },
+  "43ee9126-1861-5126-9c4d-c1f6de1c67d0:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": 3,
+   "direction": "support"
+  },
+  "43ee9126-1861-5126-9c4d-c1f6de1c67d0:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": 2,
+   "direction": "support"
+  },
+  "96173e45-ec48-5a59-b509-89d66a905caa:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -1,
+   "direction": "oppose"
+  },
+  "96173e45-ec48-5a59-b509-89d66a905caa:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "96173e45-ec48-5a59-b509-89d66a905caa:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "8de77038-0101-524c-9b3b-1e18014aa336:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "8de77038-0101-524c-9b3b-1e18014aa336:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "8de77038-0101-524c-9b3b-1e18014aa336:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "605bdd55-5a50-5cd0-9933-0e77bacd0f23:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "605bdd55-5a50-5cd0-9933-0e77bacd0f23:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "605bdd55-5a50-5cd0-9933-0e77bacd0f23:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "f15f296f-7992-5bc3-bee1-9d2e4ddf887b:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "f15f296f-7992-5bc3-bee1-9d2e4ddf887b:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "f15f296f-7992-5bc3-bee1-9d2e4ddf887b:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "8285a65f-c5ae-5d9d-855a-dab98a0d4e34:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -1,
+   "direction": "oppose"
+  },
+  "8285a65f-c5ae-5d9d-855a-dab98a0d4e34:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "8285a65f-c5ae-5d9d-855a-dab98a0d4e34:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "23af68db-70a9-5517-86cb-45b41b01cc7f:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "23af68db-70a9-5517-86cb-45b41b01cc7f:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "23af68db-70a9-5517-86cb-45b41b01cc7f:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -1,
+   "direction": "oppose"
+  },
+  "6adc0a17-23da-56ef-95be-3b7b11054f7e:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  },
+  "6adc0a17-23da-56ef-95be-3b7b11054f7e:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "6adc0a17-23da-56ef-95be-3b7b11054f7e:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "9263a019-5725-5e20-bbc6-5598d6b60676:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "9263a019-5725-5e20-bbc6-5598d6b60676:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -1,
+   "direction": "oppose"
+  },
+  "9263a019-5725-5e20-bbc6-5598d6b60676:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -3,
+   "direction": "oppose"
+  },
+  "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7:33906207-2d66-588a-8658-11ef2d622748": {
+   "current": true,
+   "influence": -2,
+   "direction": "oppose"
+  },
+  "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7:eac086d7-4d4f-5399-b994-825221905af7": {
+   "current": true,
+   "influence": -5,
+   "direction": "oppose"
+  },
+  "609250d3-b3d9-58d3-9dc3-f11f1e1e5cc7:69aeb58a-ed46-590b-a1c2-5faba35a1b08": {
+   "current": true,
+   "influence": -4,
+   "direction": "oppose"
+  }
+ }
+}

@@ -1,0 +1,354 @@
+{
+ "name": "g02-neutral-base",
+ "source": "scripts/golden-from-proto.mjs",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "golden-0003",
+  "title": "Nimetön pohdinta",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "golden-0001",
+    "name": "Minä",
+    "shares": 1,
+    "role": "owner"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "golden-0002",
+    "parentId": null,
+    "relation": "root",
+    "kind": "decision",
+    "title": "Mikä on paras päätös?",
+    "details": "",
+    "confidence": 50,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 60,
+     "y": 130
+    },
+    "createdBy": "golden-0001"
+   },
+   {
+    "id": "golden-0004",
+    "parentId": "golden-0002",
+    "relation": "option",
+    "kind": "option",
+    "title": "Uusi päätösvaihtoehto",
+    "details": "",
+    "confidence": 50,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 410,
+     "y": 130
+    },
+    "createdBy": "golden-0001"
+   },
+   {
+    "id": "golden-0005",
+    "parentId": "golden-0004",
+    "relation": "support",
+    "kind": "claim",
+    "title": "Puoltava argumentti",
+    "details": "",
+    "confidence": 100,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 760,
+     "y": 130
+    },
+    "createdBy": "golden-0001"
+   }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-08T10:00:00.000Z",
+  "updatedAt": "2026-11-08T10:00:00.000Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0005": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0004": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "golden-0005",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": [
+    "golden-0004"
+   ]
+  },
+  "shares": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0005": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0004": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "golden-0005",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": [
+    "golden-0004"
+   ]
+  },
+  "structural": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0005": {
+     "score": 100,
+     "balance": 100,
+     "base": 100,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "golden-0004": {
+     "score": 65,
+     "balance": 30,
+     "base": 50,
+     "delta": 15,
+     "positive": 3,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "golden-0005",
+       "subjectType": "primary",
+       "impact": 3,
+       "strength": 100,
+       "magnitude": 3,
+       "missing": false
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "golden-0005": {
+     "parentId": "golden-0004",
+     "targetId": "golden-0004",
+     "localDelta": 15,
+     "delta": 15,
+     "provisional": false
+    }
+   },
+   "ranking": [
+    "golden-0004"
+   ]
+  }
+ },
+ "assessors": {
+  "golden-0001": {
+   "nodes": {
+    "golden-0002": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0005": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "golden-0004": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "golden-0005",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": [
+    "golden-0004"
+   ]
+  }
+ },
+ "options": {
+  "golden-0004": {
+   "feasibility": {
+    "status": "feasible",
+    "gates": [],
+    "unmet": 0,
+    "unknown": 0
+   },
+   "preference": {
+    "preferenceScore": null,
+    "preferenceVoters": 0,
+    "preferenceTotalPower": 0,
+    "weightedSum": 0
+   }
+  }
+ },
+ "influence": {
+  "primary": {
+   "golden-0005": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  },
+  "secondary": {}
+ },
+ "directions": {
+  "golden-0005:golden-0001": {
+   "current": false,
+   "influence": null,
+   "direction": "support"
+  }
+ }
+}

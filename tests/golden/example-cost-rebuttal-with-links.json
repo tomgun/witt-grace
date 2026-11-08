@@ -1,0 +1,448 @@
+{
+ "name": "example-cost-rebuttal-with-links",
+ "source": "witt-grace-gpt-proto/examples/cost-rebuttal-with-links.witt.json",
+ "generatedBy": "witt-grace-gpt-proto/src/core.js (0.11.0-dev.32, evidence-v3-links)",
+ "project": {
+  "schemaVersion": 8,
+  "id": "f1733fcc-adbe-42ce-93d6-f841dd5146bd",
+  "title": "Esimerkki: kustannusväite ja sen vastaperuste",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+   "voteWeighting": "equal",
+   "assessmentWeighting": "equal",
+   "shareSnapshotDate": null,
+   "scoring": "evidence-v3-links",
+   "showAuthors": true
+  },
+  "users": [
+   {
+    "id": "3be5136b-c08f-4335-acd2-1683d582d0e5",
+    "name": "Minä",
+    "shares": 1,
+    "role": "owner"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+    "parentId": null,
+    "relation": "root",
+    "kind": "claim",
+    "title": "Uusi järjestelmä kannattaa hankkia",
+    "details": "",
+    "confidence": 60,
+    "impact": 3,
+    "collapsed": false,
+    "position": {
+     "x": 64,
+     "y": 90
+    },
+    "createdBy": "3be5136b-c08f-4335-acd2-1683d582d0e5"
+   },
+   {
+    "id": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+    "parentId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Järjestelmä on liian kallis",
+    "details": "",
+    "confidence": 78,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 404,
+     "y": 90
+    },
+    "createdBy": "3be5136b-c08f-4335-acd2-1683d582d0e5"
+   },
+   {
+    "id": "a4edcdf9-0024-4865-a623-44095ef270fe",
+    "parentId": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+    "relation": "oppose",
+    "kind": "claim",
+    "title": "Kolmen vuoden säästöt ylittävät hankintakulut",
+    "details": "",
+    "confidence": 80,
+    "impact": 4,
+    "collapsed": false,
+    "position": {
+     "x": 744,
+     "y": 90
+    },
+    "createdBy": "3be5136b-c08f-4335-acd2-1683d582d0e5"
+   }
+  ],
+  "votes": [],
+  "edgeAssessments": [],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [
+   {
+    "id": "900a5b15-00be-4a44-b74e-9a5cd3abc32d",
+    "sourceId": "a4edcdf9-0024-4865-a623-44095ef270fe",
+    "targetId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+    "relation": "support",
+    "impact": 3
+   }
+  ],
+  "layout": {
+   "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-05T21:54:07.547Z",
+  "updatedAt": "2026-11-05T21:54:07.547Z"
+ },
+ "modes": {
+  "equal": {
+   "nodes": {
+    "a4edcdf9-0024-4865-a623-44095ef270fe": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "a4edcdf9-0024-4865-a623-44095ef270fe",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "900a5b15-00be-4a44-b74e-9a5cd3abc32d",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": null
+  },
+  "shares": {
+   "nodes": {
+    "a4edcdf9-0024-4865-a623-44095ef270fe": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "a4edcdf9-0024-4865-a623-44095ef270fe",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "900a5b15-00be-4a44-b74e-9a5cd3abc32d",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "marginal": {},
+   "ranking": null
+  },
+  "structural": {
+   "nodes": {
+    "a4edcdf9-0024-4865-a623-44095ef270fe": {
+     "score": 80,
+     "balance": 60,
+     "base": 80,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": []
+    },
+    "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d": {
+     "score": 62,
+     "balance": 24,
+     "base": 78,
+     "delta": -16,
+     "positive": 0,
+     "negative": 3.2,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "a4edcdf9-0024-4865-a623-44095ef270fe",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 80,
+       "magnitude": 3.2,
+       "missing": false
+      }
+     ]
+    },
+    "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c": {
+     "score": 59.6,
+     "balance": 19.200000000000003,
+     "base": 60,
+     "delta": -0.3999999999999986,
+     "positive": 2.4000000000000004,
+     "negative": 2.48,
+     "incomplete": false,
+     "votesCount": 0,
+     "totalPower": 0,
+     "contributions": [
+      {
+       "id": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+       "subjectType": "primary",
+       "impact": -4,
+       "strength": 62,
+       "magnitude": 2.48,
+       "missing": false
+      },
+      {
+       "id": "900a5b15-00be-4a44-b74e-9a5cd3abc32d",
+       "subjectType": "secondary",
+       "impact": 3,
+       "strength": 80,
+       "magnitude": 2.4000000000000004,
+       "missing": false,
+       "overlapWarning": true
+      }
+     ]
+    }
+   },
+   "marginal": {
+    "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d": {
+     "parentId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+     "targetId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+     "localDelta": -12.399999999999999,
+     "delta": -12.399999999999999,
+     "provisional": false
+    },
+    "900a5b15-00be-4a44-b74e-9a5cd3abc32d": {
+     "parentId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+     "targetId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+     "localDelta": 12,
+     "delta": 12,
+     "provisional": false
+    },
+    "a4edcdf9-0024-4865-a623-44095ef270fe": {
+     "parentId": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+     "targetId": "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c",
+     "localDelta": -16,
+     "delta": 3.200000000000003,
+     "provisional": false
+    }
+   },
+   "ranking": null
+  }
+ },
+ "assessors": {
+  "3be5136b-c08f-4335-acd2-1683d582d0e5": {
+   "nodes": {
+    "a4edcdf9-0024-4865-a623-44095ef270fe": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": []
+    },
+    "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d": {
+     "score": null,
+     "balance": null,
+     "base": null,
+     "delta": null,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "a4edcdf9-0024-4865-a623-44095ef270fe",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    },
+    "e4bee7ab-f10f-4bbf-8317-31d0b63a9b1c": {
+     "score": 50,
+     "balance": 0,
+     "base": 50,
+     "delta": 0,
+     "positive": 0,
+     "negative": 0,
+     "incomplete": true,
+     "votesCount": null,
+     "totalPower": null,
+     "contributions": [
+      {
+       "id": "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d",
+       "subjectType": "primary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      },
+      {
+       "id": "900a5b15-00be-4a44-b74e-9a5cd3abc32d",
+       "subjectType": "secondary",
+       "impact": null,
+       "strength": null,
+       "magnitude": null,
+       "missing": true
+      }
+     ]
+    }
+   },
+   "ranking": null
+  }
+ },
+ "options": {},
+ "influence": {
+  "primary": {
+   "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   },
+   "a4edcdf9-0024-4865-a623-44095ef270fe": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  },
+  "secondary": {
+   "900a5b15-00be-4a44-b74e-9a5cd3abc32d": {
+    "count": 0,
+    "mean": null,
+    "min": null,
+    "max": null,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "status": "unassessed",
+    "signConflict": false
+   }
+  }
+ },
+ "directions": {
+  "cf2ddd3f-b502-4ee5-8c0e-601e46a2927d:3be5136b-c08f-4335-acd2-1683d582d0e5": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  },
+  "a4edcdf9-0024-4865-a623-44095ef270fe:3be5136b-c08f-4335-acd2-1683d582d0e5": {
+   "current": false,
+   "influence": null,
+   "direction": "oppose"
+  }
+ }
+}
