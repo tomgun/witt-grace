@@ -7,9 +7,8 @@ import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../l
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import {
-  APPEARANCE_KEY,
+  APPEARANCE_KEY as SPECIAL_KEY,
   LOCALE_KEY,
-  VIEW_KEY,
   browserStore,
   loadProject,
   readPreference,
@@ -17,21 +16,64 @@ import {
   writePreference,
 } from '../lib/storage.ts';
 import type { KeyValueStore } from '../lib/storage.ts';
+import { assessorKey, readView, readZones, reviewViewKey, writeView, writeZones } from './view.ts';
+import type { ViewState, Zone, Zones } from './view.ts';
 
-export const APPEARANCES = ['light', 'dark', 'paper', 'bitberg'] as const;
+export type { ViewState, Zone, Zones } from './view.ts';
+
+/** The prototype's eight themes, in its menu order (UI_INVENTORY S-00). */
+export const APPEARANCES = [
+  'light',
+  'dark',
+  'paper',
+  'cosmos',
+  'hologram',
+  'manuscript-book',
+  'manuscript-pen',
+  'bitberg',
+] as const;
 export type Appearance = (typeof APPEARANCES)[number];
-export type Zone = 'left' | 'top' | 'right' | 'bottom';
-export type Viewpoint = 'shared' | 'personal';
+/** Skins kept per browser; the base theme (light/dark/paper) is document data (`project.theme`). */
+export const SPECIAL_APPEARANCES = [
+  'cosmos',
+  'hologram',
+  'manuscript-book',
+  'manuscript-pen',
+  'bitberg',
+] as const;
+export type SpecialAppearance = (typeof SPECIAL_APPEARANCES)[number];
+export type LeftTab = 'tree' | 'repeat';
+export type LibrarySelection = { type: 'concept' | 'locked' | 'linked-node'; id: string };
+export type DialogName =
+  | 'people'
+  | 'vote'
+  | 'assessment'
+  | 'reviewLens'
+  | 'help'
+  | 'examples'
+  | 'about'
+  | 'newWork'
+  | 'aiDraft'
+  | 'aiReview'
+  | 'aiResults'
+  | 'library'
+  | 'visualExport'
+  | 'contextReasons'
+  | 'sharedReasons';
+export type ModalRequest =
+  | { kind: 'confirm'; text: string; resolve: (ok: boolean) => void }
+  | {
+      kind: 'text';
+      heading: string;
+      prompt: string;
+      action: string;
+      initial: string;
+      resolve: (value: string | null) => void;
+    }
+  | { kind: 'notice'; text: string }
+  | { kind: 'move'; nodeId: string }
+  | { kind: 'links'; nodeId: string; linkId?: string };
 
-export type Layout = 'tree' | 'table';
-export interface ViewState {
-  layout: Layout;
-  leftTab: 'tree' | 'repeat';
-  zones: Record<Zone, boolean>;
-  dockOpen: boolean;
-  viewpoint: Viewpoint;
-  showAuthors: boolean;
-}
 export interface Notice {
   kind: 'error' | 'info';
   text: string;
@@ -44,7 +86,39 @@ export interface AppState {
   /** The active language's messages; Finnish until another language has loaded. */
   messages: Messages;
   appearance: Appearance;
+  /** Persisted presentation preferences (`witt-view-v1`). */
   view: ViewState;
+  /** Persisted panel visibility (`witt-zones-v1`). */
+  zones: Zones;
+  /** Session-only: which left-panel tab is open (the prototype's `repeatPaneOpen`). */
+  leftTab: LeftTab;
+  /** The home screen is shown instead of the workspace (the prototype's `body.home-active`). */
+  home: boolean;
+  /** "Vain puu": only the canvas is visible (never persisted). */
+  focusOnly: boolean;
+  /** A library card selected in the repeat pane; the inspector then shows that reason instead of a node. */
+  selectedLibraryReason: LibrarySelection | null;
+  /** View-only subtree overrides while the depth slider is active (true = closed, false = fully open). */
+  depthOverrides: ReadonlyMap<string, boolean>;
+  /** Branches the person closed by hand; they win over focus peeks and table reveals. */
+  explicitlyClosedIds: ReadonlySet<string>;
+  /** A closed path revealed from the table until the next selection. */
+  tableRevealId: string | null;
+  /** The review lens: null = every human; an array = exactly these assessors (per document, per browser). */
+  reviewIds: string[] | null;
+  /** Monotonic counters that ask the canvas to fit or to centre a node; the canvas owns the camera. */
+  fitRequest: number;
+  centerRequest: { id: string; n: number } | null;
+  /** A library card being dragged over the canvas (HTML5 drag data is unreadable during dragover). */
+  draggingLibraryReason: LibrarySelection | null;
+  /** The card whose title is being edited in place. */
+  inlineEditId: string | null;
+  /** The truncated title shown in the floating claim preview, anchored to a screen rectangle. */
+  claimPreview: { nodeId: string; left: number; top: number; right: number } | null;
+  /** One modal request at a time: confirmations, text prompts and notices resolve a promise. */
+  modal: ModalRequest | null;
+  /** The open workspace dialog, if any (people, vote, assessment, lens, help, …). */
+  dialog: DialogName | null;
   canUndo: boolean;
   canRedo: boolean;
   saveStatus: MessageKey;
@@ -52,48 +126,66 @@ export interface AppState {
   notice: Notice | null;
 }
 
-const defaultView: ViewState = {
-  layout: 'tree',
-  leftTab: 'tree',
-  zones: { left: true, top: true, right: true, bottom: false },
-  dockOpen: false,
-  viewpoint: 'shared',
-  showAuthors: true,
-};
-
 export function blankProject(mode: Mode = 'argument'): Project {
   return createBlankProject({ mode, projectId: newId(), rootId: newId(), userId: newId(), now: nowIso() });
 }
 
-function readView(store: KeyValueStore): ViewState {
+/** `witt-appearance-v1` holds a special skin (legacy `studio-daw` reads as Bitberg); else the document's base theme. */
+function effectiveAppearance(store: KeyValueStore, project: Project): Appearance {
+  const raw = readPreference(store, SPECIAL_KEY);
+  const special = raw === 'studio-daw' ? 'bitberg' : raw;
+  if (SPECIAL_APPEARANCES.includes(special as SpecialAppearance)) return special as Appearance;
+  return project.theme;
+}
+function restoreActor(store: KeyValueStore, project: Project): string {
+  const saved = readPreference(store, assessorKey(project.id));
+  return project.users.some((u) => u.id === saved)
+    ? (saved as string)
+    : (project.users[0] as { id: string }).id;
+}
+function readReviewIds(store: KeyValueStore, projectId: string): string[] | null {
   try {
-    const raw = readPreference(store, VIEW_KEY);
-    if (!raw) return defaultView;
-    const parsed = JSON.parse(raw) as Partial<ViewState>;
-    return { ...defaultView, ...parsed, zones: { ...defaultView.zones, ...(parsed.zones ?? {}) } };
+    const parsed: unknown = JSON.parse(readPreference(store, reviewViewKey(projectId)) ?? 'null');
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : null;
   } catch {
-    return defaultView;
+    return null;
   }
 }
 
-export function createStore(options: { store?: KeyValueStore; persistent?: boolean } = {}) {
+export function createStore(
+  options: { store?: KeyValueStore; persistent?: boolean; windowWidth?: number } = {}
+) {
   const detected = options.store ? null : browserStore();
   const store = options.store ?? (detected as { store: KeyValueStore }).store;
   const persistent = options.persistent ?? detected?.persistent ?? false;
+  const width = options.windowWidth ?? (typeof window === 'undefined' ? 1440 : window.innerWidth);
   const loaded = loadProject(store);
   const initialProject = loaded.ok ? loaded.project : blankProject('argument');
   const savedLanguage = readPreference(store, LOCALE_KEY);
-  const savedAppearance = readPreference(store, APPEARANCE_KEY);
   let state: AppState = {
     project: initialProject,
     selectedId: (rootNode(initialProject) as { id: string }).id,
-    actorId: (initialProject.users[0] as { id: string }).id,
+    actorId: restoreActor(store, initialProject),
     language: isLanguage(savedLanguage) ? savedLanguage : DEFAULT_LANGUAGE,
     messages: FI,
-    appearance: APPEARANCES.includes(savedAppearance as Appearance)
-      ? (savedAppearance as Appearance)
-      : 'light',
-    view: readView(store),
+    appearance: effectiveAppearance(store, initialProject),
+    view: readView(store, width),
+    zones: readZones(store, width),
+    leftTab: 'tree',
+    home: true,
+    focusOnly: false,
+    selectedLibraryReason: null,
+    depthOverrides: new Map(),
+    explicitlyClosedIds: new Set(),
+    tableRevealId: null,
+    reviewIds: readReviewIds(store, initialProject.id),
+    fitRequest: 0,
+    centerRequest: null,
+    draggingLibraryReason: null,
+    inlineEditId: null,
+    claimPreview: null,
+    modal: null,
+    dialog: null,
     canUndo: false,
     canRedo: false,
     saveStatus: loaded.ok ? 'savedBrowser' : 'noServer',
@@ -129,6 +221,7 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
       project,
       selectedId: selected,
       actorId: actor,
+      appearance: effectiveAppearance(store, project),
       canUndo: past.length > 0,
       canRedo: future.length > 0,
     });
@@ -160,11 +253,26 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
     /** Replace the whole document (new, open, import). The person confirmed it already. */
     load(project: Project) {
       const validated = parseProject(project);
+      const rootId = (rootNode(validated) as { id: string }).id;
       replace(validated);
       set({
-        selectedId: (rootNode(validated) as { id: string }).id,
-        actorId: (validated.users[0] as { id: string }).id,
+        selectedId: rootId,
+        actorId: restoreActor(store, validated),
+        selectedLibraryReason: null,
+        depthOverrides: new Map(),
+        explicitlyClosedIds: new Set(),
+        tableRevealId: null,
+        reviewIds: readReviewIds(store, validated.id),
+        view: {
+          ...state.view,
+          focus: { mode: 'all', anchorId: rootId },
+          compactVisible: false,
+          depthLimit: null,
+        },
+        home: false,
       });
+      writeView(store, state.view);
+      api.requestFit();
     },
     undo() {
       const previous = past.pop();
@@ -180,11 +288,54 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
       replace(next, { remember: false });
       set({ canUndo: past.length > 0, canRedo: future.length > 0 });
     },
+    /** The prototype's `selectNode`: clears a library selection and a table reveal that is not this node. */
     select(id: string) {
-      if (state.project.nodes.some((n) => n.id === id)) set({ selectedId: id });
+      if (!state.project.nodes.some((n) => n.id === id)) return;
+      set({
+        selectedId: id,
+        selectedLibraryReason: null,
+        tableRevealId: state.tableRevealId === id ? state.tableRevealId : null,
+      });
     },
     setActor(id: string) {
-      if (state.project.users.some((u) => u.id === id)) set({ actorId: id });
+      if (!state.project.users.some((u) => u.id === id)) return;
+      writePreference(store, assessorKey(state.project.id), id);
+      set({ actorId: id });
+    },
+    setHome(home: boolean) {
+      set({ home, focusOnly: home ? false : state.focusOnly });
+      if (!home) api.requestFit();
+    },
+    setFocusOnly(focusOnly: boolean) {
+      const view =
+        focusOnly && state.view.presentation === 'table'
+          ? { ...state.view, presentation: 'tree' as const }
+          : state.view;
+      set({ focusOnly, view });
+      api.requestFit();
+    },
+    selectLibraryReason(selection: LibrarySelection | null) {
+      set({ selectedLibraryReason: selection, leftTab: selection ? 'repeat' : state.leftTab });
+      if (selection) api.setZones({ left: true });
+    },
+    setDepthOverrides(depthOverrides: ReadonlyMap<string, boolean>) {
+      set({ depthOverrides });
+    },
+    setExplicitlyClosed(explicitlyClosedIds: ReadonlySet<string>) {
+      set({ explicitlyClosedIds });
+    },
+    setTableReveal(tableRevealId: string | null) {
+      set({ tableRevealId });
+    },
+    setReviewIds(reviewIds: string[] | null) {
+      writePreference(store, reviewViewKey(state.project.id), JSON.stringify(reviewIds));
+      set({ reviewIds });
+    },
+    requestFit() {
+      set({ fitRequest: state.fitRequest + 1 });
+    },
+    requestCenter(id: string) {
+      set({ centerRequest: { id, n: (state.centerRequest?.n ?? 0) + 1 } });
     },
     setLanguage(language: Language) {
       writePreference(store, LOCALE_KEY, language);
@@ -193,17 +344,73 @@ export function createStore(options: { store?: KeyValueStore; persistent?: boole
         if (state.language === language) set({ messages });
       });
     },
+    /** Base themes go into the document (undoable, exported); special skins stay in this browser. */
     setAppearance(appearance: Appearance) {
-      writePreference(store, APPEARANCE_KEY, appearance);
+      if (SPECIAL_APPEARANCES.includes(appearance as SpecialAppearance)) {
+        writePreference(store, SPECIAL_KEY, appearance);
+        set({ appearance });
+        return;
+      }
+      try {
+        store.removeItem(SPECIAL_KEY);
+      } catch {
+        // optional
+      }
+      if (appearance !== state.project.theme)
+        api.dispatch({ type: 'project.setTheme', theme: appearance as Project['theme'] });
       set({ appearance });
     },
     setView(patch: Partial<ViewState>) {
-      const view = { ...state.view, ...patch, zones: { ...state.view.zones, ...(patch.zones ?? {}) } };
-      writePreference(store, VIEW_KEY, JSON.stringify(view));
+      const view: ViewState = {
+        ...state.view,
+        ...patch,
+        layers: { ...state.view.layers, ...(patch.layers ?? {}) },
+        focus: { ...state.view.focus, ...(patch.focus ?? {}) },
+      };
+      writeView(store, view);
       set({ view });
     },
+    setZones(patch: Partial<Zones>) {
+      const zones = { ...state.zones, ...patch };
+      writeZones(store, zones);
+      set({ zones });
+    },
     toggleZone(zone: Zone) {
-      api.setView({ zones: { ...state.view.zones, [zone]: !state.view.zones[zone] } });
+      api.setZones({ [zone]: !state.zones[zone] });
+    },
+    setLeftTab(leftTab: LeftTab) {
+      set({ leftTab });
+    },
+    setDraggingLibraryReason(draggingLibraryReason: LibrarySelection | null) {
+      set({ draggingLibraryReason });
+    },
+    setInlineEdit(inlineEditId: string | null) {
+      set({ inlineEditId });
+    },
+    setClaimPreview(claimPreview: AppState['claimPreview']) {
+      set({ claimPreview });
+    },
+    /** The prototype's `askConfirm`: resolves true on Jatka, false on Peruuta or Escape. */
+    askConfirm(text: string): Promise<boolean> {
+      return new Promise((resolve) => set({ modal: { kind: 'confirm', text, resolve } }));
+    },
+    /** The prototype's `askText`: resolves the trimmed value, or null when cancelled. */
+    askText(prompt: string, heading: string, action: string, initial = ''): Promise<string | null> {
+      return new Promise((resolve) =>
+        set({ modal: { kind: 'text', heading, prompt, action, initial, resolve } })
+      );
+    },
+    showMessage(text: string) {
+      set({ modal: { kind: 'notice', text } });
+    },
+    openModal(modal: ModalRequest) {
+      set({ modal });
+    },
+    openDialog(dialog: DialogName | null) {
+      set({ dialog });
+    },
+    closeModal() {
+      set({ modal: null });
     },
     notify(notice: Notice | null) {
       set({ notice });

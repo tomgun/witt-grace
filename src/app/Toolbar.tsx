@@ -1,331 +1,471 @@
-import { useState } from 'react';
+// The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
+// (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
 import type { ReactNode } from 'react';
-import {
-  isAiProfile,
-  rootNode,
-  serializeProjectFile,
-  exportFilename,
-  parseProject,
-} from '../domain/index.ts';
+import { childrenOf, isAiProfile } from '../domain/index.ts';
 import type { Mode } from '../domain/index.ts';
-import { downloadText, pickTextFile } from '../lib/files.ts';
-import { newId } from '../lib/providers.ts';
-import { Modal } from './dialogs.tsx';
-import { blankProject, getStore, useAppState, useTranslator } from './store.ts';
-import type { Viewpoint } from './store.ts';
+import {
+  ADD_LOCAL_USER,
+  addNode,
+  canEdit,
+  chooseActor,
+  choosePerspective,
+  deleteNode,
+  openRepeatLibrary,
+  selectPresentation,
+  setSubtreeCollapsed,
+  setWorkflow,
+  showViewDock,
+  startInlineEdit,
+  toggleFocus,
+  toggleViewDock,
+} from './actions.ts';
+import { viewedAssessorId } from './derive.ts';
+import type { Frame } from './projection.ts';
+import { displayShortcut } from './shortcuts.ts';
+import type { Shortcuts } from './shortcuts.ts';
+import { getStore, useAppState, useTranslator } from './store.ts';
 
 function Menu({ id, label, children }: { id: string; label: string; children: ReactNode }) {
   return (
-    <details className="toolbar-popover" data-testid={`menu-${id}`}>
+    <details id={id} className="toolbar-popover" data-testid={`menu-${id}`}>
       <summary>{label}</summary>
       <div
         className="toolbar-popup"
-        role="menu"
-        onClick={(e) => ((e.currentTarget.closest('details') as HTMLDetailsElement).open = false)}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest('button'))
+            (e.currentTarget.closest('details') as HTMLDetailsElement).open = false;
+        }}
       >
         {children}
       </div>
     </details>
   );
 }
-const MenuButton = ({
+const Item = ({
+  id,
   onClick,
   disabled,
+  hidden,
   children,
-  testId,
+  kbd,
+  title,
 }: {
+  id: string;
   onClick: () => void;
   disabled?: boolean;
+  hidden?: boolean;
   children: ReactNode;
-  testId?: string;
+  kbd?: string;
+  title?: string;
 }) => (
-  <button
-    type="button"
-    className="btn quiet"
-    role="menuitem"
-    onClick={onClick}
-    disabled={disabled}
-    data-testid={testId}
-  >
-    {children}
-  </button>
+  <>
+    <button
+      type="button"
+      className="btn quiet"
+      id={id}
+      data-testid={id}
+      onClick={onClick}
+      disabled={disabled}
+      hidden={hidden}
+      title={title}
+    >
+      {children}
+    </button>
+    {kbd && !hidden ? <kbd>{kbd}</kbd> : null}
+  </>
 );
 
-export function Toolbar({
-  onAdd,
-  onDeleteSelected,
-  onShortcuts,
-  onPeople,
-  onVote,
-}: {
-  onAdd: (relation: 'support' | 'oppose' | 'neutral' | 'option') => void;
-  onDeleteSelected: () => void;
-  onShortcuts: () => void;
-  onPeople: () => void;
-  onVote: () => void;
-}) {
+export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcuts }) {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
-  const { project } = state;
-  const [replacement, setReplacement] = useState<{ title: string; apply: () => void } | null>(null);
-  const root = rootNode(project);
+  const { project, view } = state;
+  const editable = canEdit(state);
   const selected = project.nodes.find((n) => n.id === state.selectedId);
-  const canEdit = project.users.find((u) => u.id === state.actorId)?.role !== 'viewer';
-
-  const confirmReplace = (title: string, apply: () => void) => setReplacement({ title, apply });
-  const newDocument = (mode: Mode) =>
-    confirmReplace(`${t('new')} · ${t(mode === 'decision' ? 'modeDecision' : 'modeArgument')}`, () =>
-      store.load(blankProject(mode))
-    );
-  const openFile = async () => {
-    const picked = await pickTextFile();
-    if (!picked) return;
-    try {
-      const parsed = parseProject(JSON.parse(picked.text));
-      confirmReplace(`${t('openJson')} · ${picked.name}`, () => store.load(parsed));
-    } catch (error) {
-      store.notify({
-        kind: 'error',
-        text: `${picked.name}: ${error instanceof Error ? error.message : String(error)}`,
-      });
-    }
-  };
-  const saveFile = () => {
-    downloadText(exportFilename(project.title), serializeProjectFile(project));
-    store.notify({ kind: 'info', text: t('savedFile') });
-  };
-  const addPerson = () => {
-    const name = window.prompt(t('profileNewPrompt'));
-    if (!name?.trim()) return;
-    const id = newId();
-    if (store.dispatch({ type: 'user.add', id, name })) store.setActor(id);
-  };
+  const root = project.nodes.find((n) => n.parentId === null);
   const setMode = (mode: Mode) => {
     if (mode === project.mode) return;
-    if (mode === 'argument' && project.nodes.some((n) => n.kind === 'option' || n.kind === 'group')) {
-      store.notify({ kind: 'error', text: t('optionsPreventArgumentMode') });
+    if (mode === 'argument' && project.nodes.some((n) => n.relation === 'option' || n.relation === 'group')) {
+      store.showMessage(t('optionsPreventArgumentMode'));
       return;
     }
     store.dispatch({ type: 'project.setMode', mode });
   };
-  const modeWord = project.mode === 'decision' ? t('modeDecision') : t('modeArgument');
-
+  const aiProfiles = project.users.filter((u) => isAiProfile(u));
+  const current = project.users.find((u) => u.id === state.actorId);
+  const perspective =
+    view.indexMode === 'personal' &&
+    view.viewAssessorId &&
+    view.viewAssessorId !== state.actorId &&
+    project.users.some((u) => u.id === view.viewAssessorId)
+      ? `assessor:${view.viewAssessorId}`
+      : view.indexMode;
+  const inspected =
+    view.indexMode === 'personal'
+      ? project.users.find((u) => u.id === viewedAssessorId(project, view, state.actorId))
+      : undefined;
   return (
-    <div className="toolbar" aria-label={t('toolbarEditGroup')} data-testid="toolbar">
-      <div className="toolbar-group">
-        <div className="mode-switch" role="group" aria-label={`${t('modeArgument')} / ${t('modeDecision')}`}>
-          <button
-            type="button"
-            className={project.mode === 'argument' ? 'active' : ''}
-            aria-pressed={project.mode === 'argument'}
-            data-testid="mode-argument"
-            onClick={() => setMode('argument')}
-          >
-            {t('modeArgument')}
-          </button>
-          <button
-            type="button"
-            className={project.mode === 'decision' ? 'active' : ''}
-            aria-pressed={project.mode === 'decision'}
-            data-testid="mode-decision"
-            onClick={() => setMode('decision')}
-          >
-            {t('modeDecision')}
-          </button>
-        </div>
-        <label className="visually-hidden" htmlFor="actorSelect">
-          {t('profileSelect')}
-        </label>
-        <select
-          id="actorSelect"
-          className="profile-select"
-          data-testid="actor-select"
-          title={t('profileSelect')}
-          value={state.actorId}
-          onChange={(e) => (e.target.value === '__add__' ? addPerson() : store.setActor(e.target.value))}
-        >
-          {project.users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.name}
-              {isAiProfile(u) ? ' (AI)' : ''}
-            </option>
-          ))}
-          <option value="__add__">{t('profileAdd')}</option>
-        </select>
-        <div className="table-switch" role="group" aria-label={t('tableViewGroup')}>
-          <button
-            type="button"
-            className={`btn quiet${state.view.layout === 'tree' ? ' active' : ''}`}
-            aria-pressed={state.view.layout === 'tree'}
-            data-testid="layout-tree"
-            onClick={() => store.setView({ layout: 'tree' })}
-          >
-            {t('treeView')}
-          </button>
-          <button
-            type="button"
-            className={`btn quiet${state.view.layout === 'table' ? ' active' : ''}`}
-            aria-pressed={state.view.layout === 'table'}
-            data-testid="layout-table"
-            onClick={() => store.setView({ layout: 'table' })}
-          >
-            {t('tableView')}
-          </button>
-        </div>
-        <label className="visually-hidden" htmlFor="viewpointSelect">
-          {t('indexDisplay')}
-        </label>
-        <select
-          id="viewpointSelect"
-          data-testid="viewpoint-select"
-          title={t('indexDisplay')}
-          value={state.view.viewpoint}
-          onChange={(e) => store.setView({ viewpoint: e.target.value as Viewpoint })}
-        >
-          <option value="shared">{t('indexShared')}</option>
-          <option value="personal">{t('indexPersonal')}</option>
-        </select>
-      </div>
-      <div className="toolbar-group toolbar-simple-menus">
-        <Menu id="file" label={t('toolbarFileGroup')}>
-          <MenuButton testId="menu-new-argument" onClick={() => newDocument('argument')}>
-            {t('new')} · {t('modeArgument')}
-          </MenuButton>
-          <MenuButton testId="menu-new-decision" onClick={() => newDocument('decision')}>
-            {t('new')} · {t('modeDecision')}
-          </MenuButton>
-          <MenuButton testId="menu-open" onClick={() => void openFile()}>
-            {t('openJson')}
-          </MenuButton>
-          <MenuButton testId="menu-save" onClick={saveFile}>
-            {t('saveFile')}
-          </MenuButton>
-          <div className="menu-divider" />
-          <span className="save-status" role="status" data-testid="save-status">
-            {t(state.saveStatus)}
-          </span>
-        </Menu>
-        <Menu id="edit" label={t('toolbarEditGroup')}>
-          <MenuButton
-            testId="menu-add-support"
-            onClick={() => onAdd('support')}
-            disabled={!canEdit || !selected}
-          >
-            {t('supportAdd')}
-          </MenuButton>
-          <MenuButton
-            testId="menu-add-oppose"
-            onClick={() => onAdd('oppose')}
-            disabled={!canEdit || !selected}
-          >
-            {t('opposeAdd')}
-          </MenuButton>
-          <MenuButton
-            testId="menu-add-neutral"
-            onClick={() => onAdd('neutral')}
-            disabled={!canEdit || !selected}
-          >
-            {t('neutralAdd')}
-          </MenuButton>
-          {project.mode === 'decision' ? (
-            <MenuButton
-              testId="menu-add-option"
-              onClick={() => onAdd('option')}
-              disabled={!canEdit || !selected || (selected.kind !== 'decision' && selected.kind !== 'group')}
-            >
-              {t('optionShort')}
-            </MenuButton>
-          ) : null}
-          <div className="menu-divider" />
-          <MenuButton
-            testId="menu-delete"
-            onClick={onDeleteSelected}
-            disabled={!canEdit || !selected || selected.id === root?.id}
-          >
-            {t('deleteSubtree')}
-          </MenuButton>
-          <div className="menu-divider" />
-          <MenuButton testId="menu-undo" onClick={() => store.undo()} disabled={!state.canUndo}>
-            {t('undo')}
-          </MenuButton>
-          <MenuButton testId="menu-redo" onClick={() => store.redo()} disabled={!state.canRedo}>
-            {t('redo')}
-          </MenuButton>
-        </Menu>
-        <Menu id="review" label={t('toolbarAssessGroup')}>
-          <MenuButton testId="menu-people" onClick={onPeople}>
-            {t('profileManage')}
-          </MenuButton>
-          {project.mode === 'decision' ? (
-            <MenuButton testId="menu-vote" onClick={onVote}>
-              {t('votingButton')}
-            </MenuButton>
-          ) : null}
-        </Menu>
-        <Menu id="view" label={t('toolbarViewGroup')}>
-          <MenuButton
-            testId="menu-view-settings"
-            onClick={() => store.setView({ dockOpen: !state.view.dockOpen })}
-          >
-            {t('viewSettingsButton')} <kbd>Alt+V</kbd>
-          </MenuButton>
-          <label className="toolbar-importance">
-            <input
-              type="checkbox"
-              checked={state.view.showAuthors}
-              onChange={(e) => store.setView({ showAuthors: e.target.checked })}
-            />
-            <span>{t('showAuthors')}</span>
-          </label>
-        </Menu>
-        <Menu id="help" label={t('toolbarHelpGroup')}>
-          <MenuButton testId="menu-shortcuts" onClick={onShortcuts}>
-            {t('shortcutsButton')} <kbd>?</kbd>
-          </MenuButton>
-        </Menu>
-      </div>
-      <Modal
-        open={!!replacement}
-        onClose={() => setReplacement(null)}
-        title={t('replaceTitle')}
-        testId="replace-dialog"
+    <>
+      <div
+        className="toolbar witt-simplified-toolbar"
+        aria-label={t('toolbarEditGroup')}
+        data-testid="toolbar"
       >
-        <p>{replacement?.title}</p>
-        <p data-testid="replace-summary">
-          {t('replaceSummary', {
-            title: project.title,
-            mode: modeWord,
-            count: project.nodes.length,
-            updated: project.updatedAt.slice(0, 16).replace('T', ' '),
-          })}
-        </p>
-        <p className="inspector-note">{t('footerFriendly')}</p>
-        <div className="dialog-actions">
+        <div
+          className="toolbar-group toolbar-purpose"
+          role="group"
+          aria-label={`${t('modeArgument')} / ${t('modeDecision')}`}
+        >
+          <div aria-label={t('workArea')} className="mode-switch" role="group">
+            <button
+              type="button"
+              id="modeArgument"
+              data-testid="mode-argument"
+              className={project.mode === 'argument' ? 'active' : ''}
+              onClick={() => setMode('argument')}
+            >
+              {t('modeArgument')}
+            </button>
+            <button
+              type="button"
+              id="modeDecision"
+              data-testid="mode-decision"
+              className={project.mode === 'decision' ? 'active' : ''}
+              onClick={() => setMode('decision')}
+            >
+              {t('modeDecision')}
+            </button>
+          </div>
+        </div>
+        <div className="toolbar-group toolbar-flow" role="group" aria-label={t('workflow')}>
+          <span className="toolbar-caption">{t('stageLabel')}</span>
+          <div className="workflow-switch workflow-stages" role="group" aria-label={t('workflow')}>
+            <button
+              type="button"
+              id="btnWorkflowExplore"
+              data-workflow="explore"
+              className={view.workflow === 'explore' ? 'active' : ''}
+              aria-pressed={view.workflow === 'explore'}
+              onClick={() => setWorkflow('explore')}
+            >
+              {t('explore')}
+            </button>
+            <button
+              type="button"
+              id="btnWorkflowEvaluate"
+              data-workflow="evaluate"
+              className={view.workflow === 'evaluate' ? 'active' : ''}
+              aria-pressed={view.workflow === 'evaluate'}
+              onClick={() => setWorkflow('evaluate')}
+            >
+              {t('evaluate')}
+            </button>
+            {project.mode === 'decision' ? (
+              <button
+                type="button"
+                className="workflow-vote"
+                id="btnVoting"
+                data-testid="btnVoting"
+                onClick={() => store.openDialog('vote')}
+              >
+                {t('votingButton')}
+              </button>
+            ) : null}
+          </div>
+          <label className="visually-hidden" htmlFor="actorSelect">
+            {t('profileSelect')}
+          </label>
+          <select
+            id="actorSelect"
+            className="profile-select"
+            data-testid="actor-select"
+            title={t('profileSelect')}
+            aria-label={t('profileSelect')}
+            value={state.actorId}
+            onChange={(e) => void chooseActor(e.target.value)}
+          >
+            {project.users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+                {isAiProfile(u) ? ' · AI' : ''}
+              </option>
+            ))}
+            <option value={ADD_LOCAL_USER}>{t('profileAddLocalOption')}</option>
+          </select>
+        </div>
+        <div className="toolbar-group toolbar-presentation" role="group" aria-label={t('tableViewGroup')}>
+          <div className="table-switch" role="group" aria-label={t('tableViewGroup')}>
+            <button
+              type="button"
+              id="btnTreeView"
+              data-testid="layout-tree"
+              className={`btn quiet${view.presentation === 'tree' ? ' active' : ''}`}
+              aria-pressed={view.presentation === 'tree'}
+              title={shortcuts.table}
+              onClick={() => selectPresentation('tree')}
+            >
+              {t('treeView')}
+            </button>
+            <button
+              type="button"
+              id="btnTableView"
+              data-testid="layout-table"
+              className={`btn quiet${view.presentation === 'table' ? ' active' : ''}`}
+              aria-pressed={view.presentation === 'table'}
+              title={shortcuts.table}
+              onClick={() => selectPresentation('table')}
+            >
+              {t('tableView')}
+            </button>
+          </div>
           <button
             type="button"
             className="btn quiet"
-            onClick={() => setReplacement(null)}
-            data-testid="replace-cancel"
+            id="btnViewSettings"
+            data-testid="btnViewSettings"
+            aria-controls="viewDock"
+            aria-expanded={!view.dockHidden}
+            aria-pressed={!view.dockHidden}
+            onClick={toggleViewDock}
           >
-            {t('cancel')}
+            {t('viewSettingsButton')}
           </button>
-          <button type="button" className="btn quiet" onClick={saveFile}>
-            {t('saveFile')}
-          </button>
+          {aiProfiles.length ? (
+            <button
+              type="button"
+              className="btn quiet ai-results-shortcut"
+              id="btnAIResults"
+              onClick={() => store.openDialog('aiResults')}
+            >
+              {t('aiAssessmentsButton')}
+              {aiProfiles.length > 1 ? ` (${aiProfiles.length})` : ''}
+            </button>
+          ) : null}
+        </div>
+        <div className="toolbar-group toolbar-simple-menus">
+          <Menu id="fileMenu" label={t('toolbarFileGroup')}>
+            <Item id="btnNew" onClick={() => store.openDialog('newWork')}>
+              {t('new')}
+            </Item>
+            <Item id="btnOpen" onClick={() => window.dispatchEvent(new CustomEvent('witt-open-file'))}>
+              {t('openJson')}
+            </Item>
+            <Item
+              id="btnSave"
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-save-file'))}
+              kbd="Ctrl/Cmd+S"
+              title="Ctrl/Cmd+S"
+            >
+              {t('saveFile')}
+            </Item>
+            <Item id="btnExportVisual" onClick={() => store.openDialog('visualExport')}>
+              {t('exportVisual')}
+            </Item>
+            <Item id="btnLibrary" onClick={() => store.openDialog('library')}>
+              {t('documentLibrary')}
+            </Item>
+            <div className="menu-divider" />
+            <Item id="btnAIReview" onClick={() => store.openDialog('aiReview')}>
+              {t('aiProposalMenu')}
+            </Item>
+            <div className="menu-divider" />
+            <span className="save-status" id="saveStatus" role="status" data-testid="save-status">
+              {t(state.saveStatus)}
+            </span>
+          </Menu>
+          <Menu id="editMenu" label={t('toolbarEditGroup')}>
+            <Item id="btnEditMenuSelected" onClick={() => startInlineEdit(state.selectedId)}>
+              {t('editArgument')}
+            </Item>
+            <Item
+              id="btnEditMenuSupport"
+              onClick={() => addNode('support')}
+              disabled={!editable || selected?.kind === 'group'}
+              kbd={displayShortcut(shortcuts.support)}
+            >
+              {t('supportAdd')}
+            </Item>
+            <Item
+              id="btnEditMenuOppose"
+              onClick={() => addNode('oppose')}
+              disabled={!editable || selected?.kind === 'group'}
+              kbd={displayShortcut(shortcuts.oppose)}
+            >
+              {t('opposeAdd')}
+            </Item>
+            <Item
+              id="btnEditMenuNeutral"
+              onClick={() => addNode('neutral')}
+              disabled={!editable || selected?.kind === 'group'}
+            >
+              {t('neutralAdd')}
+            </Item>
+            <Item
+              id="btnEditMenuOption"
+              onClick={() => addNode('option', root?.id)}
+              hidden={project.mode !== 'decision'}
+              disabled={!editable || project.votingRound?.status === 'open'}
+            >
+              {t('optionShort')}
+            </Item>
+            <div className="menu-divider" />
+            <Item id="btnContextMenu" onClick={openRepeatLibrary}>
+              {t('contextOpen')}
+            </Item>
+            <Item
+              id="btnEditMenuMove"
+              onClick={() => store.openModal({ kind: 'move', nodeId: state.selectedId })}
+              disabled={!selected?.parentId || !editable}
+            >
+              {t('moveSubtree')}
+            </Item>
+            <Item
+              id="btnEditMenuCollapse"
+              onClick={() => setSubtreeCollapsed(state.selectedId)}
+              disabled={!selected || !childrenOf(project, selected.id).length}
+            >
+              {t(selected && frame.isNodeCollapsed(selected) ? 'expandSubtree' : 'collapseSubtree')}
+            </Item>
+            <Item
+              id="btnEditMenuDelete"
+              onClick={() => void deleteNode(state.selectedId)}
+              disabled={!selected?.parentId || !editable}
+              kbd="Del"
+            >
+              {t('deleteSubtree')}
+            </Item>
+            <div className="menu-divider" />
+            <Item id="btnUndo" onClick={() => store.undo()} disabled={!state.canUndo} kbd="Ctrl/Cmd+Z">
+              {t('undo')}
+            </Item>
+            <Item id="btnRedo" onClick={() => store.redo()} disabled={!state.canRedo} kbd="Ctrl/Cmd+Shift+Z">
+              {t('redo')}
+            </Item>
+          </Menu>
+          <Menu id="assessmentMenu" label={t('toolbarAssessGroup')}>
+            <Item id="btnPeople" onClick={() => store.openDialog('people')} title={t('profileManage')}>
+              {t('profileManage')}
+            </Item>
+            <Item
+              id="btnAssess"
+              onClick={() => store.openDialog('assessment')}
+              disabled={!editable}
+              kbd={displayShortcut(shortcuts.assessment)}
+              title={`${t('assessmentStart')} (${displayShortcut(shortcuts.assessment)})`}
+            >
+              {t('assessmentStart')}
+            </Item>
+            <Item
+              id="btnReviewLens"
+              onClick={() => store.openDialog('reviewLens')}
+              title={t(frame.lens.filtered ? 'lensFilteredHint' : 'lensAllHint')}
+            >
+              {t('reviewLens')}
+              {frame.lens.filtered ? ` · ${frame.lens.selectedCount}/${frame.lens.totalCount}` : ''}
+            </Item>
+            <label className="menu-label" htmlFor="indexModeSelect">
+              {t('indexDisplay')}
+            </label>
+            <select
+              id="indexModeSelect"
+              data-testid="viewpoint-select"
+              aria-label={t('indexDisplay')}
+              value={perspective}
+              onChange={(e) => choosePerspective(e.target.value)}
+            >
+              <option value="shared">
+                {t('indexShared')}
+                {aiProfiles.length ? ` · ${t('humanReviewOnly')}` : ''}
+              </option>
+              <option value="personal">
+                {t('indexPersonal')} · {current?.name ?? ''}
+              </option>
+              {project.users
+                .filter((u) => u.id !== state.actorId)
+                .map((u) => (
+                  <option key={u.id} value={`assessor:${u.id}`}>
+                    {isAiProfile(u) && !u.name.startsWith('AI') ? `AI · ${u.name}` : u.name}
+                  </option>
+                ))}
+            </select>
+          </Menu>
+          <Menu id="viewMenu" label={t('toolbarViewGroup')}>
+            <Item id="btnViewPanelMenu" onClick={showViewDock} kbd="Alt+V">
+              {t('viewSettingsButton')}
+            </Item>
+            <Item
+              id="btnFocusView"
+              onClick={() => toggleFocus()}
+              kbd={shortcuts.focus}
+              title={shortcuts.focus}
+            >
+              ⛶ {t(state.focusOnly ? 'exitFocus' : 'focusTree')}
+            </Item>
+            <label className="toolbar-importance">
+              <input
+                type="checkbox"
+                id="aiOptionHighlights"
+                checked={!!view.highlightOptions}
+                disabled={view.indexMode !== 'personal' || project.mode !== 'decision'}
+                onChange={(e) => store.setView({ highlightOptions: e.target.checked })}
+              />
+              <span>{t('highlightTopOptions')}</span>
+            </label>
+            <label className="toolbar-importance">
+              <input
+                type="checkbox"
+                id="importantToggle"
+                checked={view.showImportance}
+                onChange={(e) => store.setView({ showImportance: e.target.checked })}
+              />
+              <span>{t('importantHighlight')}</span>
+            </label>
+            <label className="toolbar-importance">
+              <input
+                type="checkbox"
+                id="showAuthors"
+                checked={project.settings.showAuthors !== false}
+                onChange={(e) =>
+                  store.dispatch({ type: 'project.setShowAuthors', showAuthors: e.target.checked })
+                }
+              />
+              <span>{t('showAuthors')}</span>
+            </label>
+          </Menu>
+          <Menu id="helpMenu" label={t('toolbarHelpGroup')}>
+            <Item id="btnDemo" onClick={() => store.openDialog('examples')}>
+              {t('example')}
+            </Item>
+            <Item id="btnTutorial" onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial'))}>
+              {t('tutorialStart')}
+            </Item>
+            <Item
+              id="btnKeyboardTop"
+              onClick={() => store.openDialog('help')}
+              kbd={shortcuts.help}
+              title={`${t('shortcutsButton')} (${shortcuts.help})`}
+            >
+              {t('shortcutsButton')}
+            </Item>
+          </Menu>
+        </div>
+      </div>
+      {inspected && inspected.id !== state.actorId ? (
+        <div id="analysisPerspectiveBanner" className="analysis-perspective-banner" role="status">
+          <span id="analysisPerspectiveLabel">
+            {t('viewingPerspective', { name: inspected.name })} ·{' '}
+            {t('editingAs', { name: current?.name ?? '' })}
+          </span>
           <button
             type="button"
-            className="btn primary"
-            data-testid="replace-confirm"
-            onClick={() => {
-              replacement?.apply();
-              setReplacement(null);
-            }}
+            id="btnPerspectiveOwn"
+            className="btn quiet"
+            onClick={() => choosePerspective('personal')}
           >
-            {t('replaceConfirm')}
+            {t('backToOwnReviews')}
           </button>
         </div>
-      </Modal>
-    </div>
+      ) : null}
+    </>
   );
 }

@@ -1,0 +1,216 @@
+// Presentation-level derivations shared by the canvas, outline, table and inspector, ported from the prototype's
+// app.js helpers (inv-canvas §1.5, inv-inspector §F). Pure functions over the document, the scores and the view.
+import {
+  argumentBalance,
+  assessmentFields,
+  baseConfidence,
+  directionFromInfluence,
+  indexAssessable,
+  marginalIndexEffects,
+  marginalTargetEffects,
+  personalCredence,
+  personalInfluence,
+  sharedReason,
+} from '../domain/index.ts';
+import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
+import type { MessageKey, Translator } from '../lib/i18n/i18n.ts';
+import type { ViewState } from './view.ts';
+
+export const EM_DASH = '—';
+/** The prototype's `signed`: a plus sign for positives, otherwise the plain JS number. */
+export const signed = (value: number): string => (value > 0 ? `+${value}` : String(value));
+
+/** Visible balance text `S = 2I − 100` with `digits` decimals and an explicit sign; `—` when null. */
+export function balanceText(internal: number | null | undefined, digits = 1): string {
+  const value = argumentBalance(internal ?? null);
+  if (value === null) return EM_DASH;
+  const rounded = Number(value.toFixed(digits));
+  return (rounded > 0 ? '+' : '') + rounded.toFixed(digits);
+}
+export function balanceDeltaText(internalDelta: number | null | undefined, digits = 1): string {
+  if (internalDelta === null || internalDelta === undefined || !Number.isFinite(internalDelta))
+    return EM_DASH;
+  const rounded = Number((2 * internalDelta).toFixed(digits));
+  return (rounded > 0 ? '+' : '') + rounded.toFixed(digits);
+}
+/** A derived result exists only for index-assessable nodes with at least one scored contribution. */
+export const derivedResult = (node: Node, result: NodeScore | undefined | null): boolean =>
+  indexAssessable(node) &&
+  result?.score !== null &&
+  result?.score !== undefined &&
+  (result.contributions ?? []).some((item) => !item.missing);
+/** Balance text plus the ` †` marker for an incomplete result; `—` for leaves, values, gates and groups. */
+export const resultText = (node: Node, result: NodeScore | undefined | null, digits = 1): string =>
+  derivedResult(node, result)
+    ? balanceText(result!.score, digits) + (result!.incomplete ? ' †' : '')
+    : EM_DASH;
+
+export interface DeriveContext {
+  project: Project;
+  view: ViewState;
+  actorId: string;
+  scores: Scores;
+  personalScores: Scores;
+  lens: Lens;
+}
+
+/** The assessor whose perspective is shown: the chosen one in personal mode when it still exists, else the actor. */
+export const viewedAssessorId = (project: Project, view: ViewState, actorId: string): string =>
+  view.indexMode === 'personal' &&
+  view.viewAssessorId &&
+  project.users.some((u) => u.id === view.viewAssessorId)
+    ? view.viewAssessorId
+    : actorId;
+
+/** The influence actually shown for a child: personal review (or locked value) in personal mode, the weighted
+ * contribution that entered the parent score in shared mode; null when missing. */
+export function shownInfluence(ctx: DeriveContext, node: Node): number | null {
+  if (!node.parentId || node.relation === 'option' || node.relation === 'group') return null;
+  const { project, view, scores } = ctx;
+  if (view.indexMode === 'personal') {
+    if (node.sharedReasonId) return sharedReason(project, node.sharedReasonId)?.influence ?? null;
+    const own = personalInfluence(project, 'primary', node.id, viewedAssessorId(project, view, ctx.actorId));
+    return own.current && own.record ? own.record.influence : null;
+  }
+  const edge = scores.get(node.parentId)?.contributions?.find((item) => item.id === node.id);
+  return edge && !edge.missing && edge.impact !== null && Number.isFinite(edge.impact) ? edge.impact : null;
+}
+/** Root, options and groups keep their stored relation; claims show the assessed direction, falling back to the
+ * authored template. */
+export function displayedPrimaryRelation(ctx: DeriveContext, node: Node): Stance {
+  if (node.parentId === null || node.relation === 'option' || node.relation === 'group') return node.relation;
+  return directionFromInfluence(shownInfluence(ctx, node), node.relation);
+}
+export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
+  if (node.relation === 'group') return 'optionGroupType';
+  if (node.relation === 'option') return 'optionType';
+  const direction = displayedPrimaryRelation(ctx, node);
+  if (direction === 'support') return 'supportType';
+  if (direction === 'oppose') return 'opposeType';
+  if (direction === 'neutral') return 'neutralWord';
+  return node.kind === 'decision' ? 'rootDecisionType' : 'rootClaimType';
+}
+export const relationLabel = (ctx: DeriveContext, t: Translator, node: Node): string =>
+  t(relationLabelKey(ctx, node));
+
+/** The score of the shown viewpoint. */
+export const shownScore = (ctx: DeriveContext, id: string): NodeScore | undefined =>
+  ctx.view.indexMode === 'personal' ? ctx.personalScores.get(id) : ctx.scores.get(id);
+
+export interface AssessmentSnapshot {
+  credence: number | null;
+  impact: number | null;
+  value: string;
+  provenance: string;
+  averaging: boolean;
+  filtered: boolean;
+}
+const fmt = (num: number): string =>
+  Number.isInteger(num) ? String(num) : Number(num.toFixed(1)).toString();
+
+/** The compact "75%/+3" pair a card shows, with where the numbers came from. Null when nothing applies. */
+export function nodeAssessmentSnapshot(
+  ctx: DeriveContext,
+  t: Translator,
+  node: Node
+): AssessmentSnapshot | null {
+  const fields = assessmentFields(node);
+  if (!fields.credence && !fields.impact) return null;
+  const { project, view, lens } = ctx;
+  const personal = view.indexMode === 'personal';
+  const assessor = viewedAssessorId(project, view, ctx.actorId);
+  const shared = node.sharedReasonId ? sharedReason(project, node.sharedReasonId) : null;
+  const mode = project.settings.assessmentWeighting;
+  const filtered = !personal && lens.filtered && !shared;
+  let credence: number | null = null;
+  let impact: number | null = null;
+  const review = personal ? personalCredence(project, node.id, assessor) : null;
+  const aggregated = !personal && !shared ? baseConfidence(project, node) : null;
+  if (fields.credence) {
+    if (shared) credence = shared.confidence;
+    else if (personal) credence = review ? review.confidence : null;
+    else if (filtered) credence = null;
+    else credence = aggregated?.base ?? null;
+  }
+  if (fields.impact) {
+    if (shared) impact = shared.influence;
+    else if (filtered) impact = null;
+    else impact = shownInfluence(ctx, node);
+  }
+  const provenance = shared
+    ? t('assessmentSummaryFixed')
+    : personal
+      ? t('assessmentSummaryPersonal', { name: project.users.find((u) => u.id === assessor)?.name ?? '' })
+      : filtered
+        ? t('assessmentSummaryFiltered')
+        : mode === 'shares'
+          ? t('assessmentSummaryWeighted')
+          : mode === 'equal'
+            ? t('assessmentSummaryMean')
+            : t('assessmentSummaryStructural');
+  if (
+    node.parentId === null &&
+    node.kind === 'claim' &&
+    !shared &&
+    mode !== 'structural' &&
+    (personal ? !review : (aggregated?.votesCount ?? 0) === 0)
+  )
+    return null;
+  const p = credence === null ? EM_DASH : `${fmt(credence)}%`;
+  const w = impact === null ? EM_DASH : signed(Number(impact.toFixed(1)));
+  return {
+    credence,
+    impact,
+    value: fields.impact ? `${p}/${w}` : p,
+    provenance,
+    averaging: !personal && mode !== 'structural' && !shared,
+    filtered,
+  };
+}
+
+export interface Importance {
+  effects: Map<string, TargetEffect>;
+  importantIds: Set<string>;
+}
+/** Marginal effects on the top target; when highlighting is on, the strongest 20 % per target are "important". */
+export function recalculateImportance(ctx: DeriveContext): Importance {
+  const { project, view, lens } = ctx;
+  const importantIds = new Set<string>();
+  if (view.indexMode === 'shared' && lens.filtered) return { effects: new Map(), importantIds };
+  const evaluated = view.indexMode === 'personal' ? ctx.personalScores : ctx.scores;
+  const effects = marginalTargetEffects(project, evaluated, marginalIndexEffects(project, evaluated));
+  if (view.showImportance) {
+    const byTarget = new Map<string, TargetEffect[]>();
+    for (const effect of effects.values()) {
+      if (!(effect.magnitude > 1e-9)) continue;
+      if (!byTarget.has(effect.targetId)) byTarget.set(effect.targetId, []);
+      byTarget.get(effect.targetId)!.push(effect);
+    }
+    for (const items of byTarget.values()) {
+      items.sort((a, b) => b.magnitude - a.magnitude || a.childId.localeCompare(b.childId));
+      for (const item of items.slice(0, Math.ceil(items.length * 0.2))) importantIds.add(item.childId);
+    }
+  }
+  return { effects, importantIds };
+}
+export const importanceShort = (effect: TargetEffect): string => `${balanceDeltaText(effect.delta, 1)} p`;
+export function importanceText(t: Translator, effect: TargetEffect): string {
+  return t('importanceTargetChange', { change: balanceDeltaText(effect.delta, 2) });
+}
+export function importanceHint(project: Project, t: Translator, effect: TargetEffect): string {
+  const target = project.nodes.find((n) => n.id === effect.targetId);
+  const parent = project.nodes.find((n) => n.id === effect.parentId);
+  const main = t('importanceTargetWhatIf', {
+    target: target?.title ?? '',
+    without: balanceText(effect.targetWithoutScore),
+    current: balanceText(effect.targetCurrentScore),
+    change: balanceDeltaText(effect.delta, 2),
+  });
+  const local = t('importanceWhatIf', {
+    parent: parent?.title ?? '',
+    without: balanceText(effect.localWithoutScore),
+    current: balanceText(effect.localCurrentScore),
+    change: balanceDeltaText(effect.localDelta, 2),
+  });
+  return `${main} | ${local}${effect.provisional ? ` ${t('importanceProvisional')}` : ''}`;
+}

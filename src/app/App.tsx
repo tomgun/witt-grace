@@ -1,308 +1,309 @@
-import { useCallback, useEffect, useState } from 'react';
-import { descendants, rootNode } from '../domain/index.ts';
-import { newId } from '../lib/providers.ts';
+// The shell: body classes, zones, keyboard, home/workspace switch, bottom zone, footer and the dialog hosts.
+import { useEffect, useMemo, useState } from 'react';
+import { exportFilename, parseProject, serializeProjectFile } from '../domain/index.ts';
+import { downloadText, pickTextFile } from '../lib/files.ts';
+import {
+  addNode,
+  arrangeTree,
+  deleteNode,
+  selectPresentation,
+  toggleFocus,
+  toggleOptionBranches,
+  toggleViewDock,
+  canEdit,
+} from './actions.ts';
 import { Canvas } from './Canvas.tsx';
+import { ModalHost, NoticeBar } from './dialogs.tsx';
+import { Home } from './Home.tsx';
 import { Inspector } from './Inspector.tsx';
-import { Modal, NoticeBar } from './dialogs.tsx';
-import { Outline } from './Outline.tsx';
-import { TableView } from './TableView.tsx';
+import { LeftPanel } from './LeftPanel.tsx';
 import { PeopleDialog } from './PeopleDialog.tsx';
-import { VoteDialog } from './VoteDialog.tsx';
-import { Toolbar } from './Toolbar.tsx';
-import { TopBar } from './TopBar.tsx';
+import { useFrame } from './projection.ts';
+import { readShortcuts, shortcutFor } from './shortcuts.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import type { Zone } from './store.ts';
-import { useScores } from './useScores.ts';
+import { TableView } from './TableView.tsx';
+import { Toolbar } from './Toolbar.tsx';
+import { TopBar } from './TopBar.tsx';
+import { ViewDock } from './ViewDock.tsx';
+import { VoteDialog } from './VoteDialog.tsx';
+import { ZONES } from './view.ts';
 
-type AddRelation = 'support' | 'oppose' | 'neutral' | 'option';
+export const APP_VERSION = '0.2.0-dev';
 
 export function App() {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
-  const { project, view } = state;
-  const scores = useScores(project, view.viewpoint, state.actorId);
-  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
-  const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [peopleOpen, setPeopleOpen] = useState(false);
-  const [voteOpen, setVoteOpen] = useState(false);
+  const { project, view, zones } = state;
+  const frame = useFrame(state);
+  const [shortcutsVersion, setShortcutsVersion] = useState(0);
+  const shortcuts = useMemo(() => readShortcuts(window.localStorage), [shortcutsVersion]); // eslint-disable-line react-hooks/exhaustive-deps
   const selected = project.nodes.find((n) => n.id === state.selectedId);
-  const root = rootNode(project);
 
-  const add = useCallback(
-    (relation: AddRelation) => {
-      const target = store.get().selectedId;
-      const id = newId();
-      if (store.dispatch({ type: 'node.add', id, parentId: target, relation })) {
-        store.select(id);
-        requestAnimationFrame(() =>
-          document.querySelector<HTMLTextAreaElement>('[data-testid="node-title"]')?.focus()
-        );
-      }
-    },
-    [store]
-  );
-  const requestDelete = useCallback(() => {
-    const id = store.get().selectedId;
-    if (root && id !== root.id) setPendingDelete(id);
-  }, [store, root]);
-
+  // Body state the prototype's CSS keys on.
   useEffect(() => {
-    document.body.dataset.theme = state.appearance;
+    const body = document.body;
+    body.dataset.theme = state.appearance;
     document.documentElement.lang = state.language;
-  }, [state.appearance, state.language]);
+    body.classList.toggle('home-active', state.home);
+    body.classList.toggle('witt-focus', state.focusOnly && !state.home);
+    for (const zone of ZONES) {
+      body.classList.toggle(`zone-${zone}-hidden`, !zones[zone]);
+      body.classList.toggle(`zone-${zone}-visible`, zones[zone]);
+    }
+  }, [state.appearance, state.language, state.home, state.focusOnly, zones]);
 
+  // File flows (also reachable from the home screen and Ctrl/Cmd+S).
   useEffect(() => {
+    const openFile = async () => {
+      const picked = await pickTextFile();
+      if (!picked) return;
+      try {
+        const parsed = parseProject(JSON.parse(picked.text));
+        if (await store.askConfirm(`${t('openJson')} · ${picked.name}`)) store.load(parsed);
+      } catch (error) {
+        store.showMessage(`${picked.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    };
+    const saveFile = () => {
+      const current = store.get().project;
+      downloadText(exportFilename(current.title), serializeProjectFile(current));
+      store.notify({ kind: 'info', text: t('savedFile') });
+    };
+    const onOpen = () => void openFile();
+    window.addEventListener('witt-open-file', onOpen);
+    window.addEventListener('witt-save-file', saveFile);
+    return () => {
+      window.removeEventListener('witt-open-file', onOpen);
+      window.removeEventListener('witt-save-file', saveFile);
+    };
+  }, [store, t]);
+
+  // Document-level keys in the prototype's order (inv-canvas §9.2).
+  useEffect(() => {
+    const camera = (detail: { kind: 'zoom' | 'fit' | 'pan'; factor?: number; dx?: number; dy?: number }) =>
+      window.dispatchEvent(new CustomEvent('witt-camera', { detail }));
     const onKey = (e: KeyboardEvent) => {
+      const s = store.get();
       const target = e.target as HTMLElement | null;
-      const typing =
-        !!target &&
-        (target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.tagName === 'SELECT' ||
-          target.isContentEditable);
-      if (e.altKey && !e.ctrlKey && !e.metaKey) {
-        const zones: Record<string, Zone> = { '1': 'left', '2': 'top', '3': 'right', '4': 'bottom' };
-        const zone = zones[e.key];
-        if (zone) {
+      const editing = !!target?.closest('input,textarea,select,dialog,[contenteditable="true"]');
+      const home = s.home;
+      if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === 'v' && !editing && !home) {
+        e.preventDefault();
+        toggleViewDock();
+        return;
+      }
+      if (e.altKey && e.shiftKey && e.code === 'KeyO' && s.project.mode === 'decision' && !editing && !home) {
+        e.preventDefault();
+        toggleOptionBranches();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('witt-save-file'));
+        return;
+      }
+      if (e.key === 'Escape' && s.focusOnly && !editing) {
+        toggleFocus(false);
+        return;
+      }
+      if (editing) return;
+      if (
+        e.altKey &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.shiftKey &&
+        ['1', '2', '3', '4'].includes(e.key) &&
+        !home
+      ) {
+        e.preventDefault();
+        store.toggleZone(
+          ({ '1': 'left', '2': 'top', '3': 'right', '4': 'bottom' } as Record<string, Zone>)[e.key]!
+        );
+        return;
+      }
+      if (!home && s.view.presentation === 'tree') {
+        if ((e.ctrlKey || e.metaKey) && !e.altKey && ['+', '=', '-', '_'].includes(e.key)) {
           e.preventDefault();
-          store.toggleZone(zone);
+          camera({ kind: 'zoom', factor: e.key === '+' || e.key === '=' ? 1.2 : 1 / 1.2 });
           return;
         }
-        if (e.key.toLowerCase() === 'v') {
-          e.preventDefault();
-          store.setView({ dockOpen: !store.get().view.dockOpen });
+        if (e.key === '0' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          camera({ kind: 'fit' });
           return;
         }
+        if (e.altKey && !e.ctrlKey && !e.shiftKey && e.key.startsWith('Arrow')) {
+          e.preventDefault();
+          const pan: Record<string, [number, number]> = {
+            ArrowUp: [0, 100],
+            ArrowDown: [0, -100],
+            ArrowLeft: [100, 0],
+            ArrowRight: [-100, 0],
+          };
+          const [dx, dy] = pan[e.key] ?? [0, 0];
+          camera({ kind: 'pan', dx, dy });
+          return;
+        }
+      }
+      const action = shortcutFor(shortcuts, e);
+      if (home) {
+        if (action === 'help') {
+          e.preventDefault();
+          store.openDialog('help');
+        }
+        return;
+      }
+      if (action) {
+        e.preventDefault();
+        if (action === 'support' || action === 'oppose') addNode(action);
+        else if (action === 'option') {
+          if (s.project.mode === 'decision')
+            addNode('option', s.project.nodes.find((n) => n.parentId === null)?.id);
+        } else if (action === 'table') selectPresentation(s.view.presentation === 'table' ? 'tree' : 'table');
+        else if (action === 'focus') toggleFocus();
+        else if (action === 'assessment') store.openDialog('assessment');
+        else if (action === 'help') store.openDialog('help');
+        else if (action === 'arrange') arrangeTree();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        addNode(e.shiftKey ? 'oppose' : 'support');
+        return;
       }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-        if (typing) return;
         e.preventDefault();
         if (e.shiftKey) store.redo();
         else store.undo();
         return;
       }
-      if (typing) return;
-      if (e.key === '+') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
         e.preventDefault();
-        add('support');
-      } else if (e.key === '-' || e.key === '−') {
-        e.preventDefault();
-        add('oppose');
-      } else if (e.key === 'Delete') {
-        e.preventDefault();
-        requestDelete();
-      } else if (e.key === '?') {
-        e.preventDefault();
-        setShortcutsOpen(true);
-      } else if (e.key === 'F2') {
-        e.preventDefault();
-        document.querySelector<HTMLTextAreaElement>('[data-testid="node-title"]')?.focus();
+        store.redo();
+        return;
+      }
+      if (e.key.toLowerCase() === 'g' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        document
+          .querySelector<HTMLElement>(`.node[data-id="${CSS.escape(s.selectedId)}"]`)
+          ?.focus({ preventScroll: true });
+        return;
+      }
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const node = s.project.nodes.find((n) => n.id === s.selectedId);
+        if (node?.parentId) {
+          e.preventDefault();
+          void deleteNode(node.id);
+        }
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [add, requestDelete, store]);
+  }, [store, shortcuts]);
 
-  const pending = pendingDelete ? project.nodes.find((n) => n.id === pendingDelete) : undefined;
-  const zones = view.zones;
+  if (state.home) {
+    return (
+      <>
+        <Home />
+        <ModalHost frame={frame} onShortcutsChanged={() => setShortcutsVersion((v) => v + 1)} />
+      </>
+    );
+  }
+  const editable = canEdit(state);
+  const workspaceClass = `workspace${view.presentation === 'table' ? ' table-view' : ''}${view.workflow === 'evaluate' ? ' table-evaluate' : ''}${state.leftTab === 'repeat' ? ' repeat-library-open' : ''}`;
   return (
     <div className="app-shell" data-testid="app">
       <TopBar />
-      {zones.top ? (
-        <Toolbar
-          onAdd={add}
-          onDeleteSelected={requestDelete}
-          onShortcuts={() => setShortcutsOpen(true)}
-          onPeople={() => setPeopleOpen(true)}
-          onVote={() => setVoteOpen(true)}
-        />
-      ) : null}
+      <Toolbar frame={frame} shortcuts={shortcuts} />
       <NoticeBar />
-      <main
-        className={`workspace${zones.left ? '' : ' no-left'}${zones.right ? '' : ' no-right'}`}
-        data-testid="workspace"
-      >
-        {zones.left ? <Outline /> : null}
-        {view.layout === 'table' ? <TableView scores={scores} /> : <Canvas scores={scores} />}
-        {zones.right ? <Inspector scores={scores} /> : null}
+      <main className={workspaceClass} id="workspaceMain" data-testid="workspace">
+        <LeftPanel frame={frame} />
+        {view.presentation === 'table' ? (
+          <TableView scores={frame.scores} />
+        ) : (
+          <Canvas frame={frame} shortcuts={shortcuts} />
+        )}
+        <Inspector frame={frame} />
       </main>
       {zones.bottom ? (
-        <section className="bottom-zone" aria-label={t('structureTitle')} data-testid="bottom-zone">
+        <section
+          id="bottomZone"
+          className="bottom-zone"
+          aria-label={t('structureTitle')}
+          data-testid="bottom-zone"
+        >
           <div className="bottom-zone-title">
-            <strong>{t('structureTitle')}</strong> <span>{selected?.title}</span>
+            <strong>{t('structureTitle')}</strong>
+            <span id="bottomSelectedNode">{selected?.title ?? ''}</span>
           </div>
           <div className="bottom-zone-actions">
             <button
               type="button"
               className="btn support-add"
-              onClick={() => add('support')}
+              id="btnBottomSupport"
               data-testid="bottom-add-support"
+              disabled={!editable || selected?.kind === 'group'}
+              onClick={() => addNode('support')}
             >
               {t('supportAdd')}
             </button>
             <button
               type="button"
               className="btn oppose-add"
-              onClick={() => add('oppose')}
+              id="btnBottomOppose"
               data-testid="bottom-add-oppose"
+              disabled={!editable || selected?.kind === 'group'}
+              onClick={() => addNode('oppose')}
             >
               {t('opposeAdd')}
             </button>
-            <button type="button" className="btn quiet" onClick={() => add('neutral')}>
-              {t('neutralAdd')}
-            </button>
-            {project.mode === 'decision' ? (
-              <button
-                type="button"
-                className="btn option-add"
-                onClick={() => add('option')}
-                data-testid="bottom-add-option"
-              >
-                {t('optionAdd')}
-              </button>
-            ) : null}
             <button
               type="button"
               className="btn quiet"
-              onClick={requestDelete}
-              disabled={!selected || selected.id === root?.id}
+              id="btnBottomNeutral"
+              disabled={!editable || selected?.kind === 'group'}
+              onClick={() => addNode('neutral')}
+            >
+              {t('neutralAdd')}
+            </button>
+            <button
+              type="button"
+              className="btn quiet"
+              id="btnBottomMove"
+              disabled={!selected?.parentId || !editable}
+              onClick={() => store.openModal({ kind: 'move', nodeId: state.selectedId })}
+            >
+              {t('moveSubtree')}
+            </button>
+            <button
+              type="button"
+              className="btn quiet"
+              id="btnBottomDelete"
+              disabled={!selected?.parentId || !editable}
+              onClick={() => void deleteNode(state.selectedId)}
             >
               {t('deleteSubtree')}
             </button>
           </div>
         </section>
       ) : null}
-      {view.dockOpen ? (
-        <div className="view-dock" role="dialog" aria-label={t('viewSettingsButton')} data-testid="view-dock">
-          <div className="dock-topline">
-            <span>{t('viewSettingsButton')}</span>
-            <button
-              type="button"
-              className="btn quiet"
-              aria-label={t('dockClose')}
-              onClick={() => store.setView({ dockOpen: false })}
-            >
-              ×
-            </button>
-          </div>
-          <label className="toolbar-importance">
-            <input
-              type="checkbox"
-              checked={view.showAuthors}
-              onChange={(e) => store.setView({ showAuthors: e.target.checked })}
-            />
-            <span>{t('showAuthors')}</span>
-          </label>
-          <button type="button" className="btn quiet" onClick={() => store.dispatch({ type: 'layout.auto' })}>
-            {t('arrange')}
-          </button>
-        </div>
-      ) : null}
       <footer className="app-footer">
         <span>
-          WITT <b>0.1.0</b>
+          WITT <b>{APP_VERSION}</b>
         </span>
         <span>{t('footerFriendly')}</span>
-        <a href="proto/" className="proto-link">
-          dev32
-        </a>
+        <button type="button" id="btnHelp" onClick={() => store.openDialog('help')}>
+          {t('help')}
+        </button>
       </footer>
-      <PeopleDialog open={peopleOpen} onClose={() => setPeopleOpen(false)} />
-      <VoteDialog open={voteOpen} onClose={() => setVoteOpen(false)} scores={scores} />
-      <Modal
-        open={!!pending}
-        onClose={() => setPendingDelete(null)}
-        title={t('confirmationTitle')}
-        testId="delete-dialog"
-      >
-        <p>
-          {pending
-            ? t('deleteSubtreeConfirm', {
-                title: pending.title,
-                count: descendants(project, pending.id).length,
-              })
-            : ''}
-        </p>
-        <div className="dialog-actions">
-          <button type="button" className="btn quiet" onClick={() => setPendingDelete(null)}>
-            {t('cancel')}
-          </button>
-          <button
-            type="button"
-            className="btn primary"
-            data-testid="delete-confirm"
-            onClick={() => {
-              if (pending) store.dispatch({ type: 'node.remove', id: pending.id });
-              setPendingDelete(null);
-            }}
-          >
-            {t('deleteSubtree')}
-          </button>
-        </div>
-      </Modal>
-      <Modal
-        open={shortcutsOpen}
-        onClose={() => setShortcutsOpen(false)}
-        title={t('shortcutsButton')}
-        testId="shortcuts-dialog"
-      >
-        <table className="shortcuts">
-          <tbody>
-            <tr>
-              <td>
-                <kbd>+</kbd> / <kbd>−</kbd>
-              </td>
-              <td>
-                {t('supportAdd')} / {t('opposeAdd')}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <kbd>Del</kbd>
-              </td>
-              <td>{t('deleteSubtree')}</td>
-            </tr>
-            <tr>
-              <td>
-                <kbd>F2</kbd>
-              </td>
-              <td>{t('editArgument')}</td>
-            </tr>
-            <tr>
-              <td>
-                <kbd>Ctrl/Cmd+Z</kbd>, <kbd>Ctrl/Cmd+Shift+Z</kbd>
-              </td>
-              <td>
-                {t('undo')}, {t('redo')}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <kbd>Alt+1</kbd>…<kbd>Alt+4</kbd>
-              </td>
-              <td>{t('zoneControls')}</td>
-            </tr>
-            <tr>
-              <td>
-                <kbd>Alt+V</kbd>
-              </td>
-              <td>{t('viewSettingsButton')}</td>
-            </tr>
-            <tr>
-              <td>
-                <kbd>Ctrl/Cmd +</kbd> / <kbd>−</kbd> / <kbd>0</kbd>
-              </td>
-              <td>{t('canvasKeyboardHelp')}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="dialog-actions">
-          <button type="button" className="btn primary" onClick={() => setShortcutsOpen(false)}>
-            {t('close')}
-          </button>
-        </div>
-      </Modal>
+      {!view.dockHidden ? <ViewDock frame={frame} anchorId="btnViewSettings" /> : null}
+      <PeopleDialog open={state.dialog === 'people'} onClose={() => store.openDialog(null)} />
+      <VoteDialog
+        open={state.dialog === 'vote'}
+        onClose={() => store.openDialog(null)}
+        scores={frame.scores}
+      />
+      <ModalHost frame={frame} onShortcutsChanged={() => setShortcutsVersion((v) => v + 1)} />
     </div>
   );
 }

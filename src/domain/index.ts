@@ -59,3 +59,22 @@ export {
 } from './commands.ts';
 export type { Command, CommandType, CommandContext } from './commands.ts';
 export { serializeProjectFile, serializeProjectCompact, exportFilename } from './serialize.ts';
+export {
+  CARD_W,
+  ORIENTATIONS,
+  viewPosition,
+  documentPosition,
+  fourWayProjection,
+  edgeGeometry,
+  secondaryLinkPath,
+  fourWayVisualDirections,
+  stableFourWayAddition,
+  compactVisibleProjection,
+  depthProjection,
+  maxTreeDepth,
+} from './layout.ts';
+export type { LayoutNode, Orientation, Cardinal, Direction, Projection, DepthProjection } from './layout.ts';
+export { NAV_KEYS, visibleOrder, spatialNeighbor, navigate } from './navigation.ts';
+export type { NavNode, NavAction } from './navigation.ts';
+export { projectLens, lensSelected, assessorSummary } from './lens.ts';
+export type { Lens, CredenceStats, ImpactStats, Disagreement, AssessorSummary } from './lens.ts';

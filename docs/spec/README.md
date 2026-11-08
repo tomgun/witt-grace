@@ -8,7 +8,8 @@ These files are the **living product and method contract** for the new WITT impl
 | --- | --- | --- |
 | `METHOD_INTENT.md` | Why GRACE has exactly two rating axes, what the balance means, cognitive-ease priorities, non-goals. | Owner-confirmed intent |
 | `GRACE_AND_DATA_MODEL.md` | Ontology, exact `evidence-v3-links` formula with pinned numeric examples, human/AI aggregation, contextual reuse, groups, gates, values, persistence rules (G-01…G-06). | Contract |
-| `UX_AND_WORKFLOWS.md` | The refined UI behavior to preserve: modes, menus, docking, repeated-reason shelf, reviews, ballots, AI flows, exports (UX-A…UX-E). | Contract |
+| `UX_AND_WORKFLOWS.md` | The refined UI behavior to preserve: modes, menus, docking, repeated-reason shelf, reviews, ballots, AI flows, exports (UX-A…UX-E). | Contract (rationale) |
+| `UI_INVENTORY.md` | Screen-by-screen inventory of the prototype UI: every region, control, dialog, layer, stage, persisted key and format, with the prototype's element ids and i18n keys. What is visible in the prototype is the spec. | Contract (checklist) |
 | `IDENTITY_AI_AND_VOTING.md` | Stable author IDs, AI isolation, contribution bundles, ballot rounds. | Contract |
 | `REQUIREMENTS.md` | Requirement ledger with IDs (G-xx, UX-xx, U-xx, V-xx, P2P-xx) and status Implemented / Partial / Planned. | Lock list |
 | `SECURITY_AND_PRIVACY.md` | What the local-first app does and does not promise. | Contract + non-claims |

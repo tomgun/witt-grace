@@ -2,6 +2,8 @@
 
 > **Living specification.** Copied 2026-11-08 from the dev32 prototype handoff (`witt-grace-gpt-proto/docs/specifications/UX_AND_WORKFLOWS.md`). Backticked source, test and tool paths (`src/…`, `tests/…`, `tools/…`) refer to the frozen prototype under `witt-grace-gpt-proto/` until the new implementation supplies its own evidence. Edit this file only through the change policy in `docs/spec/README.md`.
 
+**Scope note (2026-11-08):** this file is the rationale. The screen-level checklist of what the prototype shows, control by control, is `UI_INVENTORY.md`; the new implementation is measured against that inventory, not only against the principles below.
+
 **Goal:** Keep the specific, user-refined UI behavior stable while modernizing its implementation. This describes **implemented baseline behavior**, not a promise that every flow has already been audited for WCAG compliance or production security. Representative CSS selectors and existing test files provide traceability.
 
 ## UX-A. Information architecture and cognitive load
