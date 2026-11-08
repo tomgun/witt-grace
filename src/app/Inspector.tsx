@@ -10,6 +10,7 @@ import {
 } from '../domain/index.ts';
 import type { Node, Scores, SemanticType, Stance } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
+import { DecisionOverview } from './DecisionOverview.tsx';
 import { balanceText, credenceText, influenceText, signed } from './format.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
@@ -295,6 +296,7 @@ export function Inspector({ scores }: { scores: Scores }) {
             </select>
           </div>
         ) : null}
+        {project.mode === 'decision' && isRoot ? <DecisionOverview scores={scores} /> : null}
         <section className="score-section" aria-label={t('layerIndex')} data-testid="score-section">
           <h3>
             {t('layerIndex')} · {state.view.viewpoint === 'personal' ? t('indexPersonal') : t('indexShared')}

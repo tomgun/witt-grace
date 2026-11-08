@@ -5,6 +5,8 @@ import { Canvas } from './Canvas.tsx';
 import { Inspector } from './Inspector.tsx';
 import { Modal, NoticeBar } from './dialogs.tsx';
 import { Outline } from './Outline.tsx';
+import { PeopleDialog } from './PeopleDialog.tsx';
+import { VoteDialog } from './VoteDialog.tsx';
 import { Toolbar } from './Toolbar.tsx';
 import { TopBar } from './TopBar.tsx';
 import { getStore, useAppState, useTranslator } from './store.ts';
@@ -21,6 +23,8 @@ export function App() {
   const scores = useScores(project, view.viewpoint, state.actorId);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [peopleOpen, setPeopleOpen] = useState(false);
+  const [voteOpen, setVoteOpen] = useState(false);
   const selected = project.nodes.find((n) => n.id === state.selectedId);
   const root = rootNode(project);
 
@@ -105,7 +109,13 @@ export function App() {
     <div className="app-shell" data-testid="app">
       <TopBar />
       {zones.top ? (
-        <Toolbar onAdd={add} onDeleteSelected={requestDelete} onShortcuts={() => setShortcutsOpen(true)} />
+        <Toolbar
+          onAdd={add}
+          onDeleteSelected={requestDelete}
+          onShortcuts={() => setShortcutsOpen(true)}
+          onPeople={() => setPeopleOpen(true)}
+          onVote={() => setVoteOpen(true)}
+        />
       ) : null}
       <NoticeBar />
       <main
@@ -197,6 +207,8 @@ export function App() {
           dev32
         </a>
       </footer>
+      <PeopleDialog open={peopleOpen} onClose={() => setPeopleOpen(false)} />
+      <VoteDialog open={voteOpen} onClose={() => setVoteOpen(false)} scores={scores} />
       <Modal
         open={!!pending}
         onClose={() => setPendingDelete(null)}

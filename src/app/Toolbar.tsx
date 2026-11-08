@@ -55,10 +55,14 @@ export function Toolbar({
   onAdd,
   onDeleteSelected,
   onShortcuts,
+  onPeople,
+  onVote,
 }: {
   onAdd: (relation: 'support' | 'oppose' | 'neutral' | 'option') => void;
   onDeleteSelected: () => void;
   onShortcuts: () => void;
+  onPeople: () => void;
+  onVote: () => void;
 }) {
   const state = useAppState();
   const t = useTranslator();
@@ -228,6 +232,16 @@ export function Toolbar({
           <MenuButton testId="menu-redo" onClick={() => store.redo()} disabled={!state.canRedo}>
             {t('redo')}
           </MenuButton>
+        </Menu>
+        <Menu id="review" label={t('toolbarAssessGroup')}>
+          <MenuButton testId="menu-people" onClick={onPeople}>
+            {t('profileManage')}
+          </MenuButton>
+          {project.mode === 'decision' ? (
+            <MenuButton testId="menu-vote" onClick={onVote}>
+              {t('votingButton')}
+            </MenuButton>
+          ) : null}
         </Menu>
         <Menu id="view" label={t('toolbarViewGroup')}>
           <MenuButton

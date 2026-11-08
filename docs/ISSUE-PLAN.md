@@ -15,7 +15,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-008** Pages: the new app at `/`, the prototype at `/proto/`, one-file standalone export of the new app; relative asset paths under a project path.
 - [ ] **WG-009** Browser tests (A009): keyboard walks of the WG-007 slice; screenshot comparison against the prototype.
 - [ ] **WG-010** Persistence: storage adapter, autosave, document library, the replacement confirmation (UX-E06), low-prominence save status, quota/private-mode errors visible.
-- [ ] **WG-011** Decision mode: options, groups (no rating, no ballot slot), gates met/unmet/unknown, structural preview, ballots with frozen rounds and share weighting (V-01…V-04).
+- [x] **WG-011** DONE 2026-11-08: options overview, gates from the inspector, ballot dialog with frozen rounds and share weighting, people dialog with the pooled-weighting choice; a two-person ballot walk in Playwright. Groups: addable and structural (no rating, no ballot slot); a group inspector of its own is still open.
 - [ ] **WG-012** Repeated reasons: the card shelf, `Luo kirjastoon`, `Liitä myös muihin solmuihin…`, per-context ratings, route notes, locked shared reasons as advanced (UX-C01…C07).
 - [ ] **WG-013** People and AI: local profiles, viewpoint selector, AI isolation, AI task copy/TXT parity, proposal preview and granular acceptance, contribution bundle UI (U-01…U-06).
 - [ ] **WG-014** Workspace: File/Edit/View/Help menus, four-pane docking `Alt+1..4`, `Näkymäasetukset` dock `Alt+V`, keyboard camera, depth slider, themes incl. Bitberg, 390 px layout (UX-B01…B08).
