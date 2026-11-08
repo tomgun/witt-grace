@@ -10,3 +10,4 @@ tests/golden
 package-lock.json
 playwright-report
 test-results
+src/lib/i18n/catalog.ts

@@ -27,7 +27,12 @@ const rules = [
     'recursive delete at the repo root or home; name the directory explicitly',
   ],
   [
-    /\b(rm|mv|sed\s+-i|tee|cp)\b[^\n|;&]*witt-grace-gpt-proto\/(?!dist\b)/,
+    /\b(rm|sed\s+-i|tee)\b[^\n|;&]*witt-grace-gpt-proto\/(?!dist\b)/,
+    'the prototype is frozen (docs/PROTOTYPE_REFERENCE.md); build output under witt-grace-gpt-proto/dist is the only writable path',
+  ],
+  [
+    // cp/mv INTO the prototype (the destination is the last argument); copying out of it is reading and stays allowed
+    /\b(cp|mv)\b[^\n|;&]*\s[^\s;&|]*witt-grace-gpt-proto\/(?!dist\b)[^\s;&|]*\s*(?:$|[;&|])/m,
     'the prototype is frozen (docs/PROTOTYPE_REFERENCE.md); build output under witt-grace-gpt-proto/dist is the only writable path',
   ],
   [

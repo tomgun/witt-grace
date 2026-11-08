@@ -51,3 +51,4 @@ export {
 export type { FocusProjection, FocusStance, ValueProfileItem } from './views.ts';
 export { applyCommand, applyCommands, canReparent, canAddLink, canAttachReasonConcept } from './commands.ts';
 export type { Command, CommandType, CommandContext } from './commands.ts';
+export { serializeProjectFile, serializeProjectCompact, exportFilename } from './serialize.ts';
