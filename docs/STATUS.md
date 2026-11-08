@@ -3,6 +3,7 @@
 The single truth table for the rebuild. States: `DONE-source` (code exists), `DONE-verified(unit|golden|e2e|sandbox|mac|github)` (a named check proved it, where), `DESIGNED` (docs only), `OPEN`. The prototype's own behaviour is characterized in `docs/spec/REQUIREMENTS.md`; this table tracks the new implementation and the repository. If code and this table disagree, the code wins and this table is fixed in the same PR.
 
 ## Last verified
+- 2026-11-08, Linux sandbox (Node 24.22.2 installed for the session; the distro Node 22 lacks TypeScript support), branch `main` after WG-001: `npm run check` passed (docs links, spec index, lens placeholders, spec lock, lint, typecheck, prettier, 230 tests: 38 golden fixtures × parse/equal/shares/structural/per-person/feasibility-ballots-influence-directions, plus the import-direction and purity tests); `npm run proto:check` passed (372). Not run: GitHub Actions, Pages.
 - 2026-11-08, Linux sandbox (Node 22.22.1, Python 3.14), repository root, no commits yet: `witt-grace-gpt-proto`: `npm run check` passed (372 tests), `npm run build` passed, `node tools/verify-pages-build.cjs` PASS (23 deployable files), standalone SHA-256 matches the handoff; root `npm run check` passed (docs links, spec index, lens placeholders, spec lock); the two Claude hooks block and allow as designed. Not run: GitHub Actions (no remote push yet), Pages.
 
 ## Repository and process
@@ -24,8 +25,8 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 
 | Item | State | Evidence |
 | --- | --- | --- |
-| Golden fixtures generated from the prototype engine (scores per node, viewpoint and weighting; eligibility; ballots; round-trips) | OPEN | WG-002 |
-| `src/domain`: typed v8 model, `parseProject`, scoring `evidence-v3-links`, aggregation, eligibility | OPEN | WG-003 |
+| Golden fixtures generated from the prototype engine: 18 examples + 20 hand-built cases; per node and viewpoint (equal, shares, structural, each person) the internal score, balance, base, delta, contributions, incompleteness; marginal target effects; rankings; feasibility; ballot preferences; influence summaries; displayed directions | DONE-verified(golden, sandbox) | `scripts/golden-from-proto.mjs`, `tests/golden/*.json` |
+| `src/domain`: typed v8 model and closed sets, `parseProject` (the boundary, prototype's refusal messages), `evaluate` / `evaluateAssessor` (evidence-v3-links), marginal effects, feasibility, ballot preference, rankings, review readers; pure (no DOM, clock, random); dependency direction enforced by ESLint and a test | DONE-verified(golden, unit, sandbox): every fixture reproduced exactly | `src/domain/*.ts`, `tests/golden/golden.test.ts`, `tests/unit/import-direction.test.ts` |
 | Domain commands (nodes, reviews, concepts and uses, groups, ballots) as pure functions | OPEN | WG-004 |
 | Serialization: `.witt.json` v8 round-trip, contribution bundle v1, AI draft v2, import atomicity | OPEN | WG-005 |
 | Locales: nine languages, coverage test, Finnish glossary | OPEN | WG-006 |
@@ -39,8 +40,8 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 - Nothing has been pushed to GitHub yet; CI and Pages are unverified until the first push.
 
 ## Next 5
-1. WG-001 — first commit and push, enable Pages, confirm CI and `/proto/` live.
-2. WG-002 — golden fixtures from the prototype engine.
-3. WG-003 — `src/domain` with the parser and the scoring engine matching every fixture.
-4. WG-006 — locales catalog and coverage test (small, unblocks the UI).
-5. A005 — UI technology ADR, decided with the owner once WG-003 is green.
+1. WG-004 — domain commands as pure functions (nodes, reviews, concepts, groups, users, ballots, comments) with invariant tests.
+2. WG-005 — serialization: `.witt.json` round-trip, contribution bundle v1, AI draft v2, import atomicity.
+3. WG-006 — locales catalog and coverage test.
+4. WG-007 — React + Vite app, first vertical slice (argument mode), Playwright walk.
+5. WG-001 close-out — push, enable Pages, confirm CI and `/proto/` live (owner).

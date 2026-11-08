@@ -8,9 +8,24 @@
     "node": ">=22.18 <27"
   },
   "scripts": {
-    "check": "node scripts/check-docs.mjs && node scripts/check-spec-lock.mjs",
+    "dev": "echo \"the new app arrives with WG-007; until then: npm run proto:dev\" && exit 1",
+    "test": "node --experimental-strip-types --test \"tests/**/*.test.ts\"",
+    "golden": "node scripts/golden-from-proto.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "node scripts/check-docs.mjs && node scripts/check-spec-lock.mjs && npm run lint && npm run typecheck && npm run format:check && npm test",
     "proto:check": "npm --prefix witt-grace-gpt-proto run check",
     "proto:build": "npm --prefix witt-grace-gpt-proto run build && cd witt-grace-gpt-proto && node tools/verify-pages-build.cjs",
     "proto:dev": "npm --prefix witt-grace-gpt-proto run dev"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1"
   }
 }

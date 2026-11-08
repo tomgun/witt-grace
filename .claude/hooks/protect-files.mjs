@@ -23,7 +23,9 @@ function block(reason) {
 }
 
 if (rel.startsWith('witt-grace-gpt-proto/')) {
-  block('the prototype is frozen (docs/PROTOTYPE_REFERENCE.md); an unavoidable path fix is made by hand and noted in CHANGELOG.md');
+  block(
+    'the prototype is frozen (docs/PROTOTYPE_REFERENCE.md); an unavoidable path fix is made by hand and noted in CHANGELOG.md'
+  );
 }
 if (/^\.env(\..+)?$/.test(base) && !base.endsWith('.example')) {
   block('environment files hold secrets; edit .env by hand and change .env.example for the documented shape');
@@ -41,7 +43,9 @@ if (/^docs\/spec\/[^/]+\.md$/.test(rel) && base !== 'CHANGELOG.md') {
     block(`git could not say whether docs/spec/CHANGELOG.md changed (${error.message}); specs stay locked`);
   }
   if (!changelogTouched) {
-    block('specs are locked: add a dated line to docs/spec/CHANGELOG.md first (docs/spec/README.md, change policy), then edit the spec');
+    block(
+      'specs are locked: add a dated line to docs/spec/CHANGELOG.md first (docs/spec/README.md, change policy), then edit the spec'
+    );
   }
 }
 process.exit(0);

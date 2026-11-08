@@ -5,6 +5,8 @@ tmp-ref
 _archive
 docs/principles
 docs/lenses
+tests/golden
 *.md
+package-lock.json
 playwright-report
 test-results

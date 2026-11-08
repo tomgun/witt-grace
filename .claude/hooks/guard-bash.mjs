@@ -17,7 +17,10 @@ const rules = [
     /git\s+push\b[^\n|;&]*--force-with-lease[^\n|;&]*\bmain\b/,
     'force-pushing main rewrites shared history; push a branch and open a PR',
   ],
-  [/git\s+reset\s+--hard/, 'git reset --hard discards uncommitted work; use git stash or git checkout -- <file>'],
+  [
+    /git\s+reset\s+--hard/,
+    'git reset --hard discards uncommitted work; use git stash or git checkout -- <file>',
+  ],
   [/git\s+commit\b[^\n|;&]*--no-verify/, 'commit hooks exist for a reason; fix the hook failure instead'],
   [
     /\brm\s+-[a-zA-Z]*r[a-zA-Z]*\s+(\/|\.\/?|\*|~\/?)(\s|$)/,
