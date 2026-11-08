@@ -1,0 +1,800 @@
+{
+  "schemaVersion": 8,
+  "id": "8d8b7afc-a57c-5537-9051-8226e1e8e381",
+  "title": "Etä- ja lähityö: yhteinen työskentelymalli",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true,
+    "assessmentWeighting": "equal"
+  },
+  "users": [
+    {
+      "id": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "name": "Eeva · tiiminvetäjä",
+      "shares": 1,
+      "role": "owner"
+    },
+    {
+      "id": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "name": "Oskari · keskittymistehtävät",
+      "shares": 1,
+      "role": "editor"
+    },
+    {
+      "id": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "name": "Mira · pitkä työmatka",
+      "shares": 1,
+      "role": "editor"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.",
+      "details": "",
+      "confidence": 50,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 60,
+        "y": 100
+      },
+      "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+    },
+    {
+      "id": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Spontaani yhteistyö voi helpottua lähityössä",
+      "details": "Tämä riippuu työstä, tiimin koosta ja tavoitettavuudesta.",
+      "confidence": 85,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 340,
+        "y": 216
+      },
+      "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+    },
+    {
+      "id": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Uusien työntekijöiden perehdytys voi sujua kasvokkain",
+      "details": "Ei tarkoita, että laadukas etäperehdytys olisi mahdoton.",
+      "confidence": 88,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 620,
+        "y": 332
+      },
+      "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+    },
+    {
+      "id": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "parentId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Yhteistyölle voi sopia myös sovittu lähipäivä",
+      "details": "Ehdollinen väite: yhteiset tapaamispäivät voivat vähentää pakollisten päivien määrää.",
+      "confidence": 87,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 620,
+        "y": 448
+      },
+      "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+    },
+    {
+      "id": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Häiriöt voivat heikentää keskittymistä toimistolla",
+      "details": "Työtehtävien laatu vaikuttaa siihen, missä työtä on paras tehdä.",
+      "confidence": 87,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 340,
+        "y": 564
+      },
+      "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+    },
+    {
+      "id": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "parentId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Rauhalliset työtilat voivat vähentää toimistohäiriöitä",
+      "details": "Rajoite: tällaisia tiloja pitää oikeasti olla.",
+      "confidence": 86,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 620,
+        "y": 680
+      },
+      "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+    },
+    {
+      "id": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Pitkä työmatka vie aikaa ja voi kuormittaa",
+      "details": "Arvostus: ajankäytön ja perhe-elämän paino vaihtelee.",
+      "confidence": 94,
+      "impact": 5,
+      "collapsed": false,
+      "position": {
+        "x": 340,
+        "y": 796
+      },
+      "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+    },
+    {
+      "id": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "parentId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Osa työntekijöistä matkustaa yli tunnin suuntaansa",
+      "details": "Ehdollinen väite: ei koske kaikkia työntekijöitä.",
+      "confidence": 84,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 620,
+        "y": 912
+      },
+      "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+    },
+    {
+      "id": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Yhteiset kohtaamiset voivat tukea luottamusta",
+      "details": "Vaikutusta ei voi irrottaa organisaatiokulttuurista.",
+      "confidence": 83,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 340,
+        "y": 1028
+      },
+      "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+    },
+    {
+      "id": "6587417f-9184-5f30-b870-0381eaa15448",
+      "parentId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Luottamusta voidaan vahvistaa myös etäkäytännöillä",
+      "details": "Esimerkiksi säännöllisillä keskusteluilla ja yhteisillä pelisäännöillä.",
+      "confidence": 83,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 620,
+        "y": 1144
+      },
+      "createdBy": "d58ac68b-e3e8-578a-b6b5-1215950513f1"
+    },
+    {
+      "id": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "parentId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa",
+      "details": "Arvostus: autonomia ja joustavuus voivat olla tärkeitä.",
+      "confidence": 86,
+      "impact": 4,
+      "collapsed": false,
+      "position": {
+        "x": 340,
+        "y": 1260
+      },
+      "createdBy": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d"
+    },
+    {
+      "id": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "parentId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista",
+      "details": "Rajoite: asiakkaiden ja tiimien kalenterit eivät aina jousta.",
+      "confidence": 77,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 620,
+        "y": 1376
+      },
+      "createdBy": "41cc361f-741b-5adf-aa5a-6baa25f5fa14"
+    }
+  ],
+  "votes": [
+    {
+      "id": "e83c52ab-53d4-50d9-9535-df29f756f195",
+      "nodeId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 60,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "a2ac2229-b170-5816-93b9-6849c238bce2",
+      "nodeId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 60,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "13dc991c-33e9-520a-99a6-c0e8b8dc2d9b",
+      "nodeId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 60,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "1287311f-9c61-5460-b44d-ee4c50e55dcb",
+      "nodeId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 92,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "67f6faf4-56f7-5626-bf70-70db388cbdef",
+      "nodeId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 65,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "ca3787fa-7933-5242-80bd-5782a9b47e44",
+      "nodeId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 64,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "d7f20780-dd2a-5725-a736-28249da787c4",
+      "nodeId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 93,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "6c1cf8d8-6d55-52dc-afeb-bdda9f05ac68",
+      "nodeId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 89,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "cc1fcc88-05f8-5689-9373-af0edb2c7f91",
+      "nodeId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 86,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "9d880e52-5c28-5eae-8b60-fd270d49e749",
+      "nodeId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 74,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "1d79fb04-9308-5eb6-ab63-e93de25e3ec8",
+      "nodeId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 96,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "7d7b498c-86fb-5254-b268-768ad945e9e8",
+      "nodeId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 93,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "2db205c4-8ef9-5cf0-8107-e903af464527",
+      "nodeId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 71,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "28d38aad-be3f-5328-be69-b96cd4bef59d",
+      "nodeId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 98,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "a4ed6b26-ce21-5796-b3f6-79c4eb69ef2b",
+      "nodeId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 83,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "bca6e87b-5460-5a31-b6a4-7012801dedd3",
+      "nodeId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 95,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "9059291e-f3e5-5be7-9476-e995c82bd13c",
+      "nodeId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 81,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "a85ed62c-f569-538f-ad98-2db9d7432c56",
+      "nodeId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 79,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "1facb5f5-754c-50cf-9a8c-bd2ed0bfaf5a",
+      "nodeId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 82,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "eddf008d-9f80-5790-92dd-4da7e6a70f67",
+      "nodeId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 84,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "1611eb96-e643-5aab-8705-1e1e856c51f3",
+      "nodeId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 99,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "e44426a0-1138-5186-b2d8-f5345f43265c",
+      "nodeId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 81,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "349123f1-34a6-504a-9bfc-6f67edf83022",
+      "nodeId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 84,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "7fa728d1-8f0c-5bda-a36e-3be835ef35ef",
+      "nodeId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 98,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "f87ef5f5-80ae-5608-99c6-2b80da02c83c",
+      "nodeId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 94,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "52311715-d41c-54a2-abf6-7f41ecf7f69a",
+      "nodeId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 70,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "7d666fe8-e167-5119-9e5b-1008b3e6fd94",
+      "nodeId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 79,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "9e225cd6-87c0-564a-b404-72d61a6bf500",
+      "nodeId": "6587417f-9184-5f30-b870-0381eaa15448",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 84,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "cf006132-314a-5122-9dfe-725073ff45e7",
+      "nodeId": "6587417f-9184-5f30-b870-0381eaa15448",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 97,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "16756e41-d1d6-507d-92a9-d5a4c023c8c6",
+      "nodeId": "6587417f-9184-5f30-b870-0381eaa15448",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 89,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "81efc666-06dc-5421-8b62-e1a7fa9200df",
+      "nodeId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 64,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "c1c2c54c-47b6-5fb2-9a80-4e33301b391b",
+      "nodeId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 98,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "347f4f79-e758-5216-bb91-b6fc913e78cb",
+      "nodeId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 96,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "5d244cf1-75d5-5662-bcf8-681477bbbd8b",
+      "nodeId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "confidence": 95,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "e6167e37-0077-5f08-afe9-536d68ac5e36",
+      "nodeId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "confidence": 72,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "ee1d0292-3b38-51f1-ab3a-35285ce659bf",
+      "nodeId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "confidence": 80,
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "33ed844a-b19b-5c89-ba30-b829a7a68623",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "influence": 5,
+      "fingerprint": "[\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "13cf81e9-cbef-5ffc-aebf-bfa772acff82",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "influence": 2,
+      "fingerprint": "[\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "9e54b1bd-500b-5949-a220-749e893a2dc1",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "a96661e4-90b5-5833-83ec-a5a401e39bec",
+      "influence": 2,
+      "fingerprint": "[\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "e1735fc8-f2e9-5883-861d-8cd342445e24",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "influence": 4,
+      "fingerprint": "[\"e10942e9-6e9a-5168-bd50-8628bcef3437\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Uusien työntekijöiden perehdytys voi sujua kasvokkain\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "fbbb6382-4eb1-5a1d-9f1a-69e903b7f975",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "influence": 3,
+      "fingerprint": "[\"e10942e9-6e9a-5168-bd50-8628bcef3437\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Uusien työntekijöiden perehdytys voi sujua kasvokkain\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "a7002cfc-b3d7-5ab9-b9e3-5ccd608eb2d4",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "e10942e9-6e9a-5168-bd50-8628bcef3437",
+      "influence": 3,
+      "fingerprint": "[\"e10942e9-6e9a-5168-bd50-8628bcef3437\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Uusien työntekijöiden perehdytys voi sujua kasvokkain\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "745b68fa-25f2-5ae4-a781-cadbf3e82dc7",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "influence": -2,
+      "fingerprint": "[\"8ca31062-cf00-5e03-96bc-aaece3ea761b\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Yhteistyölle voi sopia myös sovittu lähipäivä\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "7827876b-d16e-510a-8442-8f97739eb801",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "influence": -5,
+      "fingerprint": "[\"8ca31062-cf00-5e03-96bc-aaece3ea761b\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Yhteistyölle voi sopia myös sovittu lähipäivä\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "23659414-acdc-59b0-b44f-6ae55bf9d3d2",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "influence": -4,
+      "fingerprint": "[\"8ca31062-cf00-5e03-96bc-aaece3ea761b\",\"a96661e4-90b5-5833-83ec-a5a401e39bec\",\"Yhteistyölle voi sopia myös sovittu lähipäivä\",\"Spontaani yhteistyö voi helpottua lähityössä\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "25e0a3c7-4f18-58d3-8369-08f86b4824d4",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "influence": -2,
+      "fingerprint": "[\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "cbb31f2c-f2e9-55f6-a90f-0275663ddd58",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "influence": -5,
+      "fingerprint": "[\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "8c5a58b0-0915-5591-83c6-9449ac8f1f60",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "fda9d3cf-62aa-5090-8ae3-a9ebf6e69649",
+      "influence": -4,
+      "fingerprint": "[\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "093a7cce-8dd0-5274-b0e0-8ebf6c60763d",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "influence": -4,
+      "fingerprint": "[\"d60ea9da-31b1-5c78-a372-247da183c96c\",\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"Rauhalliset työtilat voivat vähentää toimistohäiriöitä\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "69de2d98-96a5-5e4c-8aac-e073fb6e4af4",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "influence": -2,
+      "fingerprint": "[\"d60ea9da-31b1-5c78-a372-247da183c96c\",\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"Rauhalliset työtilat voivat vähentää toimistohäiriöitä\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "8d7cb25b-fd67-557c-abfa-cd56b22f98d8",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "d60ea9da-31b1-5c78-a372-247da183c96c",
+      "influence": -2,
+      "fingerprint": "[\"d60ea9da-31b1-5c78-a372-247da183c96c\",\"fda9d3cf-62aa-5090-8ae3-a9ebf6e69649\",\"Rauhalliset työtilat voivat vähentää toimistohäiriöitä\",\"Häiriöt voivat heikentää keskittymistä toimistolla\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "f4a0dd55-61a0-51e5-87d5-9de79ee8c38a",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "influence": -3,
+      "fingerprint": "[\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "eb1b97b0-7cc7-5ace-babb-778f80c1fe54",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "influence": -3,
+      "fingerprint": "[\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "db5cc7f6-0813-5260-9c5c-1df87639798c",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "09dcb80e-f85e-5a31-8174-8468360d36b1",
+      "influence": -5,
+      "fingerprint": "[\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "e1e12d27-bf27-55a3-ae3a-ffca068a35dc",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "influence": 3,
+      "fingerprint": "[\"5c2efa69-b5ce-5bc3-87b1-60769584b626\",\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"Osa työntekijöistä matkustaa yli tunnin suuntaansa\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "e1ec5980-982c-527d-9293-bcb8b6bda430",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "influence": 4,
+      "fingerprint": "[\"5c2efa69-b5ce-5bc3-87b1-60769584b626\",\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"Osa työntekijöistä matkustaa yli tunnin suuntaansa\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "085c5200-dc20-5d12-a76f-04a419fa1cc2",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "5c2efa69-b5ce-5bc3-87b1-60769584b626",
+      "influence": 5,
+      "fingerprint": "[\"5c2efa69-b5ce-5bc3-87b1-60769584b626\",\"09dcb80e-f85e-5a31-8174-8468360d36b1\",\"Osa työntekijöistä matkustaa yli tunnin suuntaansa\",\"Pitkä työmatka vie aikaa ja voi kuormittaa\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "22e493d1-4aa2-5e5d-a763-7dad537546b6",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "influence": 4,
+      "fingerprint": "[\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "755fc49d-be54-5eb4-9ad6-4bfbeef5805a",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "influence": 2,
+      "fingerprint": "[\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "6725362d-fc80-58e6-8edc-beef5be2adbb",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "e15146e7-7407-566a-837e-27f4b1af8dc5",
+      "influence": 3,
+      "fingerprint": "[\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"support\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "64ada96b-648f-584e-95de-4d688671089c",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "6587417f-9184-5f30-b870-0381eaa15448",
+      "influence": -3,
+      "fingerprint": "[\"6587417f-9184-5f30-b870-0381eaa15448\",\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"Luottamusta voidaan vahvistaa myös etäkäytännöillä\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "e000c351-3496-55c9-b54a-87c9fb660786",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "6587417f-9184-5f30-b870-0381eaa15448",
+      "influence": -4,
+      "fingerprint": "[\"6587417f-9184-5f30-b870-0381eaa15448\",\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"Luottamusta voidaan vahvistaa myös etäkäytännöillä\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "fbb11789-b4b7-5289-825e-1ba40124aa8e",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "6587417f-9184-5f30-b870-0381eaa15448",
+      "influence": -4,
+      "fingerprint": "[\"6587417f-9184-5f30-b870-0381eaa15448\",\"e15146e7-7407-566a-837e-27f4b1af8dc5\",\"Luottamusta voidaan vahvistaa myös etäkäytännöillä\",\"Yhteiset kohtaamiset voivat tukea luottamusta\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "b24f2563-88d1-5b51-ac5f-0c62b432c672",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "influence": -2,
+      "fingerprint": "[\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "ebc332d1-c437-569e-9a45-91f2b18ab444",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "influence": -5,
+      "fingerprint": "[\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "dee6ca22-8744-54ce-be26-63d53a5367c3",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "bbf38880-28f1-5701-ac88-19cf3c1b75ae",
+      "influence": -5,
+      "fingerprint": "[\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"05ffb024-171a-56ca-8e0c-ea799f750fa4\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"Kaikkien työntekijöiden pitäisi työskennellä toimistolla vähintään kolme päivää viikossa.\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "53da774c-5c31-549f-9180-e885bab677b7",
+      "userId": "d58ac68b-e3e8-578a-b6b5-1215950513f1",
+      "subjectType": "primary",
+      "subjectId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "influence": -4,
+      "fingerprint": "[\"47fa88f1-0cc4-5af6-a31a-cca14b26086a\",\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "1eb5fbd0-9c77-55b2-a32e-17869cfe863e",
+      "userId": "7b5292d5-fa2f-5c58-bbc5-4423b27aac4d",
+      "subjectType": "primary",
+      "subjectId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "influence": -2,
+      "fingerprint": "[\"47fa88f1-0cc4-5af6-a31a-cca14b26086a\",\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    },
+    {
+      "id": "df5714a0-5e64-59e6-bfa5-d05287d7c7a6",
+      "userId": "41cc361f-741b-5adf-aa5a-6baa25f5fa14",
+      "subjectType": "primary",
+      "subjectId": "47fa88f1-0cc4-5af6-a31a-cca14b26086a",
+      "influence": -3,
+      "fingerprint": "[\"47fa88f1-0cc4-5af6-a31a-cca14b26086a\",\"bbf38880-28f1-5701-ac88-19cf3c1b75ae\",\"Täysi yksilöllisyys voi vaikeuttaa yhteisten tapaamisten sopimista\",\"Yhdenmukainen sääntö jättää vähän yksilöllistä harkintaa\",\"oppose\"]",
+      "updatedAt": "2026-11-06T08:00:00.000Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [
+    {
+      "id": "ce5524a8-cf80-5d2f-bea0-939b6545d6fd",
+      "sourceId": "8ca31062-cf00-5e03-96bc-aaece3ea761b",
+      "targetId": "05ffb024-171a-56ca-8e0c-ea799f750fa4",
+      "relation": "oppose",
+      "impact": 3
+    }
+  ],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-06T08:00:00.000Z",
+  "updatedAt": "2026-11-06T08:00:00.000Z"
+}

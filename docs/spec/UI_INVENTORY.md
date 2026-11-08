@@ -172,7 +172,23 @@ All dialogs are native `<dialog>` elements with a `.dialog-inner`, a heading row
 
 ## S-12 Persisted browser state
 
-Filled from the inventory of `localStorage`/`sessionStorage`/IndexedDB use (pending in this revision; see `inv-panels`/`inv-files` reports). Known so far: `witt-project-v3` (the document), `witt-locale-v1`, `witt-view-v1` (zones, dock position, layers, orientation, depth, focus, zoom), appearance/theme key, assessment-round progress, custom shortcuts, document library in IndexedDB.
+Every key the prototype reads or writes (`localStorage` unless noted; an in-memory map replaces it when storage is blocked, and the status then reads "Vain väliaikainen istunto"). No `sessionStorage` is used.
+
+| Key | Scope | Shape |
+| --- | --- | --- |
+| `witt-project-v3` | per browser, the one active document | the whole project JSON (schema v8) |
+| `witt-workspace-meta-v1` | per browser | `{active:{id,title,savedAt}, lastOpenedJson?:{filename,projectId,at}, lastExportedJson?:{filename,projectId,at}}` |
+| `witt-view-v1` | per browser (not per document) | `{presentation, orientation, workflow, layers{labels,details,index,assessments,confidence,impact,comments,counts,links}, focus{mode,anchorId}, dockCollapsed, dockHidden, dockScreenPosition, indexMode, viewAssessorId, highlightOptions, showImportance, showSharedReasons, showRecurringInTree, dragFromText, compactVisible, depthLimit, depthCompact}`; defaults: presentation `table` when the window is ≤ 600 px else `tree`, orientation horizontal, workflow explore, layers = Tiivis preset, dock hidden and collapsed, index shared, showRecurringInTree/dragFromText/depthCompact true |
+| `witt-zones-v1` | per browser | `{left,top,right,bottom}`; defaults left = window > 1000 px, top and right true, bottom false |
+| `witt-appearance-v1` | per browser | one of the special skins `cosmos`, `hologram`, `manuscript-book`, `manuscript-pen`, `bitberg`; absent when a base theme is chosen (the base theme `light`/`dark`/`paper` is document data in `project.theme`); legacy `studio-daw` reads as `bitberg` |
+| `witt-locale-v1` | per browser | language code |
+| `witt-keybindings-v1` | per browser | `{support,oppose,option,table,focus,assessment,help,arrange}` from the fixed choice list, all distinct; defaults `+ - * T F R ? Alt+A` |
+| `witt-assessor-v1:<projectId>` | per document | the active actor's user id |
+| `witt-review-view-v1:<projectId>` | per document | `null` (every human) or an array of user ids (the review lens) |
+| `witt-assessment-pass-v2:<projectId>:<actorId>` | per document and actor | `{cursorId, doneIds[], fingerprints{id→string}}`; stale entries dropped on load |
+| IndexedDB `witt-document-library` / store `documents` / v1 | per browser | `{id,title,updatedAt,savedAt,nodeCount,revision,document}`; written only by explicit library actions, never by autosave |
+
+Session-only (never stored): "Vain puu" focus mode, the open left tab, the selected library card, depth overrides, explicitly closed branches, the table reveal, the tutorial, the camera, the selection.
 
 ## S-13 File formats and flows
 
@@ -186,4 +202,8 @@ Eight themes (S-00). Desktop grid: top bar, toolbar, left panel / canvas / inspe
 
 Recorded here so they are decided, not inherited silently. Each needs an owner decision and a `CHANGELOG.md` line before the new app deviates.
 
-- Inspector "Arvioinnin mukaan: Puoltava (+3.6666666666666665/5)" prints an unrounded float; the table shows the same value as "+3.7 (3)". Proposed: one decimal everywhere.
+- Inspector "Arvioinnin mukaan: Puoltava (+3.6666666666666665/5)" prints an unrounded float; the table shows the same value as "+3.7 (3)". Proposed: one decimal everywhere. (Reproduced as is for now.)
+- The quick-control bar's `↹ Järjestä puu` and `↶ Kumoa` glyphs are lost once the catalog text replaces the button label; the new app shows the catalog text, as the prototype does after localisation.
+- `edge-group` has no stroke rule in the stylesheet, so an edge into an option group is invisible; `.shared-node-mark`, `.meta-links` and `.node-add.group` have no rules either. Reproduced through the shared stylesheet.
+- The prototype's `#keyboardStatus` live region is never written. Reproduced (empty).
+- Alt+V does not close the dock while its first control holds focus (the dock focuses `#viewPreset` on open); a click elsewhere first is needed in both apps.

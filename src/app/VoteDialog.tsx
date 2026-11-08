@@ -1,12 +1,16 @@
-import { useState } from 'react';
+// The decision ballot (`#voteDialog`): optional, separate from the argument balance, weights frozen per round.
+// Unsaved slider drafts live only in this component and survive re-renders caused by other changes
+// (inv-review-vote-table §D).
+import { useEffect, useRef, useState } from 'react';
 import { isAiProfile, optionPreference, optionPreferenceForRound } from '../domain/index.ts';
-import type { Scores } from '../domain/index.ts';
+import type { Node, Scores, VoteWeighting } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
-import { Modal } from './dialogs.tsx';
-import { balanceText } from './format.ts';
+import { canEdit, isOwner } from './actions.ts';
+import { resultText } from './derive.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
-/** The decision ballot: optional, separate from the argument balance, weights frozen per round (V-01…V-04). */
+const scoreText = (score: number | null): string => (score === null ? '—' : `${score.toFixed(1)}/100`);
+
 export function VoteDialog({
   open,
   onClose,
@@ -16,142 +20,203 @@ export function VoteDialog({
   onClose: () => void;
   scores: Scores;
 }) {
+  const { project } = useAppState();
+  const store = getStore();
+  // The prototype's `openVoteDialog`: only a decision document has a ballot.
+  const decision = project.mode === 'decision';
+  useEffect(() => {
+    if (open && !decision) store.openDialog(null);
+  }, [open, decision, store]);
+  return open && decision ? <VoteRound onClose={onClose} scores={scores} /> : null;
+}
+
+/** Mounted only while the dialog is open, so unsaved drafts start empty on every open and vanish on close. */
+function VoteRound({ onClose, scores }: { onClose: () => void; scores: Scores }) {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
   const { project, actorId } = state;
-  const [drafts, setDrafts] = useState<Record<string, number>>({});
+  const ref = useRef<HTMLDialogElement>(null);
+  const [drafts, setDrafts] = useState<ReadonlyMap<string, number>>(new Map());
   const [hideResults, setHideResults] = useState(true);
   const [anonymous, setAnonymous] = useState(false);
+  useEffect(() => {
+    const dialog = ref.current;
+    if (dialog && !dialog.open) dialog.showModal();
+  }, []);
+
   const round = project.votingRound;
-  const me = project.users.find((u) => u.id === actorId);
-  const owner = me?.role === 'owner';
+  const owner = isOwner(state);
   const isOpen = round?.status === 'open';
   const closed = round?.status === 'closed';
+  const settingsVisible = !round || closed;
+  const me = project.users.find((u) => u.id === actorId) ?? project.users[0];
   const options = project.nodes.filter((n) => n.relation === 'option');
-  const roundOptions = round ? options.filter((n) => round.optionIds.includes(n.id)) : options;
-  const canVote = isOpen && !!me && !isAiProfile(me) && me.role !== 'viewer';
-  const resultText = (id: string) => {
-    const s = scores.get(id);
-    return `${balanceText(s?.balance ?? null)}${s?.incomplete ? ' †' : ''}`;
+  const roundOptions = round ? options.filter((n) => round.optionIds.includes(n.id)) : [];
+  const canVote = isOpen && !isAiProfile(me) && canEdit(state);
+  const history = project.voteHistory ?? [];
+
+  const setDraft = (id: string, value: number | null) =>
+    setDrafts((previous) => {
+      const next = new Map(previous);
+      if (value === null) next.delete(id);
+      else next.set(id, value);
+      return next;
+    });
+  const guarded = (run: () => boolean): boolean => {
+    if (!canEdit(store.get())) {
+      store.showMessage(t('viewerCannotEdit'));
+      return false;
+    }
+    return run();
   };
-  const start = () => {
-    if (project.ballots.length && !window.confirm(t('voteOldBallotsIncluded'))) return;
-    if (closed && !window.confirm(t('voteStartNewConfirm'))) return;
-    const auditIds = Array.from({ length: 1 + project.ballots.length }, () => newId());
-    store.dispatch({ type: 'round.start', id: newId(), auditIds, anonymous, hideResults });
+  const start = async () => {
+    if (!owner) return;
+    if (closed && !(await store.askConfirm(t('voteStartNewConfirm')))) return;
+    if (!round && project.ballots.length && !(await store.askConfirm(t('voteOldBallotsIncluded')))) return;
+    const previous = drafts;
+    setDrafts(new Map());
+    const ballots = store.get().project.ballots.length;
+    const auditIds = Array.from({ length: 1 + ballots }, () => newId());
+    if (
+      !guarded(() => store.dispatch({ type: 'round.start', id: newId(), auditIds, anonymous, hideResults }))
+    )
+      setDrafts(previous);
   };
-  const end = () => {
-    if (!window.confirm(t('voteEndConfirm'))) return;
-    store.dispatch({ type: 'round.close', userId: actorId, auditId: newId() });
+  const end = async () => {
+    if (!owner || !(await store.askConfirm(t('voteEndConfirm')))) return;
+    const previous = drafts;
+    setDrafts(new Map());
+    if (!guarded(() => store.dispatch({ type: 'round.close', userId: actorId, auditId: newId() })))
+      setDrafts(previous);
   };
+  const changeWeighting = (weighting: VoteWeighting) =>
+    guarded(() => {
+      if (store.get().project.votingRound?.status === 'open') {
+        store.showMessage(t('voteLocked'));
+        return false;
+      }
+      return store.dispatch({ type: 'project.setVoteWeighting', weighting });
+    });
+  const argumentResult = (option: Node) =>
+    t('voteArgumentResult', { score: resultText(option, scores.get(option.id)) });
+
   return (
-    <Modal open={open} onClose={onClose} title={t('votingButton')} testId="vote-dialog">
-      <p className="inspector-note">{t('voteLocalWarning')}</p>
-      <p role="status" data-testid="vote-status">
-        {t(!round ? 'voteStatusDraft' : isOpen ? 'voteStatusOpen' : 'voteStatusClosed')}
-      </p>
-      {!round || closed ? (
-        <div className="vote-settings">
-          <label>
-            <span>{t('voteWeighting')}</span>
-            <select
-              data-testid="vote-weighting"
-              value={project.settings.voteWeighting}
-              disabled={!owner}
-              onChange={(e) =>
-                store.dispatch({
-                  type: 'project.setVoteWeighting',
-                  weighting: e.target.value as 'equal' | 'shares',
-                })
-              }
-            >
-              <option value="equal">{t('voteEqual')}</option>
-              <option value="shares">{t('voteShares')}</option>
-            </select>
-          </label>
-          <label className="vote-check">
-            <input type="checkbox" checked={hideResults} onChange={(e) => setHideResults(e.target.checked)} />{' '}
-            <span>{t('voteHideResults')}</span>
-          </label>
-          <label className="vote-check">
-            <input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />{' '}
-            <span>{t('voteAnonymous')}</span>
-          </label>
-          <p className="inspector-note">{t('voteWeightsHint')}</p>
-          <div className="dialog-actions">
-            <button
-              type="button"
-              className="btn primary"
-              data-testid="vote-start"
-              disabled={!owner || options.length < 2}
-              onClick={start}
-            >
-              {t('voteStart')}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="dialog-actions">
+    <dialog
+      ref={ref}
+      id="voteDialog"
+      className="action-dialog vote-dialog"
+      aria-labelledby="voteDialogTitle"
+      data-testid="vote-dialog"
+      onClose={onClose}
+    >
+      <div className="dialog-inner">
+        <div className="dialog-heading">
+          <h2 id="voteDialogTitle">{t('votingButton')}</h2>
           <button
             type="button"
-            className="btn primary"
-            data-testid="vote-end"
-            disabled={!owner}
-            onClick={end}
+            className="btn icon-btn"
+            id="btnVoteClose"
+            aria-label={t('close')}
+            onClick={onClose}
           >
-            {t('voteEnd')}
+            ×
           </button>
         </div>
-      )}
-      <h3>{t('voteBallots')}</h3>
-      {!round ? (
-        <div>
-          <p className="inspector-note">{t('voteStartHint')}</p>
-          {options.map((option) => (
-            <p key={option.id} className="vote-argument-result" title={t('voteArgumentResultHint')}>
-              <strong>{option.title} · </strong>
-              {t('voteArgumentResult', { score: resultText(option.id) })}
+        {project.mode === 'decision' ? (
+          <>
+            <p className="inline-warning">{t('voteLocalWarning')}</p>
+            <p id="voteRoundStatus" className="vote-round-status" role="status">
+              {t(!round ? 'voteStatusDraft' : isOpen ? 'voteStatusOpen' : 'voteStatusClosed')}
             </p>
-          ))}
-        </div>
-      ) : (
-        roundOptions.map((option) => {
-          const current = project.ballots.find((b) => b.optionId === option.id && b.userId === actorId);
-          const draft = drafts[option.id];
-          const value = draft ?? current?.preference ?? 50;
-          return (
-            <div key={option.id} className="vote-option-row" data-testid={`vote-row-${option.id}`}>
-              <label htmlFor={`vote-${option.id}`}>{option.title}</label>
-              <small className="vote-argument-result" title={t('voteArgumentResultHint')}>
-                {t('voteArgumentResult', { score: resultText(option.id) })}
-              </small>
-              <input
-                id={`vote-${option.id}`}
-                data-testid={`vote-slider-${option.id}`}
-                type="range"
-                min={0}
-                max={100}
-                step={1}
-                value={value}
-                disabled={!canVote}
-                onChange={(e) => setDrafts({ ...drafts, [option.id]: Number(e.target.value) })}
-              />
-              <output data-testid={`vote-value-${option.id}`}>
-                {draft !== undefined
-                  ? `${draft}/100 · ${t('voteDraftUnsaved')}`
-                  : current
-                    ? `${current.preference}/100`
-                    : t('notAssessed')}
-              </output>
-              <div className="vote-option-actions">
-                <button
-                  type="button"
-                  className="btn primary"
-                  data-testid={`vote-save-${option.id}`}
-                  disabled={!canVote}
-                  onClick={() => {
-                    if (
+            <div id="voteSettings" className="vote-settings" hidden={!settingsVisible}>
+              <label>
+                <span>{t('voteWeighting')}</span>
+                <select
+                  id="voteWeighting"
+                  value={project.settings.voteWeighting}
+                  onChange={(e) => changeWeighting(e.target.value as VoteWeighting)}
+                >
+                  <option value="equal">{t('voteEqual')}</option>
+                  <option value="shares">{t('voteShares')}</option>
+                </select>
+              </label>
+              <label className="vote-check">
+                <input
+                  id="voteHideResults"
+                  type="checkbox"
+                  checked={hideResults}
+                  onChange={(e) => setHideResults(e.target.checked)}
+                />
+                <span>{t('voteHideResults')}</span>
+              </label>
+              <label className="vote-check">
+                <input
+                  id="voteAnonymous"
+                  type="checkbox"
+                  checked={anonymous}
+                  onChange={(e) => setAnonymous(e.target.checked)}
+                />
+                <span>{t('voteAnonymous')}</span>
+              </label>
+            </div>
+            <p id="voteWeightsHint" className="inspector-note" hidden={!settingsVisible}>
+              {t('voteWeightsHint')}
+            </p>
+            <div className="dialog-actions">
+              <button
+                id="btnVotePeople"
+                className="btn quiet"
+                type="button"
+                hidden={!settingsVisible}
+                onClick={() => store.openDialog('people')}
+              >
+                {t('profileManage')}
+              </button>
+              <button
+                id="btnVoteStart"
+                className="btn primary"
+                type="button"
+                hidden={!settingsVisible}
+                disabled={!owner}
+                onClick={() => void start()}
+              >
+                {t('voteStart')}
+              </button>
+              <button
+                id="btnVoteEnd"
+                className="btn primary"
+                type="button"
+                hidden={!isOpen}
+                disabled={!owner}
+                onClick={() => void end()}
+              >
+                {t('voteEnd')}
+              </button>
+            </div>
+            <h3>{t('voteBallots')}</h3>
+            <div id="voteBallotList" className="vote-ballot-list">
+              {!round ? (
+                <>
+                  <p className="inspector-note">{t('voteStartHint')}</p>
+                  {options.map((option) => (
+                    <p key={option.id} className="vote-argument-result" title={t('voteArgumentResultHint')}>
+                      <strong>{option.title} · </strong>
+                      {argumentResult(option)}
+                    </p>
+                  ))}
+                </>
+              ) : (
+                roundOptions.map((option) => {
+                  const current = project.ballots.find(
+                    (b) => b.optionId === option.id && b.userId === actorId
+                  );
+                  const draft = drafts.get(option.id);
+                  const value = draft ?? current?.preference ?? 50;
+                  const save = () => {
+                    const old = drafts.get(option.id);
+                    setDraft(option.id, null);
+                    const ok = guarded(() =>
                       store.dispatch({
                         type: 'ballot.cast',
                         id: newId(),
@@ -160,108 +225,169 @@ export function VoteDialog({
                         userId: actorId,
                         preference: value,
                       })
-                    ) {
-                      const rest = { ...drafts };
-                      delete rest[option.id];
-                      setDrafts(rest);
-                    }
-                  }}
-                >
-                  {t('voteSave')}
-                </button>
-                <button
-                  type="button"
-                  className="btn quiet"
-                  disabled={!canVote || !current}
-                  onClick={() =>
-                    store.dispatch({
-                      type: 'ballot.retract',
-                      auditId: newId(),
-                      optionId: option.id,
-                      userId: actorId,
-                    })
-                  }
-                >
-                  {t('voteRetract')}
-                </button>
-              </div>
+                    );
+                    if (!ok && old !== undefined) setDraft(option.id, old);
+                  };
+                  const retract = () => {
+                    const old = drafts.get(option.id);
+                    setDraft(option.id, null);
+                    const ok = guarded(() =>
+                      store.dispatch({
+                        type: 'ballot.retract',
+                        auditId: newId(),
+                        optionId: option.id,
+                        userId: actorId,
+                      })
+                    );
+                    if (!ok && old !== undefined) setDraft(option.id, old);
+                  };
+                  return (
+                    <div key={option.id} className="vote-option-row" data-testid={`vote-row-${option.id}`}>
+                      <label htmlFor={`vote-${option.id}`}>{option.title}</label>
+                      <small className="vote-argument-result" title={t('voteArgumentResultHint')}>
+                        {argumentResult(option)}
+                      </small>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        id={`vote-${option.id}`}
+                        value={value}
+                        disabled={!canVote}
+                        onChange={(e) => setDraft(option.id, Number(e.target.value))}
+                      />
+                      <output data-testid={`vote-value-${option.id}`}>
+                        {draft !== undefined
+                          ? `${draft}/100 · ${t('voteDraftUnsaved')}`
+                          : current
+                            ? `${current.preference}/100`
+                            : t('notAssessed')}
+                      </output>
+                      <div className="vote-option-actions">
+                        <button
+                          type="button"
+                          className="btn primary"
+                          data-testid={`vote-save-${option.id}`}
+                          disabled={!canVote}
+                          onClick={save}
+                        >
+                          {t('voteSave')}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn quiet"
+                          data-testid={`vote-retract-${option.id}`}
+                          disabled={!canVote || !current}
+                          onClick={retract}
+                        >
+                          {t('voteRetract')}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
-          );
-        })
-      )}
-      <h3>{t('voteResults')}</h3>
-      <div className="vote-results" aria-live="polite" data-testid="vote-results">
-        {!round ? (
-          <p className="inspector-note">{t('voteStartHint')}</p>
-        ) : isOpen && round.hideResults ? (
-          <p className="vote-sealed">{t('voteResultsHidden')}</p>
-        ) : (
-          <>
-            <p className="inspector-note">
-              {t('voteCalculation', { mode: t(round.weighting === 'shares' ? 'voteShares' : 'voteEqual') })}
-            </p>
-            {roundOptions.map((option) => {
-              const row = optionPreference(project, option.id);
-              return (
-                <div key={option.id} className="vote-result-row" data-testid={`vote-result-${option.id}`}>
-                  <strong>{option.title}</strong>{' '}
-                  <span>{row.preferenceScore === null ? '—' : `${row.preferenceScore.toFixed(1)}/100`}</span>{' '}
-                  <small>
-                    {t('voteResultDetails', {
-                      count: row.preferenceVoters,
-                      weight: row.preferenceTotalPower,
-                      sum: row.weightedSum.toFixed(1),
+            <h3>{t('voteResults')}</h3>
+            <div id="voteResults" className="vote-results" aria-live="polite">
+              {!round ? (
+                <p className="inspector-note">{t('voteStartHint')}</p>
+              ) : isOpen && round.hideResults ? (
+                <p className="vote-sealed">{t('voteResultsHidden')}</p>
+              ) : (
+                <>
+                  <p className="inspector-note">
+                    {t('voteCalculation', {
+                      mode: t(round.weighting === 'shares' ? 'voteShares' : 'voteEqual'),
                     })}
-                  </small>
-                </div>
-              );
-            })}
-            {!round.anonymous ? (
-              <details>
-                <summary>{t('voteIndividual')}</summary>
-                {project.ballots.map((ballot) => (
-                  <p key={ballot.id}>
-                    {project.users.find((u) => u.id === ballot.userId)?.name ?? '—'}:{' '}
-                    {project.nodes.find((n) => n.id === ballot.optionId)?.title ?? '—'} · {ballot.preference}
-                    /100
                   </p>
+                  {roundOptions.map((option) => {
+                    const row = optionPreference(project, option.id);
+                    return (
+                      <div
+                        key={option.id}
+                        className="vote-result-row"
+                        data-testid={`vote-result-${option.id}`}
+                      >
+                        <strong>{option.title}</strong>
+                        <span>{scoreText(row.preferenceScore)}</span>
+                        <small>
+                          {t('voteResultDetails', {
+                            count: row.preferenceVoters,
+                            weight: row.preferenceTotalPower,
+                            sum: row.weightedSum.toFixed(1),
+                          })}
+                        </small>
+                      </div>
+                    );
+                  })}
+                  {!round.anonymous ? (
+                    <details className="vote-by-person">
+                      <summary>{t('voteIndividual')}</summary>
+                      {project.ballots.map((ballot) => (
+                        <p key={ballot.id}>
+                          {`${project.users.find((u) => u.id === ballot.userId)?.name || '—'}: ${
+                            project.nodes.find((n) => n.id === ballot.optionId)?.title || '—'
+                          } · ${ballot.preference}/100`}
+                        </p>
+                      ))}
+                    </details>
+                  ) : null}
+                </>
+              )}
+            </div>
+            <details id="voteAuditDetails">
+              <summary>{t('voteAudit')}</summary>
+              <div id="voteAuditRows">
+                {isOpen && round.hideResults ? (
+                  <p className="inspector-note">{t('voteResultsHidden')}</p>
+                ) : (
+                  (project.voteAudit ?? []).map((event) => (
+                    <p key={event.id}>
+                      {`${event.at.slice(0, 16)} · ${t(`voteEvent_${event.action}`)} · ${
+                        round?.anonymous
+                          ? t('voteAnonymousActor')
+                          : project.users.find((u) => u.id === event.userId)?.name || '—'
+                      }`}
+                    </p>
+                  ))
+                )}
+              </div>
+            </details>
+            <details id="voteHistoryDetails" hidden={!history.length}>
+              <summary>{t('voteHistoryTitle')}</summary>
+              <div id="voteHistoryRows">
+                {[...history].reverse().map((entry) => (
+                  <section key={entry.round.id} className="vote-archive">
+                    <strong>{`${t('votePreviousRound')} · ${(entry.round.closedAt ?? '').slice(0, 16)}`}</strong>
+                    {entry.round.optionIds.map((optionId) => {
+                      const score = optionPreferenceForRound(entry.round, entry.ballots, optionId);
+                      return (
+                        <p key={optionId}>
+                          {`${entry.titleByOption[optionId] || '—'}: ${scoreText(score.preferenceScore)} · ${t(
+                            'voteResultDetails',
+                            {
+                              count: score.preferenceVoters,
+                              weight: score.preferenceTotalPower,
+                              sum: score.weightedSum.toFixed(1),
+                            }
+                          )}`}
+                        </p>
+                      );
+                    })}
+                  </section>
                 ))}
-              </details>
-            ) : null}
+              </div>
+            </details>
+            <div className="dialog-actions">
+              <button type="button" className="btn quiet" id="btnVoteDone" onClick={onClose}>
+                {t('close')}
+              </button>
+            </div>
           </>
-        )}
+        ) : null}
       </div>
-      {project.voteHistory.length ? (
-        <details data-testid="vote-history">
-          <summary>{t('voteHistoryTitle')}</summary>
-          {[...project.voteHistory].reverse().map((entry) => (
-            <section key={entry.round.id} className="vote-archive">
-              <strong>
-                {t('votePreviousRound')} · {(entry.round.closedAt ?? '').slice(0, 16)}
-              </strong>
-              {entry.round.optionIds.map((optionId) => {
-                const score = optionPreferenceForRound(entry.round, entry.ballots, optionId);
-                return (
-                  <p key={optionId}>
-                    {entry.titleByOption[optionId] ?? '—'}:{' '}
-                    {score.preferenceScore === null ? '—' : `${score.preferenceScore.toFixed(1)}/100`} ·{' '}
-                    {t('voteResultDetails', {
-                      count: score.preferenceVoters,
-                      weight: score.preferenceTotalPower,
-                      sum: score.weightedSum.toFixed(1),
-                    })}
-                  </p>
-                );
-              })}
-            </section>
-          ))}
-        </details>
-      ) : null}
-      <div className="dialog-actions">
-        <button type="button" className="btn quiet" onClick={onClose} data-testid="vote-close">
-          {t('close')}
-        </button>
-      </div>
-    </Modal>
+    </dialog>
   );
 }

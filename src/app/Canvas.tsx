@@ -4,7 +4,6 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
 import {
   CARD_W,
-  assessmentFields,
   clamp,
   documentPosition,
   edgeGeometry,
@@ -15,7 +14,6 @@ import {
   navigate,
   NAV_KEYS,
   secondaryLinkPath,
-  truthAssessable,
 } from '../domain/index.ts';
 import type { Node, Position } from '../domain/index.ts';
 import {
@@ -33,17 +31,13 @@ import { ADD_LOCAL_USER } from './actions.ts';
 import { ClaimPreview, previewHandlers } from './ClaimPreview.tsx';
 import { ContextMenu } from './ContextMenu.tsx';
 import {
+  cardChips,
   displayedPrimaryRelation,
   importanceHint,
-  importanceShort,
   importanceText,
-  nodeAssessmentSnapshot,
   relationLabel,
-  resultText,
   shownInfluence,
-  shownScore,
   signed,
-  EM_DASH,
 } from './derive.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
@@ -499,58 +493,8 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       (isAiProfile(creator) ||
         (project.settings.showAuthors !== false && node.authorVisibility === 'named')) &&
       l.labels;
-    const ratings = nodeAssessmentSnapshot(frame, t, node);
-    const score = shownScore(frame, node.id);
-    const linkCount = (project.links ?? []).filter(
-      (x) => x.sourceId === node.id || x.targetId === node.id
-    ).length;
-    const commentCount = project.comments.filter((c) => c.nodeId === node.id).length;
     const addDisabled = !editable || !!node.sharedReasonId || node.kind === 'group';
-    const chips: { label: string; value: string; cls?: string; title?: string }[] = [];
-    if (l.index)
-      chips.push({
-        label: t('indexChip'),
-        value: frame.lens.filtered && view.indexMode === 'shared' ? EM_DASH : resultText(node, score, 0),
-        cls: 'meta-index',
-        title: view.indexMode === 'personal' ? t('personalIndexExplain') : t('indexHint'),
-      });
-    if (l.assessments && ratings)
-      chips.push({
-        label: t('assessmentSummaryShort'),
-        value: ratings.value,
-        cls: `meta-assessment${ratings.averaging ? ' aggregated' : ''}${ratings.filtered ? ' filtered' : ''}`,
-        title: ratings.provenance,
-      });
-    if (view.showImportance && important && effect)
-      chips.push({
-        label: 'Δ',
-        value: importanceShort(effect),
-        cls: 'meta-marginal',
-        title: importanceHint(project, t, effect),
-      });
-    if (l.confidence && truthAssessable(node))
-      chips.push({
-        label: t('credenceChip'),
-        value: ratings?.credence == null ? EM_DASH : `${Number(ratings.credence.toFixed(0))} %`,
-        title: ratings?.provenance ?? t('credenceHint'),
-      });
-    if (l.impact && assessmentFields(node).impact)
-      chips.push({
-        label: t('impactChip'),
-        value: ratings?.impact == null ? EM_DASH : `${signed(Number(ratings.impact.toFixed(1)))}/5`,
-        title: ratings?.provenance ?? t('impactHint'),
-      });
-    if (l.comments)
-      chips.push({ label: t('commentsChip'), value: String(commentCount), title: t('commentsHint') });
-    if (l.counts && childCount)
-      chips.push({ label: t('childrenChip'), value: String(childCount), title: t('childrenHint') });
-    if (l.links && linkCount)
-      chips.push({
-        label: t('linksChip'),
-        value: String(linkCount),
-        cls: 'meta-links',
-        title: t('linksHint'),
-      });
+    const chips = cardChips(frame, t, node, l, frame.importance);
     const preview = previewHandlers(node.id, '.node-title', store.setClaimPreview);
     const dragging = state.draggingLibraryReason;
     return (

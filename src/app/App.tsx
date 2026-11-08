@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { exportFilename, parseProject, serializeProjectFile } from '../domain/index.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
+import { nowIso } from '../lib/providers.ts';
+import { recordEvent } from '../lib/workspaceMeta.ts';
 import {
   addNode,
   arrangeTree,
@@ -12,6 +14,7 @@ import {
   toggleViewDock,
   canEdit,
 } from './actions.ts';
+import { AssessmentDialog } from './AssessmentDialog.tsx';
 import { Canvas } from './Canvas.tsx';
 import { ModalHost, NoticeBar } from './dialogs.tsx';
 import { Home } from './Home.tsx';
@@ -19,12 +22,14 @@ import { Inspector } from './Inspector.tsx';
 import { LeftPanel } from './LeftPanel.tsx';
 import { PeopleDialog } from './PeopleDialog.tsx';
 import { useFrame } from './projection.ts';
+import { ReviewLensDialog } from './ReviewLensDialog.tsx';
 import { readShortcuts, shortcutFor } from './shortcuts.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import type { Zone } from './store.ts';
 import { TableView } from './TableView.tsx';
 import { Toolbar } from './Toolbar.tsx';
 import { TopBar } from './TopBar.tsx';
+import { Tutorial } from './Tutorial.tsx';
 import { ViewDock } from './ViewDock.tsx';
 import { VoteDialog } from './VoteDialog.tsx';
 import { ZONES } from './view.ts';
@@ -61,14 +66,18 @@ export function App() {
       if (!picked) return;
       try {
         const parsed = parseProject(JSON.parse(picked.text));
-        if (await store.askConfirm(`${t('openJson')} · ${picked.name}`)) store.load(parsed);
+        if (!(await store.prepareReplacement(t('importConfirm', { title: parsed.title })))) return;
+        store.load(parsed);
+        recordEvent(window.localStorage, 'lastOpenedJson', picked.name, parsed.id, nowIso());
       } catch (error) {
         store.showMessage(`${picked.name}: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
     const saveFile = () => {
       const current = store.get().project;
-      downloadText(exportFilename(current.title), serializeProjectFile(current));
+      const filename = exportFilename(current.title);
+      downloadText(filename, serializeProjectFile(current));
+      recordEvent(window.localStorage, 'lastExportedJson', filename, current.id, nowIso());
       store.notify({ kind: 'info', text: t('savedFile') });
     };
     const onOpen = () => void openFile();
@@ -206,6 +215,7 @@ export function App() {
       <>
         <Home />
         <ModalHost frame={frame} onShortcutsChanged={() => setShortcutsVersion((v) => v + 1)} />
+        <Tutorial />
       </>
     );
   }
@@ -219,7 +229,7 @@ export function App() {
       <main className={workspaceClass} id="workspaceMain" data-testid="workspace">
         <LeftPanel frame={frame} />
         {view.presentation === 'table' ? (
-          <TableView scores={frame.scores} />
+          <TableView frame={frame} />
         ) : (
           <Canvas frame={frame} shortcuts={shortcuts} />
         )}
@@ -303,7 +313,14 @@ export function App() {
         onClose={() => store.openDialog(null)}
         scores={frame.scores}
       />
+      <AssessmentDialog open={state.dialog === 'assessment'} onClose={() => store.openDialog(null)} />
+      <ReviewLensDialog
+        open={state.dialog === 'reviewLens'}
+        onClose={() => store.openDialog(null)}
+        frame={frame}
+      />
       <ModalHost frame={frame} onShortcutsChanged={() => setShortcutsVersion((v) => v + 1)} />
+      <Tutorial />
     </div>
   );
 }

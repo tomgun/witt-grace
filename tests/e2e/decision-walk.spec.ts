@@ -1,84 +1,51 @@
 /**
- * must: in decision mode a person adds two options, reviews a reason under one, adds a second person, opens a ballot
- *       round, both cast preferences, the owner closes the round and the results show the weighted preference per
- *       option while the argument balance stays separate (V-01, V-02, V-04, U-01, UX-D04)
+ * must: in decision mode a person adds two options from the left panel, reviews a reason under one in Punnitse and
+ *       reads +50 for that option and "—" for the other in the options ranking of the decision root; a second local
+ *       person is added through the text prompt and becomes the actor; the actor select lists both
+ *       (V-01, U-01, UX-D04, UI_INVENTORY S-05, S-08 §19, S-11.22)
  * test: tests/e2e/decision-walk.spec.ts (desktop)
- * red-against: a ballot accepted before the round opens, a result shown while hidden, the balance mixed into the vote
+ * red-against: the option balance shown before any review as 0, a review copied to the other option, the new person
+ *              replacing the first one's work
  */
 import { expect, test } from '@playwright/test';
+import { addNamed, reviewSelected, startBlank } from './helpers.ts';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => window.localStorage.clear());
-  await page.reload();
+  await startBlank(page, 'decision');
 });
 
-test('two options, a review, two people, a ballot round', async ({ page }, testInfo) => {
+test('two options, a review, the ranking and a second person', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'the desktop walk covers the flow');
-  await page.getByTestId('menu-file').locator('summary').click();
-  await page.getByTestId('menu-new-decision').click();
-  await page.getByTestId('replace-confirm').click();
-  await expect(page.getByTestId('mode-decision')).toHaveAttribute('aria-pressed', 'true');
-
-  // Two options under the decision root (keyboard: the bottom zone via Alt+4 then buttons).
-  await page.getByTestId('viewport').focus();
-  await page.keyboard.press('Alt+4');
-  await page.getByTestId('bottom-add-option').click();
-  await page.getByTestId('node-title').fill('Vaihtoehto A');
-  await page.getByTestId('node-title').press('Enter');
+  await expect(page.locator('#modeDecision')).toHaveClass(/active/);
+  await addNamed(page, '#btnOption', 'Vaihtoehto A');
   await page.locator('[data-testid^="outline-"]').first().click();
-  await page.getByTestId('bottom-add-option').click();
-  await page.getByTestId('node-title').fill('Vaihtoehto B');
-  await page.getByTestId('node-title').press('Enter');
+  await addNamed(page, '#btnOption', 'Vaihtoehto B');
   await expect(page.getByTestId('node-count')).toHaveText('3');
 
-  // A reason under A, reviewed 100 % / +5 → A's balance +50.
+  await page.locator('#btnWorkflowEvaluate').click();
   await page.locator('[data-testid^="outline-"]', { hasText: 'Vaihtoehto A' }).click();
-  await page.getByTestId('bottom-add-support').click();
-  await page.getByTestId('node-title').fill('Halvin');
-  await page.getByTestId('node-title').press('Enter');
-  await page.getByTestId('review-credence').fill('100');
-  await page.getByTestId('review-influence').fill('5');
-  await page.getByTestId('review-save').click();
+  await addNamed(page, '#btnSupport', 'Halvin');
+  await reviewSelected(page, '100', '5');
   await page.locator('[data-testid^="outline-"]').first().click();
-  const overview = page.getByTestId('options-overview');
-  await expect(overview.locator('li', { hasText: 'Vaihtoehto A' })).toContainText('+50');
-  await expect(overview.locator('li', { hasText: 'Vaihtoehto B' })).toContainText('0');
+  const ranking = page.getByTestId('decision-overview');
+  await expect(
+    ranking.locator('.ranking-row', { hasText: 'Vaihtoehto A' }).locator('.ranking-score')
+  ).toHaveText('+50');
+  await expect(
+    ranking.locator('.ranking-row', { hasText: 'Vaihtoehto B' }).locator('.ranking-score')
+  ).toHaveText('—');
 
-  // A second person.
-  page.once('dialog', (dialog) => dialog.accept('Bea'));
-  await page.getByTestId('actor-select').selectOption('__add__');
-  await expect(page.getByTestId('actor-select')).toContainText('Bea');
-  await page.getByTestId('actor-select').selectOption({ label: 'Minä' });
-
-  // Open the ballot as the owner, cast as me, then as Bea, close, read results.
-  await page.getByTestId('menu-review').locator('summary').click();
-  await page.getByTestId('menu-vote').click();
-  await expect(page.getByTestId('vote-status')).toHaveText('Äänestys ei ole vielä alkanut');
-  await page.getByTestId('vote-start').click();
-  await expect(page.getByTestId('vote-status')).toHaveText('Äänestyskierros on avoin');
-  const rows = page.locator('[data-testid^="vote-row-"]');
-  await expect(rows).toHaveCount(2);
-  const sliderA = page.locator('[data-testid^="vote-slider-"]').first();
-  await sliderA.fill('90');
-  await page.locator('[data-testid^="vote-save-"]').first().click();
-  await expect(page.locator('[data-testid^="vote-value-"]').first()).toHaveText('90/100');
-  await expect(page.getByTestId('vote-results')).toContainText('Tulokset on piilotettu');
-  await page.getByTestId('vote-close').click();
-  await page.getByTestId('actor-select').selectOption({ label: 'Bea' });
-  await page.getByTestId('menu-review').locator('summary').click();
-  await page.getByTestId('menu-vote').click();
-  await page.locator('[data-testid^="vote-slider-"]').nth(1).fill('100');
-  await page.locator('[data-testid^="vote-save-"]').nth(1).click();
-  await page.getByTestId('vote-close').click();
-  await page.getByTestId('actor-select').selectOption({ label: 'Minä' });
-  await page.getByTestId('menu-review').locator('summary').click();
-  await page.getByTestId('menu-vote').click();
-  page.once('dialog', (dialog) => dialog.accept());
-  await page.getByTestId('vote-end').click();
-  await expect(page.getByTestId('vote-status')).toHaveText('Äänestyskierros päättyi');
-  const results = page.locator('[data-testid^="vote-result-"]');
-  await expect(results.first()).toContainText('90.0/100');
-  await expect(results.nth(1)).toContainText('100.0/100');
-  await expect(results.first()).toContainText('1 äänestäjää');
+  // A second local person through the prototype's text prompt.
+  await page.locator('#actorSelect').selectOption('__add_local_user__');
+  await page.locator('#textValue').fill('Bea');
+  await page.locator('#textAccept').click();
+  await expect(page.locator('#actorSelect')).toContainText('Bea');
+  await expect(page.locator('#actorSelect')).toHaveValue(/.+/);
+  const selected = await page.locator('#actorSelect option:checked').textContent();
+  expect(selected).toBe('Bea');
+  // Bea sees the first person's review as the shared result, not as her own.
+  await page.locator('[data-testid^="outline-"]', { hasText: 'Halvin' }).click();
+  await expect(page.locator('#inspector')).toContainText('Käyttäjänä: Bea');
+  await expect(page.getByTestId('review-credence')).toHaveValue('100');
+  await expect(page.locator('#inspector .inline-warning').first()).toContainText('ei ole vielä tallennettu');
 });

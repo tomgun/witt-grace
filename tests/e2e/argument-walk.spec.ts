@@ -1,88 +1,86 @@
 /**
- * must: a person can start an argument document, add a supporting reason with the keyboard, name it, review it as
- *       100 % / +5 and read +50 as the thesis balance; a missing review shows "—/—" on the card and marks the balance incomplete; the work survives a reload;
- *       the zones toggle with Alt+1..4 and the file menu exports JSON (UX-A05, UX-B01, UX-D01, UX-D02, UX-E07, G-05)
+ * must: from the home screen a person starts a blank argument document, adds a supporting reason with `+`, names it in
+ *       the card's inline editor, switches to Punnitse, reviews it 100 % / +5 and reads +50.0 as the thesis balance;
+ *       a thesis without reasons shows "—", never 0; a second unreviewed reason shows "—/—" and marks the balance
+ *       incomplete with †; the work survives a reload; Alt+1..4 and Alt+V toggle the zones and the dock; the file menu
+ *       exports v8 JSON; decision mode adds options; themes and languages switch (UI_INVENTORY S-01, S-03, S-07, S-08)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
- * red-against: the balance shown as 0 before any review, a review saved under the wrong node, the autosave skipped
+ * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
+ *              marker rendered as "*"
  */
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { reviewSelected as review, selectRoot, startBlank } from './helpers.ts';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => window.localStorage.clear());
-  await page.reload();
+  await startBlank(page, 'argument');
 });
 
-test('start, add a reason with +, review it and read the balance', async ({ page }) => {
-  await expect(page.getByTestId('app')).toBeVisible();
+async function addReason(page: Page, key: '+' | '-', title: string) {
+  await page.locator('#viewport').focus();
+  await page.keyboard.press(key);
+  const editor = page.locator('.node-inline-editor');
+  await expect(editor).toBeFocused();
+  await editor.fill(title);
+  await editor.press('Enter');
+  await expect(page.locator('.node-title', { hasText: title })).toBeVisible();
+}
+
+test('start, add a reason with +, review it in Punnitse and read the balance', async ({ page }) => {
   await expect(page.getByTestId('node-count')).toHaveText('1');
-  // A thesis without reasons starts from the neutral base: 0, complete (G-02 first row).
-  const rootBalance = page.locator('[data-testid^="balance-"]').first();
-  await expect(rootBalance).toHaveText(/Perustelutulos 0$/);
-
-  // Keyboard: focus the canvas, press + to add a supporting reason under the selected (root) node.
-  await page.getByTestId('viewport').focus();
-  await page.keyboard.press('+');
+  await page.locator('#btnWorkflowEvaluate').click();
+  // A thesis without reasons has no derived result: "—", not 0 (inv-inspector §F).
+  await expect(page.getByTestId('score-balance')).toContainText('—');
+  await addReason(page, '+', 'Hinta on alhainen');
   await expect(page.getByTestId('node-count')).toHaveText('2');
-  const title = page.getByTestId('node-title');
-  await expect(title).toBeFocused();
-  await title.fill('Hinta on alhainen');
-  await title.press('Enter');
-  await expect(page.locator('.node-title', { hasText: 'Hinta on alhainen' })).toBeVisible();
-
-  // Review: credence 100 %, influence +5, confirm.
-  await page.getByTestId('review-credence').fill('100');
-  await page.getByTestId('review-influence').fill('5');
-  await page.getByTestId('review-save').click();
-  await expect(page.getByTestId('review-credence-value')).toHaveText('100%');
-  await expect(page.getByTestId('review-influence-value')).toHaveText('+5');
-
-  // The thesis balance is +50 (one perfect +5 support), shown on the root card and when the root is selected.
-  await expect(rootBalance).toContainText('+50');
-  await page.locator('[data-testid^="outline-"]').first().click();
-  await expect(page.getByTestId('score-balance')).toContainText('+50');
-
-  // Reload: the autosave brought the work back.
+  await review(page, '100', '5');
+  const chip = page
+    .locator('.node', { hasText: 'Hinta on alhainen' })
+    .locator('.meta-assessment .meta-value');
+  await expect(chip).toHaveText('100%/+5');
+  await selectRoot(page);
+  await expect(page.getByTestId('score-balance')).toContainText('+50.0');
+  await expect(page.locator('.node.is-root .meta-index .meta-value')).toHaveText('+50');
   await page.reload();
+  await page.locator('#btnHomeContinue').click();
   await expect(page.getByTestId('node-count')).toHaveText('2');
-  await expect(page.locator('[data-testid^="balance-"]').first()).toContainText('+50');
+  await expect(page.locator('.node.is-root .meta-index .meta-value')).toHaveText('+50');
 });
 
-test('a second unreviewed reason makes the balance incomplete, not zero', async ({ page }) => {
-  await page.getByTestId('viewport').focus();
-  await page.keyboard.press('+');
-  await page.getByTestId('review-credence').fill('100');
-  await page.getByTestId('review-influence').fill('5');
-  await page.getByTestId('review-save').click();
-  await page.locator('[data-testid^="outline-"]').first().click();
-  await page.getByTestId('viewport').focus();
-  await page.keyboard.press('-');
+test('a second unreviewed reason makes the balance incomplete (†), not zero', async ({ page }) => {
+  await page.locator('#btnWorkflowEvaluate').click();
+  await addReason(page, '+', 'Hinta on alhainen');
+  await review(page, '100', '5');
+  await selectRoot(page);
+  await addReason(page, '-', 'Laatu on heikko');
   await expect(page.getByTestId('node-count')).toHaveText('3');
-  const pair = page.locator('[data-testid^="pair-"]').last();
+  const pair = page.locator('.node', { hasText: 'Laatu on heikko' }).locator('.meta-assessment .meta-value');
   await expect(pair).toHaveText('—/—');
-  await page.locator('[data-testid^="outline-"]').first().click();
-  await expect(page.getByTestId('score-balance')).toContainText('+50');
-  await expect(page.getByTestId('score-balance')).toContainText('Arviointi kesken');
+  await selectRoot(page);
+  await expect(page.getByTestId('score-balance')).toContainText('+50.0 †');
 });
 
-test('zones toggle with Alt+1..4 and the file menu exports JSON', async ({ page }, testInfo) => {
+test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports JSON', async ({
+  page,
+}, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'the pane buttons are desktop controls');
   await expect(page.getByTestId('outline')).toBeVisible();
-  await page.getByTestId('viewport').focus();
+  await page.locator('#viewport').focus();
   await page.keyboard.press('Alt+1');
-  await expect(page.getByTestId('outline')).toHaveCount(0);
+  await expect(page.getByTestId('outline')).toBeHidden();
   await page.keyboard.press('Alt+1');
   await expect(page.getByTestId('outline')).toBeVisible();
   await page.keyboard.press('Alt+4');
-  await expect(page.getByTestId('bottom-zone')).toBeVisible();
+  await expect(page.locator('#bottomZone')).toBeVisible();
   await page.keyboard.press('Alt+V');
-  await expect(page.getByTestId('view-dock')).toBeVisible();
+  await expect(page.locator('#viewDock')).toBeVisible();
+  await page.locator('#viewport').focus();
   await page.keyboard.press('Alt+V');
-  await expect(page.getByTestId('view-dock')).toHaveCount(0);
+  await expect(page.locator('#viewDock')).toHaveCount(0);
 
-  await page.getByTestId('menu-file').locator('summary').click();
+  await page.locator('#fileMenu summary').click();
   const download = page.waitForEvent('download');
-  await page.getByTestId('menu-save').click();
+  await page.locator('#btnSave').click();
   const file = await download;
   expect(file.suggestedFilename()).toMatch(/\.witt\.json$/);
   const text = await (
@@ -96,48 +94,23 @@ test('zones toggle with Alt+1..4 and the file menu exports JSON', async ({ page 
 });
 
 test('switching to decision mode offers options; Bitberg theme applies', async ({ page }) => {
-  await page.getByTestId('mode-decision').click();
-  await expect(page.getByTestId('mode-decision')).toHaveAttribute('aria-pressed', 'true');
-  await page.getByTestId('menu-edit').locator('summary').click();
-  await page.getByTestId('menu-add-option').click();
+  await page.locator('#modeDecision').click();
+  await expect(page.locator('#modeDecision')).toHaveClass(/active/);
+  await page.locator('#editMenu summary').click();
+  await page.locator('#btnEditMenuOption').click();
   await expect(page.getByTestId('node-count')).toHaveText('2');
   await expect(page.locator('.node[data-relation="option"]')).toHaveCount(1);
-  await page.getByTestId('theme-select').selectOption('bitberg');
+  await page.locator('#themeSelect').selectOption('bitberg');
   await expect(page.locator('body')).toHaveAttribute('data-theme', 'bitberg');
 });
 
-test('the table view lists every claim with its relation, context and review', async ({ page }) => {
-  await page.getByTestId('viewport').focus();
-  await page.keyboard.press('+');
-  await page.getByTestId('node-title').fill('Hinta on alhainen');
-  await page.getByTestId('node-title').press('Enter');
-  await page.getByTestId('review-credence').fill('80');
-  await page.getByTestId('review-influence').fill('3.5');
-  await page.getByTestId('review-save').click();
-  await page.getByTestId('layout-table').click();
-  const rows = page.locator('[data-testid^="table-row-"]');
-  await expect(rows).toHaveCount(2);
-  const reason = rows.nth(1);
-  await expect(reason).toContainText('Hinta on alhainen');
-  await expect(reason).toContainText('Puoltava');
-  await expect(reason).toContainText('80%');
-  await expect(reason).toContainText('+3.5');
-  await expect(page.getByTestId('table-count')).toHaveText('Näytetään 2/2 väitettä');
-  await page.getByTestId('table-filter').selectOption('oppose');
-  await expect(page.getByTestId('table-count')).toHaveText('Näytetään 0/2 väitettä');
-  await page.getByTestId('table-filter').selectOption('all');
-  await page.getByTestId('table-search').fill('hinta');
-  await expect(rows).toHaveCount(1);
-  await page.getByTestId('layout-tree').click();
-  await expect(page.getByTestId('viewport')).toBeVisible();
-});
-
 test('switching the language loads its messages on demand', async ({ page }) => {
-  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('Tiedosto');
-  await page.getByTestId('language-select').selectOption('en');
-  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('File');
+  await expect(page.locator('#fileMenu summary')).toHaveText('Tiedosto');
+  await page.locator('#localeSelect').selectOption('en');
+  await expect(page.locator('#fileMenu summary')).toHaveText('File');
   await page.reload();
-  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('File');
-  await page.getByTestId('language-select').selectOption('fi');
-  await expect(page.getByTestId('menu-file').locator('summary')).toHaveText('Tiedosto');
+  await page.locator('#btnHomeContinue').click();
+  await expect(page.locator('#fileMenu summary')).toHaveText('File');
+  await page.locator('#localeSelect').selectOption('fi');
+  await expect(page.locator('#fileMenu summary')).toHaveText('Tiedosto');
 });

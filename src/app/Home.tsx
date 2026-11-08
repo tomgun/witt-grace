@@ -1,22 +1,28 @@
 // The home screen (UI_INVENTORY S-01): every button, the current-work card and the warnings.
 import { useEffect, useRef } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
+import { homeCard } from '../lib/workspaceMeta.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
 export function Home() {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
-  const hasWork = state.saveStatus !== 'noServer' || state.project.nodes.length > 1;
+  const card = homeCard({
+    store: window.localStorage,
+    project: state.project,
+    hydrationFailed: state.hydrationFailed,
+    temporary: !state.storagePersistent,
+    locale: state.language,
+    t,
+  });
+  const hasWork = card.canContinue;
   const continueRef = useRef<HTMLButtonElement>(null);
   const newRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     (continueRef.current ?? newRef.current)?.focus();
   }, []);
   const continueWork = () => store.setHome(false);
-  const savedAt = state.project.updatedAt
-    ? state.project.updatedAt.slice(0, 16).replace('T', ' ')
-    : t('homeTimeUnknown');
   return (
     <section id="homeScreen" className="home-screen" aria-labelledby="homeTitle" data-testid="home">
       <nav className="home-nav" aria-label="WITT">
@@ -119,32 +125,32 @@ export function Home() {
                 </button>
               </div>
             </details>
-            {hasWork ? (
+            {card.saved ? (
               <section className="home-workspace" id="homeCurrentWork" aria-labelledby="homeSavedHeading">
                 <h2 id="homeSavedHeading">{t('homeSavedHeading')}</h2>
-                <strong id="homeCurrentTitle">{state.project.title}</strong>
+                <strong id="homeCurrentTitle">{card.title}</strong>
                 <dl>
                   <div>
-                    <dt id="homeBrowserSaveLabel">{t('homeBrowserSaveLabel')}</dt>
-                    <dd id="homeBrowserSave">{state.storagePersistent ? savedAt : t('homeTimeUnknown')}</dd>
+                    <dt id="homeBrowserSaveLabel">{card.browserSaveLabel}</dt>
+                    <dd id="homeBrowserSave">{card.browserSave}</dd>
                   </div>
                   <div>
                     <dt>{t('homeOpenLabel')}</dt>
-                    <dd id="homeLatestOpen">{t('homeNotYet')}</dd>
+                    <dd id="homeLatestOpen">{card.latestOpen}</dd>
                   </div>
                   <div>
                     <dt>{t('homeExportLabel')}</dt>
-                    <dd id="homeLatestExport">{t('homeNotYet')}</dd>
+                    <dd id="homeLatestExport">{card.latestExport}</dd>
                   </div>
                 </dl>
               </section>
             ) : null}
-            {state.notice?.kind === 'error' && state.saveStatus === 'noServer' ? (
+            {card.showUnreadableWarning ? (
               <p id="homeSaveWarning" className="home-save-warning">
                 {t('homeUnreadableWarning')}
               </p>
             ) : null}
-            {!state.storagePersistent ? (
+            {card.showSessionWarning ? (
               <p id="homeSessionWarning" className="home-save-warning">
                 {t('sessionOnlyWarning')}
               </p>

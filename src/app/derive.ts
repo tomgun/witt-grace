@@ -11,10 +11,11 @@ import {
   personalCredence,
   personalInfluence,
   sharedReason,
+  truthAssessable,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
 import type { MessageKey, Translator } from '../lib/i18n/i18n.ts';
-import type { ViewState } from './view.ts';
+import type { Layers, ViewState } from './view.ts';
 
 export const EM_DASH = '—';
 /** The prototype's `signed`: a plus sign for positives, otherwise the plain JS number. */
@@ -213,4 +214,71 @@ export function importanceHint(project: Project, t: Translator, effect: TargetEf
     change: balanceDeltaText(effect.localDelta, 2),
   });
   return `${main} | ${local}${effect.provisional ? ` ${t('importanceProvisional')}` : ''}`;
+}
+
+export interface CardChip {
+  label: string;
+  value: string;
+  cls?: string;
+  title?: string;
+}
+/** The footer chips of a card under a layer set, in the prototype's order (inv-canvas §1.5). */
+export function cardChips(
+  ctx: DeriveContext,
+  t: Translator,
+  node: Node,
+  l: Layers,
+  importance: Importance
+): CardChip[] {
+  const { project, view } = ctx;
+  const chips: CardChip[] = [];
+  const ratings = nodeAssessmentSnapshot(ctx, t, node);
+  const score = shownScore(ctx, node.id);
+  const effect = importance.effects.get(node.id);
+  const important = importance.importantIds.has(node.id);
+  const childCount = project.nodes.filter((n) => n.parentId === node.id).length;
+  const linkCount = (project.links ?? []).filter(
+    (x) => x.sourceId === node.id || x.targetId === node.id
+  ).length;
+  const commentCount = project.comments.filter((c) => c.nodeId === node.id).length;
+  if (l.index)
+    chips.push({
+      label: t('indexChip'),
+      value: ctx.lens.filtered && view.indexMode === 'shared' ? EM_DASH : resultText(node, score, 0),
+      cls: 'meta-index',
+      title: view.indexMode === 'personal' ? t('personalIndexExplain') : t('indexHint'),
+    });
+  if (l.assessments && ratings)
+    chips.push({
+      label: t('assessmentSummaryShort'),
+      value: ratings.value,
+      cls: `meta-assessment${ratings.averaging ? ' aggregated' : ''}${ratings.filtered ? ' filtered' : ''}`,
+      title: ratings.provenance,
+    });
+  if (view.showImportance && important && effect)
+    chips.push({
+      label: 'Δ',
+      value: importanceShort(effect),
+      cls: 'meta-marginal',
+      title: importanceHint(project, t, effect),
+    });
+  if (l.confidence && truthAssessable(node))
+    chips.push({
+      label: t('credenceChip'),
+      value: ratings?.credence == null ? EM_DASH : `${Number(ratings.credence.toFixed(0))} %`,
+      title: ratings?.provenance ?? t('credenceHint'),
+    });
+  if (l.impact && assessmentFields(node).impact)
+    chips.push({
+      label: t('impactChip'),
+      value: ratings?.impact == null ? EM_DASH : `${signed(Number(ratings.impact.toFixed(1)))}/5`,
+      title: ratings?.provenance ?? t('impactHint'),
+    });
+  if (l.comments)
+    chips.push({ label: t('commentsChip'), value: String(commentCount), title: t('commentsHint') });
+  if (l.counts && childCount)
+    chips.push({ label: t('childrenChip'), value: String(childCount), title: t('childrenHint') });
+  if (l.links && linkCount)
+    chips.push({ label: t('linksChip'), value: String(linkCount), cls: 'meta-links', title: t('linksHint') });
+  return chips;
 }

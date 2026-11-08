@@ -8,6 +8,10 @@ import { moveTargets } from './actions.ts';
 import type { Frame } from './projection.ts';
 import { HelpDialog } from './HelpDialog.tsx';
 import { LinksDialog } from './LinksDialog.tsx';
+import { ReplaceDialog } from './ReplaceDialog.tsx';
+import { ExamplesDialog } from './ExamplesDialog.tsx';
+import { LibraryDialog } from './LibraryDialog.tsx';
+import { VisualExportDialog } from './VisualExportDialog.tsx';
 
 /** A native <dialog> with focus trapping by the browser; Escape closes it. */
 export function Modal({
@@ -345,10 +349,26 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
       {modal?.kind === 'notice' ? <NoticeDialog request={modal} /> : null}
       {modal?.kind === 'move' ? <MoveDialog request={modal} /> : null}
       {modal?.kind === 'links' ? <LinksDialog request={modal} frame={frame} /> : null}
+      {modal?.kind === 'replace' ? <ReplaceDialog request={modal} /> : null}
+      <ExamplesDialog />
       {state.dialog === 'newWork' ? <NewWorkDialog /> : null}
       {state.dialog === 'about' ? <AboutDialog /> : null}
       {state.dialog === 'help' ? <HelpDialog onShortcutsChanged={onShortcutsChanged} /> : null}
-      {state.dialog && !['newWork', 'about', 'help', 'people', 'vote'].includes(state.dialog) ? (
+      {state.dialog === 'library' ? <LibraryDialog /> : null}
+      {state.dialog === 'visualExport' ? <VisualExportDialog frame={frame} /> : null}
+      {state.dialog &&
+      ![
+        'newWork',
+        'about',
+        'help',
+        'people',
+        'vote',
+        'examples',
+        'assessment',
+        'reviewLens',
+        'library',
+        'visualExport',
+      ].includes(state.dialog) ? (
         <PlaceholderDialog name={state.dialog} />
       ) : null}
     </>

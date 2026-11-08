@@ -16,6 +16,7 @@ import {
   writePreference,
 } from '../lib/storage.ts';
 import type { KeyValueStore } from '../lib/storage.ts';
+import { persist as recordActive } from '../lib/workspaceMeta.ts';
 import { assessorKey, readView, readZones, reviewViewKey, writeView, writeZones } from './view.ts';
 import type { ViewState, Zone, Zones } from './view.ts';
 
@@ -72,7 +73,10 @@ export type ModalRequest =
     }
   | { kind: 'notice'; text: string }
   | { kind: 'move'; nodeId: string }
-  | { kind: 'links'; nodeId: string; linkId?: string };
+  | { kind: 'links'; nodeId: string; linkId?: string }
+  | { kind: 'replace'; description: string; resolve: (choice: ReplaceChoice) => void };
+/** The replacement dialog's outcome: proceed and forget, proceed after a library save, or stay (null). */
+export type ReplaceChoice = 'forget' | 'keep' | null;
 
 export interface Notice {
   kind: 'error' | 'info';
@@ -123,6 +127,8 @@ export interface AppState {
   canRedo: boolean;
   saveStatus: MessageKey;
   storagePersistent: boolean;
+  /** A draft existed in storage but could not be read; it was left untouched (home-screen warning). */
+  hydrationFailed: boolean;
   notice: Notice | null;
 }
 
@@ -190,6 +196,7 @@ export function createStore(
     canRedo: false,
     saveStatus: loaded.ok ? 'savedBrowser' : 'noServer',
     storagePersistent: persistent,
+    hydrationFailed: !loaded.ok && 'reason' in loaded,
     notice: !loaded.ok && 'reason' in loaded ? { kind: 'error', text: loaded.reason } : null,
   };
   const past: Project[] = [];
@@ -202,6 +209,7 @@ export function createStore(
   };
   const persist = (project: Project) => {
     const result = saveProject(store, project, nowIso());
+    if (result.ok) recordActive(store, project, result.at);
     set({ saveStatus: result.ok ? (persistent ? 'savedBrowser' : 'noServer') : 'saveFailed' });
     if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
   };
@@ -393,6 +401,13 @@ export function createStore(
     /** The prototype's `askConfirm`: resolves true on Jatka, false on Peruuta or Escape. */
     askConfirm(text: string): Promise<boolean> {
       return new Promise((resolve) => set({ modal: { kind: 'confirm', text, resolve } }));
+    },
+    /** The prototype's `prepareReplacement`: with nothing saved it resolves 'forget' at once; otherwise the replace
+     * dialog asks whether to discard the current work, save it to the library first, or stay (null). */
+    prepareReplacement(description: string): Promise<ReplaceChoice> {
+      const hasWork = state.saveStatus !== 'noServer' || state.project.nodes.length > 1;
+      if (!hasWork) return Promise.resolve('forget');
+      return new Promise((resolve) => set({ modal: { kind: 'replace', description, resolve } }));
     },
     /** The prototype's `askText`: resolves the trimmed value, or null when cancelled. */
     askText(prompt: string, heading: string, action: string, initial = ''): Promise<string | null> {
