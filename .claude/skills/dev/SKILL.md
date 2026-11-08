@@ -1,16 +1,15 @@
 ---
 name: dev
-description: Build and serve the frozen prototype locally (and, once it exists, the new app) and print the URLs. Use when asked to run, start, demo or compare the app.
+description: Start the new app's dev server (Vite) and, on request, the frozen prototype, and print the URLs. Use when asked to run, start, demo or compare the app.
 ---
-Bring up what can run today. Run each step and stop at the first failure, quoting its output.
+Run each step and stop at the first failure, quoting its output.
 
-1. `npm run proto:build` — regenerates locales, schema and examples, builds `witt-grace-gpt-proto/dist/` and runs the Pages preflight.
-2. `npm run proto:dev` in the background — the prototype's dependency-free static server; read the port from its output.
-3. When `src/app` exists (WG-007), start the new app's dev server too and print its URL beside the prototype's.
+1. `npm run dev` in the background — Vite on http://127.0.0.1:5173 (the app at `/`). In a sandbox, ask the owner to publish the port: `sbx ports <sandbox> --publish 5173:5173/tcp`.
+2. To compare with the prototype: `npm run proto:build` then `npm run proto:dev` in the background; read its port from the output. The one-file offline prototype is `witt-grace-gpt-proto/dist/witt-standalone.html`.
+3. For a machine-driven look at the UI use the browser suite, not screenshots by hand: `npm run build && npm run e2e` (Chromium, desktop and mobile). A failed walk leaves a screenshot and a trace under `test-results/`; read the screenshot with the Read tool.
 
-Then print, verbatim:
-- Prototype: the URL the server printed (in a sandbox, ask the owner to publish the port: `sbx ports <sandbox> --publish PORT:PORT/tcp`)
-- One-file offline prototype: `witt-grace-gpt-proto/dist/witt-standalone.html` (open from disk)
-- Checks: `npm run check` (docs, spec lock) · `npm run proto:check` (372 prototype tests)
+Print, verbatim:
+- App: http://127.0.0.1:5173
+- Checks: `npm run check` (docs, spec lock, lint, typecheck, format, unit and golden tests) · `npm run e2e` (browser walks) · `npm run proto:check` (372 prototype tests)
 
 Never edit anything under `witt-grace-gpt-proto/` (frozen; the hook refuses). Browser storage is per origin: work saved at one URL does not appear at another.

@@ -865,3 +865,15 @@ contributionNameHelp|Tekijöiden näyttönimet tulevat Käyttäjät-näkymästä
 contributionEditUsers|Muokkaa käyttäjien nimiä…|Edit user names…|Edit user names…|Edit user names…|Edit user names…|Edit user names…|Edit user names…|Edit user names…|Edit user names…
 toolbarEditGroup|Muokkaa|Edit|Edit|Edit|Edit|Edit|Edit|Edit|Edit
 profileAddLocalOption|+ Lisää paikallinen käyttäjä…|+ Add local user…|+ Add local user…|+ Add local user…|+ Add local user…|+ Add local user…|+ Add local user…|+ Add local user…|+ Add local user…
+zoneLeft|Vasen sivupalkki|Linke Seitenleiste|Left panel|Panel izquierdo|Panneau gauche|Левая панель|左侧面板|左パネル|왼쪽 패널
+zoneTop|Yläpalkki|Obere Leiste|Top bar|Barra superior|Barre supérieure|Верхняя панель|顶部栏|上部バー|상단 바
+zoneRight|Oikea sivupalkki|Rechte Seitenleiste|Right panel|Panel derecho|Panneau droit|Правая панель|右侧面板|右パネル|오른쪽 패널
+zoneBottom|Alapalkki|Untere Leiste|Bottom bar|Barra inferior|Barre inférieure|Нижняя панель|底部栏|下部バー|하단 바
+zoneControls|Työtilan paneelit|Arbeitsbereichsfenster|Workspace panels|Paneles del área de trabajo|Panneaux de l'espace de travail|Панели рабочей области|工作区面板|ワークスペースのパネル|작업 공간 패널
+balanceIncomplete|Arviointi kesken|Bewertung unvollständig|Review incomplete|Evaluación incompleta|Évaluation incomplète|Оценка не завершена|评估未完成|評価が未完了|평가 미완료
+confirm|Vahvista|Bestätigen|Confirm|Confirmar|Confirmer|Подтвердить|确认|確認|확인
+zoomIn|Lähennä|Vergrößern|Zoom in|Acercar|Zoom avant|Приблизить|放大|拡大|확대
+zoomOut|Loitonna|Verkleinern|Zoom out|Alejar|Zoom arrière|Отдалить|缩小|縮小|축소
+replaceSummary|Nykyinen työ: {title} · {mode} · {count} solmua · muokattu {updated}|Aktuelle Arbeit: {title} · {mode} · {count} Knoten · geändert {updated}|Current work: {title} · {mode} · {count} nodes · edited {updated}|Trabajo actual: {title} · {mode} · {count} nodos · editado {updated}|Travail actuel : {title} · {mode} · {count} nœuds · modifié {updated}|Текущая работа: {title} · {mode} · {count} узлов · изменено {updated}|当前工作：{title} · {mode} · {count} 个节点 · 修改于 {updated}|現在の作業: {title} · {mode} · {count} ノード · 更新 {updated}|현재 작업: {title} · {mode} · {count}개 노드 · 수정 {updated}
+replaceConfirm|Korvaa nykyinen työ|Aktuelle Arbeit ersetzen|Replace current work|Reemplazar el trabajo actual|Remplacer le travail actuel|Заменить текущую работу|替换当前工作|現在の作業を置き換える|현재 작업 바꾸기
+sharedMeanNote|Ihmisten keskiarvo (kursiivilla). Oma arviosi näkyy pystyssä.|Mittelwert der Menschen (kursiv). Deine eigene Bewertung steht aufrecht.|Human mean (in italics). Your own review is upright.|Media de las personas (en cursiva). Tu propia evaluación aparece recta.|Moyenne des personnes (en italique). Votre propre évaluation est droite.|Среднее людей (курсивом). Ваша оценка показана прямым шрифтом.|人类评估的平均值（斜体）。你自己的评估为正体。|人の評価の平均（斜体）。あなた自身の評価は立体です。|사람들의 평균(기울임꼴). 본인 평가는 정체로 표시됩니다.

@@ -17,36 +17,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: check and build the app
+        run: npm run check && npm run build
       - name: build the frozen prototype
         run: npm run proto:check && npm run proto:build
-      - name: assemble the site (prototype at /proto/, landing page at /)
+      - name: assemble the site (the app at /, the prototype at /proto/)
         run: |
           mkdir -p _site/proto
+          cp -R dist/. _site/
           cp -R witt-grace-gpt-proto/dist/. _site/proto/
           touch _site/.nojekyll
-          cat > _site/index.html <<'HTML'
-          <!doctype html>
-          <html lang="fi">
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta name="robots" content="noindex, nofollow">
-            <title>WITT / GRACE</title>
-            <style>
-              body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.5; }
-              a { color: #0b5fa5; }
-            </style>
-          </head>
-          <body>
-            <h1>WITT / GRACE</h1>
-            <p>Uusi toteutus on rakenteilla. Toimiva prototyyppi (dev32) on käytettävissä osoitteessa
-              <a href="proto/">proto/</a>. Yhden tiedoston offline-versio:
-              <a href="proto/witt-standalone.html" download>witt-standalone.html</a>.</p>
-            <p>Selaimen tallennus on sivustokohtainen eikä varmuuskopio: vie työsi .witt.json-tiedostoksi.</p>
-          </body>
-          </html>
-          HTML
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

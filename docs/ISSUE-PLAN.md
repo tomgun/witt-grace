@@ -9,7 +9,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-004** Domain commands as pure functions with `now`/`newId` injected: nodes (add/edit/move/delete/collapse is view-only), reviews per person and context, concepts and uses, groups, users, comments, ballot rounds. Invariant tests: stable IDs, no cycles, no doubled use per target, no author relabelling.
 - [ ] **WG-005** Serialization: `.witt.json` v8 canonical round-trip byte-stable for every example; contribution bundle v1 diff/apply; AI draft v2 parse/preview/apply; import atomicity (a refused document changes nothing).
 - [ ] **WG-006** Locales: `locales/` catalog from the prototype's `messages.psv`, nine languages, generated typed keys, coverage test (missing, empty, raw key fail), Finnish glossary asserted.
-- [ ] **WG-007** ADR A005 decided with the owner; first vertical slice: argument mode tree + inspector + review notation + signed balance, side by side with `/proto/` at both widths.
+- [x] **WG-007** DONE 2026-11-08: React 19 + Vite (A005 accepted under the owner's mandate); shell, canvas, inspector with reviews and balance, comments, keyboard, autosave, JSON export/open, Playwright walks at both widths. Side-by-side visual comparison with `/proto/` by the owner still pending.
 
 ## Parity with the prototype (P1, order by dependency)
 - [ ] **WG-008** Pages: the new app at `/`, the prototype at `/proto/`, one-file standalone export of the new app; relative asset paths under a project path.
@@ -26,6 +26,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-017** License decision and `LICENSE` file; until then the notice in `witt-grace-gpt-proto/LICENSE-NOTICE.md` stands.
 - [ ] **WG-018** Pin GitHub Actions by commit SHA; Dependabot triage policy.
 - [ ] **WG-019** Accessibility pass (axe on every top-level view; keyboard-only walks; contrast of every theme) before calling the new app a replacement.
+- [ ] **WG-021** Split the locale catalog per language and load the active one lazily (the nine-language catalog is 490 kB of the 770 kB bundle).
 - [ ] **WG-020** Prototype retirement criteria check: every golden fixture, every REQUIREMENTS row marked Implemented, every UX item walked; then decide whether `/proto/` stays as history.
 
 ## Future (not scheduled)

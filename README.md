@@ -9,14 +9,17 @@ A GRACE document is a tree of claims under a thesis (argument mode) or under dec
 - `docs/spec/`: the product and method contract lifted from the prototype handoff, locked by a hook and a CI check.
 - The quality system from the owner's other projects: principles, review lenses, skills, hooks, the issue-sized workflow.
 
-- `src/domain/`: the new pure TypeScript domain (model, parser, `evidence-v3-links` engine, feasibility, ballots, rankings), reproducing the prototype on 38 golden fixtures generated from its engine.
+- `src/domain/`: the pure TypeScript domain (model, parser, `evidence-v3-links` engine, commands, serialization, feasibility, ballots, rankings), reproducing the prototype on 38 golden fixtures and 60 replayed edits.
+- `src/app/`: the new React + Vite app — argument and decision modes, canvas, inspector with reviews, comments, keyboard, autosave, JSON export/open, four themes, nine languages — with Playwright walks.
 
-Not implemented yet: commands, serialization, locales and the new UI (`docs/ISSUE-PLAN.md`).
+Not there yet: ballots UI, the repeated-reason shelf, table view, exports, document library, AI flows (`docs/ISSUE-PLAN.md`).
 
 ## Quick start (Node 24, see `.nvmrc`)
 ```sh
 npm ci
+npm run dev            # the app on http://127.0.0.1:5173
 npm run check          # docs, spec lock, lint, typecheck, format, unit and golden tests
+npm run build && npm run e2e   # Playwright walks (npm run e2e:install once)
 npm run golden         # regenerate tests/golden from the prototype engine (diff = drift)
 npm run proto:check    # the prototype's 372 tests
 npm run proto:build    # static site in witt-grace-gpt-proto/dist (and the one-file standalone)
@@ -32,7 +35,8 @@ docs/principles/        architecture-time, code-time and security principles · 
 witt-grace-gpt-proto/   the frozen prototype (its own package.json, src, tests, tools, docs)
 scripts/                check-docs.mjs, check-spec-lock.mjs (Node, no dependencies)
 .claude/                hooks (protect files, guard bash) and skills (dev, feature, verify, review)
-src/domain/             pure domain · tests/unit, tests/golden · src/lib, src/app, locales/ arrive with WG-004…WG-007
+src/domain/             pure domain · src/lib/ storage, files, i18n · src/app/ the React app · locales/ the table
+tests/unit tests/golden tests/e2e
 ```
 
 ## Documentation

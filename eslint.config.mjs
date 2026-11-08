@@ -1,6 +1,7 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
 
 /** Dependency direction: app -> lib + domain; lib -> domain; domain -> other domain modules only (no builtins, no DOM). */
 const needsExtension = {
@@ -26,6 +27,15 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   { files: ['src/**/*.ts', 'src/**/*.tsx'], languageOptions: { globals: globals.browser } },
+  {
+    files: ['src/app/**/*.tsx', 'src/app/**/*.ts'],
+    plugins: { 'react-hooks': reactHooks },
+    rules: { ...reactHooks.configs.recommended.rules },
+  },
+  {
+    files: ['tests/e2e/**/*.ts', 'playwright.config.ts', 'vite.config.ts'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
   {
     files: ['src/domain/**/*.ts'],
     rules: {

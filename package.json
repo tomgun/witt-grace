@@ -8,7 +8,7 @@
     "node": ">=22.18 <27"
   },
   "scripts": {
-    "dev": "echo \"the new app arrives with WG-007; until then: npm run proto:dev\" && exit 1",
+    "dev": "vite",
     "test": "node --experimental-strip-types --test \"tests/**/*.test.ts\"",
     "golden": "node scripts/golden-from-proto.mjs",
     "typecheck": "tsc --noEmit",
@@ -19,7 +19,12 @@
     "proto:check": "npm --prefix witt-grace-gpt-proto run check",
     "proto:build": "npm --prefix witt-grace-gpt-proto run build && cd witt-grace-gpt-proto && node tools/verify-pages-build.cjs",
     "proto:dev": "npm --prefix witt-grace-gpt-proto run dev",
-    "i18n": "node scripts/generate-locales.ts"
+    "i18n": "node scripts/generate-locales.ts",
+    "build": "vite build",
+    "preview": "vite preview",
+    "e2e": "playwright test",
+    "e2e:local": "npm run build && playwright test",
+    "e2e:install": "playwright install --with-deps chromium"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.0",

@@ -20,8 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: install (no-op until dependencies exist)
-        run: if [ -f package-lock.json ]; then npm ci; fi
+          cache: npm
+      - run: npm ci
       - name: docs links, spec index, lens placeholders
         run: node scripts/check-docs.mjs
       - name: spec lock (a spec change carries a changelog line)
@@ -31,13 +31,36 @@ jobs:
           else
             node scripts/check-spec-lock.mjs --base HEAD~1
           fi
-      - name: lint, typecheck, format, unit and golden tests (from WG-003)
-        run: |
-          if node -e "const s=require('./package.json').scripts; process.exit(s.lint&&s.typecheck&&s.test?0:1)"; then
-            npm run lint && npm run typecheck && npm run format:check && npm test
-          else
-            echo "not-run: lint/typecheck/test scripts not defined yet (WG-003)"
-          fi
+      - name: lint, typecheck, format, unit and golden tests
+        run: npm run lint && npm run typecheck && npm run format:check && npm test
+      - name: build the app
+        run: npm run build
+      - name: audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+  browser:
+    name: browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: build
+        run: npm run build
+      - name: install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: browser walks (desktop 1440×900 and mobile 390×844, keyboard first)
+        run: npx playwright test
+      - name: playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
   prototype:
     name: prototype
     runs-on: ubuntu-latest
