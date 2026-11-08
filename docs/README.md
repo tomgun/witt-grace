@@ -12,6 +12,7 @@ Always: `README.md` (quick start, layout) and `docs/STATUS.md` (what exists, wha
 | Picking work | `docs/ISSUE-PLAN.md` (P0 first), later the GitHub milestone |
 | Planning a feature or a review round | `docs/principles/*` and the lens docs in `docs/lenses/` the change earns (`/feature`, `/review`) |
 | Running or comparing against the prototype | `docs/PROTOTYPE_REFERENCE.md`; the prototype's own docs under `witt-grace-gpt-proto/docs/` are history, not instructions |
+| Explaining the app to a person, or checking that a feature is documented | `docs/KAYTTOOHJE.md` (fi) and `docs/USER_GUIDE.md` (en) — updated in the same change as the feature |
 | Privacy, storage and what the app must never claim | `docs/spec/SECURITY_AND_PRIVACY.md` |
 | Future collaboration | `docs/spec/P2P_NO_DATABASE_RFC_R1.md` (agreed boundary; proposed protocol), `docs/spec/FUTURE_BACKLOG.md` |
 

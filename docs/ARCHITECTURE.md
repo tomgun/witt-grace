@@ -1,15 +1,15 @@
 # Architecture
 
-**Status: proposed target (ADR A003), no code yet.** The shape is the one the owner's other projects use and the one the prototype's audit recommended: a pure domain, thin infrastructure, and a UI that only renders and dispatches. The prototype's monolith (`witt-grace-gpt-proto/src/app.js`, 4 333 lines of DOM wiring) is what this replaces; its pure engine (`src/core.js`) is what the golden fixtures are generated from.
+**Status: implemented as described since WG-007 (2026-11-08); ADRs A002, A003, A005.** A pure domain, thin infrastructure, and a UI that only renders and dispatches. The prototype's monolith (`witt-grace-gpt-proto/src/app.js`, 4 333 lines of DOM wiring) is what this replaces; its pure engine (`src/core.js`) is what the golden fixtures are generated from.
 
 ```text
-   person ──► src/app      UI: tree, table, inspector, menus, docking, dialogs (framework per ADR A005)
-                 │ dispatches commands, renders a view model
-              src/lib      browser infrastructure: storage adapter, file open/save, clipboard,
-                 │         i18n catalog loading, SVG/PNG/PDF renderers, id and clock providers
+   person ──► src/app      React 19: store (useSyncExternalStore) → dispatch(Command) → applyCommand; components render
+                 │         TopBar, Toolbar, Outline + RepeatShelf, Canvas | TableView, Inspector, dialogs
+              src/lib      browser infrastructure: storage adapter (localStorage), files (download, picker),
+                 │         i18n (generated catalog + translator), providers (newId, nowIso)
               src/domain   pure functions over the v8 document:
-                           model (types, closed sets) · parse (the boundary) · scoring (evidence-v3-links)
-                           aggregation · eligibility · reasons and concepts · ballots · commands · serialize
+                           model (types, closed sets) · parse (the boundary) · scoring (evidence-v3-links) · reviews
+                           eligibility · ballots · ranking · views · commands (46 serializable types) · serialize
 ```
 
 ## Folders and the dependency rule
@@ -37,7 +37,7 @@ Everything volatile is passed in: `now` (ISO timestamp), `newId` (UUID source), 
 
 ## Flows
 - **Open**: file or storage → `parseProject` (refuses unknown versions, cycles, orphans, duplicate IDs, foreign authorship) → typed `Project` → render. A refused document never touches the current one.
-- **Edit**: UI event → one command `(project, input, {now, newId}) → project` → autosave through the storage adapter → render. Undo/redo is a stack of projects (or inverse commands) in `src/lib`, never inside the domain.
+- **Edit**: UI event → `store.dispatch(command)` → `applyCommand(project, command, { now, actorId })` → autosave through the storage adapter → render. Ids are minted by the UI (`newId`) and carried inside the command, so the same command log replays identically on another peer: the command log is the future P2P event log (`docs/spec/P2P_NO_DATABASE_RFC_R1.md`), no second engine needed. Undo/redo is a stack of past documents in the store.
 - **Score**: `score(project, viewpoint, weighting)` is a pure read; the UI calls it per render and caches by project identity. View state (theme, pan, zoom, pane visibility, depth filter, dock position) lives in `src/lib` storage under its own key and never enters the document.
 - **AI round-trip**: `buildAiTask(project, locale)` (domain, deterministic text + schema) → the person copies or downloads it → pastes the reply → `parseAiDraft` → `previewContributions(project, draft)` (domain diff) → the person accepts a subset → `applyContributions`. No network call anywhere.
 - **Contribution bundle**: `diffProjects(original, modified, authorIds)` → bundle v1 → recipient previews and applies per author; author IDs survive untouched.
@@ -47,7 +47,7 @@ Everything volatile is passed in: `now` (ISO timestamp), `newId` (UUID source), 
 `localStorage` keys: the current project (autosave), the document library, the view preferences (`witt-view-v1`). Replacing the current project needs the confirmation that names its title, mode, node count and timestamps (UX-E06). Quota, private mode and corrupt JSON are surfaced, never swallowed. IndexedDB arrives with P2P logs.
 
 ## Errors people can see
-Filled per surface at WG-007 in the same shape as the prototype's Finnish messages: what happened, why, the next action. A refused import names the version or the first invalid path; a storage failure names the key and the cause.
+A refused command or import surfaces as a notice bar (`role="alert"`) with the domain's Finnish message (the prototype's texts: "Tiedoston formaattiversiota ei tueta…", "Uusi vanhempi on virheellinen…"); the document stays as it was. A storage failure sets the save status to "Selaintallennus epäonnistui – vie JSON-tiedosto" and shows the cause. Replacing the open work asks first and names the title, mode, node count and last edit.
 
 ## Glossary (fi)
 Argumentointi = argument mode · Päätös = decision mode · väite = claim · vaihtoehto = option · ryhmä = option group · uskottavuus = credence 0–100 % · vaikutus = signed influence −5…+5 · perustelusaldo = argument balance −100…+100 · Toistuvat perustelut = the repeated-reason shelf · Luo kirjastoon = create a concept card · Liitä myös muihin solmuihin… = attach this claim under other targets · Näkymäasetukset = view settings dock · Tallennettu selaimeen = browser-save status · AI-tehtävä = the AI task text · Tuo / vie muutoksia = contribution bundle import/export.

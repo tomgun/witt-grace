@@ -4,6 +4,9 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ## [Unreleased]
 
+### Added
+- WG-016 (part): the user guide in Finnish (`docs/KAYTTOOHJE.md`) and English (`docs/USER_GUIDE.md`) describing what the new app does today; `check-docs` fails when either is missing; `docs/ARCHITECTURE.md` now describes the implemented structure and names the command log as the future P2P event log.
+
 ### Fixed
 - WG-022 (part): on a 390 px viewport the canvas collapsed to zero height between the outline and the inspector; it now keeps at least 40 vh and the browser suite asserts the tree is visible after the table switch on mobile.
 

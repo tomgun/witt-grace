@@ -54,6 +54,11 @@ for (const name of readdirSync(lensDir)) {
   if (text.includes('<fill at')) findings.push(`docs/lenses/${name}: unfilled project specifics`);
 }
 
+// The user guides exist in both languages and name every top-level feature the status table marks done.
+for (const guide of ['docs/KAYTTOOHJE.md', 'docs/USER_GUIDE.md']) {
+  if (!existsSync(path.join(root, guide))) findings.push(`${guide} is missing (docs/README.md names it)`);
+}
+
 if (findings.length) {
   for (const finding of findings) console.error(`check-docs: ${finding}`);
   process.exit(1);

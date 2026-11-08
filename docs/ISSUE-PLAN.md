@@ -20,7 +20,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-013** People and AI: local profiles, viewpoint selector, AI isolation, AI task copy/TXT parity, proposal preview and granular acceptance, contribution bundle UI (U-01…U-06).
 - [ ] **WG-014** Workspace: File/Edit/View/Help menus, four-pane docking `Alt+1..4`, `Näkymäasetukset` dock `Alt+V`, keyboard camera, depth slider, themes incl. Bitberg, 390 px layout (UX-B01…B08).
 - [ ] **WG-015** PARTIAL 2026-11-08: the table view with search and filter is done and walked; open: PNG (single then tiles), SVG, multi-page PDF exports that never mutate (UX-E08).
-- [ ] **WG-016** User guide (fi, then en) and in-app help/tutorial, kept current by the docs check; examples library (synthetic) bundled.
+- [ ] **WG-016** PARTIAL 2026-11-08: the user guide exists in Finnish and English and the docs check requires both; open: in-app help/tutorial and the synthetic examples library.
 
 ## Housekeeping (P2)
 - [ ] **WG-017** License decision and `LICENSE` file; until then the notice in `witt-grace-gpt-proto/LICENSE-NOTICE.md` stands.

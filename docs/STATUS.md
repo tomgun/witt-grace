@@ -19,6 +19,7 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 | Docs check: local links, every spec listed in the spec index, no unfilled lens placeholder | DONE-verified(sandbox) | `scripts/check-docs.mjs` |
 | Principles and lenses with WITT project specifics | DONE-source | `docs/principles/`, `docs/lenses/` |
 | Skills `/dev`, `/feature`, `/verify`, `/review` | DONE-source | `.claude/skills/` |
+| User guide (fi, en) for the new app; `check-docs` requires both | DONE-source | `docs/KAYTTOOHJE.md`, `docs/USER_GUIDE.md` |
 | CI: `checks` and `prototype` jobs | DONE-source — not yet run on GitHub | `.github/workflows/ci.yml` |
 | Pages: prototype at `/proto/`, landing page at `/` | DONE-source — not yet run on GitHub | `.github/workflows/pages.yml` |
 | GitHub repository `tomgun/witt-grace` with the first push, branch protection, Pages source | OPEN | `CONTRIBUTING.md` |
