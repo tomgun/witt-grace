@@ -210,6 +210,7 @@ export function Canvas({ scores }: { scores: Scores }) {
                               ? t('opposeWord')
                               : t('neutralWord')}
                     </span>
+                    {node.reasonConceptId ? <span className="node-badge">{t('contextBadge')}</span> : null}
                     {state.view.showAuthors ? (
                       <span className="node-author">
                         {project.users.find((u) => u.id === node.createdBy)?.name}

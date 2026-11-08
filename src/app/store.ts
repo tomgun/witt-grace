@@ -26,6 +26,7 @@ export type Viewpoint = 'shared' | 'personal';
 export type Layout = 'tree' | 'table';
 export interface ViewState {
   layout: Layout;
+  leftTab: 'tree' | 'repeat';
   zones: Record<Zone, boolean>;
   dockOpen: boolean;
   viewpoint: Viewpoint;
@@ -51,6 +52,7 @@ export interface AppState {
 
 const defaultView: ViewState = {
   layout: 'tree',
+  leftTab: 'tree',
   zones: { left: true, top: true, right: true, bottom: false },
   dockOpen: false,
   viewpoint: 'shared',

@@ -575,6 +575,33 @@ export function canAttachReasonConcept(p: Project, id: string, parentId: string)
   if ((p.links ?? []).some((link) => link.targetId === parentId && sources.has(link.sourceId))) return false;
   return true;
 }
+/** Would `concept.reuse` of `sourceId` at `targetId` succeed? The source may or may not be a concept yet. */
+export function canReuseClaimAt(p: Project, sourceId: string, targetId: string): boolean {
+  const source = p.nodes.find((n) => n.id === sourceId);
+  const parent = source?.parentId ? p.nodes.find((n) => n.id === source.parentId) : undefined;
+  if (
+    !source ||
+    source.kind !== 'claim' ||
+    !parent ||
+    !['claim', 'option'].includes(parent.kind) ||
+    source.sharedReasonId
+  )
+    return false;
+  if (sourceId === targetId || source.parentId === targetId) return false;
+  const target = p.nodes.find((n) => n.id === targetId);
+  if (!target || !['claim', 'option'].includes(target.kind) || target.sharedReasonId) return false;
+  if (source.reasonConceptId) return canAttachReasonConcept(p, source.reasonConceptId, targetId);
+  // Not yet a concept: simulate the promotion on a clone and ask the real predicate.
+  const draft = structuredClone(p);
+  const conceptId = '__probe__';
+  draft.reasonConcepts = [
+    ...(draft.reasonConcepts ?? []),
+    { id: conceptId, title: source.title, semanticType: 'fact' },
+  ];
+  const probe = draft.nodes.find((n) => n.id === sourceId) as Node;
+  probe.reasonConceptId = conceptId;
+  return canAttachReasonConcept(draft, conceptId, targetId);
+}
 function attachReasonConcept(
   p: Project,
   id: string,

@@ -1,5 +1,6 @@
 import { childrenOf, rootNode } from '../domain/index.ts';
 import type { Node, Project } from '../domain/index.ts';
+import { RepeatShelf } from './RepeatShelf.tsx';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
 function OutlineItem({ project, node, depth }: { project: Project; node: Node; depth: number }) {
@@ -32,9 +33,12 @@ function OutlineItem({ project, node, depth }: { project: Project; node: Node; d
 
 /** The left panel: the tree as an outline (UX-A08 companion to the canvas). */
 export function Outline() {
-  const { project } = useAppState();
+  const state = useAppState();
+  const { project } = state;
   const t = useTranslator();
+  const store = getStore();
   const root = rootNode(project);
+  const tab = state.view.leftTab;
   return (
     <aside className="sidepanel leftpanel" aria-label={t('tree')} data-testid="outline">
       <div className="panel-heading">
@@ -46,10 +50,36 @@ export function Outline() {
           {project.nodes.length}
         </span>
       </div>
-      <div className="sidepanel-label">{t('structure')}</div>
-      <nav aria-label={t('tree')} className="tree-outline">
-        {root ? <OutlineItem project={project} node={root} depth={0} /> : null}
-      </nav>
+      <div className="left-panel-tabs" role="group" aria-label={`${t('repeatTreeTab')} / ${t('repeatTab')}`}>
+        <button
+          type="button"
+          className={tab === 'tree' ? 'active' : ''}
+          aria-pressed={tab === 'tree'}
+          data-testid="left-tab-tree"
+          onClick={() => store.setView({ leftTab: 'tree' })}
+        >
+          {t('repeatTreeTab')}
+        </button>
+        <button
+          type="button"
+          className={tab === 'repeat' ? 'active' : ''}
+          aria-pressed={tab === 'repeat'}
+          data-testid="left-tab-repeat"
+          onClick={() => store.setView({ leftTab: 'repeat' })}
+        >
+          {t('repeatTab')}
+        </button>
+      </div>
+      {tab === 'repeat' ? (
+        <RepeatShelf />
+      ) : (
+        <>
+          <div className="sidepanel-label">{t('structure')}</div>
+          <nav aria-label={t('tree')} className="tree-outline">
+            {root ? <OutlineItem project={project} node={root} depth={0} /> : null}
+          </nav>
+        </>
+      )}
     </aside>
   );
 }

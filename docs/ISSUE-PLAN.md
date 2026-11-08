@@ -16,7 +16,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-009** Browser tests (A009): keyboard walks of the WG-007 slice; screenshot comparison against the prototype.
 - [ ] **WG-010** Persistence: storage adapter, autosave, document library, the replacement confirmation (UX-E06), low-prominence save status, quota/private-mode errors visible.
 - [x] **WG-011** DONE 2026-11-08: options overview, gates from the inspector, ballot dialog with frozen rounds and share weighting, people dialog with the pooled-weighting choice; a two-person ballot walk in Playwright. Groups: addable and structural (no rating, no ballot slot); a group inspector of its own is still open.
-- [ ] **WG-012** Repeated reasons: the card shelf, `Luo kirjastoon`, `Liitä myös muihin solmuihin…`, per-context ratings, route notes, locked shared reasons as advanced (UX-C01…C07).
+- [ ] **WG-012** PARTIAL 2026-11-08: the shelf, `Luo kirjastoon`, `Liitä myös muihin solmuihin…`, per-context ratings and the concept box are done and walked; open: drag a card onto a node, route notes for secondary links, locked shared reasons as an advanced option, renaming a concept from the shelf (UX-C03, C06, C05, C07).
 - [ ] **WG-013** People and AI: local profiles, viewpoint selector, AI isolation, AI task copy/TXT parity, proposal preview and granular acceptance, contribution bundle UI (U-01…U-06).
 - [ ] **WG-014** Workspace: File/Edit/View/Help menus, four-pane docking `Alt+1..4`, `Näkymäasetukset` dock `Alt+V`, keyboard camera, depth slider, themes incl. Bitberg, 390 px layout (UX-B01…B08).
 - [ ] **WG-015** PARTIAL 2026-11-08: the table view with search and filter is done and walked; open: PNG (single then tiles), SVG, multi-page PDF exports that never mutate (UX-E08).
@@ -25,6 +25,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 ## Housekeeping (P2)
 - [ ] **WG-017** License decision and `LICENSE` file; until then the notice in `witt-grace-gpt-proto/LICENSE-NOTICE.md` stands.
 - [ ] **WG-018** Pin GitHub Actions by commit SHA; Dependabot triage policy.
+- [ ] **WG-022** PARTIAL 2026-11-08: at 390 px the canvas now keeps at least 40 vh (outline ≤ 22 vh, inspector ≤ 30 vh); open: collapsible sheets so a person can give the tree the whole height (UX-B08).
 - [ ] **WG-019** Accessibility pass (axe on every top-level view; keyboard-only walks; contrast of every theme) before calling the new app a replacement.
 - [ ] **WG-021** Split the locale catalog per language and load the active one lazily (the nine-language catalog is 490 kB of the 770 kB bundle).
 - [ ] **WG-020** Prototype retirement criteria check: every golden fixture, every REQUIREMENTS row marked Implemented, every UX item walked; then decide whether `/proto/` stays as history.

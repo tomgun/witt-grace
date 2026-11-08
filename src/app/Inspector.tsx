@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { ReuseDialog } from './ReuseDialog.tsx';
 import {
   assessmentFields,
   canReparent,
   isAiProfile,
   personalCredence,
   personalInfluence,
+  reasonConcept,
   rootNode,
   truthAssessable,
 } from '../domain/index.ts';
@@ -145,8 +147,10 @@ export function Inspector({ scores }: { scores: Scores }) {
   const t = useTranslator();
   const store = getStore();
   const { project } = state;
+  const [reuseSource, setReuseSource] = useState<string | null>(null);
   const node = project.nodes.find((n) => n.id === state.selectedId);
   if (!node) return <aside className="sidepanel inspector-panel" aria-label={t('selectedNode')} />;
+  const concept = node.reasonConceptId ? reasonConcept(project, node.reasonConceptId) : null;
   const score = scores.get(node.id);
   const root = rootNode(project);
   const isRoot = node.parentId === null;
@@ -170,6 +174,46 @@ export function Inspector({ scores }: { scores: Scores }) {
       </div>
       <div className="inspector-body">
         <p className="inspector-note">{isRoot ? t('rootNote') : t('impactNote')}</p>
+        {node.kind === 'claim' &&
+        parent &&
+        (parent.kind === 'claim' || parent.kind === 'option') &&
+        !node.sharedReasonId ? (
+          <button
+            type="button"
+            className="btn primary repeat-from-node"
+            data-testid="reuse-open"
+            disabled={!canEdit}
+            onClick={() => setReuseSource(node.id)}
+          >
+            {t('repeatLinkOtherTargets')}
+          </button>
+        ) : null}
+        {concept ? (
+          <section className="shared-locked-inspector" data-testid="concept-box">
+            <strong>{t('contextBadge')}</strong>
+            <p>{t('contextUseHelp', { name: concept.title })}</p>
+            <p>{t('repeatReviewContext', { target: parent?.title ?? '' })}</p>
+            <div className="dialog-actions">
+              <button
+                type="button"
+                className="btn quiet"
+                onClick={() =>
+                  store.setView({ leftTab: 'repeat', zones: { ...state.view.zones, left: true } })
+                }
+              >
+                {t('contextManage')}
+              </button>
+              <button
+                type="button"
+                className="btn quiet"
+                disabled={!canEdit}
+                onClick={() => store.dispatch({ type: 'concept.detach', nodeId: node.id })}
+              >
+                {t('contextDetach')}
+              </button>
+            </div>
+          </section>
+        ) : null}
         <TextField
           key={`${node.id}:title:${node.title}`}
           id="nodeTitle"
@@ -395,6 +439,7 @@ export function Inspector({ scores }: { scores: Scores }) {
           </p>
         ) : null}
       </div>
+      <ReuseDialog sourceId={reuseSource} onClose={() => setReuseSource(null)} />
     </aside>
   );
 }
