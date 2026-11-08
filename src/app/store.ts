@@ -23,7 +23,9 @@ export type Appearance = (typeof APPEARANCES)[number];
 export type Zone = 'left' | 'top' | 'right' | 'bottom';
 export type Viewpoint = 'shared' | 'personal';
 
+export type Layout = 'tree' | 'table';
 export interface ViewState {
+  layout: Layout;
   zones: Record<Zone, boolean>;
   dockOpen: boolean;
   viewpoint: Viewpoint;
@@ -48,6 +50,7 @@ export interface AppState {
 }
 
 const defaultView: ViewState = {
+  layout: 'tree',
   zones: { left: true, top: true, right: true, bottom: false },
   dockOpen: false,
   viewpoint: 'shared',

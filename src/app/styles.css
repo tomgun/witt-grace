@@ -1122,3 +1122,74 @@ body[data-theme='bitberg'] .node-meta {
   font-size: 11px;
   color: var(--muted);
 }
+
+.table-switch {
+  display: flex;
+  gap: 2px;
+}
+.table-switch .btn.active {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  border-color: transparent;
+}
+.table-area {
+  min-width: 0;
+  overflow: auto;
+  background: var(--canvas);
+  padding: 0 0 20px;
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 18px 20px 8px;
+}
+.table-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.argument-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+.argument-table th,
+.argument-table td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.argument-table thead th {
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  position: sticky;
+  top: 0;
+  background: var(--canvas);
+}
+.argument-table tr.selected {
+  background: var(--accent-soft);
+}
+.argument-table tr[data-relation='support'] th {
+  border-left: 3px solid var(--green);
+}
+.argument-table tr[data-relation='oppose'] th {
+  border-left: 3px solid var(--red);
+}
+.argument-table tr[data-relation='option'] th {
+  border-left: 3px solid var(--option);
+}
+.table-claim {
+  padding: 2px 6px;
+  font-weight: 650;
+  text-align: left;
+}
+.table-context {
+  color: var(--muted);
+}

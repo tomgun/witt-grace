@@ -153,6 +153,26 @@ export function Toolbar({
           ))}
           <option value="__add__">{t('profileAdd')}</option>
         </select>
+        <div className="table-switch" role="group" aria-label={t('tableViewGroup')}>
+          <button
+            type="button"
+            className={`btn quiet${state.view.layout === 'tree' ? ' active' : ''}`}
+            aria-pressed={state.view.layout === 'tree'}
+            data-testid="layout-tree"
+            onClick={() => store.setView({ layout: 'tree' })}
+          >
+            {t('treeView')}
+          </button>
+          <button
+            type="button"
+            className={`btn quiet${state.view.layout === 'table' ? ' active' : ''}`}
+            aria-pressed={state.view.layout === 'table'}
+            data-testid="layout-table"
+            onClick={() => store.setView({ layout: 'table' })}
+          >
+            {t('tableView')}
+          </button>
+        </div>
         <label className="visually-hidden" htmlFor="viewpointSelect">
           {t('indexDisplay')}
         </label>

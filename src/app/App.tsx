@@ -5,6 +5,7 @@ import { Canvas } from './Canvas.tsx';
 import { Inspector } from './Inspector.tsx';
 import { Modal, NoticeBar } from './dialogs.tsx';
 import { Outline } from './Outline.tsx';
+import { TableView } from './TableView.tsx';
 import { PeopleDialog } from './PeopleDialog.tsx';
 import { VoteDialog } from './VoteDialog.tsx';
 import { Toolbar } from './Toolbar.tsx';
@@ -123,7 +124,7 @@ export function App() {
         data-testid="workspace"
       >
         {zones.left ? <Outline /> : null}
-        <Canvas scores={scores} />
+        {view.layout === 'table' ? <TableView scores={scores} /> : <Canvas scores={scores} />}
         {zones.right ? <Inspector scores={scores} /> : null}
       </main>
       {zones.bottom ? (

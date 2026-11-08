@@ -34,7 +34,8 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 | Locales: `locales/messages.psv` (866 keys × 9 languages, the prototype's table) → generated typed catalog `src/lib/i18n/catalog.ts` (`npm run i18n`); `translate`/`translator`; tests pin catalog sync, completeness, placeholder parity and the Finnish glossary | DONE-verified(unit, sandbox) | `scripts/generate-locales.ts`, `src/lib/i18n/`, `tests/unit/i18n.test.ts` |
 | React 19 + Vite app (A005): top bar with title, four zone toggles (`Alt+1..4`), language and theme (light, dark, paper, Bitberg); toolbar with Argumentointi/Päätös, person and viewpoint selectors, File/Edit/View/Help menus; outline; pannable, zoomable canvas with draggable cards, edges, balance and `75%/+5` pairs; inspector with title, details, relation, parent, semantic type, gate status, score explanation, personal review sliders, comments; bottom zone; view-settings dock (`Alt+V`); keyboard `+`/`−`/`Del`/`F2`/`Ctrl+Z`; autosave to the prototype's storage key; JSON export/open with the replacement confirmation; new document | DONE-verified(e2e, sandbox): 7 keyboard-first walks at 1440×900 and 390×844 | `src/app/*`, `tests/e2e/argument-walk.spec.ts` |
 | Decision mode: options and groups, gates from the inspector, the options overview for the decision root (feasibility badge, balance, preference), the ballot dialog (weights frozen per round, hidden interim results, per-person ballots, retract, close, archived rounds), the people dialog (names, vote shares, pooled-weighting choice, switch, remove) | DONE-verified(e2e, sandbox): a two-person ballot walk | `src/app/VoteDialog.tsx`, `src/app/PeopleDialog.tsx`, `src/app/DecisionOverview.tsx`, `tests/e2e/decision-walk.spec.ts` |
-| Repeated-reason shelf, table view, PNG/SVG/PDF exports, document library, AI flows, contribution bundles, depth slider, focus highlighting, tutorial, examples | OPEN | WG-010, WG-012…WG-016 |
+| Table view beside the tree: every claim in logical order with relation, context, this person's credence and influence, balance; search and relation filter; a Content-Security-Policy on the page (self only, no inline script) | DONE-verified(e2e, sandbox) | `src/app/TableView.tsx`, `index.html` |
+| Repeated-reason shelf, PNG/SVG/PDF exports, document library, AI flows, contribution bundles, depth slider, focus highlighting, tutorial, examples | OPEN | WG-010, WG-012…WG-016 |
 | P2P rooms | DESIGNED | `docs/spec/P2P_NO_DATABASE_RFC_R1.md` |
 
 ## Known limitations (documented behaviour, not bugs)
@@ -43,8 +44,8 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 - Nothing has been pushed to GitHub yet; CI and Pages are unverified until the first push.
 
 ## Next 5
-1. WG-015 — table view beside the tree (UX-A08) and the first export.
-2. WG-012 — repeated-reason shelf and "Liitä myös muihin solmuihin…".
-3. WG-010 — document library and the persistence edge cases.
-4. WG-013 — contribution bundle v1 and AI draft v2 parsers and flows.
+1. WG-012 — repeated-reason shelf and "Liitä myös muihin solmuihin…".
+2. WG-010 — document library and the persistence edge cases.
+3. WG-013 — contribution bundle v1 and AI draft v2 parsers and flows.
+4. WG-015 — PNG/SVG/PDF exports (the table half is done).
 5. WG-001 close-out — push, enable Pages, confirm CI and `/proto/` live (owner).

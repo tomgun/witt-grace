@@ -105,3 +105,29 @@ test('switching to decision mode offers options; Bitberg theme applies', async (
   await page.getByTestId('theme-select').selectOption('bitberg');
   await expect(page.locator('body')).toHaveAttribute('data-theme', 'bitberg');
 });
+
+test('the table view lists every claim with its relation, context and review', async ({ page }) => {
+  await page.getByTestId('viewport').focus();
+  await page.keyboard.press('+');
+  await page.getByTestId('node-title').fill('Hinta on alhainen');
+  await page.getByTestId('node-title').press('Enter');
+  await page.getByTestId('review-credence').fill('80');
+  await page.getByTestId('review-influence').fill('3.5');
+  await page.getByTestId('review-save').click();
+  await page.getByTestId('layout-table').click();
+  const rows = page.locator('[data-testid^="table-row-"]');
+  await expect(rows).toHaveCount(2);
+  const reason = rows.nth(1);
+  await expect(reason).toContainText('Hinta on alhainen');
+  await expect(reason).toContainText('Puoltava');
+  await expect(reason).toContainText('80%');
+  await expect(reason).toContainText('+3.5');
+  await expect(page.getByTestId('table-count')).toHaveText('Näytetään 2/2 väitettä');
+  await page.getByTestId('table-filter').selectOption('oppose');
+  await expect(page.getByTestId('table-count')).toHaveText('Näytetään 0/2 väitettä');
+  await page.getByTestId('table-filter').selectOption('all');
+  await page.getByTestId('table-search').fill('hinta');
+  await expect(rows).toHaveCount(1);
+  await page.getByTestId('layout-tree').click();
+  await expect(page.getByTestId('viewport')).toBeVisible();
+});
