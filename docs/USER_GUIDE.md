@@ -121,7 +121,7 @@ Choose the stage *Punnitse*. In *Kartoita* the inspector only says *Uskottavuus 
 
 **Panels**: `Alt+1` left, `Alt+2` top (the toolbar), `Alt+3` right, `Alt+4` bottom; the top bar's buttons ◧ ▤ ◨ ▥. The choice is remembered. On a narrow window (≤ 1000 px) the left panel starts hidden and at ≤ 600 px the app opens in the table; at 390 px the panels stack.
 
-**Themes**: Light, Dark, Paper, Star map, Hologram, Manuscript, Quill pen and Night colours. The first three are saved in the document (and travel with the file); the others are per browser. **Languages**: Finnish, German, English, Spanish, French, Russian, Simplified Chinese, Japanese and Korean; switching is immediate and remembered.
+**Themes**: Light, Dark, Paper, Star map, Hologram, Manuscript, Quill pen, Night colours, Terminal (green on black like an old terminal), ASCII (cards and tree lines drawn from characters) and Comic (hand-drawn, xkcd-like). The first three are saved in the document (and travel with the file); the others are per browser. **Languages**: Finnish, German, English, Spanish, French, Russian, Simplified Chinese, Japanese and Korean; switching is immediate and remembered.
 
 ## 7. Files and sharing
 

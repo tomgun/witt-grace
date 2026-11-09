@@ -40,6 +40,7 @@ import {
   shownInfluence,
   signed,
 } from './derive.ts';
+import { asciiEdgeParts } from './AsciiEdge.tsx';
 import { dropRestoredGhosts } from './fade.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
@@ -399,15 +400,28 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             ? 'focus-context'
             : 'focus-muted'
       );
+    const d = edgeGeometry(parent, child, view.orientation, CARD_W, H, positionsForEdges, frame.directions);
+    const importanceDelta =
+      effect && frame.importance.importantIds.has(child.id) ? String(effect.delta) : undefined;
+    if (state.appearance === 'ascii')
+      return [
+        <g
+          key={child.id}
+          className={`${classes.join(' ')} ascii-edge`}
+          data-focus-stance={focusing ? view.focus.mode : undefined}
+          data-importance-delta={importanceDelta}
+        >
+          {title ? <title>{title}</title> : null}
+          {asciiEdgeParts(d)}
+        </g>,
+      ];
     return [
       <path
         key={child.id}
         className={classes.join(' ')}
         data-focus-stance={focusing ? view.focus.mode : undefined}
-        data-importance-delta={
-          effect && frame.importance.importantIds.has(child.id) ? String(effect.delta) : undefined
-        }
-        d={edgeGeometry(parent, child, view.orientation, CARD_W, H, positionsForEdges, frame.directions)}
+        data-importance-delta={importanceDelta}
+        d={d}
       >
         {title ? <title>{title}</title> : null}
       </path>,
@@ -830,6 +844,16 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`}
           >
             <defs>
+              <filter id="wittSketch" x="-5%" y="-5%" width="110%" height="110%">
+                <feTurbulence
+                  type="fractalNoise"
+                  baseFrequency="0.03"
+                  numOctaves="2"
+                  seed="7"
+                  result="noise"
+                />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" />
+              </filter>
               <marker
                 id="secondary-support-arrow"
                 markerWidth="8"

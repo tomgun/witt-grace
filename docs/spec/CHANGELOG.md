@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-09 — `UI_INVENTORY.md` — Owner decision: three added themes Terminaali, ASCII and Sarjakuva (S-00 row, S-12 key values, S-15 decided deviation).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: × delete on cards, a leaf deletes without a confirm, deleted cards fade out (S-07 row, S-15 decided deviation).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: a ? help button in the top bar (S-02 row, S-15 decided deviation).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: undo ↶ and redo ↷ buttons in the top bar (S-02 row, S-15 decided deviation).

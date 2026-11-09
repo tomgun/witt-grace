@@ -21,6 +21,9 @@ export const APPEARANCE_KEYS: Record<Appearance, MessageKey> = {
   'manuscript-book': 'manuscriptBook',
   'manuscript-pen': 'manuscriptPen',
   bitberg: 'bitbergTheme',
+  terminal: 'terminalTheme',
+  ascii: 'asciiTheme',
+  comic: 'comicTheme',
 };
 export const ACRONYMS =
   'WITT = Web Interactive Thinking Tool · GRACE = Günther’s Reflective Argumentation & Collaborative Evaluation Method';

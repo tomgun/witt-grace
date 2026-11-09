@@ -5,7 +5,8 @@
  *       incomplete with †; the work survives a reload; Alt+1..4 and Alt+V toggle the zones and the dock; the file menu
  *       exports v8 JSON; decision mode adds options; themes and languages switch; the top bar's ↶/↷ undo and redo an
  *       added card and its ? opens help without widening the page; × or Delete removes a leaf without asking (a
- *       fading copy stays a second), a subtree asks first, and undo restores it (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
+ *       fading copy stays a second), a subtree asks first, and undo restores it; the added Terminaali, ASCII and
+ *       Sarjakuva themes apply and persist, and ASCII draws the edges as characters (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
  *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo
@@ -166,4 +167,25 @@ test('× deletes a leaf at once with a fading copy; a subtree asks first; undo r
   await expect(page.locator('.dialog-inner:visible')).toContainText('1');
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('node-count')).toHaveText('3');
+});
+
+test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browser and ASCII draws edges as text', async ({
+  page,
+}) => {
+  await startBlank(page, 'argument');
+  await addNamed(page, '#btnSupport', 'Theme child');
+  for (const [id, label] of [
+    ['terminal', '▮ Terminaali'],
+    ['ascii', '# ASCII'],
+    ['comic', '✎ Sarjakuva'],
+  ] as const) {
+    await page.locator('#themeSelect').selectOption(id);
+    await expect(page.locator('body')).toHaveAttribute('data-theme', id);
+    await expect(page.locator('#themeSelect option:checked')).toHaveText(label);
+    expect(await page.evaluate(() => localStorage.getItem('witt-appearance-v1'))).toBe(id);
+    await expect(page.locator('#edgePaths .ascii-edge')).toHaveCount(id === 'ascii' ? 1 : 0);
+    await expect(page.locator('#edgePaths path.edge')).toHaveCount(id === 'ascii' ? 0 : 1);
+  }
+  await page.reload();
+  await expect(page.locator('body')).toHaveAttribute('data-theme', 'comic');
 });

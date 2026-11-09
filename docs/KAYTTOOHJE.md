@@ -121,7 +121,7 @@ Valitse TYÖVAIHE **Punnitse**. Kartoita-vaiheessa oikea paneeli näyttää vain
 
 **Paneelit** `Alt+1` vasen, `Alt+2` yläpalkki (työkalurivi), `Alt+3` oikea, `Alt+4` alapalkki; yläpalkin painikkeet ◧ ▤ ◨ ▥. Valinta muistetaan selaimessa. Kapealla ikkunalla (≤ 1000 px) vasen paneeli alkaa piilotettuna, ja ≤ 600 px ikkuna avautuu taulukkoon; 390 px leveydellä paneelit pinoutuvat.
 
-**Ulkoasuteemat**: ☀ Vaalea, ☾ Tumma, ▤ Paperi, ✦ Tähtikartta, ◇ Hologrammi, ❧ Käsikirjoitus, ❧ Sulkakynä ja ◆ Yövärit. Kolme ensimmäistä tallentuvat asiakirjaan (ja kulkevat tiedoston mukana), muut ovat selainkohtaisia. **Kieli**: suomi, saksa, englanti, espanja, ranska, venäjä, kiina (yksinkertaistettu), japani ja korea; vaihtuu heti ja muistetaan selaimessa.
+**Ulkoasuteemat**: ☀ Vaalea, ☾ Tumma, ▤ Paperi, ✦ Tähtikartta, ◇ Hologrammi, ❧ Käsikirjoitus, ❧ Sulkakynä, ◆ Yövärit, ▮ Terminaali (vihreää tekstiä mustalla kuin vanhassa päätteessä), # ASCII (kortit ja puun viivat piirretään merkeistä) ja ✎ Sarjakuva (käsin piirretyn näköinen xkcd-tyyli). Kolme ensimmäistä tallentuvat asiakirjaan (ja kulkevat tiedoston mukana), muut ovat selainkohtaisia. **Kieli**: suomi, saksa, englanti, espanja, ranska, venäjä, kiina (yksinkertaistettu), japani ja korea; vaihtuu heti ja muistetaan selaimessa.
 
 ## 7. Tiedostot ja jakaminen
 

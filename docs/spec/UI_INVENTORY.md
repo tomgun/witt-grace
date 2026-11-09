@@ -17,7 +17,7 @@
 | --- | --- | --- |
 | Root element | `<body data-theme="light" class="home-active">` | `home-active` shows the home screen and hides the app shell; removed when a document is opened. |
 | Hidden file inputs | `#fileInput` (accepts `.json,.witt.json,.peruste.json,application/json`), `#aiDraftInput`, `#aiReviewInput`, `#wittOriginalInput`, `#libraryBackupInput` | One input per flow; every open flow goes through these. |
-| Themes | `light`, `dark`, `paper`, `cosmos` (Star map), `hologram`, `manuscript-book` (Manuscript / Book), `manuscript-pen` (Manuscript / Quill), `bitberg` (shown as “◆ Yövärit” / “◆ Night colours” since 2026-11-09; the prototype labels it “Bitberg”) | Eight themes, same list on the home screen and in the top bar. `<meta name="theme-color">` follows the theme. |
+| Themes | `light`, `dark`, `paper`, `cosmos` (Star map), `hologram`, `manuscript-book` (Manuscript / Book), `manuscript-pen` (Manuscript / Quill), `bitberg` (shown as “◆ Yövärit” / “◆ Night colours” since 2026-11-09; the prototype labels it “Bitberg”); added 2026-11-09: `terminal` (▮ Terminaali), `ascii` (# ASCII), `comic` (✎ Sarjakuva) | Eight prototype themes plus three added ones (S-15), same list on the home screen and in the top bar. `<meta name="theme-color">` follows the theme. |
 | Languages | `fi` Suomi, `de` Deutsch, `en` English, `es` Español, `fr` Français, `ru` Русский, `zh-Hans` 简体中文, `ja` 日本語, `ko` 한국어 | Same list on the home screen and in the top bar; persisted in `witt-locale-v1`. |
 | Version | Footer `WITT 0.11.0-dev.32` | The new app shows its own version in the same place. |
 
@@ -59,7 +59,7 @@ Shown instead of the workspace on load and via the ⌂ button. Layout: nav row, 
 | Zone toggles | `#btnZoneLeft` ◧ Alt+1, `#btnZoneTop` ▤ Alt+2, `#btnZoneRight` ◨ Alt+3, `#btnZoneBottom` ▥ Alt+4 | titles "Vasen sivupalkki (Alt+1)" etc. | `aria-pressed` reflects visibility; defaults left/top/right on, bottom off; per-browser preference (`witt-view-v1`). |
 | Help (new app only) | `#btnHelpTop` ? | `shortcutsButton` Pikanäppäimet (key `?`) | Owner decision 2026-11-09 (S-15): opens the help and shortcuts dialog, right of the zone toggles. On ≤ 410 px the language and theme selects narrow so the row fits. |
 | Language | `#localeSelect` | `language` Kieli | Switches all nine languages live. |
-| Theme | `#themeSelect` | `theme` Ulkoasuteema | Eight themes (S-00). |
+| Theme | `#themeSelect` | `theme` Ulkoasuteema | Eleven themes (S-00). |
 
 ## S-03 Toolbar (`.toolbar.witt-simplified-toolbar`)
 
@@ -183,7 +183,7 @@ Every key the prototype reads or writes (`localStorage` unless noted; an in-memo
 | `witt-workspace-meta-v1` | per browser | `{active:{id,title,savedAt}, lastOpenedJson?:{filename,projectId,at}, lastExportedJson?:{filename,projectId,at}}` |
 | `witt-view-v1` | per browser (not per document) | `{presentation, orientation, workflow, layers{labels,details,index,assessments,confidence,impact,comments,counts,links}, focus{mode,anchorId}, dockCollapsed, dockHidden, dockScreenPosition, indexMode, viewAssessorId, highlightOptions, showImportance, showSharedReasons, showRecurringInTree, dragFromText, compactVisible, depthLimit, depthCompact}`; defaults: presentation `table` when the window is ≤ 600 px else `tree`, orientation horizontal, workflow explore, layers = Tiivis preset, dock hidden and collapsed, index shared, showRecurringInTree/dragFromText/depthCompact true |
 | `witt-zones-v1` | per browser | `{left,top,right,bottom}`; defaults left = window > 1000 px, top and right true, bottom false |
-| `witt-appearance-v1` | per browser | one of the special skins `cosmos`, `hologram`, `manuscript-book`, `manuscript-pen`, `bitberg`; absent when a base theme is chosen (the base theme `light`/`dark`/`paper` is document data in `project.theme`); legacy `studio-daw` reads as `bitberg` |
+| `witt-appearance-v1` | per browser | one of the special skins `cosmos`, `hologram`, `manuscript-book`, `manuscript-pen`, `bitberg`, `terminal`, `ascii`, `comic`; absent when a base theme is chosen (the base theme `light`/`dark`/`paper` is document data in `project.theme`); legacy `studio-daw` reads as `bitberg` |
 | `witt-locale-v1` | per browser | language code |
 | `witt-keybindings-v1` | per browser | `{support,oppose,option,table,focus,assessment,help,arrange}` from the fixed choice list, all distinct; defaults `+ - * T F R ? Alt+A` |
 | `witt-assessor-v1:<projectId>` | per document | the active actor's user id |
@@ -211,6 +211,7 @@ Decided deviations:
 - 2026-11-09 (owner): undo ↶ and redo ↷ are always visible in the top bar (`#btnUndoTop`, `#btnRedoTop`, styled like the zone toggles). The prototype hides them in the Edit menu and the tree-only quick bar, and the owner could not find them.
 - 2026-11-09 (owner): a ? button in the top bar (`#btnHelpTop`) opens the help and shortcuts dialog, which the prototype offers only in the Apua menu, by the `?` key and in the tree-only quick bar.
 - 2026-11-09 (owner): cards get a × delete button apart from + − ▾; deleting a leaf no longer asks (undo restores it); deleted cards fade out for a second so a slip is seen. The prototype deletes only from menus, the bottom bar and the Del key, and always asks.
+- 2026-11-09 (owner): three more per-browser skins after Yövärit: `terminal` ▮ Terminaali (green phosphor on black, monospace, scanlines, glow, amber for opposing, a blinking cursor on the selected card), `ascii` # ASCII (plain text on paper; cards boxed in `+ - |`, the selected one in `# =`, buttons and chips in `[ ]`, tree edges drawn as characters `- + > v ^` by `AsciiEdge.tsx` instead of curves), `comic` ✎ Sarjakuva (xkcd-like: black ink on white, hand-drawn box corners, edges wobbled by the `#wittSketch` SVG filter, the bundled Comic Neue font under SIL OFL 1.1). Stored in `witt-appearance-v1` like the other skins; visual export uses the dark palette for `terminal`, light for the others.
 
 - Inspector "Arvioinnin mukaan: Puoltava (+3.6666666666666665/5)" prints an unrounded float; the table shows the same value as "+3.7 (3)". Proposed: one decimal everywhere. (Reproduced as is for now.)
 - The quick-control bar's `↹ Järjestä puu` and `↶ Kumoa` glyphs are lost once the catalog text replaces the button label; the new app shows the catalog text, as the prototype does after localisation.

@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App.tsx';
 import './styles.css';
+import './themes-added.css';
 
 const mount = document.getElementById('app');
 if (!mount) throw new Error('WITT: the #app element is missing from index.html');

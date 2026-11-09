@@ -4,6 +4,9 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ## [Unreleased]
 
+### Added
+- Owner decision 2026-11-09: three themes, per browser like the other skins: ▮ Terminaali (green phosphor terminal), # ASCII (cards and tree edges drawn from characters; `src/app/AsciiEdge.tsx`) and ✎ Sarjakuva (xkcd-like hand-drawn look with the bundled Comic Neue font, SIL OFL 1.1, `src/app/fonts/`). Their styles live in `src/app/themes-added.css`, after the untouched prototype stylesheet. Labels in nine languages (`UI_INVENTORY.md` S-15).
+
 ### Changed
 - Owner decision 2026-11-09: cards have a × delete button at the right edge (apart from + − ▾); a leaf is deleted without a confirm by × or Del, a subtree still asks; the deleted cards fade out for a second so an accidental delete is seen, and undo restores them (`UI_INVENTORY.md` S-15). New catalog key `deleteNode` in nine languages.
 - Owner decision 2026-11-09: a ? button in the top bar opens the help and keyboard shortcuts (`UI_INVENTORY.md` S-15); on phones the language and theme selects narrow to keep the row on screen.

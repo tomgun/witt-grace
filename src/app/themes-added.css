@@ -1,0 +1,392 @@
+/* Themes added by the owner on 2026-11-09 (UI_INVENTORY S-15): Terminaali, ASCII and Sarjakuva. Each is a per-browser
+   skin like Bitberg; the prototype's stylesheet above stays untouched. */
+
+/* ---- ▮ Terminaali: green phosphor on black, monospace, scanlines and a soft glow -------------------------------- */
+body[data-theme='terminal'] {
+  color-scheme: dark;
+  --bg: #020a04;
+  --surface: #031208;
+  --surface-secondary: #04160a;
+  --panel: #020d05;
+  --canvas: #010802;
+  --ink: #5cff8f;
+  --muted: #2f9c58;
+  --subtle: #48d978;
+  --border: #1b6b37;
+  --accent: #8dffb0;
+  --accent-soft: #0b3318;
+  --accent-text: #b4ffcb;
+  --green: #5cff8f;
+  --green-bg: #06290f;
+  --red: #ffb347;
+  --red-bg: #2e1d05;
+  --option: #6fe3ff;
+  --option-bg: #052630;
+  --grid: #0b2a14;
+  --shadow: 0 0 14px rgba(92, 255, 143, 0.12);
+  --input: #010802;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, 'Courier New', monospace;
+  text-shadow: 0 0 3px rgba(92, 255, 143, 0.55);
+}
+body[data-theme='terminal'] :is(button, input, select, textarea) {
+  font-family: inherit;
+  text-shadow: inherit;
+}
+body[data-theme='terminal']::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.22) 2px 3px);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.75);
+}
+body[data-theme='terminal'] :is(.topbar, .toolbar, .app-footer, .sidepanel, .inspector-panel, .table-header) {
+  background: var(--panel);
+  border-color: var(--border);
+}
+body[data-theme='terminal']
+  :is(
+    .btn,
+    .node,
+    dialog,
+    .view-dock,
+    .zoom-controls,
+    .mode-switch,
+    .mode-switch button,
+    .left-panel-tabs button,
+    .repeat-card,
+    input,
+    select,
+    textarea,
+    .zone-controls,
+    .zone-toggle,
+    .meta-chip,
+    .node-add,
+    .node-collapse,
+    .node-delete
+  ) {
+  border-radius: 0;
+}
+body[data-theme='terminal'] .btn.primary {
+  background: var(--ink);
+  color: #021006;
+  text-shadow: none;
+  border-color: var(--ink);
+}
+body[data-theme='terminal'] #viewport {
+  background-image: radial-gradient(rgba(92, 255, 143, 0.12) 0.8px, transparent 1.4px);
+  background-size: 22px 22px;
+}
+body[data-theme='terminal'] .node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 10px rgba(92, 255, 143, 0.08);
+}
+body[data-theme='terminal'] .node[data-relation='support'] {
+  border-top: 1px solid var(--green);
+}
+body[data-theme='terminal'] .node[data-relation='oppose'] {
+  border-top: 1px solid var(--red);
+}
+body[data-theme='terminal'] .node[data-relation='option'] {
+  border-top: 1px solid var(--option);
+}
+body[data-theme='terminal'] .node.selected {
+  border: 1px solid var(--accent);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 18px rgba(141, 255, 176, 0.35);
+}
+body[data-theme='terminal'] .node.selected .node-title::after {
+  content: '█';
+  margin-left: 3px;
+  animation: wittTerminalCursor 1.05s steps(1) infinite;
+}
+@keyframes wittTerminalCursor {
+  50% {
+    opacity: 0;
+  }
+}
+body[data-theme='terminal'] .edge {
+  filter: drop-shadow(0 0 2px rgba(92, 255, 143, 0.6));
+}
+body[data-theme='terminal'] .edge-oppose {
+  filter: drop-shadow(0 0 2px rgba(255, 179, 71, 0.6));
+}
+body[data-theme='terminal'] .home-screen {
+  background: radial-gradient(ellipse at 50% 30%, #062a12, #010702 75%);
+}
+body[data-theme='terminal'] :is(.home-visual, .home-features article, .visual-root, .visual-node) {
+  background: var(--surface);
+  border-color: var(--border);
+  border-radius: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme='terminal'] .node.selected .node-title::after {
+    animation: none;
+  }
+}
+
+/* ---- # ASCII: plain text on paper; cards are boxes of + - | and the edges are drawn from characters ------------- */
+body[data-theme='ascii'] {
+  --bg: #fbfaf4;
+  --surface: #fbfaf4;
+  --surface-secondary: #f3f1e6;
+  --panel: #fbfaf4;
+  --canvas: #fbfaf4;
+  --ink: #26261f;
+  --muted: #7a786b;
+  --subtle: #55544a;
+  --border: #b9b6a5;
+  --accent: #1d4ed8;
+  --accent-soft: #e6ecfb;
+  --accent-text: #1d4ed8;
+  --green: #1f7a4f;
+  --green-bg: #e8f3ec;
+  --red: #b3261e;
+  --red-bg: #f8e9e7;
+  --option: #5b3fb5;
+  --option-bg: #efebf9;
+  --grid: #e9e6d8;
+  --shadow: none;
+  --input: #ffffff;
+  font-family: Menlo, Consolas, 'DejaVu Sans Mono', 'Courier New', monospace;
+}
+body[data-theme='ascii'] :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+body[data-theme='ascii']
+  :is(
+    .btn,
+    dialog,
+    .view-dock,
+    .zoom-controls,
+    .mode-switch,
+    .mode-switch button,
+    .left-panel-tabs button,
+    .repeat-card,
+    input,
+    select,
+    textarea,
+    .zone-controls,
+    .zone-toggle,
+    .meta-chip,
+    .node-add,
+    .node-collapse,
+    .node-delete,
+    .home-visual,
+    .home-features article
+  ) {
+  border-radius: 0;
+  box-shadow: none;
+}
+body[data-theme='ascii'] #viewport {
+  background-image: none;
+}
+body[data-theme='ascii'] .node,
+body[data-theme='ascii'] .node[data-relation] {
+  background: var(--surface);
+  border: 9px solid transparent;
+  border-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='27' height='27'><g font-family='Menlo%2CConsolas%2Cmonospace' font-size='13' fill='%2326261f' text-anchor='middle'><text x='4.5' y='9'>%2B</text><text x='13.5' y='9'>-</text><text x='22.5' y='9'>%2B</text><text x='4.5' y='18'>%7C</text><text x='22.5' y='18'>%7C</text><text x='4.5' y='27'>%2B</text><text x='13.5' y='27'>-</text><text x='22.5' y='27'>%2B</text></g></svg>")
+    9 round;
+  border-radius: 0;
+  box-shadow: none;
+}
+body[data-theme='ascii'] .node[data-relation='support'] {
+  border-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='27' height='27'><g font-family='Menlo%2CConsolas%2Cmonospace' font-size='13' fill='%231f7a4f' text-anchor='middle'><text x='4.5' y='9'>%2B</text><text x='13.5' y='9'>-</text><text x='22.5' y='9'>%2B</text><text x='4.5' y='18'>%7C</text><text x='22.5' y='18'>%7C</text><text x='4.5' y='27'>%2B</text><text x='13.5' y='27'>-</text><text x='22.5' y='27'>%2B</text></g></svg>")
+    9 round;
+}
+body[data-theme='ascii'] .node[data-relation='oppose'] {
+  border-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='27' height='27'><g font-family='Menlo%2CConsolas%2Cmonospace' font-size='13' fill='%23b3261e' text-anchor='middle'><text x='4.5' y='9'>%2B</text><text x='13.5' y='9'>-</text><text x='22.5' y='9'>%2B</text><text x='4.5' y='18'>%7C</text><text x='22.5' y='18'>%7C</text><text x='4.5' y='27'>%2B</text><text x='13.5' y='27'>-</text><text x='22.5' y='27'>%2B</text></g></svg>")
+    9 round;
+}
+body[data-theme='ascii'] .node[data-relation='option'] {
+  border-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='27' height='27'><g font-family='Menlo%2CConsolas%2Cmonospace' font-size='13' fill='%235b3fb5' text-anchor='middle'><text x='4.5' y='9'>%2B</text><text x='13.5' y='9'>-</text><text x='22.5' y='9'>%2B</text><text x='4.5' y='18'>%7C</text><text x='22.5' y='18'>%7C</text><text x='4.5' y='27'>%2B</text><text x='13.5' y='27'>-</text><text x='22.5' y='27'>%2B</text></g></svg>")
+    9 round;
+}
+body[data-theme='ascii'] .node.selected {
+  border-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='27' height='27'><g font-family='Menlo%2CConsolas%2Cmonospace' font-size='13' fill='%231d4ed8' text-anchor='middle'><text x='4.5' y='9'>%23</text><text x='13.5' y='9'>=</text><text x='22.5' y='9'>%23</text><text x='4.5' y='18'>%23</text><text x='22.5' y='18'>%23</text><text x='4.5' y='27'>%23</text><text x='13.5' y='27'>=</text><text x='22.5' y='27'>%23</text></g></svg>")
+    9 round;
+  box-shadow: none;
+}
+body[data-theme='ascii'] .node-header {
+  padding: 2px 4px 2px;
+}
+body[data-theme='ascii'] .node-title {
+  padding: 2px 4px 0;
+  font-weight: 700;
+}
+body[data-theme='ascii'] :is(.node-add, .node-collapse, .node-delete) {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  width: auto;
+  min-width: 0;
+  padding: 0 1px;
+}
+body[data-theme='ascii'] :is(.node-add, .node-collapse, .node-delete)::before {
+  content: '[';
+  color: var(--muted);
+}
+body[data-theme='ascii'] :is(.node-add, .node-collapse, .node-delete)::after {
+  content: ']';
+  color: var(--muted);
+}
+body[data-theme='ascii'] .meta-chip {
+  border: 0;
+  background: transparent;
+}
+body[data-theme='ascii'] .meta-chip::before {
+  content: '[';
+}
+body[data-theme='ascii'] .meta-chip::after {
+  content: ']';
+}
+body[data-theme='ascii'] .ascii-edge text {
+  font-family: Menlo, Consolas, 'DejaVu Sans Mono', 'Courier New', monospace;
+  font-size: 13px;
+  fill: var(--muted);
+  stroke: none;
+}
+body[data-theme='ascii'] .ascii-edge.edge-support text {
+  fill: var(--green);
+}
+body[data-theme='ascii'] .ascii-edge.edge-oppose text {
+  fill: var(--red);
+}
+body[data-theme='ascii'] .ascii-edge.edge-option text {
+  fill: var(--option);
+}
+body[data-theme='ascii'] .ascii-edge .ascii-glyph {
+  font-weight: 700;
+}
+body[data-theme='ascii'] .ascii-edge.focus-muted {
+  opacity: 0.25;
+}
+body[data-theme='ascii'] .edge-secondary {
+  stroke-dasharray: 2 6;
+  stroke-linecap: round;
+}
+
+/* Comic Neue (SIL Open Font License 1.1, see fonts/ComicNeue-OFL.txt) ships with the app so the comic theme looks
+   the same everywhere; the browser loads it only when the theme is on. */
+@font-face {
+  font-family: 'Comic Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/comic-neue-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Comic Neue';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/comic-neue-latin-700-normal.woff2') format('woff2');
+}
+
+/* ---- ✎ Sarjakuva: xkcd-like black ink on white, hand-drawn boxes and wobbly lines ------------------------------ */
+body[data-theme='comic'] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-secondary: #f6f6f6;
+  --panel: #ffffff;
+  --canvas: #ffffff;
+  --ink: #111111;
+  --muted: #6b6b6b;
+  --subtle: #3d3d3d;
+  --border: #111111;
+  --accent: #111111;
+  --accent-soft: #f1f1f1;
+  --accent-text: #111111;
+  --green: #2e7d32;
+  --green-bg: #eef7ee;
+  --red: #c62828;
+  --red-bg: #fdeeee;
+  --option: #3949ab;
+  --option-bg: #eef0fa;
+  --grid: #ececec;
+  --shadow: none;
+  --input: #ffffff;
+  font-family:
+    'Humor Sans', 'xkcd Script', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', cursive;
+}
+body[data-theme='comic'] :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+body[data-theme='comic']
+  :is(
+    .btn,
+    dialog,
+    .view-dock,
+    .zoom-controls,
+    .mode-switch,
+    .repeat-card,
+    input,
+    select,
+    textarea,
+    .zone-controls,
+    .node-add,
+    .node-collapse,
+    .home-visual,
+    .home-features article,
+    .visual-root,
+    .visual-node
+  ) {
+  border: 2px solid #111;
+  border-radius: 255px 12px 225px 12px / 12px 225px 12px 255px;
+  box-shadow: none;
+}
+body[data-theme='comic'] :is(.mode-switch button, .left-panel-tabs button, .zone-toggle) {
+  border-radius: 255px 10px 225px 10px / 10px 225px 10px 255px;
+}
+body[data-theme='comic']
+  :is(.mode-switch button.active, .left-panel-tabs button.active, .zone-toggle.active) {
+  background: #111;
+  color: #fff;
+}
+body[data-theme='comic'] .btn.primary {
+  background: #111;
+  color: #fff;
+}
+body[data-theme='comic'] #viewport {
+  background-image: none;
+}
+body[data-theme='comic'] .node,
+body[data-theme='comic'] .node[data-relation] {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  box-shadow: none;
+}
+body[data-theme='comic'] .node.selected {
+  border-width: 3px;
+  box-shadow: 4px 4px 0 #111;
+}
+body[data-theme='comic'] .node-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+body[data-theme='comic'] .node-tag {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+body[data-theme='comic'] #edgePaths {
+  filter: url(#wittSketch);
+}
+body[data-theme='comic'] .edge {
+  stroke: #111;
+  stroke-width: 2.2px;
+  stroke-linecap: round;
+}
+body[data-theme='comic'] .edge-support {
+  stroke: var(--green);
+}
+body[data-theme='comic'] .edge-oppose {
+  stroke: var(--red);
+}
+body[data-theme='comic'] .edge-option {
+  stroke: var(--option);
+}
