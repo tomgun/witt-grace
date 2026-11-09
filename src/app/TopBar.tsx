@@ -3,6 +3,8 @@ import { APPEARANCES, getStore, useAppState, useTranslator } from './store.ts';
 import type { Appearance, Zone } from './store.ts';
 import { LANGUAGES, LANGUAGE_NAMES } from '../lib/i18n/i18n.ts';
 import type { Language, MessageKey } from '../lib/i18n/i18n.ts';
+import { displayShortcut } from './shortcuts.ts';
+import type { Shortcuts } from './shortcuts.ts';
 
 const ZONE_BUTTONS: { zone: Zone; id: string; glyph: string; key: MessageKey; shortcut: string }[] = [
   { zone: 'left', id: 'btnZoneLeft', glyph: '◧', key: 'zoneLeft', shortcut: 'Alt+1' },
@@ -76,7 +78,7 @@ export function ThemeSelect({ id }: { id: string }) {
 }
 
 /** The header stays reachable even when every other zone is hidden (UX-B01). */
-export function TopBar() {
+export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
@@ -179,6 +181,18 @@ export function TopBar() {
               {glyph}
             </button>
           ))}
+        </div>
+        <div className="zone-controls help-controls" role="group">
+          <button
+            type="button"
+            id="btnHelpTop"
+            className="zone-toggle"
+            title={`${t('shortcutsButton')} (${displayShortcut(shortcuts.help)})`}
+            aria-label={`${t('shortcutsButton')} (${displayShortcut(shortcuts.help)})`}
+            onClick={() => store.openDialog('help')}
+          >
+            ?
+          </button>
         </div>
         <LanguageSelect id="localeSelect" />
         <ThemeSelect id="themeSelect" />

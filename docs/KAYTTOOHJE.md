@@ -40,7 +40,7 @@ Kortti **Jatka keskeneräistä asiakirjaa** näyttää nykyisen työn nimen sek�
 
 ## 3. Kartoittaminen
 
-Työtilassa on yläpalkki (asiakirjan nimi, ↶ Kumoa ja ↷ Tee uudelleen, neljä paneelipainiketta, kieli, ulkoasuteema), työkalurivi (Argumentointi/Päätös, TYÖVAIHE Kartoita/Punnitse, käyttäjävalitsin, Puu/Taulukko, Näkymäasetukset ja valikot **Tiedosto**, **Muokkaa**, **Arviointi**, **Näkymä**, **Apua**), vasen paneeli (TYÖTILA: välilehdet **Puurakenne** ja **Yhteydet ja perustelut** sekä LISÄÄ VALITTUUN SOLMUUN), keskellä puu kortteina ja oikealla VALITTU SOLMU / **Muokkaa argumenttia**. Alapalkki **Rakenne** (`Alt+4`) on oletuksena piilossa.
+Työtilassa on yläpalkki (asiakirjan nimi, ↶ Kumoa ja ↷ Tee uudelleen, neljä paneelipainiketta, ? ohje ja pikanäppäimet, kieli, ulkoasuteema), työkalurivi (Argumentointi/Päätös, TYÖVAIHE Kartoita/Punnitse, käyttäjävalitsin, Puu/Taulukko, Näkymäasetukset ja valikot **Tiedosto**, **Muokkaa**, **Arviointi**, **Näkymä**, **Apua**), vasen paneeli (TYÖTILA: välilehdet **Puurakenne** ja **Yhteydet ja perustelut** sekä LISÄÄ VALITTUUN SOLMUUN), keskellä puu kortteina ja oikealla VALITTU SOLMU / **Muokkaa argumenttia**. Alapalkki **Rakenne** (`Alt+4`) on oletuksena piilossa.
 
 **Kortit.** Jokainen solmu on kortti: suhdemerkintä (PÄÄVÄITE, PUOLTAA, VASTUSTAA, VAIHTOEHTO, PÄÄTÖS), otsikko, Punnitse-vaiheessa perustelutulos ja `75%/+5`. Kortin otsikkorivillä ovat painikkeet **+** (puoltava), **−** (vastainen), päätöstilassa juurella ja ryhmillä **\*** (päätösvaihtoehto) ja **▦** (vaihtoehtoryhmä) sekä **▾/▸** (sulje tai avaa alipuu). Valitse kortti napsauttamalla.
 

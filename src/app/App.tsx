@@ -273,7 +273,7 @@ export function App() {
   const workspaceClass = `workspace${view.presentation === 'table' ? ' table-view' : ''}${view.workflow === 'evaluate' ? ' table-evaluate' : ''}${state.leftTab === 'repeat' ? ' repeat-library-open' : ''}`;
   return (
     <div className="app-shell" data-testid="app">
-      <TopBar />
+      <TopBar shortcuts={shortcuts} />
       <Toolbar frame={frame} shortcuts={shortcuts} />
       <NoticeBar />
       <main className={workspaceClass} id="workspaceMain" data-testid="workspace">

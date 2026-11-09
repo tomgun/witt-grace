@@ -4,7 +4,7 @@
  *       a thesis without reasons shows "—", never 0; a second unreviewed reason shows "—/—" and marks the balance
  *       incomplete with †; the work survives a reload; Alt+1..4 and Alt+V toggle the zones and the dock; the file menu
  *       exports v8 JSON; decision mode adds options; themes and languages switch; the top bar's ↶/↷ undo and redo an
- *       added card (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
+ *       added card and its ? opens help without widening the page (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
  *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo
@@ -132,4 +132,13 @@ test('the top bar undo and redo buttons revert and reapply an edit', async ({ pa
     await page.locator('#btnRedoTop').click();
     await expect(page.locator('.node-title', { hasText: 'Undo target' })).toBeVisible({ timeout: 500 });
   }).toPass();
+});
+
+test('the top bar ? button opens the help and shortcuts dialog', async ({ page }) => {
+  await startBlank(page, 'argument');
+  await page.locator('#btnHelpTop').click();
+  await expect(page.locator('#helpDialog')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize()!.width
+  );
 });

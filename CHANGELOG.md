@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Changed
+- Owner decision 2026-11-09: a ? button in the top bar opens the help and keyboard shortcuts (`UI_INVENTORY.md` S-15); on phones the language and theme selects narrow to keep the row on screen.
 - Owner decision 2026-11-09: undo ↶ and redo ↷ buttons are always visible in the top bar, left of the panel toggles; disabled when there is nothing to undo or redo (`UI_INVENTORY.md` S-15).
 - Owner decision 2026-11-09: the Bitberg theme is now labelled “◆ Yövärit” (en “◆ Night colours”, all nine languages) with a glyph like the other themes; the theme id `bitberg` and stored preferences are unchanged (`UI_INVENTORY.md` S-15).
 

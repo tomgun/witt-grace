@@ -57,6 +57,7 @@ Shown instead of the workspace on load and via the ⌂ button. Layout: nav row, 
 | Document title | `#projectTitle` (input, maxlength 200) | `docName` Asiakirjan nimi | Edits the project title in place; part of the document, undoable. |
 | Undo / redo (new app only) | `#historyControls`: `#btnUndoTop` ↶, `#btnRedoTop` ↷ | `undo` Kumoa (Ctrl/Cmd+Z), `redo` Tee uudelleen (Ctrl/Cmd+Shift+Z) | Owner decision 2026-11-09 (S-15): always visible left of the zone toggles, disabled when there is nothing to undo or redo. The prototype offers undo only in the Edit menu, by key and in the tree-only quick bar. |
 | Zone toggles | `#btnZoneLeft` ◧ Alt+1, `#btnZoneTop` ▤ Alt+2, `#btnZoneRight` ◨ Alt+3, `#btnZoneBottom` ▥ Alt+4 | titles "Vasen sivupalkki (Alt+1)" etc. | `aria-pressed` reflects visibility; defaults left/top/right on, bottom off; per-browser preference (`witt-view-v1`). |
+| Help (new app only) | `#btnHelpTop` ? | `shortcutsButton` Pikanäppäimet (key `?`) | Owner decision 2026-11-09 (S-15): opens the help and shortcuts dialog, right of the zone toggles. On ≤ 410 px the language and theme selects narrow so the row fits. |
 | Language | `#localeSelect` | `language` Kieli | Switches all nine languages live. |
 | Theme | `#themeSelect` | `theme` Ulkoasuteema | Eight themes (S-00). |
 
@@ -207,6 +208,7 @@ Decided deviations:
 
 - 2026-11-09 (owner): the `bitberg` theme is labelled “◆ Yövärit” (en “◆ Night colours”, nine languages) instead of the prototype’s “Bitberg”, with a glyph like the other themes. The theme id `bitberg`, the `witt-appearance-v1` value and the stylesheet are unchanged, so stored preferences keep working.
 - 2026-11-09 (owner): undo ↶ and redo ↷ are always visible in the top bar (`#btnUndoTop`, `#btnRedoTop`, styled like the zone toggles). The prototype hides them in the Edit menu and the tree-only quick bar, and the owner could not find them.
+- 2026-11-09 (owner): a ? button in the top bar (`#btnHelpTop`) opens the help and shortcuts dialog, which the prototype offers only in the Apua menu, by the `?` key and in the tree-only quick bar.
 
 - Inspector "Arvioinnin mukaan: Puoltava (+3.6666666666666665/5)" prints an unrounded float; the table shows the same value as "+3.7 (3)". Proposed: one decimal everywhere. (Reproduced as is for now.)
 - The quick-control bar's `↹ Järjestä puu` and `↶ Kumoa` glyphs are lost once the catalog text replaces the button label; the new app shows the catalog text, as the prototype does after localisation.

@@ -8693,11 +8693,27 @@ body.zone-bottom-hidden .bottom-zone {
     width: min(350px, calc(100vw - 16px));
   }
 }
-.header-right .history-controls {
+.header-right :is(.history-controls, .help-controls) {
   margin-right: 5px;
 }
+.help-controls .zone-toggle {
+  font-weight: 700;
+  font-size: 15px;
+}
 @media (max-width: 760px) {
-  .header-right .history-controls {
+  .header-right :is(.history-controls, .help-controls) {
     margin: 0;
+  }
+}
+@media (max-width: 410px) {
+  /* Undo/redo and help share the row with the panel toggles; the two selects give way. */
+  .header-right {
+    gap: 4px;
+  }
+  .header-right select,
+  .header-right :is(#localeSelect, #themeSelect) {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 110px;
   }
 }
