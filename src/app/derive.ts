@@ -102,12 +102,11 @@ export const relationLabel = (ctx: DeriveContext, t: Translator, node: Node): st
   node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group')
     ? node.typeLabel
     : t(relationLabelKey(ctx, node));
-/** The small chip beside a reason's tag: its own type name, else its semantic type, else nothing. */
-export function semanticChip(t: Translator, node: Node): string | null {
-  if (node.sharedReasonId) return null;
-  if (node.typeLabel && node.parentId !== null && node.kind === 'claim') return node.typeLabel;
-  return node.semanticType && node.semanticType !== 'unspecified' ? t(`semantic_${node.semanticType}`) : null;
-}
+/** A reason's own type name, shown on its own line above the title (the header has no room for it). */
+export const reasonTypeLabel = (node: Node): string | null =>
+  node.typeLabel && node.parentId !== null && node.kind === 'claim' && !node.sharedReasonId
+    ? node.typeLabel
+    : null;
 
 /** The score of the shown viewpoint. */
 export const shownScore = (ctx: DeriveContext, id: string): NodeScore | undefined =>

@@ -37,7 +37,7 @@ import {
   importanceHint,
   importanceText,
   relationLabel,
-  semanticChip,
+  reasonTypeLabel,
   shownInfluence,
   signed,
 } from './derive.ts';
@@ -567,10 +567,17 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         {...preview}
       >
         <div className="node-header" onPointerDown={(e) => beginNodeDrag(e, node, false)}>
-          <span className={`node-tag${l.labels ? '' : ' compact-tag'}`}>{label}</span>
+          <span className={`node-tag${l.labels ? '' : ' compact-tag'}`} title={label}>
+            {label}
+          </span>
           {node.sharedReasonId ? <small className="shared-node-mark">{t('sharedBadge')}</small> : null}
           {node.reasonConceptId ? <small className="shared-node-mark">{t('contextBadge')}</small> : null}
-          {semanticChip(t, node) ? <small className="node-semantic">{semanticChip(t, node)}</small> : null}
+          {node.semanticType &&
+          node.semanticType !== 'unspecified' &&
+          !node.sharedReasonId &&
+          !reasonTypeLabel(node) ? (
+            <small className="node-semantic">{t(`semantic_${node.semanticType}`)}</small>
+          ) : null}
           {showAuthor && creator ? (
             isAiProfile(creator) ? (
               <small className="node-ai-author" title={`${t('aiAuthored')}: ${creator.name}`}>
@@ -675,6 +682,11 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             </button>
           ) : null}
         </div>
+        {reasonTypeLabel(node) ? (
+          <div className="node-type-label" title={reasonTypeLabel(node) ?? undefined}>
+            {reasonTypeLabel(node)}
+          </div>
+        ) : null}
         <div className="node-title" onPointerDown={(e) => beginNodeDrag(e, node, true)}>
           {node.title}
         </div>
