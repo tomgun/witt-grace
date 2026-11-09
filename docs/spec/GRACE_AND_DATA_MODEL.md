@@ -40,6 +40,15 @@ Examples pinned by existing tests:
 | 20% / +5 premise | 55 | +10 |
 | Premise at 50 with a 100%/+5 supporting grandchild, then +5 to root | 68.75 | +37.5 |
 
+### `evidence-v4-reasons` (owner decision 2026-11-09, the default for new documents)
+
+One rule differs from `evidence-v3-links`: a claim that has reasons (a primary child that is not an option, group, gate or value, or a secondary link from such a claim) takes its result from them alone. Its base is the neutral 50 as soon as one of those relations scores; with none of them scored it has no result (`—`, incomplete), never its own credence. The claim's own credence is then a felt sense: it is saved and shown for comparison but never enters a score. Leaves, options (50), locked shared reasons and every other formula above are unchanged. The version is stored per document in `settings.scoring` and switched in Arviointi → Laskentatapa; the prototype's files stay `evidence-v3-links`, which the golden fixtures pin.
+
+| Tree | `evidence-v3-links` | `evidence-v4-reasons` |
+| --- | ---: | ---: |
+| Claim with own 80 %, one 100 % / −3.5 reason | +25 | −35 |
+| Claim with own 80 %, its only reason unassessed | +60 | — |
+
 ### Marginal effect Δ (“Korosta painavimmat”)
 
 A diagnostic, never an input to any score. For every scored relation `e` from child `c` into parent `t` (missing, zero-impact and unassessed contributions are skipped):

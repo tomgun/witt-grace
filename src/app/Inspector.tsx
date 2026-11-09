@@ -36,6 +36,7 @@ import {
   EM_DASH,
   balanceDeltaText,
   balanceText,
+  credenceIsFeeling,
   derivedResult,
   displayedPrimaryRelation,
   importanceHint,
@@ -919,7 +920,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             key={`c:${node.id}:${ownVote?.confidence ?? 'none'}`}
             id="nodeConfidence"
             testId="review-credence"
-            label={t('ownCredence')}
+            label={t(credenceIsFeeling(project, node) ? 'ownCredenceFeeling' : 'ownCredence')}
             value={ownVote?.confidence ?? node.confidence}
             min={0}
             max={100}
@@ -928,7 +929,11 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             format={(v) => `${v} %`}
             onCommit={(v) => commit(v, null)}
           />
-          {!ownVote ? <p className="inline-warning">{t('profileUnsetHint')}</p> : null}
+          {credenceIsFeeling(project, node) ? (
+            <p className="inspector-note">{t('ownCredenceFeelingNote')}</p>
+          ) : !ownVote ? (
+            <p className="inline-warning">{t('profileUnsetHint')}</p>
+          ) : null}
         </>
       ) : null}
       {impactShown ? (

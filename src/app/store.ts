@@ -1,7 +1,13 @@
 // The one document store. State changes only through dispatch(command) → applyCommand; the UI subscribes with
 // useSyncExternalStore. Undo/redo is a stack of past documents; view preferences live beside, never inside, the document.
 import { useSyncExternalStore } from 'react';
-import { applyCommand, createBlankProject, parseProject, rootNode } from '../domain/index.ts';
+import {
+  applyCommand,
+  createBlankProject,
+  parseProject,
+  rootNode,
+  SCORING_VERSION,
+} from '../domain/index.ts';
 import type { Command, ImportReport, Mode, Project } from '../domain/index.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
@@ -140,7 +146,14 @@ export interface AppState {
 }
 
 export function blankProject(mode: Mode = 'argument'): Project {
-  return createBlankProject({ mode, projectId: newId(), rootId: newId(), userId: newId(), now: nowIso() });
+  return createBlankProject({
+    mode,
+    projectId: newId(),
+    rootId: newId(),
+    userId: newId(),
+    now: nowIso(),
+    scoring: SCORING_VERSION,
+  });
 }
 
 /** `witt-appearance-v1` holds a special skin (legacy `studio-daw` reads as Bitberg); else the document's base theme. */

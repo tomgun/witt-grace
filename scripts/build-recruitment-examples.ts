@@ -3,7 +3,12 @@
 // the same criteria in decision mode. Fictional people and data. Run: node scripts/build-recruitment-examples.ts
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { applyCommand, createBlankProject, serializeProjectFile } from '../src/domain/index.ts';
+import {
+  applyCommand,
+  createBlankProject,
+  SCORING_VERSION,
+  serializeProjectFile,
+} from '../src/domain/index.ts';
 import type { Command, Project } from '../src/domain/index.ts';
 
 const NOW = '2026-11-09T09:00:00.000Z';
@@ -40,7 +45,13 @@ function people(p: Project): Project {
 }
 
 function oneCandidate(): Project {
-  let p = createBlankProject({ projectId: 'ex-rekry-yksi', rootId: 'root', userId: USERS[0], now: NOW });
+  let p = createBlankProject({
+    projectId: 'ex-rekry-yksi',
+    rootId: 'root',
+    userId: USERS[0],
+    now: NOW,
+    scoring: SCORING_VERSION,
+  });
   p = people(p);
   p = run(
     p,
@@ -108,6 +119,7 @@ function threeCandidates(): Project {
     rootId: 'root',
     userId: USERS[0],
     now: NOW,
+    scoring: SCORING_VERSION,
   });
   p = people(p);
   p = run(

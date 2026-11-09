@@ -1,5 +1,6 @@
 // Creating documents and nodes. Ids and timestamps come from the caller; nothing here reads a clock or randomness.
-import { SCHEMA_VERSION, SCORING_VERSION } from './model.ts';
+import { SCHEMA_VERSION, SCORING_V3 } from './model.ts';
+import type { ScoringVersion } from './model.ts';
 import type { Kind, Mode, Node, Position, Project, Stance, User } from './model.ts';
 import { childrenOf, rootNode } from './graph.ts';
 
@@ -49,6 +50,8 @@ export interface CreateInput {
   userId: string;
   now: string;
   userName?: string;
+  /** The prototype's version unless the caller asks for another; the app's new documents pass SCORING_VERSION. */
+  scoring?: ScoringVersion;
 }
 export function createBlankProject({
   mode = 'argument',
@@ -57,6 +60,7 @@ export function createBlankProject({
   userId,
   now,
   userName = 'Minä',
+  scoring = SCORING_V3,
 }: CreateInput): Project {
   const user: User = { id: userId, name: userName, shares: 1, role: 'owner' };
   const node = newNode({
@@ -76,7 +80,7 @@ export function createBlankProject({
       voteWeighting: 'equal',
       assessmentWeighting: 'equal',
       shareSnapshotDate: null,
-      scoring: SCORING_VERSION,
+      scoring,
       showAuthors: true,
     },
     users: [user],

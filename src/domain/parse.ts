@@ -7,7 +7,7 @@ import {
   MODES,
   ROLES,
   SCHEMA_VERSION,
-  SCORING_VERSION,
+  SCORING_VERSIONS,
   SEMANTIC_TYPES,
   STANCES,
   THEMES,
@@ -124,7 +124,7 @@ export function parseProject(input: unknown): Project {
     !isPlain(settings) ||
     !includes(VOTE_WEIGHTINGS, settings.voteWeighting) ||
     !includes(ASSESSMENT_WEIGHTINGS, settings.assessmentWeighting) ||
-    settings.scoring !== SCORING_VERSION
+    !includes(SCORING_VERSIONS, settings.scoring)
   )
     refuse('Virheelliset laskenta-asetukset');
   const s = settings as Plain;
@@ -665,7 +665,7 @@ export function parseProject(input: unknown): Project {
       voteWeighting: s.voteWeighting as Project['settings']['voteWeighting'],
       assessmentWeighting: s.assessmentWeighting as Project['settings']['assessmentWeighting'],
       shareSnapshotDate: s.shareSnapshotDate as string | null,
-      scoring: SCORING_VERSION,
+      scoring: s.scoring as Project['settings']['scoring'],
       showAuthors: s.showAuthors !== false,
     },
     users,

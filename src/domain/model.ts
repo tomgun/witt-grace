@@ -2,7 +2,15 @@
 // Numbers here are the GRACE contract (docs/spec/GRACE_AND_DATA_MODEL.md); change them only with a new scoring version.
 
 export const SCHEMA_VERSION = 8 as const;
-export const SCORING_VERSION = 'evidence-v3-links' as const;
+/** The prototype's scoring: a claim's own credence is its base and its reasons move it (kept for the prototype's files). */
+export const SCORING_V3 = 'evidence-v3-links' as const;
+/** Owner decision 2026-11-09: a claim with reasons gets its result from them alone, starting neutral; its own credence
+ * is then a felt sense that never enters the score. Leaves keep their own credence. */
+export const SCORING_V4 = 'evidence-v4-reasons' as const;
+export const SCORING_VERSIONS = [SCORING_V3, SCORING_V4] as const;
+export type ScoringVersion = (typeof SCORING_VERSIONS)[number];
+/** The version a new document gets. */
+export const SCORING_VERSION: ScoringVersion = SCORING_V4;
 
 export const MODES = ['argument', 'decision'] as const;
 export const THEMES = ['light', 'dark', 'paper'] as const;
@@ -160,7 +168,7 @@ export interface Settings {
   voteWeighting: VoteWeighting;
   assessmentWeighting: AssessmentWeighting;
   shareSnapshotDate: string | null;
-  scoring: typeof SCORING_VERSION;
+  scoring: ScoringVersion;
   showAuthors: boolean;
 }
 export interface Project {

@@ -1,8 +1,8 @@
 // The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
 import type { ReactNode } from 'react';
-import { childrenOf, isAiProfile } from '../domain/index.ts';
-import type { Mode } from '../domain/index.ts';
+import { childrenOf, isAiProfile, SCORING_V3, SCORING_V4 } from '../domain/index.ts';
+import type { Mode, ScoringVersion } from '../domain/index.ts';
 import {
   ADD_LOCAL_USER,
   addNode,
@@ -387,6 +387,26 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
                     {isAiProfile(u) && !u.name.startsWith('AI') ? `AI · ${u.name}` : u.name}
                   </option>
                 ))}
+            </select>
+            <label className="menu-label" htmlFor="scoringSelect" title={t('scoringHint')}>
+              {t('scoringLabel')}
+            </label>
+            <select
+              id="scoringSelect"
+              data-testid="scoring-select"
+              aria-label={t('scoringLabel')}
+              title={t('scoringHint')}
+              value={project.settings.scoring}
+              disabled={!editable}
+              onChange={(e) =>
+                store.dispatch({ type: 'project.setScoring', scoring: e.target.value as ScoringVersion })
+              }
+            >
+              {[SCORING_V4, SCORING_V3].map((v) => (
+                <option key={v} value={v}>
+                  {t(v === SCORING_V4 ? 'scoringReasons' : 'scoringPrototype')}
+                </option>
+              ))}
             </select>
           </Menu>
           <Menu id="viewMenu" label={t('toolbarViewGroup')}>

@@ -6,10 +6,13 @@ import {
   baseConfidence,
   directionFromInfluence,
   indexAssessable,
+  isGate,
+  isValue,
   marginalIndexEffects,
   marginalTargetEffects,
   personalCredence,
   personalInfluence,
+  SCORING_V4,
   sharedReason,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
@@ -102,6 +105,21 @@ export const relationLabel = (ctx: DeriveContext, t: Translator, node: Node): st
   node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group')
     ? node.typeLabel
     : t(relationLabelKey(ctx, node));
+/** Under evidence-v4-reasons a claim with reasons takes its result from them; its own credence is then only a felt
+ * sense, saved for comparison but never scored (owner decision 2026-11-09). */
+export function credenceIsFeeling(project: Project, node: Node): boolean {
+  if (project.settings.scoring !== SCORING_V4 || node.kind !== 'claim' || node.sharedReasonId) return false;
+  const reason = (n: Node | undefined) => !!n && n.kind === 'claim' && !isGate(n) && !isValue(n);
+  return (
+    project.nodes.some(
+      (n) => n.parentId === node.id && n.relation !== 'option' && n.relation !== 'group' && reason(n)
+    ) ||
+    (project.links ?? []).some(
+      (l) => l.targetId === node.id && reason(project.nodes.find((n) => n.id === l.sourceId))
+    )
+  );
+}
+
 /** A reason's own type name, shown on its own line above the title (the header has no room for it). */
 export const reasonTypeLabel = (node: Node): string | null =>
   node.typeLabel && node.parentId !== null && node.kind === 'claim' && !node.sharedReasonId

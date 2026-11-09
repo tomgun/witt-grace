@@ -1,5 +1,6 @@
 // evidence-v3-links: the recursive explanatory balance per viewpoint. Pure; reproduces the prototype engine exactly
-// (tests/golden). Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
+// (tests/golden). evidence-v4-reasons (owner 2026-11-09) differs in one rule: a claim with reasons starts neutral (50)
+// and its own credence is not used; with none of them assessed yet it has no result. Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
 import {
   argumentBalance,
   evidenceFactor,
@@ -9,6 +10,7 @@ import {
   isGate,
   isValue,
   relationFingerprint,
+  SCORING_V4,
   signedLinkImpact,
 } from './model.ts';
 import type { AssessmentWeighting, Node, Project, SubjectType, User } from './model.ts';
@@ -127,7 +129,30 @@ const empty = (incomplete: boolean, collective: boolean): NodeScore => ({
  * Collective viewpoint: `equal` (default) and `shares` pool CURRENT human reviews; `structural` previews the authored
  * template values. AI profiles never enter. Each node's internal score feeds its parent as strength = score / 100.
  */
+/** True when the node has a relation that can score into it: a primary reason or a secondary link from a claim. */
+function hasReasons(
+  node: Node,
+  children: Map<string | null, Node[]>,
+  incoming: Map<string, { sourceId: string }[]>,
+  project: Project
+): boolean {
+  if (
+    (children.get(node.id) ?? []).some(
+      (c) => c.relation !== 'option' && c.relation !== 'group' && !isGate(c) && !isValue(c)
+    )
+  )
+    return true;
+  return (incoming.get(node.id) ?? []).some((link) => {
+    const source = nodeById(project, link.sourceId);
+    return !!source && !isGate(source) && !isValue(source);
+  });
+}
+/** evidence-v4-reasons: the base of a claim with reasons is neutral once one of them scores, else there is no result. */
+const reasonsBase = (contributions: Contribution[]): number | null =>
+  contributions.some((c) => !c.missing) ? 50 : null;
+
 export function evaluate(project: Project): Scores {
+  const v4 = project.settings.scoring === SCORING_V4;
   const mode = assessmentWeighting(project);
   const human = new Map<string, User>(project.users.filter((u) => !isAiProfile(u)).map((u) => [u.id, u]));
   const expectedHumanReviews = [...human.values()].filter(
@@ -178,7 +203,9 @@ export function evaluate(project: Project): Scores {
     // In argument mode the thesis is a RESULT of its reasons: an unassessed thesis starts neutral (50), never from a
     // synthetic review. A deliberately entered root vote is respected.
     const thesis = project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
-    const baseValue =
+    const fromReasons =
+      v4 && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
+    let baseValue =
       node.kind === 'option'
         ? 50
         : shared
@@ -196,6 +223,7 @@ export function evaluate(project: Project): Scores {
       mode !== 'structural' &&
       !shared &&
       node.kind !== 'option' &&
+      !fromReasons &&
       (thesis ? info.count > 0 && info.count < expectedHumanReviews : info.count < expectedHumanReviews);
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
@@ -295,6 +323,10 @@ export function evaluate(project: Project): Scores {
         overlapWarning: secondaryOverlapWarning(project, link),
       });
     }
+    if (fromReasons) {
+      baseValue = reasonsBase(contributions);
+      if (baseValue === null) incomplete = true;
+    }
     const score = baseValue === null ? null : evidenceScore(baseValue, positive, negative);
     const result: NodeScore = {
       score,
@@ -326,6 +358,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
   const ownVotes = new Map(
     project.votes.filter((v) => v.userId === userId).map((v) => [v.nodeId, v.confidence])
   );
+  const v4 = project.settings.scoring === SCORING_V4;
   const ownEdges = new Map(
     (project.edgeAssessments ?? [])
       .filter((a) => a.userId === userId)
@@ -345,11 +378,13 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
     const shared = node.sharedReasonId ? sharedReason(project, node.sharedReasonId) : null;
     const thesis = project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
     const own = ownVotes.get(node.id);
-    const base =
+    const fromReasons =
+      v4 && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
+    let base =
       node.kind === 'option' ? 50 : shared ? shared.confidence : own !== undefined ? own : thesis ? 50 : null;
     let positive = 0;
     let negative = 0;
-    let incomplete = base === null;
+    let incomplete = base === null && !fromReasons;
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
       if (child.relation === 'option' || child.relation === 'group' || isGate(child) || isValue(child))
@@ -426,6 +461,10 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         missing: false,
         overlapWarning: secondaryOverlapWarning(project, link),
       });
+    }
+    if (fromReasons) {
+      base = reasonsBase(contributions);
+      if (base === null) incomplete = true;
     }
     const score = base === null ? null : evidenceScore(base, positive, negative);
     const answer: NodeScore = {

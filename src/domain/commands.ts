@@ -9,6 +9,7 @@ import {
   truthAssessable,
   assessmentFields,
   TYPE_LABEL_MAX,
+  SCORING_VERSIONS,
 } from './model.ts';
 import type {
   AssessmentWeighting,
@@ -20,6 +21,7 @@ import type {
   Project,
   ReasonConcept,
   Role,
+  ScoringVersion,
   SemanticType,
   SharedReason,
   SourceRef,
@@ -47,6 +49,7 @@ export type Command =
   | { type: 'project.setAssessmentWeighting'; weighting: AssessmentWeighting }
   | { type: 'project.setVoteWeighting'; weighting: VoteWeighting }
   | { type: 'project.setShowAuthors'; showAuthors: boolean }
+  | { type: 'project.setScoring'; scoring: ScoringVersion }
   | {
       type: 'node.add';
       id: string;
@@ -820,6 +823,10 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
       return;
     case 'project.setAssessmentWeighting':
       p.settings.assessmentWeighting = c.weighting;
+      return;
+    case 'project.setScoring':
+      if (!SCORING_VERSIONS.includes(c.scoring)) fail('Tuntematon laskentatapa');
+      p.settings.scoring = c.scoring;
       return;
     case 'project.setVoteWeighting':
       p.settings.voteWeighting = c.weighting;

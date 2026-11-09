@@ -58,7 +58,8 @@ export const PROJECT_SCHEMA: JsonSchema = {
           maxLength: 32,
         },
         scoring: {
-          const: 'evidence-v3-links',
+          // evidence-v4-reasons added after the prototype (owner 2026-11-09).
+          enum: ['evidence-v3-links', 'evidence-v4-reasons'],
         },
         showAuthors: {
           type: 'boolean',

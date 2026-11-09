@@ -8,7 +8,8 @@
  *       fading copy stays a second), a subtree asks first, and undo restores it; the added Terminaali, ASCII and
  *       Sarjakuva themes apply and persist, and ASCII draws the edges as characters; an unassessed slider reads "—" and
  *       saving one axis saves the other as shown in one undo step; the dock has seven layers and no drag-from-text
- *       option (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
+ *       option; a new document lets reasons decide (the credence of a claim with reasons is a felt sense) and the
+ *       Arviointi menu switches the calculation method (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
  *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo, the
@@ -96,7 +97,7 @@ test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports
     .then((chunks) => Buffer.concat(chunks).toString('utf8'));
   const parsed = JSON.parse(text) as { schemaVersion: number; settings: { scoring: string } };
   expect(parsed.schemaVersion).toBe(8);
-  expect(parsed.settings.scoring).toBe('evidence-v3-links');
+  expect(parsed.settings.scoring).toBe('evidence-v4-reasons');
 });
 
 test('switching to decision mode offers options; Yövärit (bitberg) theme applies', async ({ page }) => {
@@ -228,4 +229,21 @@ test('the view dock has no separate credence or impact layer and no drag-from-te
     page.locator('#layersPanel [data-layer="confidence"], #layersPanel [data-layer="impact"]')
   ).toHaveCount(0);
   await expect(page.locator('#dragFromText')).toHaveCount(0);
+});
+
+test('a new document lets reasons decide; the calculation method switches in the Arviointi menu', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the menus are desktop controls');
+  await page.locator('#btnWorkflowEvaluate').click();
+  await addReason(page, '+', 'Kokemus riittää');
+  await addReason(page, '-', 'Vain vuosi alalta');
+  await page.locator('.node-title', { hasText: 'Kokemus riittää' }).click();
+  await expect(page.locator('label[for="nodeConfidence"]')).toContainText(
+    'Oma tuntuma (ei vaikuta laskentaan)'
+  );
+  await page.locator('#assessmentMenu summary').click();
+  await expect(page.getByTestId('scoring-select')).toHaveValue('evidence-v4-reasons');
+  await page.getByTestId('scoring-select').selectOption('evidence-v3-links');
+  await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma uskottavuusarvio');
 });
