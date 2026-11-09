@@ -4,7 +4,8 @@
  *       a thesis without reasons shows "—", never 0; a second unreviewed reason shows "—/—" and marks the balance
  *       incomplete with †; the work survives a reload; Alt+1..4 and Alt+V toggle the zones and the dock; the file menu
  *       exports v8 JSON; decision mode adds options; themes and languages switch; the top bar's ↶/↷ undo and redo an
- *       added card and its ? opens help without widening the page (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
+ *       added card and its ? opens help without widening the page; × or Delete removes a leaf without asking (a
+ *       fading copy stays a second), a subtree asks first, and undo restores it (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
  *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo
@@ -141,4 +142,28 @@ test('the top bar ? button opens the help and shortcuts dialog', async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
     page.viewportSize()!.width
   );
+});
+
+test('× deletes a leaf at once with a fading copy; a subtree asks first; undo restores', async ({ page }) => {
+  await startBlank(page, 'argument');
+  await addNamed(page, '#btnSupport', 'Leaf to delete');
+  const leaf = page.locator('#nodesLayer .node', { hasText: 'Leaf to delete' });
+  await page.locator('#zoomReset').click();
+  await leaf.locator('.node-delete').click();
+  await expect(page.getByTestId('node-count')).toHaveText('1');
+  await expect(page.locator('#nodeGhosts .node-ghost')).toHaveCount(1);
+  await expect(page.locator('#nodeGhosts .node-ghost')).toHaveCount(0, { timeout: 3000 });
+  await page.locator('#btnUndoTop').click();
+  await expect(page.getByTestId('node-count')).toHaveText('2');
+  await expect(page.locator('#nodeGhosts .node-ghost')).toHaveCount(0);
+  // The root has no ×; a card with children asks before Delete removes it.
+  await expect(page.locator('#nodesLayer .node').first().locator('.node-delete')).toHaveCount(0);
+  await leaf.locator('.node-title').click();
+  await addNamed(page, '#btnSupport', 'Child');
+  await leaf.locator('.node-title').click();
+  await page.locator('#viewport').focus();
+  await page.keyboard.press('Delete');
+  await expect(page.locator('.dialog-inner:visible')).toContainText('1');
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('node-count')).toHaveText('3');
 });

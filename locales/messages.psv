@@ -136,6 +136,7 @@ structureTitle|Rakenne|Struktur|Structure|Estructura|Structure|Структур�
 expandSubtree|Avaa alipuu|Teilbaum öffnen|Expand subtree|Expandir subárbol|Déplier le sous-arbre|Развернуть поддерево|展开子树|部分木を展開|하위 트리 펼치기
 collapseSubtree|Sulje alipuu|Teilbaum schließen|Collapse subtree|Contraer subárbol|Replier le sous-arbre|Свернуть поддерево|折叠子树|部分木を折りたたむ|하위 트리 접기
 deleteSubtree|Poista alipuu|Teilbaum löschen|Delete subtree|Eliminar subárbol|Supprimer le sous-arbre|Удалить поддерево|删除子树|部分木を削除|하위 트리 삭제
+deleteNode|Poista solmu|Knoten löschen|Delete node|Eliminar nodo|Supprimer le nœud|Удалить узел|删除节点|ノードを削除|노드 삭제
 optionShort|+ Vaihtoehto|+ Option|+ Option|+ Opción|+ Option|+ Вариант|+ 选项|+ 選択肢|+ 선택지
 orientation|Puun suunta|Baumrichtung|Tree direction|Dirección del árbol|Orientation de l’arbre|Направление дерева|树的方向|ツリーの向き|트리 방향
 viewOnly|Vain puu|Nur Baum|Tree only|Solo árbol|Arbre seul|Только дерево|仅树形图|ツリーのみ|트리만

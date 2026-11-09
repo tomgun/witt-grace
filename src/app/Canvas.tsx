@@ -23,6 +23,7 @@ import {
   canAttachLibraryReason,
   canEdit,
   chooseActor,
+  deleteNode,
   setSubtreeCollapsed,
   startInlineEdit,
   toggleFocus,
@@ -39,6 +40,7 @@ import {
   shownInfluence,
   signed,
 } from './derive.ts';
+import { dropRestoredGhosts } from './fade.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
@@ -107,6 +109,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   useLayoutEffect(() => {
     cameraRef.current = camera;
   }, [camera]);
+  useLayoutEffect(dropRestoredGhosts, [project]);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [live, setLive] = useState<{ id: string; pos: Position } | null>(null);
   const [menu, setMenu] = useState<{ nodeId: string; x: number; y: number } | null>(null);
@@ -642,6 +645,22 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           >
             {collapsed ? '▸' : '▾'}
           </button>
+          {node.parentId !== null ? (
+            <button
+              type="button"
+              className="node-delete"
+              title={`${t(childCount ? 'deleteSubtree' : 'deleteNode')} (Del)`}
+              aria-label={`${t(childCount ? 'deleteSubtree' : 'deleteNode')}: ${node.title}`}
+              disabled={!editable}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void deleteNode(node.id);
+              }}
+            >
+              ×
+            </button>
+          ) : null}
         </div>
         <div
           className="node-title"
@@ -845,6 +864,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           >
             {nodes.map(renderCard)}
           </div>
+          <div id="nodeGhosts" aria-hidden="true" style={{ ['--card-height' as string]: `${H}px` }} />
         </div>
       </div>
       <div id="keyboardStatus" aria-live="polite" className="visually-hidden" />

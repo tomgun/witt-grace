@@ -13,6 +13,7 @@ import {
 import type { Node, Project, Stance } from '../domain/index.ts';
 import { translator } from '../lib/i18n/i18n.ts';
 import { newId } from '../lib/providers.ts';
+import { fadeOutCards } from './fade.ts';
 import { buildFrame } from './projection.ts';
 import { getStore } from './store.ts';
 import type { AppState, LibrarySelection } from './store.ts';
@@ -89,8 +90,14 @@ export async function deleteNode(nodeId: string): Promise<void> {
     store.showMessage(t()('viewerCannotEdit'));
     return;
   }
-  const count = descendants(state.project, nodeId).length;
-  if (!(await store.askConfirm(t()('deleteSubtreeConfirm', { title: node.title, count })))) return;
+  const removed = descendants(state.project, nodeId);
+  // A leaf goes at once (undo brings it back); a subtree still asks, since it takes more than the visible card.
+  if (
+    removed.length &&
+    !(await store.askConfirm(t()('deleteSubtreeConfirm', { title: node.title, count: removed.length })))
+  )
+    return;
+  fadeOutCards([nodeId, ...removed]);
   store.select(node.parentId);
   store.dispatch({ type: 'node.remove', id: nodeId });
 }

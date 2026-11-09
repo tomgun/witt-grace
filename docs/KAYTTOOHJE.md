@@ -42,7 +42,7 @@ Kortti **Jatka keskeneräistä asiakirjaa** näyttää nykyisen työn nimen sek�
 
 Työtilassa on yläpalkki (asiakirjan nimi, ↶ Kumoa ja ↷ Tee uudelleen, neljä paneelipainiketta, ? ohje ja pikanäppäimet, kieli, ulkoasuteema), työkalurivi (Argumentointi/Päätös, TYÖVAIHE Kartoita/Punnitse, käyttäjävalitsin, Puu/Taulukko, Näkymäasetukset ja valikot **Tiedosto**, **Muokkaa**, **Arviointi**, **Näkymä**, **Apua**), vasen paneeli (TYÖTILA: välilehdet **Puurakenne** ja **Yhteydet ja perustelut** sekä LISÄÄ VALITTUUN SOLMUUN), keskellä puu kortteina ja oikealla VALITTU SOLMU / **Muokkaa argumenttia**. Alapalkki **Rakenne** (`Alt+4`) on oletuksena piilossa.
 
-**Kortit.** Jokainen solmu on kortti: suhdemerkintä (PÄÄVÄITE, PUOLTAA, VASTUSTAA, VAIHTOEHTO, PÄÄTÖS), otsikko, Punnitse-vaiheessa perustelutulos ja `75%/+5`. Kortin otsikkorivillä ovat painikkeet **+** (puoltava), **−** (vastainen), päätöstilassa juurella ja ryhmillä **\*** (päätösvaihtoehto) ja **▦** (vaihtoehtoryhmä) sekä **▾/▸** (sulje tai avaa alipuu). Valitse kortti napsauttamalla.
+**Kortit.** Jokainen solmu on kortti: suhdemerkintä (PÄÄVÄITE, PUOLTAA, VASTUSTAA, VAIHTOEHTO, PÄÄTÖS), otsikko, Punnitse-vaiheessa perustelutulos ja `75%/+5`. Kortin otsikkorivillä ovat painikkeet **+** (puoltava), **−** (vastainen), päätöstilassa juurella ja ryhmillä **\*** (päätösvaihtoehto) ja **▦** (vaihtoehtoryhmä) sekä **▾/▸** (sulje tai avaa alipuu). Oikeassa reunassa on **×** (poista solmu), joka näkyy, kun kortti on valittu tai hiiri on sen päällä. Solmu, jolla ei ole alisolmuja, poistuu kysymättä (× tai `Del`) ja hiipuu pois sekunnissa; alipuun poisto kysyy vahvistuksen. Kumoa (↶ tai `Ctrl/Cmd+Z`) palauttaa poistetun. Valitse kortti napsauttamalla.
 
 **Lisääminen.** Kohdistuu valittuun solmuun: kortin +/−, vasemman paneelin **+ Puoltava**, **− Vastainen** ja **0** (neutraali), Muokkaa-valikko, alapalkki tai näppäimet `+` ja `−`. Uusi kortti avautuu heti kirjoitettavaksi.
 
@@ -161,7 +161,7 @@ Pikanäppäimet eivät kaappaa näppäimiä tekstikentissä. Apua → **Pikanäp
 | `Alt+Shift+O` | Näytä vain päätösvaihtoehdot / avaa niiden perustelut |
 | `Ctrl/Cmd+S` | Tallenna tiedosto (`.witt.json`) |
 | `Ctrl/Cmd+Z` · `Ctrl/Cmd+Shift+Z` tai `Ctrl/Cmd+Y` | Kumoa · Tee uudelleen |
-| `Del` / `Backspace` | Poista valittu alipuu (vahvistus) |
+| `Del` / `Backspace` | Poista valittu solmu (alipuu kysyy vahvistuksen) |
 | `F2` / `Enter` | Muokkaa valitun kortin tekstiä; `Enter` tallentaa, `Shift+Enter` rivinvaihto, `Esc` peruu |
 | `Shift+F10` / valikkonäppäin | Solmun valikko |
 | `G` | Kohdista puu (valittu kortti) |

@@ -42,7 +42,7 @@ The card *Jatka keskeneräistä asiakirjaa* shows the current work's title and t
 
 The workspace has the top bar (document title, ↶ undo and ↷ redo, four panel toggles, ? help and shortcuts, language, theme), the toolbar (*Argumentointi*/*Päätös*, *TYÖVAIHE* *Kartoita*/*Punnitse*, the person select, *Puu*/*Taulukko*, *Näkymäasetukset* and the menus *Tiedosto*, *Muokkaa*, *Arviointi*, *Näkymä*, *Apua* = File, Edit, Assessment, View, Help), the left panel (tabs *Puurakenne* = outline and *Yhteydet ja perustelut* = connections and reasons, plus *LISÄÄ VALITTUUN SOLMUUN* = add to selected node), the tree as cards in the centre and on the right *VALITTU SOLMU* / *Muokkaa argumenttia* (the inspector). The bottom bar *Rakenne* (`Alt+4`) is hidden by default.
 
-**Cards.** Each node is a card: a relation tag (PÄÄVÄITE main claim, PUOLTAA supports, VASTUSTAA opposes, VAIHTOEHTO option, PÄÄTÖS decision), the title, and in *Punnitse* the balance and `75%/+5`. The card header has **+** (supporting), **−** (opposing), in decision mode on the root and on groups **\*** (option) and **▦** (option group), and **▾/▸** (collapse or expand the subtree). Click a card to select it.
+**Cards.** Each node is a card: a relation tag (PÄÄVÄITE main claim, PUOLTAA supports, VASTUSTAA opposes, VAIHTOEHTO option, PÄÄTÖS decision), the title, and in *Punnitse* the balance and `75%/+5`. The card header has **+** (supporting), **−** (opposing), in decision mode on the root and on groups **\*** (option) and **▦** (option group), and **▾/▸** (collapse or expand the subtree). At the right edge **×** deletes the node; it shows when the card is selected or under the pointer. A node without children goes without a question (× or `Del`) and fades out over a second; a subtree asks first. Undo (↶ or `Ctrl/Cmd+Z`) brings it back. Click a card to select it.
 
 **Adding** goes to the selected node: the card's +/−, the left panel's *+ Puoltava*, *− Vastainen* and *0* (neutral), the Edit menu, the bottom bar, or the keys `+` and `−`. The new card opens for typing at once.
 
@@ -161,7 +161,7 @@ Shortcuts never capture keys inside text fields. Help → *Pikanäppäimet* (`?`
 | `Alt+Shift+O` | Show only decision options / open their reasons |
 | `Ctrl/Cmd+S` | Save file (`.witt.json`) |
 | `Ctrl/Cmd+Z` · `Ctrl/Cmd+Shift+Z` or `Ctrl/Cmd+Y` | Undo · redo |
-| `Del` / `Backspace` | Delete the selected subtree (asks first) |
+| `Del` / `Backspace` | Delete the selected node (a subtree asks first) |
 | `F2` / `Enter` | Edit the selected card's text; `Enter` saves, `Shift+Enter` new line, `Esc` cancels |
 | `Shift+F10` / context-menu key | Node menu |
 | `G` | Focus the tree (the selected card) |
