@@ -280,7 +280,7 @@ export function AiReviewDialog() {
           indexMode: 'personal',
           viewAssessorId: added.id,
           workflow: 'evaluate',
-          layers: { ...state.view.layers, index: true, confidence: true, impact: true },
+          layers: { ...state.view.layers, index: true, assessments: true },
           highlightOptions: merged.project.mode === 'decision',
         });
     }

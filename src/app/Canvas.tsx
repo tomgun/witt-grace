@@ -676,12 +676,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             </button>
           ) : null}
         </div>
-        <div
-          className="node-title"
-          onPointerDown={(e) => {
-            if (view.dragFromText) beginNodeDrag(e, node, true);
-          }}
-        >
+        <div className="node-title" onPointerDown={(e) => beginNodeDrag(e, node, true)}>
           {node.title}
         </div>
         {l.details && node.details ? <div className="node-details">{node.details}</div> : null}

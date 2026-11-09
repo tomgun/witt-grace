@@ -41,6 +41,7 @@ export function HelpDialog({ onShortcutsChanged }: { onShortcutsChanged: () => v
     'helpComments',
     'assessmentHelpMain',
     'helpIndex',
+    'helpImportance',
     'helpLocal',
   ] as const;
   const keyboard = [

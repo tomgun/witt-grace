@@ -5,9 +5,12 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- G-02 in `GRACE_AND_DATA_MODEL.md`, the user guides and the in-app help (`helpImportance`, nine languages) explain the marginal effect Δ shown by *Korosta painavimmat*: what it answers, how it is computed, two worked examples, why only some cards show it. `tests/unit/marginal-effects.test.ts` pins the examples. WG-028 records the owner's question about an unrated note node and the impact wording.
 - Owner decision 2026-11-09: three themes, per browser like the other skins: ▮ Terminaali (green phosphor terminal), # ASCII (cards and tree edges drawn from characters; `src/app/AsciiEdge.tsx`) and ✎ Sarjakuva (xkcd-like hand-drawn look with the bundled Comic Neue font, SIL OFL 1.1, `src/app/fonts/`). Their styles live in `src/app/themes-added.css`, after the untouched prototype stylesheet. Labels in nine languages (`UI_INVENTORY.md` S-15).
 
 ### Changed
+- Owner decision 2026-11-09: an unassessed inspector slider is greyed and reads "—" instead of showing the document's starting value as if it counted; pressing or moving it saves it, also at the shown value, and saving one axis also saves the other as shown when the person has none yet, as one undo step (`review.personal`). New hint `profileUnsetHint` in nine languages (`UI_INVENTORY.md` S-15).
+- Owner decision 2026-11-09: the separate card layers Uskottavuusarvio and Vaikutuspaino are removed (they repeated *Arviot tiiviisti* 75%/+5, which the Kaikki tiedot preset now shows), and so is *Raahaa solmua myös tekstistä*: cards always drag by their text too (`UI_INVENTORY.md` S-15).
 - Owner decision 2026-11-09: cards have a × delete button at the right edge (apart from + − ▾); a leaf is deleted without a confirm by × or Del, a subtree still asks; the deleted cards fade out for a second so an accidental delete is seen, and undo restores them (`UI_INVENTORY.md` S-15). New catalog key `deleteNode` in nine languages.
 - Owner decision 2026-11-09: a ? button in the top bar opens the help and keyboard shortcuts (`UI_INVENTORY.md` S-15); on phones the language and theme selects narrow to keep the row on screen.
 - Owner decision 2026-11-09: undo ↶ and redo ↷ buttons are always visible in the top bar, left of the panel toggles; disabled when there is nothing to undo or redo (`UI_INVENTORY.md` S-15).

@@ -39,6 +39,25 @@ Examples pinned by existing tests:
 | 20% / +5 premise | 55 | +10 |
 | Premise at 50 with a 100%/+5 supporting grandchild, then +5 to root | 68.75 | +37.5 |
 
+### Marginal effect Δ (“Korosta painavimmat”)
+
+A diagnostic, never an input to any score. For every scored relation `e` from child `c` into parent `t` (missing, zero-impact and unassessed contributions are skipped):
+
+```text
+local:  I_without(t) = clamp(base(t) + 5 * (SUM(contribution) - contribution(e)), 0, 100)
+        localΔ(c)    = 2 * (I(t) - I_without(t))                      // in visible points
+target: walk from t up to the thesis or the nearest option, recomputing each ancestor's one changed contribution
+        w(edge) * clamp(I_without(child) / 100, 0, 1) with the other contributions as they are, clamps included;
+        Δ(c) = 2 * (I(target) - I_without(target))
+```
+
+The walk stops without a result at a gate, a value, a group, an unassessed or zero-impact link on the way. Δ answers “how much would the main claim's / option's balance change if only this relation were removed, everything else as assessed”; deltas of different reasons do not add up (clamps and the shared base make them interact). The card chip `Δ +4.0 p` and the highlighted border appear only on the strongest fifth per target (`ceil(0.2 × n)`, so at least one, ties by child id) while View → *Korosta painavimmat* is on; the tooltip gives the target's current balance, its balance without the relation, and the same for the direct parent. It follows the shown viewpoint (shared or one assessor) and is hidden when the shared balance is hidden by a reviewer filter.
+
+| Tree (argument mode) | Balances | Δ shown |
+| --- | --- | --- |
+| Thesis ← A 100 % / +5 | thesis +50 | A: +50.0 p (without A the thesis is at its neutral base, 0) |
+| Thesis ← A 80 % / +4 ← B 100 % / −2 | A +40, thesis +28 | A: +28.0 p; B: −4.0 p (local −20 on A: A would be +60) |
+
 The old `heuristic-v1` formula and v5/v6 scoring docs are **historical**, not a numerical contract for new work. Use tests such as `evidence-v2-dev21.test.cjs`, `weighted-upward-dev20.test.cjs`, `deep-argument-propagation-dev20.test.cjs`, `secondary-scoring-dev26.test.cjs`, `signed-balance-dev21.test.cjs`.
 
 ## G-03: human aggregation and independent viewpoints

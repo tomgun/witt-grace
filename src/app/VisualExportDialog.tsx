@@ -20,13 +20,17 @@ import {
 import { Modal } from './dialogs.tsx';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
-import { LAYER_PRESETS } from './view.ts';
+import { exportLayers, LAYER_PRESETS } from './view.ts';
 import type { Translator } from '../lib/i18n/i18n.ts';
 
 /** Everything the export drawing needs from the current frame, with the app's own labels and chips. */
 export function snapshotInput(frame: Frame, t: Translator, options: VisualExportOptions): SnapshotInput {
   const { project, view, actorId } = frame;
-  const layers = resolveExportLayers(options.detail, view.layers, LAYER_PRESETS);
+  const layers = resolveExportLayers(options.detail, exportLayers(view.layers), {
+    text: exportLayers(LAYER_PRESETS.text),
+    analysis: exportLayers(LAYER_PRESETS.analysis),
+    all: exportLayers(LAYER_PRESETS.all),
+  });
   const personal = view.indexMode === 'personal';
   const assessor = project.users.find((u) => u.id === viewedAssessorId(project, view, actorId));
   const viewpoint = personal ? (assessor?.name ?? t('indexPersonal')) : t('indexShared');
@@ -70,7 +74,7 @@ export function VisualExportDialog({ frame }: { frame: Frame }) {
       showImportance: view.showImportance,
       highlightOptions: view.highlightOptions,
       leadingOptionCount: frame.leadingOptionIds.size,
-      layers: view.layers,
+      layers: exportLayers(view.layers),
       showRecurringInTree: view.showRecurringInTree,
       compactVisible: view.depthLimit !== null ? view.depthCompact : view.compactVisible,
       anyCollapsed: project.nodes.some((n) => n.collapsed),

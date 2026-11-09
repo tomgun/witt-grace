@@ -163,7 +163,7 @@ export function AiDraftDialog() {
             indexMode: 'personal',
             viewAssessorId: ai.id,
             workflow: 'evaluate',
-            layers: { ...state.view.layers, index: true, confidence: true, impact: true },
+            layers: { ...state.view.layers, index: true, assessments: true },
             highlightOptions: incoming.mode === 'decision',
           });
       }

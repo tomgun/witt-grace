@@ -13,8 +13,6 @@ const LAYER_KEYS: Record<
   | 'layerDetails'
   | 'layerIndex'
   | 'layerAssessments'
-  | 'layerConfidence'
-  | 'layerImpact'
   | 'layerComments'
   | 'layerCounts'
   | 'layerLinks'
@@ -23,8 +21,6 @@ const LAYER_KEYS: Record<
   details: 'layerDetails',
   index: 'layerIndex',
   assessments: 'layerAssessments',
-  confidence: 'layerConfidence',
-  impact: 'layerImpact',
   comments: 'layerComments',
   counts: 'layerCounts',
   links: 'layerLinks',
@@ -264,15 +260,6 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               onChange={(e) => store.setView({ showRecurringInTree: e.target.checked })}
             />
             <span>{t('sharedShowInTree')}</span>
-          </label>
-          <label>
-            <input
-              id="dragFromText"
-              type="checkbox"
-              checked={view.dragFromText}
-              onChange={(e) => store.setView({ dragFromText: e.target.checked })}
-            />
-            <span>{t('dragFromText')}</span>
           </label>
         </div>
         <div className="dock-tree-tools">

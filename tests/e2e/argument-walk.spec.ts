@@ -6,10 +6,13 @@
  *       exports v8 JSON; decision mode adds options; themes and languages switch; the top bar's ↶/↷ undo and redo an
  *       added card and its ? opens help without widening the page; × or Delete removes a leaf without asking (a
  *       fading copy stays a second), a subtree asks first, and undo restores it; the added Terminaali, ASCII and
- *       Sarjakuva themes apply and persist, and ASCII draws the edges as characters (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
+ *       Sarjakuva themes apply and persist, and ASCII draws the edges as characters; an unassessed slider reads "—" and
+ *       saving one axis saves the other as shown in one undo step; the dock has seven layers and no drag-from-text
+ *       option (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
- *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo
+ *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo, the
+ *              document's starting value shown as if assessed, a one-axis save leaving the pair half missing
  */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
@@ -188,4 +191,41 @@ test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browse
   }
   await page.reload();
   await expect(page.locator('body')).toHaveAttribute('data-theme', 'comic');
+});
+
+test('an unassessed slider reads —; saving one axis saves the other as shown, as one undo step', async ({
+  page,
+}) => {
+  await page.locator('#btnWorkflowEvaluate').click();
+  await addReason(page, '+', 'Uusi peruste');
+  const chip = page.locator('.node', { hasText: 'Uusi peruste' }).locator('.meta-assessment .meta-value');
+  await expect(chip).toHaveText('—/—');
+  await expect(page.locator('#nodeConfidence')).toHaveClass(/range-unset/);
+  await expect(page.locator('label[for="nodeConfidence"] output')).toHaveText('—');
+  await expect(page.locator('label[for="nodeImpact"] output')).toHaveText('—');
+  const influence = page.getByTestId('review-influence');
+  await influence.fill('4');
+  await influence.blur();
+  await expect(chip).toHaveText('100%/+4');
+  await expect(page.locator('#nodeConfidence')).not.toHaveClass(/range-unset/);
+  await page.locator('#btnUndoTop').click();
+  await expect(chip).toHaveText('—/—');
+  // Pressing a key on the slider accepts the shown value even when it does not move (100 % is the maximum).
+  await page.locator('#nodeConfidence').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(chip).toHaveText('100%/+3');
+});
+
+test('the view dock has no separate credence or impact layer and no drag-from-text option', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the dock is opened from the desktop toolbar');
+  await page.locator('#viewport').focus();
+  await page.keyboard.press('Alt+V');
+  await page.locator('#btnLayers').click();
+  await expect(page.locator('#layersPanel input[data-layer]')).toHaveCount(7);
+  await expect(
+    page.locator('#layersPanel [data-layer="confidence"], #layersPanel [data-layer="impact"]')
+  ).toHaveCount(0);
+  await expect(page.locator('#dragFromText')).toHaveCount(0);
 });

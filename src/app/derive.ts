@@ -11,7 +11,6 @@ import {
   personalCredence,
   personalInfluence,
   sharedReason,
-  truthAssessable,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
 import type { MessageKey, Translator } from '../lib/i18n/i18n.ts';
@@ -261,18 +260,6 @@ export function cardChips(
       value: importanceShort(effect),
       cls: 'meta-marginal',
       title: importanceHint(project, t, effect),
-    });
-  if (l.confidence && truthAssessable(node))
-    chips.push({
-      label: t('credenceChip'),
-      value: ratings?.credence == null ? EM_DASH : `${Number(ratings.credence.toFixed(0))} %`,
-      title: ratings?.provenance ?? t('credenceHint'),
-    });
-  if (l.impact && assessmentFields(node).impact)
-    chips.push({
-      label: t('impactChip'),
-      value: ratings?.impact == null ? EM_DASH : `${signed(Number(ratings.impact.toFixed(1)))}/5`,
-      title: ratings?.provenance ?? t('impactHint'),
     });
   if (l.comments)
     chips.push({ label: t('commentsChip'), value: String(commentCount), title: t('commentsHint') });

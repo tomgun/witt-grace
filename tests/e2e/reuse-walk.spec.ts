@@ -34,7 +34,7 @@ test('reuse a reason under a second option with independent ratings', async ({ p
   await expect(page.locator('.node .shared-node-mark')).toHaveCount(2);
   // The new use starts from the document template, never from the first use's rating.
   await expect(page.getByTestId('review-credence')).toHaveValue('100');
-  await expect(page.locator('#inspector .inline-warning').first()).toContainText('ei ole vielä tallennettu');
+  await expect(page.locator('#inspector .inline-warning').first()).toContainText('Et ole vielä arvioinut');
   await reviewSelected(page, '90', '-3');
   const uses = page
     .locator('.node', { hasText: 'Saamme perheen yhteistä aikaa' })

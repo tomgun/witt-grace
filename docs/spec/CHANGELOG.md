@@ -2,6 +2,8 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-09 — `GRACE_AND_DATA_MODEL.md` — G-02 gains the description of the existing marginal effect Δ (“Korosta painavimmat”): formula, stopping rules, the strongest-fifth rule and two worked examples. Behaviour unchanged (the owner asked for it to be explained in the method description).
+- 2026-11-09 — `UI_INVENTORY.md` — Owner decisions: the separate credence and impact card layers and the “Raahaa solmua myös tekstistä” option are removed; unassessed inspector sliders read “—” and saving one axis saves the other as shown (S-07.1 layers, S-12 key shape, S-15 decided deviations).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: three added themes Terminaali, ASCII and Sarjakuva (S-00 row, S-12 key values, S-15 decided deviation).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: × delete on cards, a leaf deletes without a confirm, deleted cards fade out (S-07 row, S-15 decided deviation).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: a ? help button in the top bar (S-02 row, S-15 decided deviation).

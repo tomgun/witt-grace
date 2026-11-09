@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import {
+  assessmentFields,
   canReparent,
   currentInfluenceReviews,
   decisionRanking,
@@ -159,6 +160,7 @@ function Range({
   format,
   onCommit,
   testId,
+  unset = false,
 }: {
   id: string;
   label: string;
@@ -170,14 +172,21 @@ function Range({
   format: (v: number) => string;
   onCommit: (v: number) => void;
   testId?: string;
+  /** No saved assessment yet: the handle sits at the document's starting value, reads "—" and is greyed until the
+   * person moves or presses it, which saves it as theirs (owner decision 2026-11-09, UI_INVENTORY S-15). */
+  unset?: boolean;
 }) {
   const [draft, setDraft] = useState(value);
-  const commit = () => draft !== value && onCommit(draft);
+  const [touched, setTouched] = useState(false);
+  const commit = () => (draft !== value || (unset && touched)) && onCommit(draft);
+  const empty = unset && !touched;
   return (
-    <Field id={id} label={label} output={format(draft)}>
+    <Field id={id} label={label} output={empty ? EM_DASH : format(draft)}>
       <input
         id={id}
         data-testid={testId}
+        className={empty ? 'range-unset' : undefined}
+        aria-valuetext={empty ? EM_DASH : undefined}
         type="range"
         min={min}
         max={max}
@@ -185,6 +194,10 @@ function Range({
         value={draft}
         disabled={!editable}
         onChange={(e) => setDraft(Number(e.target.value))}
+        onPointerDown={() => setTouched(true)}
+        onKeyDown={(e) =>
+          (e.key.startsWith('Arrow') || e.key === ' ' || e.key === 'Enter') && setTouched(true)
+        }
         onPointerUp={commit}
         onKeyUp={commit}
         onBlur={commit}
@@ -772,8 +785,29 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
   const effective: NodeScore | undefined = view.indexMode === 'personal' ? personal : assessment;
   const otherScore: NodeScore | undefined =
     view.indexMode === 'personal' ? assessment : frame.actorScores.get(node.id);
+  const credenceShown = !otherPerspective && !node.sharedReasonId && truthAssessable(node);
+  const impactShown =
+    !otherPerspective && !node.sharedReasonId && !!node.parentId && node.relation !== 'option';
   const commit = (credence: number | null, influence: number | null) => {
+    // Saving one axis also saves the other one as the slider shows it, when the person has none yet: they saw both
+    // values and left that one as it was (owner decision 2026-11-09). A stale impact still asks to be reassessed.
+    if (credence === null && credenceShown && !ownVote) credence = node.confidence;
+    if (influence === null && impactShown && !ownImpact?.record) influence = signedInfluence(node) ?? 0;
     if (influence !== null) store.setView({ indexMode: 'personal', viewAssessorId: null });
+    const fields = assessmentFields(node);
+    if (credence !== null && influence !== null && fields.credence && fields.impact) {
+      // Both at once, as the assessment round saves them: one undo step.
+      store.dispatch({
+        type: 'review.personal',
+        voteId: newId(),
+        assessmentId: newId(),
+        nodeId: node.id,
+        userId: actorId,
+        credence,
+        influence,
+      });
+      return;
+    }
     if (credence !== null)
       store.dispatch({ type: 'review.credence', id: newId(), nodeId: node.id, userId: actorId, credence });
     if (influence !== null)
@@ -834,9 +868,10 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
       {!otherPerspective && node.sharedReasonId ? (
         <p className="inspector-note">{t('sharedFixedExplanation')}</p>
       ) : null}
-      {!otherPerspective && !node.sharedReasonId && truthAssessable(node) ? (
+      {credenceShown ? (
         <>
           <Range
+            unset={!ownVote}
             key={`c:${node.id}:${ownVote?.confidence ?? 'none'}`}
             id="nodeConfidence"
             testId="review-credence"
@@ -849,12 +884,13 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             format={(v) => `${v} %`}
             onCommit={(v) => commit(v, null)}
           />
-          {!ownVote ? <p className="inline-warning">{t('profileSuggested')}</p> : null}
+          {!ownVote ? <p className="inline-warning">{t('profileUnsetHint')}</p> : null}
         </>
       ) : null}
-      {!otherPerspective && !node.sharedReasonId && node.parentId && node.relation !== 'option' ? (
+      {impactShown ? (
         <>
           <Range
+            unset={!ownImpact?.current}
             key={`i:${node.id}:${ownImpact?.current && ownImpact.record ? ownImpact.record.influence : 'none'}`}
             id="nodeImpact"
             testId="review-influence"
@@ -872,7 +908,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             onCommit={(v) => commit(null, v)}
           />
           {!ownImpact?.current ? (
-            <p className="inline-warning">{t(ownImpact?.record ? 'profileStale' : 'profileSuggested')}</p>
+            <p className="inline-warning">{t(ownImpact?.record ? 'profileStale' : 'profileUnsetHint')}</p>
           ) : null}
         </>
       ) : null}

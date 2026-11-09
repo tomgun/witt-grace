@@ -3,6 +3,7 @@
 The single truth table for the rebuild. States: `DONE-source` (code exists), `DONE-verified(unit|golden|parity|e2e|sandbox|mac|github)` (a named check proved it, where), `DESIGNED` (docs only), `OPEN`. Since 2026-11-08 the prototype's visible UI is the contract (`docs/spec/UI_INVENTORY.md`); "parity" means a test that drives the frozen prototype module and the port with the same input and compares the output. If code and this table disagree, the code wins and this table is fixed in the same PR.
 
 ## Last verified
+- 2026-11-09, Linux sandbox (Node 24.22.2), `main` with the owner's decisions of 2026-11-09 (Yövärit, top-bar undo/redo and ?, card ×, three added themes, unset sliders, seven layers, Δ explained): `npm run check` passed (326 unit/golden/parity tests); `npm run build` passed; `npx playwright test` passed (30 walks at 1440×900 and 390×844 including the dual-target parity walk, 10 skipped by design). Not run: GitHub Actions, Pages, `npm run proto:check`.
 - 2026-11-09, Linux sandbox (Node 24.22.2), `main` after WG-023 part 2 (`961afb1`) plus the library, export and home-card wiring: `npm run check` passed (docs, spec lock, lint, typecheck, format, 324 unit/golden/parity tests); `npm run build` passed (493 kB main bundle, 150 kB gzip, one chunk per language, examples served from `public/examples/`); `npx playwright test` passed (17 walks at 1440×900 and 390×844, 7 skipped by design); screenshot comparison with `/proto/` at 1440×900 for the home screen, Kartoita, Punnitse with a selected reason, the dock, the reason library, the context menu, decision mode, Bitberg, the assessment round, the review lens, the people and vote dialogs, the table, the tutorial, the visual export and the library dialogs: layout, texts and numbers match the prototype (the quirks the prototype itself has are listed in `UI_INVENTORY.md` S-15). Not run: GitHub Actions, Pages (no push yet). `npm run proto:check` last passed 2026-11-08 (372).
 - 2026-11-08, Linux sandbox (Node 24.22.2), `main` after WG-021: `npm run check` passed (258 tests); `npm run build` passed; `npx playwright test` passed (13 walks, 3 skipped on mobile by design); `npm run proto:check` passed (372).
 - 2026-11-08, Linux sandbox (Node 22.22.1, Python 3.14), repository root, no commits yet: `witt-grace-gpt-proto`: `npm run check` passed (372 tests), `npm run build` passed, `node tools/verify-pages-build.cjs` PASS (23 deployable files), standalone SHA-256 matches the handoff; root `npm run check` passed; the two Claude hooks block and allow as designed.
@@ -18,7 +19,7 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 | Docs check: local links, every spec listed in the spec index, no unfilled lens placeholder, both user guides present | DONE-verified(sandbox) | `scripts/check-docs.mjs` |
 | Principles and lenses with WITT project specifics; skills `/dev`, `/feature`, `/verify`, `/review` | DONE-source | `docs/principles/`, `docs/lenses/`, `.claude/skills/` |
 | CI: `checks`, `browser` and `prototype` jobs; Pages: app at `/`, prototype at `/proto/` | DONE-source — not yet run on GitHub | `.github/workflows/ci.yml`, `.github/workflows/pages.yml` |
-| GitHub repository `tomgun/witt-grace` with the first push, branch protection, Pages source | OPEN (owner) | `CONTRIBUTING.md` |
+| GitHub repository `tomgun/witt-grace` with the first push, branch protection, Pages source | Pushed by the owner 2026-11-09; branch protection and Pages unconfirmed (owner) | `CONTRIBUTING.md` |
 
 ## New implementation
 
@@ -35,18 +36,19 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 | Visual export: SVG byte-equal to the prototype for every example (648 renders), PNG plan and tiles, PDF page plan and bytes, ZIP bytes, estimate text, filenames | DONE-verified(parity) | `src/lib/export/`, `tests/unit/lib-export.test.ts` |
 | Workspace shell to the inventory: home screen (S-01), top bar (S-02), toolbar with stages, actor select, menus and the perspective banner (S-03, S-04), left panel with the reason library pane and the add block (S-05), canvas cards, context menu, inline editing, drag, edges, camera, quick bar, legend (S-07), the dock (S-07.1), inspector sections 1–19 (S-08), bottom zone (S-09), footer (S-10); the prototype stylesheet with eight themes; the 390 px layout | DONE-verified(e2e, sandbox screenshots against `/proto/`) | `src/app/*.tsx`, `src/app/styles.css`, `tests/e2e/argument-walk.spec.ts`, `reuse-walk.spec.ts` |
 | Dialogs: shared and context reasons (via the library pane and inspector), links, visual export, examples, review lens, tutorial, assessment round, move, new work, about, vote, people, help with shortcut settings, confirm/notice/text, replace, library (S-11.1–11.11, 11.14–11.23, 11.27) | DONE-verified(e2e: review, table, onboarding, decision walks) | `src/app/*Dialog.tsx`, `src/app/Tutorial.tsx`, `tests/e2e/*.spec.ts` |
-| AI draft, proposal (contribution) and AI results dialogs, the import report, File → Avaa JSON routing by format (S-11.12, 11.13, 11.20, 11.24–11.26) | OPEN — in progress (WG-023 part 3) | `docs/ISSUE-PLAN.md` |
+| AI draft, proposal (contribution) and AI results dialogs, the import report, File → Avaa JSON routing by format (S-11.12, 11.13, 11.20, 11.24–11.26) | DONE-verified(e2e) | `src/app/Ai*Dialog.tsx`, `src/app/ImportReportDialog.tsx`, `tests/e2e/ai-walk.spec.ts` |
 | P2P rooms | DESIGNED | `docs/spec/P2P_NO_DATABASE_RFC_R1.md` |
 
 ## Known limitations (documented behaviour, not bugs)
 - Prototype quirks reproduced on purpose until the owner decides otherwise (WG-024): see `docs/spec/UI_INVENTORY.md` S-15.
 - The prototype's browser tests are Python Playwright scripts; they are not part of the root `npm run check`.
 - Adding a node in the four-way orientation records two undo steps (the node and the offsets); the prototype records one.
-- Nothing has been pushed to GitHub yet; CI and Pages are unverified until the first push.
+- CI and Pages results on GitHub have not been checked from here.
+- Owner decisions that change the prototype's visible UI are listed in `docs/spec/UI_INVENTORY.md` S-15 (decided deviations).
 
 ## Next 5
-1. WG-023 part 3 — the AI dialogs, the import report and File → Avaa JSON routing; then the full screenshot pass.
-2. WG-025 — dual-target browser walks against `/proto/` and the app.
-3. WG-024 — owner decisions on the S-15 quirks.
-4. WG-001 close-out — push, enable Pages, confirm CI and `/proto/` live (owner).
+1. WG-028 — proposal for an unrated note node and clearer impact wording (owner decision first).
+2. WG-024 — owner decisions on the remaining S-15 quirks.
+3. WG-001 close-out — enable Pages, confirm CI and `/proto/` live (owner).
+4. WG-027 — customisable toolbar proposal (owner decision first).
 5. WG-017 — license decision (owner).

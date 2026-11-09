@@ -47,5 +47,5 @@ test('two options, a review, the ranking and a second person', async ({ page }, 
   await page.locator('[data-testid^="outline-"]', { hasText: 'Halvin' }).click();
   await expect(page.locator('#inspector')).toContainText('Käyttäjänä: Bea');
   await expect(page.getByTestId('review-credence')).toHaveValue('100');
-  await expect(page.locator('#inspector .inline-warning').first()).toContainText('ei ole vielä tallennettu');
+  await expect(page.locator('#inspector .inline-warning').first()).toContainText('Et ole vielä arvioinut');
 });

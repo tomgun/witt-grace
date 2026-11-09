@@ -2,6 +2,7 @@
 // They describe presentation only and never enter the document; the document's own layout stays in `project.layout`.
 import type { KeyValueStore } from '../lib/storage.ts';
 import { readPreference, writePreference } from '../lib/storage.ts';
+import type { ExportLayers } from '../lib/export/snapshot.ts';
 
 export const VIEW_KEY = 'witt-view-v1';
 export const ZONES_KEY = 'witt-zones-v1';
@@ -20,14 +21,14 @@ export const LAYER_NAMES = [
   'details',
   'index',
   'assessments',
-  'confidence',
-  'impact',
   'comments',
   'counts',
   'links',
 ] as const;
 export type LayerName = (typeof LAYER_NAMES)[number];
 export type Layers = Record<LayerName, boolean>;
+// The prototype's separate credence and impact layers repeated the compact pair; the owner removed them (2026-11-09,
+// UI_INVENTORY S-15). A saved view that had either one on gets the compact pair instead.
 export type LayerPreset = 'text' | 'analysis' | 'all';
 export const LAYER_PRESETS: Record<LayerPreset, Layers> = {
   text: {
@@ -35,8 +36,6 @@ export const LAYER_PRESETS: Record<LayerPreset, Layers> = {
     details: false,
     index: false,
     assessments: false,
-    confidence: false,
-    impact: false,
     comments: false,
     counts: false,
     links: false,
@@ -46,8 +45,6 @@ export const LAYER_PRESETS: Record<LayerPreset, Layers> = {
     details: true,
     index: true,
     assessments: true,
-    confidence: false,
-    impact: false,
     comments: true,
     counts: true,
     links: false,
@@ -56,9 +53,7 @@ export const LAYER_PRESETS: Record<LayerPreset, Layers> = {
     labels: true,
     details: true,
     index: true,
-    assessments: false,
-    confidence: true,
-    impact: true,
+    assessments: true,
     comments: true,
     counts: true,
     links: true,
@@ -80,7 +75,6 @@ export interface ViewState {
   showImportance: boolean;
   showSharedReasons: boolean;
   showRecurringInTree: boolean;
-  dragFromText: boolean;
   compactVisible: boolean;
   depthLimit: number | null;
   depthCompact: boolean;
@@ -104,7 +98,6 @@ export function defaultView(windowWidth = 1440): ViewState {
     showImportance: false,
     showSharedReasons: true,
     showRecurringInTree: true,
-    dragFromText: true,
     compactVisible: false,
     depthLimit: null,
     depthCompact: true,
@@ -126,6 +119,7 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
   const layers = { ...base.layers };
   const savedLayers = isRecord(saved.layers) ? saved.layers : {};
   for (const key of LAYER_NAMES) if (typeof savedLayers[key] === 'boolean') layers[key] = savedLayers[key];
+  if (savedLayers.confidence === true || savedLayers.impact === true) layers.assessments = true;
   const focus = isRecord(saved.focus) ? saved.focus : {};
   const pos = isRecord(saved.dockScreenPosition) ? saved.dockScreenPosition : null;
   const depth = saved.depthLimit;
@@ -155,7 +149,6 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
     showImportance: !!saved.showImportance,
     showSharedReasons: saved.showSharedReasons !== false,
     showRecurringInTree: saved.showRecurringInTree !== false,
-    dragFromText: saved.dragFromText !== false,
     compactVisible: !!saved.compactVisible,
     depthLimit: Number.isInteger(depth) && (depth as number) >= 0 ? (depth as number) : null,
     depthCompact: saved.depthCompact !== false,
@@ -184,6 +177,9 @@ export function writeZones(store: KeyValueStore, zones: Zones): void {
   writePreference(store, ZONES_KEY, JSON.stringify(zones));
 }
 
+/** The export keeps the prototype's nine-layer shape; the removed credence and impact layers are always off there. */
+export const exportLayers = (l: Layers): ExportLayers => ({ ...l, confidence: false, impact: false });
+
 /** Which preset the current layers equal, or `custom`. */
 export function currentPreset(layers: Layers): LayerPreset | 'custom' {
   return (
@@ -195,11 +191,11 @@ export function currentPreset(layers: Layers): LayerPreset | 'custom' {
 
 /** The prototype's card height for a layer set (view-layout spacing depends on it). */
 export function cardHeight(l: Layers): number {
-  const density = (
-    ['index', 'assessments', 'confidence', 'impact', 'comments', 'counts', 'links'] as const
-  ).filter((key) => l[key]).length;
+  const density = (['index', 'assessments', 'comments', 'counts', 'links'] as const).filter(
+    (key) => l[key]
+  ).length;
   if (!l.labels && !l.details && density === 0) return 94;
-  if (density <= 2 && !l.assessments && !l.confidence && !l.impact && !l.comments) return 154;
+  if (density <= 2 && !l.assessments && !l.comments) return 154;
   return 176;
 }
 

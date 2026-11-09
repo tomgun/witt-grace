@@ -45,7 +45,7 @@ export function AiResultsDialog() {
       indexMode: 'personal',
       viewAssessorId: id,
       workflow: 'evaluate',
-      layers: { ...view.layers, index: true, confidence: true, impact: true },
+      layers: { ...view.layers, index: true, assessments: true },
       highlightOptions: decision && highlight,
     });
     store.select((rootNode(project) as { id: string }).id);
