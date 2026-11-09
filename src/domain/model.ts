@@ -7,7 +7,11 @@ export const SCORING_V3 = 'evidence-v3-links' as const;
 /** Owner decision 2026-11-09: a claim with reasons gets its result from them alone, starting neutral; its own credence
  * is then a felt sense that never enters the score. Leaves keep their own credence. */
 export const SCORING_V4 = 'evidence-v4-reasons' as const;
-export const SCORING_VERSIONS = [SCORING_V3, SCORING_V4] as const;
+/** Owner request 2026-11-09: reasons decide as in v4, but evidence adds up as log-odds, so it never hits a hard cap: a
+ * claim's internal value is 100·σ(logit(base) + k·(positive − negative)), k = ln 3 / 5, so one fully credible +5
+ * reason still gives 75 (+50) from a neutral base, two give 90 (+80) instead of the capped 100. */
+export const SCORING_LOGODDS = 'logodds-reasons-v1' as const;
+export const SCORING_VERSIONS = [SCORING_V3, SCORING_V4, SCORING_LOGODDS] as const;
 export type ScoringVersion = (typeof SCORING_VERSIONS)[number];
 /** The version a new document gets. */
 export const SCORING_VERSION: ScoringVersion = SCORING_V4;
@@ -202,6 +206,18 @@ export const argumentBalance = (internal: number | null): number | null =>
 export const evidenceFactor = (score: number): number => clamp(score / 100, 0, 1);
 export const evidenceScore = (base: number, positive: number, negative: number): number =>
   clamp(base + 5 * (positive - negative), 0, 100);
+const LOGODDS_K = Math.log(3) / 5;
+/** The log-odds combination: no net evidence leaves the base as it is; otherwise the base (kept off 0 and 100) moves
+ * on the logit scale. */
+export const logOddsScore = (base: number, positive: number, negative: number): number => {
+  const net = positive - negative;
+  if (Math.abs(net) < 1e-12) return base;
+  const p = clamp(base, 0.5, 99.5) / 100;
+  return 100 / (1 + Math.exp(-(Math.log(p / (1 - p)) + LOGODDS_K * net)));
+};
+/** The score formula of a scoring version. */
+export const scoreFor = (scoring: ScoringVersion) =>
+  scoring === SCORING_LOGODDS ? logOddsScore : evidenceScore;
 
 export const isGate = (n: Node | undefined | null): boolean =>
   n?.semanticType === 'constraint' || n?.semanticType === 'prerequisite';

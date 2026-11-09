@@ -12,7 +12,7 @@ import {
   marginalTargetEffects,
   personalCredence,
   personalInfluence,
-  SCORING_V4,
+  SCORING_V3,
   sharedReason,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
@@ -108,7 +108,7 @@ export const relationLabel = (ctx: DeriveContext, t: Translator, node: Node): st
 /** Under evidence-v4-reasons a claim with reasons takes its result from them; its own credence is then only a felt
  * sense, saved for comparison but never scored (owner decision 2026-11-09). */
 export function credenceIsFeeling(project: Project, node: Node): boolean {
-  if (project.settings.scoring !== SCORING_V4 || node.kind !== 'claim' || node.sharedReasonId) return false;
+  if (project.settings.scoring === SCORING_V3 || node.kind !== 'claim' || node.sharedReasonId) return false;
   const reason = (n: Node | undefined) => !!n && n.kind === 'claim' && !isGate(n) && !isValue(n);
   return (
     project.nodes.some(

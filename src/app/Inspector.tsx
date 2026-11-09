@@ -22,6 +22,8 @@ import {
   summarizeInfluenceReviews,
   truthAssessable,
   TYPE_LABEL_MAX,
+  SCORING_LOGODDS,
+  SCORING_V3,
 } from '../domain/index.ts';
 import type { InfluenceSummary, Node, NodeScore, SemanticType, Stance } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
@@ -1022,15 +1024,25 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           <div className="score-explain">
             {t(view.indexMode === 'personal' ? 'personalIndexExplain' : 'heuristicExplain')}
           </div>
-          {beforeClamp !== null && beforeClamp > 100 + 1e-9 ? (
+          {project.settings.scoring !== SCORING_LOGODDS &&
+          beforeClamp !== null &&
+          beforeClamp > 100 + 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedHigh')}</p>
           ) : null}
-          {beforeClamp !== null && beforeClamp < 0 - 1e-9 ? (
+          {project.settings.scoring !== SCORING_LOGODDS && beforeClamp !== null && beforeClamp < 0 - 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedLow')}</p>
           ) : null}
           <details className="score-help">
             <summary>{t('indexQuestion')}</summary>
-            <p>{t('indexExplain')}</p>
+            <p>
+              {t(
+                project.settings.scoring === SCORING_V3
+                  ? 'indexExplain'
+                  : project.settings.scoring === SCORING_LOGODDS
+                    ? 'indexExplainLogOdds'
+                    : 'indexExplainReasons'
+              )}
+            </p>
             {effective && derivedResult(node, effective) ? (
               <p>
                 {t('indexHere', {

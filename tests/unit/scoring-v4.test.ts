@@ -3,7 +3,8 @@
  *       (own 80 % with one 100 %/−3.83 reason gives −38.3, not +21.7 as under evidence-v3-links); with none of its
  *       reasons assessed it has no result; a leaf keeps its own credence; the same holds for one assessor's
  *       viewpoint; `project.setScoring` switches the version both ways and refuses an unknown one; a new app
- *       document gets v4 while the prototype's documents stay v3 (owner decision 2026-11-09)
+ *       document gets v4 while the prototype's documents stay v3; logodds-reasons-v1 keeps the v4 rule and combines
+ *       reasons as odds (+50, +80, +93, never capped) with Δ on the same formula (owner decisions 2026-11-09)
  * test: tests/unit/scoring-v4.test.ts
  * red-against: the own credence still used as the base, an unassessed claim scored as 0, the v3 golden numbers moved
  */
@@ -14,6 +15,8 @@ import {
   createBlankProject,
   evaluate,
   evaluateAssessor,
+  marginalTargetEffects,
+  SCORING_LOGODDS,
   SCORING_V3,
   SCORING_V4,
 } from '../../src/domain/index.ts';
@@ -81,4 +84,40 @@ test('the scoring version switches both ways and refuses an unknown one', () => 
     createBlankProject({ projectId: 'q', rootId: 'R', userId: 'u', now: ctx.now }).settings.scoring,
     SCORING_V3
   );
+});
+
+test('log-odds: reasons decide as in v4 and combine as odds: +50, +80, +93, no cap; Δ follows the same formula', () => {
+  const add = (p: Project, id: string, influence: number) =>
+    run(
+      p,
+      { type: 'node.add', id, parentId: 'T', relation: influence > 0 ? 'support' : 'oppose', title: id },
+      { type: 'review.credence', id: `v-${id}`, nodeId: id, userId: 'u1', credence: 100 },
+      {
+        type: 'review.influence',
+        id: `a-${id}`,
+        subjectType: 'primary',
+        subjectId: id,
+        userId: 'u1',
+        influence,
+      }
+    );
+  let p = createBlankProject({
+    projectId: 'p',
+    rootId: 'T',
+    userId: 'u1',
+    now: ctx.now,
+    scoring: SCORING_LOGODDS,
+  });
+  p = add(p, 'A', 5);
+  assert.equal(S(evaluate(p).get('T')?.score), 50);
+  p = add(p, 'B', 5);
+  assert.equal(S(evaluate(p).get('T')?.score), 80);
+  assert.equal(Number((2 * marginalTargetEffects(p, evaluate(p)).get('A')!.delta).toFixed(1)), 30);
+  p = add(p, 'C', 5);
+  assert.equal(S(evaluate(p).get('T')?.score), 92.9);
+  p = add(p, 'D', -5);
+  assert.equal(S(evaluate(p).get('T')?.score), 80);
+  // The own credence of a claim with reasons does not count here either.
+  const withOwn = run(p, { type: 'review.credence', id: 'v-own', nodeId: 'T', userId: 'u1', credence: 10 });
+  assert.equal(S(evaluate(withOwn).get('T')?.score), 80);
 });

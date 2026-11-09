@@ -244,6 +244,13 @@ test('a new document lets reasons decide; the calculation method switches in the
   );
   await page.locator('#assessmentMenu summary').click();
   await expect(page.getByTestId('scoring-select')).toHaveValue('evidence-v4-reasons');
+  await expect(page.locator('#scoringSelect option')).toHaveText([
+    'Perustelut ratkaisevat (oletus)',
+    'Log-odds: näyttö kertyy kertoimina',
+    'Oma arvio + perustelut (prototyyppi)',
+  ]);
+  await page.getByTestId('scoring-select').selectOption('logodds-reasons-v1');
+  await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma tuntuma');
   await page.getByTestId('scoring-select').selectOption('evidence-v3-links');
   await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma uskottavuusarvio');
 });

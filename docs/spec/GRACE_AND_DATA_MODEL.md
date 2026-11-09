@@ -49,6 +49,16 @@ One rule differs from `evidence-v3-links`: a claim that has reasons (a primary c
 | Claim with own 80 %, one 100 % / −3.5 reason | +25 | −35 |
 | Claim with own 80 %, its only reason unassessed | +60 | — |
 
+### `logodds-reasons-v1` (owner request 2026-11-09, selectable)
+
+The v4 rule (a claim with reasons starts neutral and ignores its own credence) with one more change: contributions combine on the log-odds scale instead of the capped sum. With `k = ln 3 / 5` and the same `strength`, `positive`, `negative` as above:
+
+```text
+I(target) = 100 · σ( logit(base/100) + k · (positive − negative) )      base kept within 0.5…99.5; no net evidence → I = base
+```
+
+A fully credible +5 reason multiplies the odds by 3. From a neutral base: one such reason +50 (as in v3/v4), two +80, three +92.9, one +5 and one −5 cancel to 0. There is no clamp, so the ±100 saturation notes are not shown. Δ uses the same formula (two +5 reasons: Δ of each is +30).
+
 ### Marginal effect Δ (“Korosta painavimmat”)
 
 A diagnostic, never an input to any score. For every scored relation `e` from child `c` into parent `t` (missing, zero-impact and unassessed contributions are skipped):

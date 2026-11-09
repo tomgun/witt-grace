@@ -1,16 +1,17 @@
 // evidence-v3-links: the recursive explanatory balance per viewpoint. Pure; reproduces the prototype engine exactly
 // (tests/golden). evidence-v4-reasons (owner 2026-11-09) differs in one rule: a claim with reasons starts neutral (50)
-// and its own credence is not used; with none of them assessed yet it has no result. Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
+// and its own credence is not used; with none of them assessed yet it has no result. logodds-reasons-v1 keeps that rule
+// and combines the reasons on the log-odds scale instead of the capped sum (`scoreFor` in model.ts). Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
 import {
   argumentBalance,
   evidenceFactor,
-  evidenceScore,
+  scoreFor,
+  SCORING_V3,
   indexAssessable,
   isAiProfile,
   isGate,
   isValue,
   relationFingerprint,
-  SCORING_V4,
   signedLinkImpact,
 } from './model.ts';
 import type { AssessmentWeighting, Node, Project, SubjectType, User } from './model.ts';
@@ -147,12 +148,13 @@ function hasReasons(
     return !!source && !isGate(source) && !isValue(source);
   });
 }
-/** evidence-v4-reasons: the base of a claim with reasons is neutral once one of them scores, else there is no result. */
+/** evidence-v4-reasons and logodds-reasons-v1: the base of a claim with reasons is neutral once one of them scores, else there is no result. */
 const reasonsBase = (contributions: Contribution[]): number | null =>
   contributions.some((c) => !c.missing) ? 50 : null;
 
 export function evaluate(project: Project): Scores {
-  const v4 = project.settings.scoring === SCORING_V4;
+  const reasonsDecide = project.settings.scoring !== SCORING_V3;
+  const combine = scoreFor(project.settings.scoring);
   const mode = assessmentWeighting(project);
   const human = new Map<string, User>(project.users.filter((u) => !isAiProfile(u)).map((u) => [u.id, u]));
   const expectedHumanReviews = [...human.values()].filter(
@@ -204,7 +206,7 @@ export function evaluate(project: Project): Scores {
     // synthetic review. A deliberately entered root vote is respected.
     const thesis = project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
     const fromReasons =
-      v4 && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
+      reasonsDecide && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
     let baseValue =
       node.kind === 'option'
         ? 50
@@ -327,7 +329,7 @@ export function evaluate(project: Project): Scores {
       baseValue = reasonsBase(contributions);
       if (baseValue === null) incomplete = true;
     }
-    const score = baseValue === null ? null : evidenceScore(baseValue, positive, negative);
+    const score = baseValue === null ? null : combine(baseValue, positive, negative);
     const result: NodeScore = {
       score,
       balance: argumentBalance(score),
@@ -358,7 +360,8 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
   const ownVotes = new Map(
     project.votes.filter((v) => v.userId === userId).map((v) => [v.nodeId, v.confidence])
   );
-  const v4 = project.settings.scoring === SCORING_V4;
+  const reasonsDecide = project.settings.scoring !== SCORING_V3;
+  const combine = scoreFor(project.settings.scoring);
   const ownEdges = new Map(
     (project.edgeAssessments ?? [])
       .filter((a) => a.userId === userId)
@@ -379,7 +382,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
     const thesis = project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
     const own = ownVotes.get(node.id);
     const fromReasons =
-      v4 && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
+      reasonsDecide && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
     let base =
       node.kind === 'option' ? 50 : shared ? shared.confidence : own !== undefined ? own : thesis ? 50 : null;
     let positive = 0;
@@ -466,7 +469,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
       base = reasonsBase(contributions);
       if (base === null) incomplete = true;
     }
-    const score = base === null ? null : evidenceScore(base, positive, negative);
+    const score = base === null ? null : combine(base, positive, negative);
     const answer: NodeScore = {
       score,
       balance: argumentBalance(score),
@@ -496,6 +499,7 @@ export interface MarginalEffect {
 }
 /** Leave-one-relation-out change in the parent's internal score: a local counterfactual, not a decomposition. */
 export function marginalIndexEffects(project: Project, evaluated: Scores): Map<string, MarginalEffect> {
+  const combine = scoreFor(project.settings.scoring);
   const effects = new Map<string, MarginalEffect>();
   for (const parent of project.nodes) {
     if (!indexAssessable(parent)) continue;
@@ -509,7 +513,7 @@ export function marginalIndexEffects(project: Project, evaluated: Scores): Map<s
       if (!Number.isFinite(signed) || signed === 0) continue;
       const positive = Math.max(0, result.positive - (signed > 0 ? child.magnitude : 0));
       const negative = Math.max(0, result.negative - (signed < 0 ? child.magnitude : 0));
-      const withoutScore = evidenceScore(result.base, positive, negative);
+      const withoutScore = combine(result.base, positive, negative);
       const raw = result.score - withoutScore;
       const delta = Math.abs(raw) < 1e-9 ? 0 : raw;
       effects.set(child.id, {
@@ -540,6 +544,7 @@ export function marginalTargetEffects(
   evaluated: Scores,
   localEffects: Map<string, MarginalEffect> = marginalIndexEffects(project, evaluated)
 ): Map<string, TargetEffect> {
+  const combine = scoreFor(project.settings.scoring);
   const result = new Map<string, TargetEffect>();
   const byId = new Map(project.nodes.map((n) => [n.id, n]));
   for (const effect of localEffects.values()) {
@@ -593,7 +598,7 @@ export function marginalTargetEffects(
       const change = afterMagnitude - contribution.magnitude;
       const positive = Math.max(0, parentResult.positive + (signed > 0 ? change : 0));
       const negative = Math.max(0, parentResult.negative + (signed < 0 ? change : 0));
-      afterScore = evidenceScore(parentResult.base, positive, negative);
+      afterScore = combine(parentResult.base, positive, negative);
       provisional ||= Boolean(parentResult.incomplete);
       currentId = (parent as Node).id;
     }
