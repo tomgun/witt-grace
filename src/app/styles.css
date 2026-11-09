@@ -8475,6 +8475,14 @@ body[data-theme='bitberg'] .repeat-link-indicator {
 .zone-toggle:hover {
   color: var(--accent-text);
 }
+/* Owner decision 2026-11-09: undo and redo stay visible in the header (UI_INVENTORY S-15). */
+.zone-toggle:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.zone-toggle:disabled:hover {
+  color: var(--muted);
+}
 body.zone-top-hidden .toolbar {
   display: none !important;
 }
@@ -8683,5 +8691,13 @@ body.zone-bottom-hidden .bottom-zone {
 @media (max-width: 760px) {
   #viewDock:not(.is-collapsed) {
     width: min(350px, calc(100vw - 16px));
+  }
+}
+.header-right .history-controls {
+  margin-right: 5px;
+}
+@media (max-width: 760px) {
+  .header-right .history-controls {
+    margin: 0;
   }
 }

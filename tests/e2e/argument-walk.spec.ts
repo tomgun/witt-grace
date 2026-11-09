@@ -3,14 +3,15 @@
  *       the card's inline editor, switches to Punnitse, reviews it 100 % / +5 and reads +50.0 as the thesis balance;
  *       a thesis without reasons shows "—", never 0; a second unreviewed reason shows "—/—" and marks the balance
  *       incomplete with †; the work survives a reload; Alt+1..4 and Alt+V toggle the zones and the dock; the file menu
- *       exports v8 JSON; decision mode adds options; themes and languages switch (UI_INVENTORY S-01, S-03, S-07, S-08)
+ *       exports v8 JSON; decision mode adds options; themes and languages switch; the top bar's ↶/↷ undo and redo an
+ *       added card (UI_INVENTORY S-01, S-02, S-03, S-07, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
- *              marker rendered as "*"
+ *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo
  */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { reviewSelected as review, selectRoot, startBlank } from './helpers.ts';
+import { addNamed, reviewSelected as review, selectRoot, startBlank } from './helpers.ts';
 
 test.beforeEach(async ({ page }) => {
   await startBlank(page, 'argument');
@@ -114,4 +115,21 @@ test('switching the language loads its messages on demand', async ({ page }) => 
   await expect(page.locator('#fileMenu summary')).toHaveText('File');
   await page.locator('#localeSelect').selectOption('fi');
   await expect(page.locator('#fileMenu summary')).toHaveText('Tiedosto');
+});
+
+test('the top bar undo and redo buttons revert and reapply an edit', async ({ page }) => {
+  await startBlank(page, 'argument');
+  await expect(page.locator('#btnRedoTop')).toBeDisabled();
+  await addNamed(page, '#btnSupport', 'Undo target');
+  await expect(page.getByTestId('node-count')).toHaveText('2');
+  // Adding and naming may be one or two steps; undo until the card is gone, then redo until it is back.
+  await expect(async () => {
+    await page.locator('#btnUndoTop').click();
+    await expect(page.getByTestId('node-count')).toHaveText('1', { timeout: 500 });
+  }).toPass();
+  await expect(page.locator('#btnRedoTop')).toBeEnabled();
+  await expect(async () => {
+    await page.locator('#btnRedoTop').click();
+    await expect(page.locator('.node-title', { hasText: 'Undo target' })).toBeVisible({ timeout: 500 });
+  }).toPass();
 });

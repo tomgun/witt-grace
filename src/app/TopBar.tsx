@@ -134,6 +134,35 @@ export function TopBar() {
         />
       </div>
       <div className="header-right">
+        <div
+          className="zone-controls history-controls"
+          id="historyControls"
+          role="group"
+          aria-label={`${t('undo')} / ${t('redo')}`}
+        >
+          <button
+            type="button"
+            id="btnUndoTop"
+            className="zone-toggle"
+            disabled={!state.canUndo}
+            title={`${t('undo')} (Ctrl/Cmd+Z)`}
+            aria-label={`${t('undo')} (Ctrl/Cmd+Z)`}
+            onClick={() => store.undo()}
+          >
+            ↶
+          </button>
+          <button
+            type="button"
+            id="btnRedoTop"
+            className="zone-toggle"
+            disabled={!state.canRedo}
+            title={`${t('redo')} (Ctrl/Cmd+Shift+Z)`}
+            aria-label={`${t('redo')} (Ctrl/Cmd+Shift+Z)`}
+            onClick={() => store.redo()}
+          >
+            ↷
+          </button>
+        </div>
         <div className="zone-controls" role="group" aria-label={t('zoneControls')}>
           {ZONE_BUTTONS.map(({ zone, id, glyph, key, shortcut }) => (
             <button
