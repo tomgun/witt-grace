@@ -40,6 +40,7 @@ import {
   importanceHint,
   importanceText,
   nodeAssessmentSnapshot,
+  ratesSignificance,
   relationLabel,
   resultText,
   shownInfluence,
@@ -894,7 +895,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             key={`i:${node.id}:${ownImpact?.current && ownImpact.record ? ownImpact.record.influence : 'none'}`}
             id="nodeImpact"
             testId="review-influence"
-            label={t('profileInfluence')}
+            label={t(ratesSignificance(project, node) ? 'profileSignificance' : 'profileInfluence')}
             value={
               ownImpact?.current && ownImpact.record
                 ? ownImpact.record.influence
@@ -1126,7 +1127,13 @@ export function Inspector({ frame }: { frame: Frame }) {
     const editable = canEdit(state) && !node.sharedReasonId;
     const fullyEditable = canEdit(state);
     const parent = node.parentId ? project.nodes.find((n) => n.id === node.parentId) : undefined;
-    const kicker = `${relationLabel(frame, t, node)} · ${t(node.parentId === null ? 'rootNote' : 'impactNote')}`;
+    const kicker = `${relationLabel(frame, t, node)} · ${t(
+      node.parentId === null
+        ? 'rootNote'
+        : ratesSignificance(project, node)
+          ? 'significanceNote'
+          : 'impactNote'
+    )}`;
     if (node.kind === 'group') {
       const parentChoices: [string, string][] = project.nodes
         .filter((n) => canReparent(project, node.id, n.id))

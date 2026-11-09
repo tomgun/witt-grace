@@ -81,6 +81,12 @@ export function displayedPrimaryRelation(ctx: DeriveContext, node: Node): Stance
   if (node.parentId === null || node.relation === 'option' || node.relation === 'group') return node.relation;
   return directionFromInfluence(shownInfluence(ctx, node), node.relation);
 }
+/** In a decision, a reason directly under an option rates its significance for that option (direction, strength
+ * and how much it matters to the assessor in one number); deeper reasons rate their influence on the parent. Same
+ * number and maths either way; only the wording differs (owner decision 2026-11-09, UI_INVENTORY S-15). */
+export const ratesSignificance = (project: Project, node: Node): boolean =>
+  project.mode === 'decision' && project.nodes.find((n) => n.id === node.parentId)?.kind === 'option';
+
 export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
   if (node.relation === 'group') return 'optionGroupType';
   if (node.relation === 'option') return 'optionType';

@@ -315,12 +315,20 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                   </div>
                 </div>
                 <div className="assessment-field" id="assessmentImpactField" hidden={!hasEdge}>
-                  <p className="assessment-axis">{t('assessmentImpactAxis')}</p>
+                  <p className="assessment-axis">
+                    {t(parent?.kind === 'option' ? 'assessmentSignificanceAxis' : 'assessmentInfluenceAxis')}
+                  </p>
                   <label htmlFor="assessmentInfluence" id="assessmentInfluenceLabel">
                     {t(parent?.kind === 'option' ? 'assessmentInfluenceOption' : 'assessmentInfluenceClaim')}
                   </label>
                   <div id="assessmentImpactReflection" className="assessment-reflection">
-                    <p>{t('assessmentImpactReflectSimple')}</p>
+                    <p>
+                      {t(
+                        parent?.kind === 'option'
+                          ? 'assessmentSignificanceReflect'
+                          : 'assessmentImpactReflectSimple'
+                      )}
+                    </p>
                   </div>
                   <div className="assessment-scale">
                     <input

@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-09 — `UI_INVENTORY.md` — Owner decision (option 1 of the impact-wording question): a reason directly under a decision option is worded as its significance for the option; other relations as influence on the parent (S-15). Scoring unchanged.
 - 2026-11-09 — `GRACE_AND_DATA_MODEL.md` — G-02 gains the description of the existing marginal effect Δ (“Korosta painavimmat”): formula, stopping rules, the strongest-fifth rule and two worked examples. Behaviour unchanged (the owner asked for it to be explained in the method description).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decisions: the separate credence and impact card layers and the “Raahaa solmua myös tekstistä” option are removed; unassessed inspector sliders read “—” and saving one axis saves the other as shown (S-07.1 layers, S-12 key shape, S-15 decided deviations).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: three added themes Terminaali, ASCII and Sarjakuva (S-00 row, S-12 key values, S-15 decided deviation).
