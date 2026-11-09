@@ -21,6 +21,7 @@ import {
   signedInfluence,
   summarizeInfluenceReviews,
   truthAssessable,
+  TYPE_LABEL_MAX,
 } from '../domain/index.ts';
 import type { InfluenceSummary, Node, NodeScore, SemanticType, Stance } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
@@ -204,6 +205,48 @@ function Range({
         onBlur={commit}
       />
     </Field>
+  );
+}
+function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
+  const t = useTranslator();
+  const store = getStore();
+  const [draft, setDraft] = useState(node.typeLabel ?? '');
+  const commit = () => {
+    const next = draft.trim();
+    if (next !== (node.typeLabel ?? ''))
+      store.dispatch({ type: 'node.edit', id: node.id, typeLabel: next || null });
+  };
+  return (
+    <>
+      <Field id="nodeTypeLabel" label={t('typeLabelField')}>
+        <input
+          id="nodeTypeLabel"
+          data-testid="node-type-label"
+          type="text"
+          list="typeLabelPresets"
+          maxLength={TYPE_LABEL_MAX}
+          value={draft}
+          disabled={!editable}
+          placeholder={node.semanticType === 'value' ? t('semantic_value') : undefined}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+          }}
+        />
+        <datalist id="typeLabelPresets">
+          {t('typeLabelPresets')
+            .split(';')
+            .map((preset) => (
+              <option key={preset} value={preset} />
+            ))}
+        </datalist>
+      </Field>
+      <p className="inspector-note">{t('typeLabelHelp')}</p>
+    </>
   );
 }
 function Select({
@@ -1165,6 +1208,11 @@ export function Inspector({ frame }: { frame: Frame }) {
             maxLength={5000}
             onCommit={(v) => store.dispatch({ type: 'node.edit', id: node.id, details: v })}
           />
+          <TypeLabelField
+            key={`type:${node.id}:${node.typeLabel ?? ''}`}
+            node={node}
+            editable={fullyEditable}
+          />
           <Select
             id="nodeParent"
             testId="node-parent"
@@ -1305,6 +1353,9 @@ export function Inspector({ frame }: { frame: Frame }) {
           maxLength={5000}
           onCommit={(v) => store.dispatch({ type: 'node.edit', id: node.id, details: v })}
         />
+        {!node.sharedReasonId ? (
+          <TypeLabelField key={`type:${node.id}:${node.typeLabel ?? ''}`} node={node} editable={editable} />
+        ) : null}
         {node.relation === 'option' ? <OptionValues node={node} /> : null}
         {project.mode === 'decision' && node.parentId === null ? <DecisionValueMatrix /> : null}
         {project.mode === 'decision' && (node.parentId === null || node.relation === 'option') ? (

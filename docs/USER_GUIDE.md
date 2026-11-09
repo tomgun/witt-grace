@@ -24,7 +24,7 @@ The **home screen** (*Aloitussivu*) always opens first (and from the ⌂ button 
 - *Jatka edellistä työtä* (continue) – shown when the browser holds a readable save; opens it in the workspace.
 - *+ Luo uusi asiakirja* (new document) – opens *Uusi työ*: *Tyhjä argumenttipuu* (blank argument tree), *Tyhjä päätöspuu* (blank decision tree) or *Luo uusi puu AI:n avulla* (new tree with AI). With work open, starting anew asks first and replaces the current work.
 - *Avaa tiedosto* (open file) – opens a `.witt.json` (section 7).
-- *Kokeile esimerkkiä* (try an example) – *Harjoitusesimerkit*: five fictional three-assessor discussions (weight management, remote and office work, choosing a cloud platform and others). An example opens under a fresh id, so it never overwrites a library copy; a multi-assessor example opens straight in *Punnitse*.
+- *Kokeile esimerkkiä* (try an example) – *Harjoitusesimerkit*: five fictional three-assessor discussions plus two recruitment examples, *Sopiiko kandidaatti K?* (criteria as claims under the main claim; a criterion's influence on it is its weight) and *Kolme kandidaattia* (candidates as options, the same criteria as repeated reasons under each); they also show the current model's limit: a criterion below neutral (e.g. −16.7) still adds a little, since a reason's strength is 0…1 (weight management, remote and office work, choosing a cloud platform and others). An example opens under a fresh id, so it never overwrites a library copy; a multi-assessor example opens straight in *Punnitse*.
 - *Opastettu harjoitus* (guided practice) – a seven-step exercise on a fresh document (below).
 - *Muut toiminnot* (more) – *Asiakirjakirjasto* (document library), *Luo uusi puu AI:n avulla*, *AI:n tai toisen käyttäjän muutosehdotus* (proposal from an AI or another user).
 
@@ -72,7 +72,9 @@ The workspace has the top bar (document title, ↶ undo and ↷ redo, four panel
 
 Choose the stage *Punnitse*. In *Kartoita* the inspector only says *Uskottavuus ja vaikutus arvioidaan Punnitse-tilassa* with a *Punnitse* button; switching also sets the layers to the Analysis preset.
 
-**Your rating in the inspector.** Under *Arviointiasetukset* (*Käyttäjänä: name*) are the sliders *Oma uskottavuusarvio* (0–100 %) and *Oma vaikutusarvio vanhempaan (−5…+5)*. In a decision, a reason directly under an option has *Oma arvio merkityksestä vaihtoehdolle (−5…+5)* instead: one number for direction, strength and how much the matter weighs for you (e.g. *En ole treenannut moneen päivään* under *Uimaan tänään* gets a larger number the more regular training matters to you). Deeper reasons still rate their influence on their parent. The maths is the same; only the wording differs. Until you have rated, a slider is greyed and reads *—*: its handle waits at the document's starting value, which no score uses. Pressing or moving it and letting go saves it, also at the shown value. Saving one slider also saves the other one as shown if you have not rated it yet: setting only the influence to +3 also saves the shown 100 % credence. Both are one undo step; if the claim or relation changed after you rated it, the rating is marked stale and you are asked to rate again. The line *Arvioinnin mukaan: Puoltava (+3.7/5)* gives the assessed direction; *Arviot henkilöittäin · n / m* lists the visible assessors' ratings. Values, constraints and prerequisites get no credence percentage.
+**Your rating in the inspector.** Under *Arviointiasetukset* (*Käyttäjänä: name*) are the sliders *Oma uskottavuusarvio* (0–100 %) and *Oma vaikutusarvio vanhempaan (−5…+5)*. In a decision, a reason directly under an option has *Oma arvio merkityksestä vaihtoehdolle (−5…+5)* instead: one number for direction, strength and how much the matter weighs for you (e.g. *En ole treenannut moneen päivään* under *Uimaan tänään* gets a larger number the more regular training matters to you). Deeper reasons still rate their influence on their parent. The maths is the same; only the wording differs. **Own type name.** The field *Oma tyyppinimi* gives the node's type a name of your own (suggestions Kriteeri, Tavoite, Arvo, Periaate, Huomio, Kandidaatti, or free text, at most 40 characters). On the root, an option or a group it replaces the card's type tag (e.g. VAIHTOEHTO → KRITEERI); on a reason it shows beside the direction tag. A new option, group or value judgment on the same level takes the same name. It never affects a score; clearing it restores the default.
+
+Until you have rated, a slider is greyed and reads *—*: its handle waits at the document's starting value, which no score uses. Pressing or moving it and letting go saves it, also at the shown value. Saving one slider also saves the other one as shown if you have not rated it yet: setting only the influence to +3 also saves the shown 100 % credence. Both are one undo step; if the claim or relation changed after you rated it, the rating is marked stale and you are asked to rate again. The line *Arvioinnin mukaan: Puoltava (+3.7/5)* gives the assessed direction; *Arviot henkilöittäin · n / m* lists the visible assessors' ratings. Values, constraints and prerequisites get no credence percentage.
 
 **The assessment round** (Assessment → *◉ Arviointikierros*, key `R`) walks the claims one at a time: *Kohta 3/11*, *Arvioitu 2/11*, a progress bar, the parent context, the claim with its notes, both axes. Buttons *← Edellinen*, *Ohita →*, *Tallenna ja seuraava →* (`Ctrl/Cmd+Enter`), *Aloita uusi kierros* and at the end *Jatka keskeneräisistä*. Progress is kept in this browser per document and person; a done mark expires when the claim, its parent or your own values change.
 
@@ -151,12 +153,13 @@ Choose the stage *Punnitse*. In *Kartoita* the inspector only says *Uskottavuus 
 
 ## 8. Keyboard shortcuts
 
-Shortcuts never capture keys inside text fields. Help → *Pikanäppäimet* (`?`) opens the quick guide; its *Muokattavat pikanäppäimet* section rebinds eight commands (choices include `+ − * Ctrl+Enter Alt+1…6 Alt+A F H R T ?`; one key per command; *Palauta oletukset* resets). The setting is kept in the browser.
+Shortcuts never capture keys inside text fields. Help → *Pikanäppäimet* (`?`) opens the quick guide; its *Muokattavat pikanäppäimet* section rebinds nine commands (choices include `+ − * Ctrl+Enter Alt+1…6 Alt+A F H R T ?`; one key per command; *Palauta oletukset* resets). The setting is kept in the browser.
 
 | Key | Action |
 | --- | --- |
 | `+` / `−` | Add a supporting / opposing reason to the selected node (rebindable) |
 | `Ctrl/Cmd+Enter` / `Ctrl/Cmd+Shift+Enter` | The same, always available |
+| `,` | Add a value judgment (a goal or value; never counted in the balance) to the selected node (rebindable) |
 | `*` | Add a decision option (decision mode, rebindable) |
 | `T` | Tree ⇄ table (rebindable) |
 | `F` / `Esc` | Tree only on/off / off (rebindable) |

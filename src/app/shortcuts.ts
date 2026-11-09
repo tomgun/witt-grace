@@ -5,11 +5,13 @@ import type { MessageKey } from '../lib/i18n/i18n.ts';
 
 export const SHORTCUT_STORAGE = 'witt-keybindings-v1';
 export type ShortcutAction =
-  'support' | 'oppose' | 'option' | 'table' | 'focus' | 'assessment' | 'help' | 'arrange';
+  'support' | 'oppose' | 'value' | 'option' | 'table' | 'focus' | 'assessment' | 'help' | 'arrange';
 export type Shortcuts = Record<ShortcutAction, string>;
 export const SHORTCUT_DEFAULTS: Readonly<Shortcuts> = Object.freeze({
   support: '+',
   oppose: '-',
+  // Added after the prototype (owner 2026-11-09): a value judgment under the selected card.
+  value: ',',
   option: '*',
   table: 'T',
   focus: 'F',
@@ -21,6 +23,8 @@ export const SHORTCUT_CHOICES = [
   '+',
   '-',
   '*',
+  ',',
+  '.',
   'Ctrl+Enter',
   'Ctrl+Shift+Enter',
   'Ctrl+Alt+Enter',
@@ -44,6 +48,7 @@ export const SHORTCUT_CHOICES = [
 export const SHORTCUT_LABELS: Record<ShortcutAction, MessageKey> = {
   support: 'supportAdd',
   oppose: 'opposeAdd',
+  value: 'valueAdd',
   option: 'optionAdd',
   table: 'tableView',
   focus: 'focusTree',

@@ -1,6 +1,6 @@
 /**
- * must: from the home screen "Kokeile esimerkkiä" lists the five synthetic three-assessor debates with their claim and
- *       assessor counts; opening one while work is saved passes the replacement dialog (Peruuta keeps the current work,
+ * must: from the home screen "Kokeile esimerkkiä" lists the five synthetic three-assessor debates and the two added
+ *       recruitment examples (S-15) with their claim and assessor counts; opening one while work is saved passes the replacement dialog (Peruuta keeps the current work,
  *       "Hylkää nykyinen ja jatka" loads the example in Punnitse); "Opastettu harjoitus" passes the same dialog, creates
  *       the practice document and the panel advances only when the person does what a step asks (+ reason, name it,
  *       − reason), "Ohita vaihe" moves on, × closes and clears every highlight (UX_AND_WORKFLOWS, UI_INVENTORY S-01)
@@ -25,7 +25,7 @@ test('an example and the practice open through the replacement dialog; the pract
   await page.locator('#btnHomeDemo').click();
   const examples = page.locator('#examplesDialog');
   await expect(examples).toBeVisible();
-  await expect(examples.locator('.example-card')).toHaveCount(5);
+  await expect(examples.locator('.example-card')).toHaveCount(7);
   const card = examples.locator('.example-card[data-example="painonhallinta"]');
   await expect(card).toContainText('Painonhallinta: mikä on kestävä tapa?');
   await expect(card).toContainText('13 väitettä · 3 arvioijaa');

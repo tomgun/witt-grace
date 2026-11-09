@@ -216,6 +216,7 @@ export function App() {
       if (action) {
         e.preventDefault();
         if (action === 'support' || action === 'oppose') addNode(action);
+        else if (action === 'value') addNode('support', undefined, 'value');
         else if (action === 'option') {
           if (s.project.mode === 'decision')
             addNode('option', s.project.nodes.find((n) => n.parentId === null)?.id);

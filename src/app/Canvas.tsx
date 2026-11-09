@@ -37,6 +37,7 @@ import {
   importanceHint,
   importanceText,
   relationLabel,
+  semanticChip,
   shownInfluence,
   signed,
 } from './derive.ts';
@@ -569,9 +570,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           <span className={`node-tag${l.labels ? '' : ' compact-tag'}`}>{label}</span>
           {node.sharedReasonId ? <small className="shared-node-mark">{t('sharedBadge')}</small> : null}
           {node.reasonConceptId ? <small className="shared-node-mark">{t('contextBadge')}</small> : null}
-          {node.semanticType && node.semanticType !== 'unspecified' && !node.sharedReasonId ? (
-            <small className="node-semantic">{t(`semantic_${node.semanticType}`)}</small>
-          ) : null}
+          {semanticChip(t, node) ? <small className="node-semantic">{semanticChip(t, node)}</small> : null}
           {showAuthor && creator ? (
             isAiProfile(creator) ? (
               <small className="node-ai-author" title={`${t('aiAuthored')}: ${creator.name}`}>

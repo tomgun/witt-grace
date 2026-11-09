@@ -14,6 +14,7 @@ import {
   VOTE_WEIGHTINGS,
   isAiProfile,
   isGate,
+  TYPE_LABEL_MAX,
   isHalfStep,
   truthAssessable,
 } from './model.ts';
@@ -233,6 +234,9 @@ export function parseProject(input: unknown): Project {
         : {}),
       ...(p.reasonConceptId
         ? { reasonConceptId: str(p.reasonConceptId, 100, 'Kontekstiperusteen viite', false) }
+        : {}),
+      ...(p.typeLabel !== undefined
+        ? { typeLabel: str(p.typeLabel, TYPE_LABEL_MAX, 'Tyyppinimi', false) }
         : {}),
     };
   });

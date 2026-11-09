@@ -73,7 +73,11 @@ export interface Node {
   authorVisibility?: 'named' | 'anonymous';
   sharedReasonId?: string;
   reasonConceptId?: string;
+  /** The person's own name for the node's type ("Kriteeri", "Tavoite"…), shown instead of the built-in root, option or
+   * group tag, or of the semantic chip on a reason. Display only; never read by scoring (owner 2026-11-09). */
+  typeLabel?: string;
 }
+export const TYPE_LABEL_MAX = 40;
 export interface SharedReason {
   id: string;
   title: string;

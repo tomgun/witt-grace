@@ -1,0 +1,740 @@
+{
+  "schemaVersion": 8,
+  "id": "ex-rekry-kolme",
+  "title": "Rekrytointi: kolme kandidaattia samoilla kriteereillä",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "u-aino",
+      "name": "Aino · myyntijohtaja",
+      "shares": 1,
+      "role": "owner"
+    },
+    {
+      "id": "u-bertil",
+      "name": "Bertil · HR",
+      "shares": 1,
+      "role": "editor"
+    },
+    {
+      "id": "u-ceren",
+      "name": "Ceren · tiimin myyjä",
+      "shares": 1,
+      "role": "editor"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Kenet palkkaamme myyntitiimiin?",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 818
+      },
+      "createdBy": "u-aino",
+      "lastEditedBy": "u-aino"
+    },
+    {
+      "id": "o-a",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Kandidaatti A",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 272
+      },
+      "createdBy": "u-aino",
+      "typeLabel": "Kandidaatti"
+    },
+    {
+      "id": "o-a-k-sales",
+      "parentId": "o-a",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Myyntinäyttö on vahva",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 90
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-sales",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-a-k-culture",
+      "parentId": "o-a",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Sopii tiimin toimintakulttuuriin",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 272
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-culture",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-a-k-experience",
+      "parentId": "o-a",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Työkokemus riittää tehtävään",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 454
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-experience",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-b",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Kandidaatti B",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 818
+      },
+      "createdBy": "u-aino",
+      "typeLabel": "Kandidaatti"
+    },
+    {
+      "id": "o-b-k-sales",
+      "parentId": "o-b",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Myyntinäyttö on vahva",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 636
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-sales",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-b-k-culture",
+      "parentId": "o-b",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Sopii tiimin toimintakulttuuriin",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 818
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-culture",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-b-k-experience",
+      "parentId": "o-b",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Työkokemus riittää tehtävään",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1000
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-experience",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-c",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Kandidaatti C",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1364
+      },
+      "createdBy": "u-aino",
+      "typeLabel": "Kandidaatti"
+    },
+    {
+      "id": "o-c-k-sales",
+      "parentId": "o-c",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Myyntinäyttö on vahva",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1182
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-sales",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-c-k-culture",
+      "parentId": "o-c",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Sopii tiimin toimintakulttuuriin",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1364
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-culture",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "o-c-k-experience",
+      "parentId": "o-c",
+      "relation": "neutral",
+      "kind": "claim",
+      "title": "Työkokemus riittää tehtävään",
+      "details": "",
+      "confidence": 100,
+      "impact": 0,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1546
+      },
+      "createdBy": "u-aino",
+      "semanticType": "fact",
+      "reasonConceptId": "k-experience",
+      "typeLabel": "Kriteeri"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [
+    {
+      "id": "k-sales",
+      "title": "Myyntinäyttö on vahva",
+      "semanticType": "fact"
+    },
+    {
+      "id": "k-culture",
+      "title": "Sopii tiimin toimintakulttuuriin",
+      "semanticType": "fact"
+    },
+    {
+      "id": "k-experience",
+      "title": "Työkokemus riittää tehtävään",
+      "semanticType": "fact"
+    }
+  ],
+  "votes": [
+    {
+      "id": "v-054",
+      "nodeId": "o-a-k-sales",
+      "userId": "u-aino",
+      "confidence": 85,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-056",
+      "nodeId": "o-a-k-sales",
+      "userId": "u-bertil",
+      "confidence": 80,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-058",
+      "nodeId": "o-a-k-sales",
+      "userId": "u-ceren",
+      "confidence": 90,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-060",
+      "nodeId": "o-a-k-culture",
+      "userId": "u-aino",
+      "confidence": 40,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-062",
+      "nodeId": "o-a-k-culture",
+      "userId": "u-bertil",
+      "confidence": 35,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-064",
+      "nodeId": "o-a-k-culture",
+      "userId": "u-ceren",
+      "confidence": 50,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-066",
+      "nodeId": "o-a-k-experience",
+      "userId": "u-aino",
+      "confidence": 90,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-068",
+      "nodeId": "o-a-k-experience",
+      "userId": "u-bertil",
+      "confidence": 95,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-070",
+      "nodeId": "o-a-k-experience",
+      "userId": "u-ceren",
+      "confidence": 85,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-072",
+      "nodeId": "o-b-k-sales",
+      "userId": "u-aino",
+      "confidence": 55,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-074",
+      "nodeId": "o-b-k-sales",
+      "userId": "u-bertil",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-076",
+      "nodeId": "o-b-k-sales",
+      "userId": "u-ceren",
+      "confidence": 50,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-078",
+      "nodeId": "o-b-k-culture",
+      "userId": "u-aino",
+      "confidence": 85,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-080",
+      "nodeId": "o-b-k-culture",
+      "userId": "u-bertil",
+      "confidence": 90,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-082",
+      "nodeId": "o-b-k-culture",
+      "userId": "u-ceren",
+      "confidence": 80,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-084",
+      "nodeId": "o-b-k-experience",
+      "userId": "u-aino",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-086",
+      "nodeId": "o-b-k-experience",
+      "userId": "u-bertil",
+      "confidence": 55,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-088",
+      "nodeId": "o-b-k-experience",
+      "userId": "u-ceren",
+      "confidence": 65,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-090",
+      "nodeId": "o-c-k-sales",
+      "userId": "u-aino",
+      "confidence": 70,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-092",
+      "nodeId": "o-c-k-sales",
+      "userId": "u-bertil",
+      "confidence": 65,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-094",
+      "nodeId": "o-c-k-sales",
+      "userId": "u-ceren",
+      "confidence": 75,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-096",
+      "nodeId": "o-c-k-culture",
+      "userId": "u-aino",
+      "confidence": 65,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-098",
+      "nodeId": "o-c-k-culture",
+      "userId": "u-bertil",
+      "confidence": 70,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-100",
+      "nodeId": "o-c-k-culture",
+      "userId": "u-ceren",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-102",
+      "nodeId": "o-c-k-experience",
+      "userId": "u-aino",
+      "confidence": 30,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-104",
+      "nodeId": "o-c-k-experience",
+      "userId": "u-bertil",
+      "confidence": 40,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-106",
+      "nodeId": "o-c-k-experience",
+      "userId": "u-ceren",
+      "confidence": 35,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "a-055",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-sales",
+      "influence": 5,
+      "fingerprint": "[\"o-a-k-sales\",\"o-a\",\"Myyntinäyttö on vahva\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-057",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-sales",
+      "influence": 4,
+      "fingerprint": "[\"o-a-k-sales\",\"o-a\",\"Myyntinäyttö on vahva\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-059",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-sales",
+      "influence": 4,
+      "fingerprint": "[\"o-a-k-sales\",\"o-a\",\"Myyntinäyttö on vahva\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-061",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-culture",
+      "influence": 3,
+      "fingerprint": "[\"o-a-k-culture\",\"o-a\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-063",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-culture",
+      "influence": 5,
+      "fingerprint": "[\"o-a-k-culture\",\"o-a\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-065",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-culture",
+      "influence": 4,
+      "fingerprint": "[\"o-a-k-culture\",\"o-a\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-067",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-experience",
+      "influence": 2,
+      "fingerprint": "[\"o-a-k-experience\",\"o-a\",\"Työkokemus riittää tehtävään\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-069",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-experience",
+      "influence": 3,
+      "fingerprint": "[\"o-a-k-experience\",\"o-a\",\"Työkokemus riittää tehtävään\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-071",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-a-k-experience",
+      "influence": 2,
+      "fingerprint": "[\"o-a-k-experience\",\"o-a\",\"Työkokemus riittää tehtävään\",\"Kandidaatti A\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-073",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-sales",
+      "influence": 5,
+      "fingerprint": "[\"o-b-k-sales\",\"o-b\",\"Myyntinäyttö on vahva\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-075",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-sales",
+      "influence": 4,
+      "fingerprint": "[\"o-b-k-sales\",\"o-b\",\"Myyntinäyttö on vahva\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-077",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-sales",
+      "influence": 4,
+      "fingerprint": "[\"o-b-k-sales\",\"o-b\",\"Myyntinäyttö on vahva\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-079",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-culture",
+      "influence": 3,
+      "fingerprint": "[\"o-b-k-culture\",\"o-b\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-081",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-culture",
+      "influence": 5,
+      "fingerprint": "[\"o-b-k-culture\",\"o-b\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-083",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-culture",
+      "influence": 4,
+      "fingerprint": "[\"o-b-k-culture\",\"o-b\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-085",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-experience",
+      "influence": 2,
+      "fingerprint": "[\"o-b-k-experience\",\"o-b\",\"Työkokemus riittää tehtävään\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-087",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-experience",
+      "influence": 3,
+      "fingerprint": "[\"o-b-k-experience\",\"o-b\",\"Työkokemus riittää tehtävään\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-089",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-b-k-experience",
+      "influence": 2,
+      "fingerprint": "[\"o-b-k-experience\",\"o-b\",\"Työkokemus riittää tehtävään\",\"Kandidaatti B\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-091",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-sales",
+      "influence": 5,
+      "fingerprint": "[\"o-c-k-sales\",\"o-c\",\"Myyntinäyttö on vahva\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-093",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-sales",
+      "influence": 4,
+      "fingerprint": "[\"o-c-k-sales\",\"o-c\",\"Myyntinäyttö on vahva\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-095",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-sales",
+      "influence": 4,
+      "fingerprint": "[\"o-c-k-sales\",\"o-c\",\"Myyntinäyttö on vahva\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-097",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-culture",
+      "influence": 3,
+      "fingerprint": "[\"o-c-k-culture\",\"o-c\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-099",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-culture",
+      "influence": 5,
+      "fingerprint": "[\"o-c-k-culture\",\"o-c\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-101",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-culture",
+      "influence": 4,
+      "fingerprint": "[\"o-c-k-culture\",\"o-c\",\"Sopii tiimin toimintakulttuuriin\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-103",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-experience",
+      "influence": 2,
+      "fingerprint": "[\"o-c-k-experience\",\"o-c\",\"Työkokemus riittää tehtävään\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-105",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-experience",
+      "influence": 3,
+      "fingerprint": "[\"o-c-k-experience\",\"o-c\",\"Työkokemus riittää tehtävään\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-107",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "o-c-k-experience",
+      "influence": 2,
+      "fingerprint": "[\"o-c-k-experience\",\"o-c\",\"Työkokemus riittää tehtävään\",\"Kandidaatti C\",\"neutral\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-09T09:00:00.000Z",
+  "updatedAt": "2026-11-09T09:00:00.000Z"
+}

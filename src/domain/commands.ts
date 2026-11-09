@@ -1,7 +1,15 @@
 // Every change to a document is a serializable Command applied by `applyCommand(project, command, ctx)`: pure, returns a
 // new Project, throws without touching the input. Ids come from the caller (so a peer can replay the same log); `now`
 // stamps timestamps; `actorId` tags who edited. The rules are the prototype's, pinned by tests/unit/commands.test.ts.
-import { isAiProfile, isGate, isHalfStep, truthAssessable, assessmentFields } from './model.ts';
+import {
+  isAiProfile,
+  isGate,
+  isHalfStep,
+  isValue,
+  truthAssessable,
+  assessmentFields,
+  TYPE_LABEL_MAX,
+} from './model.ts';
 import type {
   AssessmentWeighting,
   GateStatus,
@@ -39,7 +47,15 @@ export type Command =
   | { type: 'project.setAssessmentWeighting'; weighting: AssessmentWeighting }
   | { type: 'project.setVoteWeighting'; weighting: VoteWeighting }
   | { type: 'project.setShowAuthors'; showAuthors: boolean }
-  | { type: 'node.add'; id: string; parentId: string; relation: Exclude<Stance, 'root'>; title?: string }
+  | {
+      type: 'node.add';
+      id: string;
+      parentId: string;
+      relation: Exclude<Stance, 'root'>;
+      title?: string;
+      /** Only `value` for now: the `,` shortcut adds a value reason in one step. */
+      semanticType?: 'value';
+    }
   | {
       type: 'node.edit';
       id: string;
@@ -49,6 +65,8 @@ export type Command =
       constraintStatus?: GateStatus;
       authorVisibility?: 'named' | 'anonymous';
       sources?: SourceRef[];
+      /** The person's own type name; `null` restores the built-in one. */
+      typeLabel?: string | null;
     }
   | { type: 'node.move'; id: string; parentId: string }
   | { type: 'node.remove'; id: string }
@@ -812,6 +830,23 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
     case 'node.add': {
       const created = addChild(p, c.id, c.parentId, c.relation, ctx.actorId);
       if (c.title !== undefined) created.title = c.title;
+      if (c.semanticType !== undefined) {
+        if (c.semanticType !== 'value' || created.kind !== 'claim') fail('Virheellinen semanttinen luokitus');
+        created.semanticType = 'value';
+      }
+      // A new option, group or value takes the type name its siblings of the same kind use, so naming one
+      // "Kriteeri" names the next one too.
+      const sibling = p.nodes
+        .filter(
+          (n) =>
+            n.parentId === c.parentId &&
+            n.id !== created.id &&
+            n.typeLabel &&
+            n.kind === created.kind &&
+            (created.kind !== 'claim' || (isValue(n) && isValue(created)))
+        )
+        .at(-1);
+      if (sibling && (created.kind !== 'claim' || isValue(created))) created.typeLabel = sibling.typeLabel;
       return;
     }
     case 'node.edit': {
@@ -834,6 +869,12 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
       }
       if (c.authorVisibility !== undefined) n.authorVisibility = c.authorVisibility;
       if (c.sources !== undefined) n.sources = c.sources;
+      if (c.typeLabel !== undefined) {
+        const label = c.typeLabel?.trim() ?? '';
+        if (label.length > TYPE_LABEL_MAX) fail('Tyyppinimi on liian pitkä');
+        if (label) n.typeLabel = label;
+        else delete n.typeLabel;
+      }
       return;
     }
     case 'node.move':

@@ -530,6 +530,12 @@ export const PROJECT_SCHEMA: JsonSchema = {
         semanticType: {
           enum: ['unspecified', 'fact', 'value', 'assumption', 'constraint', 'prerequisite'],
         },
+        // Added after the prototype (owner 2026-11-09): the person's own type name, display only.
+        typeLabel: {
+          type: 'string',
+          minLength: 1,
+          maxLength: 40,
+        },
         constraintStatus: {
           enum: ['unknown', 'met', 'unmet'],
         },

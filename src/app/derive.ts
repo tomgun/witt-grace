@@ -96,8 +96,18 @@ export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
   if (direction === 'neutral') return 'neutralWord';
   return node.kind === 'decision' ? 'rootDecisionType' : 'rootClaimType';
 }
+/** The card's type tag: the person's own type name for the root, an option or a group, else the built-in one. A
+ * reason keeps its direction tag; its own name shows as the semantic chip instead (`semanticChip`). */
 export const relationLabel = (ctx: DeriveContext, t: Translator, node: Node): string =>
-  t(relationLabelKey(ctx, node));
+  node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group')
+    ? node.typeLabel
+    : t(relationLabelKey(ctx, node));
+/** The small chip beside a reason's tag: its own type name, else its semantic type, else nothing. */
+export function semanticChip(t: Translator, node: Node): string | null {
+  if (node.sharedReasonId) return null;
+  if (node.typeLabel && node.parentId !== null && node.kind === 'claim') return node.typeLabel;
+  return node.semanticType && node.semanticType !== 'unspecified' ? t(`semantic_${node.semanticType}`) : null;
+}
 
 /** The score of the shown viewpoint. */
 export const shownScore = (ctx: DeriveContext, id: string): NodeScore | undefined =>

@@ -32,7 +32,7 @@ export const selectedNode = (state: AppState = getStore().get()): Node | undefin
   state.project.nodes.find((n) => n.id === state.selectedId);
 
 /** `addNode`: leaves depth and compact modes, keeps every four-way card in place, selects and edits the new node. */
-export function addNode(relation: AddRelation, parentId?: string): string | null {
+export function addNode(relation: AddRelation, parentId?: string, semanticType?: 'value'): string | null {
   const store = getStore();
   const state = store.get();
   const parent = parentId ?? state.selectedId;
@@ -50,7 +50,7 @@ export function addNode(relation: AddRelation, parentId?: string): string | null
   const fourWay = before.view.orientation === 'four-way';
   const oldFrame = fourWay ? frameOf(before) : null;
   store.select(parent);
-  if (!store.dispatch({ type: 'node.add', id, parentId: parent, relation })) return null;
+  if (!store.dispatch({ type: 'node.add', id, parentId: parent, relation, semanticType })) return null;
   if (fourWay && oldFrame) {
     const project = store.get().project;
     const root = rootNode(project) as Node;

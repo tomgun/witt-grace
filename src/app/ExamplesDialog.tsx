@@ -1,4 +1,4 @@
-// The prototype's #examplesDialog: five synthetic three-assessor debates (witt-grace-gpt-proto/src/examples.js). The
+// The prototype's #examplesDialog: five synthetic three-assessor debates (plus two added recruitment examples) (witt-grace-gpt-proto/src/examples.js). The
 // cards are a static manifest; the documents themselves are fetched from public/examples/ only when one is chosen, so
 // ~150 kB of fixtures stay out of the main bundle. Opening one passes the replacement dialog and gets a fresh id.
 import { useEffect, useRef, useState } from 'react';
@@ -7,57 +7,10 @@ import { newId } from '../lib/providers.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import { stopTutorial } from './Tutorial.tsx';
 
-export interface ExampleEntry {
-  id: string;
-  title: string;
-  description: string;
-  filename: string;
-  participants: string[];
-  nodeCount: number;
-}
-/** The prototype's `Examples.list()` verbatim (fictional data; the files are byte-equal copies of its fixtures). */
-export const EXAMPLES: readonly ExampleEntry[] = [
-  {
-    id: 'painonhallinta',
-    title: 'Painonhallinta: mikä on kestävä tapa?',
-    description: 'Liikunta, nälkä, ruoan mieluisuus, aika ja yksilöllinen sopivuus.',
-    filename: 'debate-painonhallinta.witt.json',
-    participants: ['Aada · aktiiviliikkuja', 'Beni · kiireinen arki', 'Caro · ruoan ilo ja terveys'],
-    nodeCount: 13,
-  },
-  {
-    id: 'etatyomalli',
-    title: 'Etä- ja lähityö: yhteinen työskentelymalli',
-    description: 'Kolmen toimistopäivän mallia arvioivat eri työtilanteissa olevat.',
-    filename: 'debate-etatyomalli.witt.json',
-    participants: ['Eeva · tiiminvetäjä', 'Oskari · keskittymistehtävät', 'Mira · pitkä työmatka'],
-    nodeCount: 12,
-  },
-  {
-    id: 'kaupunkiliikenne',
-    title: 'Kaupunkiliikenne: keskustan läpiajo',
-    description: 'Asukkaan, yrittäjän ja esteettömyyden näkökulmat.',
-    filename: 'debate-kaupunkiliikenne.witt.json',
-    participants: ['Leena · keskustan asukas', 'Joonas · yrittäjä', 'Sari · esteettömyys'],
-    nodeCount: 11,
-  },
-  {
-    id: 'tekoalykehitys',
-    title: 'Tekoälyagentit ohjelmistokehityksessä',
-    description: 'Tuottavuuden, tietoturvan ja toimitusvastuun vertailu.',
-    filename: 'debate-tekoalykehitys.witt.json',
-    participants: ['Noora · turvallisuus', 'Tuomas · kehittäjä', 'Veera · toimitus'],
-    nodeCount: 11,
-  },
-  {
-    id: 'pilvialusta',
-    title: 'Päätöksenteko: pilvialustan valinta',
-    description: 'Kolme arvioijaa, faktat ja arvostukset, erisuuntaiset vaikutukset sekä reunaehdot.',
-    filename: 'debate-pilvialusta.witt.json',
-    participants: ['Aino', 'Bertta', 'Caro'],
-    nodeCount: 12,
-  },
-];
+import { EXAMPLES } from './examples.ts';
+import type { ExampleEntry } from './examples.ts';
+
+export { EXAMPLES };
 
 /** Fetches one example relative to the page (Vite `base: './'`), so it works under any path and from a folder. */
 export async function fetchExample(entry: ExampleEntry): Promise<unknown> {

@@ -1,0 +1,603 @@
+{
+  "schemaVersion": 8,
+  "id": "ex-rekry-yksi",
+  "title": "Rekrytointi: sopiiko kandidaatti K myyntitiimiin?",
+  "mode": "argument",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v3-links",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "u-aino",
+      "name": "Aino · myyntijohtaja",
+      "shares": 1,
+      "role": "owner"
+    },
+    {
+      "id": "u-bertil",
+      "name": "Bertil · HR",
+      "shares": 1,
+      "role": "editor"
+    },
+    {
+      "id": "u-ceren",
+      "name": "Ceren · tiimin myyjä",
+      "shares": 1,
+      "role": "editor"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Kandidaatti K sopii myyntitiimiimme",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 545
+      },
+      "createdBy": "u-aino",
+      "lastEditedBy": "u-aino"
+    },
+    {
+      "id": "goal",
+      "parentId": "root",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Haluamme kasvattaa uusasiakasmyyntiä tänä vuonna",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 90
+      },
+      "createdBy": "u-aino",
+      "semanticType": "value",
+      "typeLabel": "Tavoite"
+    },
+    {
+      "id": "c-sales",
+      "parentId": "root",
+      "relation": "support",
+      "kind": "claim",
+      "title": "K on myyvä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 363
+      },
+      "createdBy": "u-aino",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "e-007",
+      "parentId": "c-sales",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ylitti myyntitavoitteensa kahtena vuonna peräkkäin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 272
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "e-014",
+      "parentId": "c-sales",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Haastattelun myyntiharjoitus jäi pinnalliseksi",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 454
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "c-culture",
+      "parentId": "root",
+      "relation": "support",
+      "kind": "claim",
+      "title": "K sopii tiimimme toimintakulttuuriin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 727
+      },
+      "createdBy": "u-aino",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "e-027",
+      "parentId": "c-culture",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kysyi paljon tiimin yhteisistä käytännöistä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 636
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "e-034",
+      "parentId": "c-culture",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kertoo viihtyvänsä parhaiten itsenäisessä työssä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 818
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "c-experience",
+      "parentId": "root",
+      "relation": "support",
+      "kind": "claim",
+      "title": "K:n työkokemus riittää tehtävään",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1000
+      },
+      "createdBy": "u-aino",
+      "typeLabel": "Kriteeri"
+    },
+    {
+      "id": "e-047",
+      "parentId": "c-experience",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Viisi vuotta B2B-myyntiä ohjelmistoalalla",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1000
+      },
+      "createdBy": "u-aino"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+    {
+      "id": "v-001",
+      "nodeId": "c-sales",
+      "userId": "u-aino",
+      "confidence": 70,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-003",
+      "nodeId": "c-sales",
+      "userId": "u-bertil",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-005",
+      "nodeId": "c-sales",
+      "userId": "u-ceren",
+      "confidence": 65,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-008",
+      "nodeId": "e-007",
+      "userId": "u-aino",
+      "confidence": 90,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-010",
+      "nodeId": "e-007",
+      "userId": "u-bertil",
+      "confidence": 80,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-012",
+      "nodeId": "e-007",
+      "userId": "u-ceren",
+      "confidence": 85,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-015",
+      "nodeId": "e-014",
+      "userId": "u-aino",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-017",
+      "nodeId": "e-014",
+      "userId": "u-bertil",
+      "confidence": 70,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-019",
+      "nodeId": "e-014",
+      "userId": "u-ceren",
+      "confidence": 50,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-021",
+      "nodeId": "c-culture",
+      "userId": "u-aino",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-023",
+      "nodeId": "c-culture",
+      "userId": "u-bertil",
+      "confidence": 50,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-025",
+      "nodeId": "c-culture",
+      "userId": "u-ceren",
+      "confidence": 70,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-028",
+      "nodeId": "e-027",
+      "userId": "u-aino",
+      "confidence": 80,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-030",
+      "nodeId": "e-027",
+      "userId": "u-bertil",
+      "confidence": 85,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-032",
+      "nodeId": "e-027",
+      "userId": "u-ceren",
+      "confidence": 90,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-035",
+      "nodeId": "e-034",
+      "userId": "u-aino",
+      "confidence": 70,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-037",
+      "nodeId": "e-034",
+      "userId": "u-bertil",
+      "confidence": 80,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-039",
+      "nodeId": "e-034",
+      "userId": "u-ceren",
+      "confidence": 60,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-041",
+      "nodeId": "c-experience",
+      "userId": "u-aino",
+      "confidence": 80,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-043",
+      "nodeId": "c-experience",
+      "userId": "u-bertil",
+      "confidence": 85,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-045",
+      "nodeId": "c-experience",
+      "userId": "u-ceren",
+      "confidence": 75,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-048",
+      "nodeId": "e-047",
+      "userId": "u-aino",
+      "confidence": 100,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-050",
+      "nodeId": "e-047",
+      "userId": "u-bertil",
+      "confidence": 100,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "v-052",
+      "nodeId": "e-047",
+      "userId": "u-ceren",
+      "confidence": 100,
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "a-002",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "c-sales",
+      "influence": 5,
+      "fingerprint": "[\"c-sales\",\"root\",\"K on myyvä\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-004",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "c-sales",
+      "influence": 4,
+      "fingerprint": "[\"c-sales\",\"root\",\"K on myyvä\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-006",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "c-sales",
+      "influence": 4,
+      "fingerprint": "[\"c-sales\",\"root\",\"K on myyvä\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-009",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "e-007",
+      "influence": 4,
+      "fingerprint": "[\"e-007\",\"c-sales\",\"Ylitti myyntitavoitteensa kahtena vuonna peräkkäin\",\"K on myyvä\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-011",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "e-007",
+      "influence": 3,
+      "fingerprint": "[\"e-007\",\"c-sales\",\"Ylitti myyntitavoitteensa kahtena vuonna peräkkäin\",\"K on myyvä\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-013",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "e-007",
+      "influence": 4,
+      "fingerprint": "[\"e-007\",\"c-sales\",\"Ylitti myyntitavoitteensa kahtena vuonna peräkkäin\",\"K on myyvä\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-016",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "e-014",
+      "influence": -2,
+      "fingerprint": "[\"e-014\",\"c-sales\",\"Haastattelun myyntiharjoitus jäi pinnalliseksi\",\"K on myyvä\",\"oppose\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-018",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "e-014",
+      "influence": -3,
+      "fingerprint": "[\"e-014\",\"c-sales\",\"Haastattelun myyntiharjoitus jäi pinnalliseksi\",\"K on myyvä\",\"oppose\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-020",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "e-014",
+      "influence": -2,
+      "fingerprint": "[\"e-014\",\"c-sales\",\"Haastattelun myyntiharjoitus jäi pinnalliseksi\",\"K on myyvä\",\"oppose\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-022",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "c-culture",
+      "influence": 3,
+      "fingerprint": "[\"c-culture\",\"root\",\"K sopii tiimimme toimintakulttuuriin\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-024",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "c-culture",
+      "influence": 5,
+      "fingerprint": "[\"c-culture\",\"root\",\"K sopii tiimimme toimintakulttuuriin\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-026",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "c-culture",
+      "influence": 4,
+      "fingerprint": "[\"c-culture\",\"root\",\"K sopii tiimimme toimintakulttuuriin\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-029",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "e-027",
+      "influence": 2,
+      "fingerprint": "[\"e-027\",\"c-culture\",\"Kysyi paljon tiimin yhteisistä käytännöistä\",\"K sopii tiimimme toimintakulttuuriin\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-031",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "e-027",
+      "influence": 2,
+      "fingerprint": "[\"e-027\",\"c-culture\",\"Kysyi paljon tiimin yhteisistä käytännöistä\",\"K sopii tiimimme toimintakulttuuriin\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-033",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "e-027",
+      "influence": 3,
+      "fingerprint": "[\"e-027\",\"c-culture\",\"Kysyi paljon tiimin yhteisistä käytännöistä\",\"K sopii tiimimme toimintakulttuuriin\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-036",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "e-034",
+      "influence": -2,
+      "fingerprint": "[\"e-034\",\"c-culture\",\"Kertoo viihtyvänsä parhaiten itsenäisessä työssä\",\"K sopii tiimimme toimintakulttuuriin\",\"oppose\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-038",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "e-034",
+      "influence": -3,
+      "fingerprint": "[\"e-034\",\"c-culture\",\"Kertoo viihtyvänsä parhaiten itsenäisessä työssä\",\"K sopii tiimimme toimintakulttuuriin\",\"oppose\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-040",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "e-034",
+      "influence": -1,
+      "fingerprint": "[\"e-034\",\"c-culture\",\"Kertoo viihtyvänsä parhaiten itsenäisessä työssä\",\"K sopii tiimimme toimintakulttuuriin\",\"oppose\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-042",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "c-experience",
+      "influence": 2,
+      "fingerprint": "[\"c-experience\",\"root\",\"K:n työkokemus riittää tehtävään\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-044",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "c-experience",
+      "influence": 3,
+      "fingerprint": "[\"c-experience\",\"root\",\"K:n työkokemus riittää tehtävään\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-046",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "c-experience",
+      "influence": 2,
+      "fingerprint": "[\"c-experience\",\"root\",\"K:n työkokemus riittää tehtävään\",\"Kandidaatti K sopii myyntitiimiimme\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-049",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "e-047",
+      "influence": 4,
+      "fingerprint": "[\"e-047\",\"c-experience\",\"Viisi vuotta B2B-myyntiä ohjelmistoalalla\",\"K:n työkokemus riittää tehtävään\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-051",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "e-047",
+      "influence": 4,
+      "fingerprint": "[\"e-047\",\"c-experience\",\"Viisi vuotta B2B-myyntiä ohjelmistoalalla\",\"K:n työkokemus riittää tehtävään\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    },
+    {
+      "id": "a-053",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "e-047",
+      "influence": 3,
+      "fingerprint": "[\"e-047\",\"c-experience\",\"Viisi vuotta B2B-myyntiä ohjelmistoalalla\",\"K:n työkokemus riittää tehtävään\",\"support\"]",
+      "updatedAt": "2026-11-09T09:00:00.000Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-09T09:00:00.000Z",
+  "updatedAt": "2026-11-09T09:00:00.000Z"
+}
