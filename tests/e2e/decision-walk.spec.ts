@@ -86,6 +86,13 @@ test('"," adds a value judgment; an own type name shows on the card and passes t
   await editor.press('Enter');
   const value = page.locator('#nodesLayer .node', { hasText: 'Asiakaskokemus on tärkeää' });
   await expect(value.locator('.node-semantic')).toHaveText('Arvostus');
+  // A reason's own type name joins its direction in one tag; the card's buttons sit at its right edge.
+  await page.getByTestId('node-type-label').fill('Tavoite');
+  await page.getByTestId('node-type-label').press('Enter');
+  await expect(value.locator('.node-tag')).toHaveText(/puoltava tavoite/i);
+  const card = (await value.boundingBox())!;
+  const plus = (await value.locator('.node-add.support').boundingBox())!;
+  expect(plus.x).toBeGreaterThan(card.x + card.width / 2);
   await page.locator('[data-testid^="outline-"]').first().click();
   await addNamed(page, '#btnOption', 'Työkokemus');
   await expect(page.locator('#nodesLayer .node', { hasText: 'Työkokemus' }).locator('.node-tag')).toHaveText(

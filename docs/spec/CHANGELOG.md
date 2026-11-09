@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-09 — `UI_INVENTORY.md` — Owner decision: a reason's own type name reads with its direction (“PUOLTAVA TOSIASIA”); card buttons at the right edge; marks on a row under the header (S-15).
 - 2026-11-09 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner request: a third selectable method `logodds-reasons-v1` (reasons decide; contributions combine as odds, k = ln 3 / 5, no cap) with explanations per method in the inspector and the help dialog.
 - 2026-11-09 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner decision: a claim's result comes from its reasons; its own credence is a felt sense that does not count. New scoring version `evidence-v4-reasons` (name provisional, the owner may rename it), the default for new documents; `evidence-v3-links` stays selectable per document (Arviointi → Laskentatapa) and pins the golden fixtures.
 - 2026-11-09 — `UI_INVENTORY.md` — Owner feedback: a reason's own type name moves to a line above the title so it is never cut; presets gain Tosiasia and drop Kandidaatti (S-15).

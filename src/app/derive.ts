@@ -99,12 +99,23 @@ export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
   if (direction === 'neutral') return 'neutralWord';
   return node.kind === 'decision' ? 'rootDecisionType' : 'rootClaimType';
 }
-/** The card's type tag: the person's own type name for the root, an option or a group, else the built-in one. A
- * reason keeps its direction tag; its own name shows as the semantic chip instead (`semanticChip`). */
-export const relationLabel = (ctx: DeriveContext, t: Translator, node: Node): string =>
-  node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group')
-    ? node.typeLabel
-    : t(relationLabelKey(ctx, node));
+/** The card's type tag: the person's own type name for the root, an option or a group; for a reason with one, the
+ * direction and the name as one phrase; else the built-in tag. */
+export function relationLabel(ctx: DeriveContext, t: Translator, node: Node): string {
+  if (node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group'))
+    return node.typeLabel;
+  const key = relationLabelKey(ctx, node);
+  const typed = reasonTypeLabel(node);
+  // A reason with its own type name reads as one phrase: "Puoltava tosiasia", "Neutraali tavoite" (owner, S-15).
+  if (typed && (key === 'supportType' || key === 'opposeType' || key === 'neutralWord'))
+    return t('typedRelation', {
+      relation: t(
+        key === 'supportType' ? 'typedSupport' : key === 'opposeType' ? 'typedOppose' : 'typedNeutral'
+      ),
+      type: typed,
+    });
+  return t(key);
+}
 /** Under evidence-v4-reasons a claim with reasons takes its result from them; its own credence is then only a felt
  * sense, saved for comparison but never scored (owner decision 2026-11-09). */
 export function credenceIsFeeling(project: Project, node: Node): boolean {
@@ -120,7 +131,7 @@ export function credenceIsFeeling(project: Project, node: Node): boolean {
   );
 }
 
-/** A reason's own type name, shown on its own line above the title (the header has no room for it). */
+/** A reason's own type name; it joins the direction tag (`relationLabel`). */
 export const reasonTypeLabel = (node: Node): string | null =>
   node.typeLabel && node.parentId !== null && node.kind === 'claim' && !node.sharedReasonId
     ? node.typeLabel

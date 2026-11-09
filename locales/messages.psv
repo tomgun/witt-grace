@@ -86,6 +86,10 @@ focusIdle|Valitse puoltavat tai vastustavat. Valitun haaran voi vaihtaa.|Unterst
 focusMatches|{kind}: {count} · Suljetuista haaroista näkyviin: {peek}. Sulkemistila säilyy.|{kind}: {count} · Ausgeblendete Treffer: {peek}. Einklappung bleibt erhalten.|{kind}: {count} · Revealed through collapsed branches: {peek}. Collapse state is unchanged.|{kind}: {count} · Mostrados desde ramas contraídas: {peek}. No cambia el estado.|{kind} : {count} · Révélés dans les branches repliées : {peek}. Aucun changement d’état.|{kind}: {count} · Показано из свёрнутых ветвей: {peek}. Состояние не меняется.|{kind}：{count} · 从折叠分支临时显示：{peek}。折叠状态不变。|{kind}: {count} · 折りたたみから一時表示: {peek}。状態は変わりません。|{kind}: {count} · 접힌 가지에서 임시 표시: {peek}. 접기 상태는 유지됩니다.
 supportType|PUOLTAA|STÜTZT|SUPPORTS|APOYA|SOUTIENT|ПОДДЕРЖИВАЕТ|支持|支持|지지
 opposeType|VASTUSTAA|WIDERSPRICHT|OPPOSES|SE OPONE|S’OPPOSE|ВОЗРАЖАЕТ|反对|反対|반대
+typedSupport|Puoltava|dafür|Supporting|a favor|favorable|за|支持|支持|지지하는
+typedOppose|Vastustava|dagegen|Opposing|en contra|défavorable|против|反对|反対|반대하는
+typedNeutral|Neutraali|neutral|Neutral|neutral|neutre|нейтральный|中立|中立|중립
+typedRelation|{relation} {type}|{type} · {relation}|{relation} {type}|{type} {relation}|{type} {relation}|{type} · {relation}|{relation}的{type}|{relation}の{type}|{relation} {type}
 optionType|VAIHTOEHTO|OPTION|OPTION|OPCIÓN|OPTION|ВАРИАНТ|选项|選択肢|선택지
 rootDecisionType|PÄÄTÖS|ENTSCHEIDUNG|DECISION|DECISIÓN|DÉCISION|РЕШЕНИЕ|决策|意思決定|결정
 rootClaimType|PÄÄVÄITE|HAUPTTHESIS|MAIN CLAIM|TESIS PRINCIPAL|THÈSE PRINCIPALE|ГЛАВНЫЙ ТЕЗИС|核心主张|主張|핵심 주장

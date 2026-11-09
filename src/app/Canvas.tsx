@@ -570,14 +570,6 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           <span className={`node-tag${l.labels ? '' : ' compact-tag'}`} title={label}>
             {label}
           </span>
-          {node.sharedReasonId ? <small className="shared-node-mark">{t('sharedBadge')}</small> : null}
-          {node.reasonConceptId ? <small className="shared-node-mark">{t('contextBadge')}</small> : null}
-          {node.semanticType &&
-          node.semanticType !== 'unspecified' &&
-          !node.sharedReasonId &&
-          !reasonTypeLabel(node) ? (
-            <small className="node-semantic">{t(`semantic_${node.semanticType}`)}</small>
-          ) : null}
           {showAuthor && creator ? (
             isAiProfile(creator) ? (
               <small className="node-ai-author" title={`${t('aiAuthored')}: ${creator.name}`}>
@@ -682,9 +674,21 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             </button>
           ) : null}
         </div>
-        {reasonTypeLabel(node) ? (
-          <div className="node-type-label" title={reasonTypeLabel(node) ?? undefined}>
-            {reasonTypeLabel(node)}
+        {node.sharedReasonId ||
+        node.reasonConceptId ||
+        (node.semanticType &&
+          node.semanticType !== 'unspecified' &&
+          !node.sharedReasonId &&
+          !reasonTypeLabel(node)) ? (
+          <div className="node-marks">
+            {node.sharedReasonId ? <small className="shared-node-mark">{t('sharedBadge')}</small> : null}
+            {node.reasonConceptId ? <small className="shared-node-mark">{t('contextBadge')}</small> : null}
+            {node.semanticType &&
+            node.semanticType !== 'unspecified' &&
+            !node.sharedReasonId &&
+            !reasonTypeLabel(node) ? (
+              <small className="node-semantic">{t(`semantic_${node.semanticType}`)}</small>
+            ) : null}
           </div>
         ) : null}
         <div className="node-title" onPointerDown={(e) => beginNodeDrag(e, node, true)}>
