@@ -17,7 +17,7 @@
 | --- | --- | --- |
 | Root element | `<body data-theme="light" class="home-active">` | `home-active` shows the home screen and hides the app shell; removed when a document is opened. |
 | Hidden file inputs | `#fileInput` (accepts `.json,.witt.json,.peruste.json,application/json`), `#aiDraftInput`, `#aiReviewInput`, `#wittOriginalInput`, `#libraryBackupInput` | One input per flow; every open flow goes through these. |
-| Themes | `light`, `dark`, `paper`, `cosmos` (Star map), `hologram`, `manuscript-book` (Manuscript / Book), `manuscript-pen` (Manuscript / Quill), `bitberg` | Eight themes, same list on the home screen and in the top bar. `<meta name="theme-color">` follows the theme. |
+| Themes | `light`, `dark`, `paper`, `cosmos` (Star map), `hologram`, `manuscript-book` (Manuscript / Book), `manuscript-pen` (Manuscript / Quill), `bitberg` (shown as “◆ Yövärit” / “◆ Night colours” since 2026-11-09; the prototype labels it “Bitberg”) | Eight themes, same list on the home screen and in the top bar. `<meta name="theme-color">` follows the theme. |
 | Languages | `fi` Suomi, `de` Deutsch, `en` English, `es` Español, `fr` Français, `ru` Русский, `zh-Hans` 简体中文, `ja` 日本語, `ko` 한국어 | Same list on the home screen and in the top bar; persisted in `witt-locale-v1`. |
 | Version | Footer `WITT 0.11.0-dev.32` | The new app shows its own version in the same place. |
 
@@ -201,6 +201,10 @@ Eight themes (S-00). Desktop grid: top bar, toolbar, left panel / canvas / inspe
 ## S-15 Prototype defects the owner may choose not to replicate
 
 Recorded here so they are decided, not inherited silently. Each needs an owner decision and a `CHANGELOG.md` line before the new app deviates.
+
+Decided deviations:
+
+- 2026-11-09 (owner): the `bitberg` theme is labelled “◆ Yövärit” (en “◆ Night colours”, nine languages) instead of the prototype’s “Bitberg”, with a glyph like the other themes. The theme id `bitberg`, the `witt-appearance-v1` value and the stylesheet are unchanged, so stored preferences keep working.
 
 - Inspector "Arvioinnin mukaan: Puoltava (+3.6666666666666665/5)" prints an unrounded float; the table shows the same value as "+3.7 (3)". Proposed: one decimal everywhere. (Reproduced as is for now.)
 - The quick-control bar's `↹ Järjestä puu` and `↶ Kumoa` glyphs are lost once the catalog text replaces the button label; the new app shows the catalog text, as the prototype does after localisation.

@@ -93,7 +93,7 @@ test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports
   expect(parsed.settings.scoring).toBe('evidence-v3-links');
 });
 
-test('switching to decision mode offers options; Bitberg theme applies', async ({ page }) => {
+test('switching to decision mode offers options; Yövärit (bitberg) theme applies', async ({ page }) => {
   await page.locator('#modeDecision').click();
   await expect(page.locator('#modeDecision')).toHaveClass(/active/);
   await page.locator('#editMenu summary').click();
@@ -102,6 +102,7 @@ test('switching to decision mode offers options; Bitberg theme applies', async (
   await expect(page.locator('.node[data-relation="option"]')).toHaveCount(1);
   await page.locator('#themeSelect').selectOption('bitberg');
   await expect(page.locator('body')).toHaveAttribute('data-theme', 'bitberg');
+  await expect(page.locator('#themeSelect option:checked')).toHaveText('◆ Yövärit');
 });
 
 test('switching the language loads its messages on demand', async ({ page }) => {
