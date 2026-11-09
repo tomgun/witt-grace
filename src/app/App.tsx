@@ -1,8 +1,14 @@
 // The shell: body classes, zones, keyboard, home/workspace switch, bottom zone, footer and the dialog hosts.
 import { useEffect, useMemo, useState } from 'react';
-import { exportFilename, parseProject, serializeProjectFile } from '../domain/index.ts';
+import {
+  exportFilename,
+  inspectImport,
+  parseProject,
+  serializeProjectFile,
+  starterToProject,
+} from '../domain/index.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
-import { nowIso } from '../lib/providers.ts';
+import { newId, nowIso } from '../lib/providers.ts';
 import { recordEvent } from '../lib/workspaceMeta.ts';
 import {
   addNode,
@@ -14,12 +20,16 @@ import {
   toggleViewDock,
   canEdit,
 } from './actions.ts';
+import { stageDraftFromFile } from './AiDraftDialog.tsx';
+import { stageProposalFromFile } from './AiReviewDialog.tsx';
 import { AssessmentDialog } from './AssessmentDialog.tsx';
 import { Canvas } from './Canvas.tsx';
 import { ModalHost, NoticeBar } from './dialogs.tsx';
 import { Home } from './Home.tsx';
+import { FILE_SIZE_LIMIT, showImportReport, textByteLength } from './ImportReportDialog.tsx';
 import { Inspector } from './Inspector.tsx';
 import { LeftPanel } from './LeftPanel.tsx';
+import { library } from './LibraryDialog.tsx';
 import { PeopleDialog } from './PeopleDialog.tsx';
 import { useFrame } from './projection.ts';
 import { ReviewLensDialog } from './ReviewLensDialog.tsx';
@@ -61,16 +71,56 @@ export function App() {
 
   // File flows (also reachable from the home screen and Ctrl/Cmd+S).
   useEffect(() => {
+    // The prototype's `openFile` (inv-ai-contrib §0.4): one preflight, then the route the file's format names.
     const openFile = async () => {
       const picked = await pickTextFile();
       if (!picked) return;
       try {
-        const parsed = parseProject(JSON.parse(picked.text));
-        if (!(await store.prepareReplacement(t('importConfirm', { title: parsed.title })))) return;
-        store.load(parsed);
-        recordEvent(window.localStorage, 'lastOpenedJson', picked.name, parsed.id, nowIso());
+        if (textByteLength(picked.text) > FILE_SIZE_LIMIT) {
+          store.showMessage(t('importTooLarge'));
+          return;
+        }
+        const report = inspectImport(picked.text, { currentProject: store.get().project });
+        if (!report.ok) {
+          showImportReport(report, picked.name);
+          return;
+        }
+        if (report.format === 'draft') {
+          stageDraftFromFile(report.parsed, picked.name);
+          return;
+        }
+        if (report.format === 'contribution') {
+          stageProposalFromFile(report.parsed, picked.name);
+          return;
+        }
+        if (report.format === 'library') {
+          const repo = await library();
+          if (!repo) {
+            store.showMessage(t('libraryUnavailable'));
+            return;
+          }
+          const count = ((report.parsed as { documents?: unknown[] }).documents ?? []).length;
+          if (!(await store.askConfirm(t('libraryRestoreConfirm', { count })))) return;
+          const result = await repo.importBundle(report.parsed, parseProject, newId);
+          store.openDialog('library');
+          store.notify({
+            kind: 'info',
+            text: t('libraryRestored', { count: result.imported, copies: result.duplicated }),
+          });
+          return;
+        }
+        const incoming =
+          report.format === 'starter'
+            ? starterToProject(report.parsed, { now: nowIso(), newId })
+            : parseProject(report.parsed);
+        const description = `${t('importConfirm', { title: incoming.title })}\nJSON tarkistettu: ${report.formatName}.`;
+        if (!(await store.prepareReplacement(description))) return;
+        store.load(incoming);
+        recordEvent(window.localStorage, 'lastOpenedJson', picked.name, incoming.id, nowIso());
       } catch (error) {
-        store.showMessage(`${picked.name}: ${error instanceof Error ? error.message : String(error)}`);
+        store.showMessage(
+          t('importFailed', { reason: error instanceof Error ? error.message : String(error) })
+        );
       }
     };
     const saveFile = () => {

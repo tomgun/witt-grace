@@ -2,7 +2,7 @@
 // useSyncExternalStore. Undo/redo is a stack of past documents; view preferences live beside, never inside, the document.
 import { useSyncExternalStore } from 'react';
 import { applyCommand, createBlankProject, parseProject, rootNode } from '../domain/index.ts';
-import type { Command, Mode, Project } from '../domain/index.ts';
+import type { Command, ImportReport, Mode, Project } from '../domain/index.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
@@ -74,7 +74,8 @@ export type ModalRequest =
   | { kind: 'notice'; text: string }
   | { kind: 'move'; nodeId: string }
   | { kind: 'links'; nodeId: string; linkId?: string }
-  | { kind: 'replace'; description: string; resolve: (choice: ReplaceChoice) => void };
+  | { kind: 'replace'; description: string; resolve: (choice: ReplaceChoice) => void }
+  | { kind: 'importReport'; report: ImportReport; filename: string };
 /** The replacement dialog's outcome: proceed and forget, proceed after a library save, or stay (null). */
 export type ReplaceChoice = 'forget' | 'keep' | null;
 

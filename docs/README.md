@@ -4,7 +4,7 @@ Always: `README.md` (quick start, layout) and `docs/STATUS.md` (what exists, wha
 
 | Doing | Read |
 | --- | --- |
-| Anything that changes what the app does | `docs/spec/README.md`, then the spec it names: `METHOD_INTENT.md` (why), `GRACE_AND_DATA_MODEL.md` (the math and the document), `UX_AND_WORKFLOWS.md` (the interface), `IDENTITY_AI_AND_VOTING.md` (people, AI, ballots), `REQUIREMENTS.md` (the IDs) |
+| Anything that changes what the app does | `docs/spec/README.md`, then the spec it names: `METHOD_INTENT.md` (why), `GRACE_AND_DATA_MODEL.md` (the math and the document), `UX_AND_WORKFLOWS.md` (the interface rationale), `UI_INVENTORY.md` (the screen-by-screen contract: the prototype's visible UI, control by control), `IDENTITY_AI_AND_VOTING.md` (people, AI, ballots), `REQUIREMENTS.md` (the IDs) |
 | Any change under `src/`, `locales/` or `schemas/` | `docs/ARCHITECTURE.md` |
 | Writing or reviewing tests, generating golden fixtures | `docs/TESTING.md`, `docs/PROTOTYPE_REFERENCE.md` |
 | Adding a dependency, changing a boundary, re-opening a decision | `docs/ADRS.md` (one row per decision) |

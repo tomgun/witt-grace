@@ -12,6 +12,10 @@ import { ReplaceDialog } from './ReplaceDialog.tsx';
 import { ExamplesDialog } from './ExamplesDialog.tsx';
 import { LibraryDialog } from './LibraryDialog.tsx';
 import { VisualExportDialog } from './VisualExportDialog.tsx';
+import { AiDraftDialog } from './AiDraftDialog.tsx';
+import { AiResultsDialog } from './AiResultsDialog.tsx';
+import { AiReviewDialog } from './AiReviewDialog.tsx';
+import { ImportReportDialog } from './ImportReportDialog.tsx';
 
 /** A native <dialog> with focus trapping by the browser; Escape closes it. */
 export function Modal({
@@ -350,12 +354,16 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
       {modal?.kind === 'move' ? <MoveDialog request={modal} /> : null}
       {modal?.kind === 'links' ? <LinksDialog request={modal} frame={frame} /> : null}
       {modal?.kind === 'replace' ? <ReplaceDialog request={modal} /> : null}
+      {modal?.kind === 'importReport' ? <ImportReportDialog request={modal} /> : null}
       <ExamplesDialog />
       {state.dialog === 'newWork' ? <NewWorkDialog /> : null}
       {state.dialog === 'about' ? <AboutDialog /> : null}
       {state.dialog === 'help' ? <HelpDialog onShortcutsChanged={onShortcutsChanged} /> : null}
       {state.dialog === 'library' ? <LibraryDialog /> : null}
       {state.dialog === 'visualExport' ? <VisualExportDialog frame={frame} /> : null}
+      {state.dialog === 'aiDraft' ? <AiDraftDialog /> : null}
+      {state.dialog === 'aiReview' ? <AiReviewDialog /> : null}
+      {state.dialog === 'aiResults' ? <AiResultsDialog /> : null}
       {state.dialog &&
       ![
         'newWork',
@@ -368,6 +376,9 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
         'reviewLens',
         'library',
         'visualExport',
+        'aiDraft',
+        'aiReview',
+        'aiResults',
       ].includes(state.dialog) ? (
         <PlaceholderDialog name={state.dialog} />
       ) : null}

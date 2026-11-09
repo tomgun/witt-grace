@@ -1,54 +1,52 @@
 # Status — implemented, designed, verified
 
-The single truth table for the rebuild. States: `DONE-source` (code exists), `DONE-verified(unit|golden|e2e|sandbox|mac|github)` (a named check proved it, where), `DESIGNED` (docs only), `OPEN`. The prototype's own behaviour is characterized in `docs/spec/REQUIREMENTS.md`; this table tracks the new implementation and the repository. If code and this table disagree, the code wins and this table is fixed in the same PR.
+The single truth table for the rebuild. States: `DONE-source` (code exists), `DONE-verified(unit|golden|parity|e2e|sandbox|mac|github)` (a named check proved it, where), `DESIGNED` (docs only), `OPEN`. Since 2026-11-08 the prototype's visible UI is the contract (`docs/spec/UI_INVENTORY.md`); "parity" means a test that drives the frozen prototype module and the port with the same input and compares the output. If code and this table disagree, the code wins and this table is fixed in the same PR.
 
 ## Last verified
-- 2026-11-08, Linux sandbox (Node 24.22.2), `main` after WG-021: `npm run check` passed (258 tests); `npm run build` passed (383 kB main bundle, 119 kB gzip, one chunk per language); `npx playwright test` passed (13 walks at 1440×900 and 390×844, 3 skipped on mobile by design); `npm run proto:check` passed (372). Not run: GitHub Actions, Pages (no push yet).
-- 2026-11-08, Linux sandbox (Node 24.22.2), `main` after WG-007: `npm run check` passed (258 tests); `npm run build` passed; `npx playwright test` passed (8 walks, 2 skipped on mobile by design); `npm run proto:check` passed (372).
-- 2026-11-08, Linux sandbox (Node 24.22.2), `main` after WG-006: `npm run check` passed (258 tests); `npm run build` passed (Vite; after WG-021 the main bundle is 383 kB, 119 kB gzip, plus one ~50 kB chunk per language); `npx playwright test` passed (7 walks, 1 skipped on mobile by design); `npm run proto:check` passed (372). Not run: GitHub Actions, Pages.
-- 2026-11-08, Linux sandbox (Node 24.22.2 installed for the session; the distro Node 22 lacks TypeScript support), branch `main` after WG-001: `npm run check` passed (docs links, spec index, lens placeholders, spec lock, lint, typecheck, prettier, 258 tests: serialization and i18n, the command parity test, 38 golden fixtures × parse/equal/shares/structural/per-person/feasibility-ballots-influence-directions, plus the import-direction and purity tests); `npm run proto:check` passed (372). Not run: GitHub Actions, Pages.
-- 2026-11-08, Linux sandbox (Node 22.22.1, Python 3.14), repository root, no commits yet: `witt-grace-gpt-proto`: `npm run check` passed (372 tests), `npm run build` passed, `node tools/verify-pages-build.cjs` PASS (23 deployable files), standalone SHA-256 matches the handoff; root `npm run check` passed (docs links, spec index, lens placeholders, spec lock); the two Claude hooks block and allow as designed. Not run: GitHub Actions (no remote push yet), Pages.
+- 2026-11-09, Linux sandbox (Node 24.22.2), `main` after WG-023 part 2 (`961afb1`) plus the library, export and home-card wiring: `npm run check` passed (docs, spec lock, lint, typecheck, format, 324 unit/golden/parity tests); `npm run build` passed (493 kB main bundle, 150 kB gzip, one chunk per language, examples served from `public/examples/`); `npx playwright test` passed (17 walks at 1440×900 and 390×844, 7 skipped by design); screenshot comparison with `/proto/` at 1440×900 for the home screen, Kartoita, Punnitse with a selected reason, the dock, the reason library, the context menu, decision mode, Bitberg, the assessment round, the review lens, the people and vote dialogs, the table, the tutorial, the visual export and the library dialogs: layout, texts and numbers match the prototype (the quirks the prototype itself has are listed in `UI_INVENTORY.md` S-15). Not run: GitHub Actions, Pages (no push yet). `npm run proto:check` last passed 2026-11-08 (372).
+- 2026-11-08, Linux sandbox (Node 24.22.2), `main` after WG-021: `npm run check` passed (258 tests); `npm run build` passed; `npx playwright test` passed (13 walks, 3 skipped on mobile by design); `npm run proto:check` passed (372).
+- 2026-11-08, Linux sandbox (Node 22.22.1, Python 3.14), repository root, no commits yet: `witt-grace-gpt-proto`: `npm run check` passed (372 tests), `npm run build` passed, `node tools/verify-pages-build.cjs` PASS (23 deployable files), standalone SHA-256 matches the handoff; root `npm run check` passed; the two Claude hooks block and allow as designed.
 
 ## Repository and process
 
 | Item | State | Evidence |
 | --- | --- | --- |
 | Prototype dev32 frozen, runnable, byte-identical to the handoff | DONE-verified(sandbox) | `witt-grace-gpt-proto/handoff/RUNTIME_SOURCE_PROVENANCE.sha256`, `docs/PROTOTYPE_REFERENCE.md` |
-| Product specs lifted to `docs/spec/` with change policy | DONE-source | `docs/spec/README.md`, `docs/spec/CHANGELOG.md` |
+| Product specs in `docs/spec/` with change policy; the UI inventory as the screen-level contract | DONE-source | `docs/spec/README.md`, `docs/spec/UI_INVENTORY.md`, `docs/spec/CHANGELOG.md` |
 | Spec lock: hook refuses a spec edit without a changelog change; CI refuses a PR likewise | DONE-verified(sandbox) | `.claude/hooks/protect-files.mjs`, `scripts/check-spec-lock.mjs` |
 | Prototype freeze: hook refuses edits and destructive shell writes under `witt-grace-gpt-proto/` | DONE-verified(sandbox) | `.claude/hooks/protect-files.mjs`, `.claude/hooks/guard-bash.mjs` |
-| Docs check: local links, every spec listed in the spec index, no unfilled lens placeholder | DONE-verified(sandbox) | `scripts/check-docs.mjs` |
-| Principles and lenses with WITT project specifics | DONE-source | `docs/principles/`, `docs/lenses/` |
-| Skills `/dev`, `/feature`, `/verify`, `/review` | DONE-source | `.claude/skills/` |
-| User guide (fi, en) for the new app; `check-docs` requires both | DONE-source | `docs/KAYTTOOHJE.md`, `docs/USER_GUIDE.md` |
-| CI: `checks` and `prototype` jobs | DONE-source — not yet run on GitHub | `.github/workflows/ci.yml` |
-| Pages: prototype at `/proto/`, landing page at `/` | DONE-source — not yet run on GitHub | `.github/workflows/pages.yml` |
-| GitHub repository `tomgun/witt-grace` with the first push, branch protection, Pages source | OPEN | `CONTRIBUTING.md` |
+| Docs check: local links, every spec listed in the spec index, no unfilled lens placeholder, both user guides present | DONE-verified(sandbox) | `scripts/check-docs.mjs` |
+| Principles and lenses with WITT project specifics; skills `/dev`, `/feature`, `/verify`, `/review` | DONE-source | `docs/principles/`, `docs/lenses/`, `.claude/skills/` |
+| CI: `checks`, `browser` and `prototype` jobs; Pages: app at `/`, prototype at `/proto/` | DONE-source — not yet run on GitHub | `.github/workflows/ci.yml`, `.github/workflows/pages.yml` |
+| GitHub repository `tomgun/witt-grace` with the first push, branch protection, Pages source | OPEN (owner) | `CONTRIBUTING.md` |
 
 ## New implementation
 
 | Item | State | Evidence |
 | --- | --- | --- |
-| Golden fixtures generated from the prototype engine: 18 examples + 20 hand-built cases; per node and viewpoint (equal, shares, structural, each person) the internal score, balance, base, delta, contributions, incompleteness; marginal target effects; rankings; feasibility; ballot preferences; influence summaries; displayed directions | DONE-verified(golden, sandbox) | `scripts/golden-from-proto.mjs`, `tests/golden/*.json` |
-| `src/domain`: typed v8 model and closed sets, `parseProject` (the boundary, prototype's refusal messages), `evaluate` / `evaluateAssessor` (evidence-v3-links), marginal effects, feasibility, ballot preference, rankings, review readers; pure (no DOM, clock, random); dependency direction enforced by ESLint and a test | DONE-verified(golden, unit, sandbox): every fixture reproduced exactly | `src/domain/*.ts`, `tests/golden/golden.test.ts`, `tests/unit/import-direction.test.ts` |
-| Domain commands (nodes, reviews, concepts and uses, groups, ballots) as pure functions | OPEN | WG-004 |
-| Serialization: `.witt.json` file form byte-identical to the prototype's export for every example, compact storage form, export filename slug | DONE-verified(unit, sandbox) | `src/domain/serialize.ts`, `tests/unit/serialize.test.ts`; contribution bundle v1 and AI draft v2 parsers arrive with WG-013 |
-| Locales: `locales/messages.psv` (878 keys × 9 languages, the prototype's table plus twelve new keys) → generated `catalog.ts` (keys + Finnish) and one lazily loaded module per language (`npm run i18n`); `translate`/`translator`/`loadMessages`; tests pin generated-file sync, completeness and placeholder parity per language and the Finnish glossary | DONE-verified(unit, e2e, sandbox) | `scripts/generate-locales.ts`, `src/lib/i18n/`, `tests/unit/i18n.test.ts` |
-| React 19 + Vite app (A005): top bar with title, four zone toggles (`Alt+1..4`), language and theme (light, dark, paper, Bitberg); toolbar with Argumentointi/Päätös, person and viewpoint selectors, File/Edit/View/Help menus; outline; pannable, zoomable canvas with draggable cards, edges, balance and `75%/+5` pairs; inspector with title, details, relation, parent, semantic type, gate status, score explanation, personal review sliders, comments; bottom zone; view-settings dock (`Alt+V`); keyboard `+`/`−`/`Del`/`F2`/`Ctrl+Z`; autosave to the prototype's storage key; JSON export/open with the replacement confirmation; new document | DONE-verified(e2e, sandbox): 7 keyboard-first walks at 1440×900 and 390×844 | `src/app/*`, `tests/e2e/argument-walk.spec.ts` |
-| Decision mode: options and groups, gates from the inspector, the options overview for the decision root (feasibility badge, balance, preference), the ballot dialog (weights frozen per round, hidden interim results, per-person ballots, retract, close, archived rounds), the people dialog (names, vote shares, pooled-weighting choice, switch, remove) | DONE-verified(e2e, sandbox): a two-person ballot walk | `src/app/VoteDialog.tsx`, `src/app/PeopleDialog.tsx`, `src/app/DecisionOverview.tsx`, `tests/e2e/decision-walk.spec.ts` |
-| Table view beside the tree: every claim in logical order with relation, context, this person's credence and influence, balance; search and relation filter; a Content-Security-Policy on the page (self only, no inline script) | DONE-verified(e2e, sandbox) | `src/app/TableView.tsx`, `index.html` |
-| Repeated reasons: "Liitä myös muihin solmuihin…" from the inspector (target picker, new use selected and visible at once, rated separately), the concept box on a use (manage, detach), the shelf tab in the left panel (create a card, every use with its own `75%/+5`, attach to the selected node), the `Uudelleen käytetty` badge on cards | DONE-verified(e2e, sandbox) | `src/app/ReuseDialog.tsx`, `src/app/RepeatShelf.tsx`, `tests/e2e/reuse-walk.spec.ts` |
-| PNG/SVG/PDF exports, document library, AI flows, contribution bundles, depth slider, focus highlighting, locked shared reasons UI, secondary links UI, tutorial, examples | OPEN | WG-010, WG-013…WG-016 |
+| Golden fixtures from the prototype engine (18 examples + 20 hand-built cases): scores, balances, contributions, marginal effects, rankings, feasibility, ballots, influence summaries, directions | DONE-verified(golden, sandbox) | `scripts/golden-from-proto.mjs`, `tests/golden/` |
+| `src/domain`: v8 model, `parseProject`, `evidence-v3-links` engine (shared and per person), reviews, eligibility, ballots, rankings, views; pure, direction enforced | DONE-verified(golden, unit) | `src/domain/*.ts`, `tests/unit/import-direction.test.ts` |
+| Serializable commands (46) with caller-supplied ids; 60 replayed edits identical to the prototype | DONE-verified(unit) | `src/domain/commands.ts`, `tests/unit/commands.test.ts` |
+| Serialization byte-identical to the prototype's export; export filename slug | DONE-verified(unit) | `src/domain/serialize.ts` |
+| Layout (three orientations, four-way balancing and stable additions, compact and depth projections, edge and link paths), keyboard navigation, review lens and assessor summary, table rows and details: line-for-line ports | DONE-verified(parity): every example × orientations × card heights × keys; 7 620 table-row comparisons | `src/domain/layout.ts`, `navigation.ts`, `lens.ts`, `table.ts`; `tests/unit/layout-parity.test.ts`, `table-parity.test.ts` |
+| AI draft v2, contribution v2 and bundle v1, starter v1, import preflight and report: prompts byte-equal, documents and previews identical to the prototype | DONE-verified(parity, 34 tests) | `src/domain/ai/`, `tests/unit/ai-*.test.ts`, `tests/fixtures/ai-task-decision-fi.txt` |
+| Locales: nine languages, one lazily loaded module each, completeness and placeholder parity tested | DONE-verified(unit, e2e) | `src/lib/i18n/`, `tests/unit/i18n.test.ts` |
+| Browser storage: the prototype's keys and shapes (`witt-project-v3`, `witt-view-v1`, `witt-zones-v1`, `witt-appearance-v1`, `witt-locale-v1`, `witt-keybindings-v1`, per-document actor, lens and assessment pass, `witt-workspace-meta-v1`); document library on IndexedDB with conflict rules, backup and restore | DONE-verified(unit for meta and library transforms; e2e for autosave and reload) | `src/app/view.ts`, `src/app/store.ts`, `src/lib/workspaceMeta.ts`, `src/lib/library.ts`, `tests/unit/lib-*.test.ts` |
+| Visual export: SVG byte-equal to the prototype for every example (648 renders), PNG plan and tiles, PDF page plan and bytes, ZIP bytes, estimate text, filenames | DONE-verified(parity) | `src/lib/export/`, `tests/unit/lib-export.test.ts` |
+| Workspace shell to the inventory: home screen (S-01), top bar (S-02), toolbar with stages, actor select, menus and the perspective banner (S-03, S-04), left panel with the reason library pane and the add block (S-05), canvas cards, context menu, inline editing, drag, edges, camera, quick bar, legend (S-07), the dock (S-07.1), inspector sections 1–19 (S-08), bottom zone (S-09), footer (S-10); the prototype stylesheet with eight themes; the 390 px layout | DONE-verified(e2e, sandbox screenshots against `/proto/`) | `src/app/*.tsx`, `src/app/styles.css`, `tests/e2e/argument-walk.spec.ts`, `reuse-walk.spec.ts` |
+| Dialogs: shared and context reasons (via the library pane and inspector), links, visual export, examples, review lens, tutorial, assessment round, move, new work, about, vote, people, help with shortcut settings, confirm/notice/text, replace, library (S-11.1–11.11, 11.14–11.23, 11.27) | DONE-verified(e2e: review, table, onboarding, decision walks) | `src/app/*Dialog.tsx`, `src/app/Tutorial.tsx`, `tests/e2e/*.spec.ts` |
+| AI draft, proposal (contribution) and AI results dialogs, the import report, File → Avaa JSON routing by format (S-11.12, 11.13, 11.20, 11.24–11.26) | OPEN — in progress (WG-023 part 3) | `docs/ISSUE-PLAN.md` |
 | P2P rooms | DESIGNED | `docs/spec/P2P_NO_DATABASE_RFC_R1.md` |
 
 ## Known limitations (documented behaviour, not bugs)
-- The prototype's browser tests are Python Playwright scripts that need a Chromium; they are not part of the root `npm run check`.
-- The prototype's own `.github/workflows` are inactive in this repository (nested folder); the root workflows cover it.
+- Prototype quirks reproduced on purpose until the owner decides otherwise (WG-024): see `docs/spec/UI_INVENTORY.md` S-15.
+- The prototype's browser tests are Python Playwright scripts; they are not part of the root `npm run check`.
+- Adding a node in the four-way orientation records two undo steps (the node and the offsets); the prototype records one.
 - Nothing has been pushed to GitHub yet; CI and Pages are unverified until the first push.
 
 ## Next 5
-1. WG-010 — document library and the persistence edge cases.
-2. WG-013 — contribution bundle v1 and AI draft v2 parsers and flows.
-3. WG-015 — PNG/SVG/PDF exports.
-4. WG-022 — mobile layout as collapsible sheets.
-5. WG-001 close-out — push, enable Pages, confirm CI and `/proto/` live (owner).
+1. WG-023 part 3 — the AI dialogs, the import report and File → Avaa JSON routing; then the full screenshot pass.
+2. WG-025 — dual-target browser walks against `/proto/` and the app.
+3. WG-024 — owner decisions on the S-15 quirks.
+4. WG-001 close-out — push, enable Pages, confirm CI and `/proto/` live (owner).
+5. WG-017 — license decision (owner).

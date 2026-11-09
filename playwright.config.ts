@@ -26,10 +26,19 @@ export default defineConfig({
       use: { browserName: 'chromium', viewport: { width: 390, height: 844 }, hasTouch: true },
     },
   ],
-  webServer: {
-    command: 'npm run preview',
-    url: 'http://127.0.0.1:4173',
-    reuseExistingServer: true,
-    timeout: 60_000,
-  },
+  webServer: [
+    {
+      command: 'npm run preview',
+      url: 'http://127.0.0.1:4173',
+      reuseExistingServer: true,
+      timeout: 60_000,
+    },
+    // The frozen prototype, for the dual-target parity walk (same steps, same ids, compared digests).
+    {
+      command: 'PORT=4174 npm run proto:dev',
+      url: 'http://127.0.0.1:4174',
+      reuseExistingServer: true,
+      timeout: 60_000,
+    },
+  ],
 });
