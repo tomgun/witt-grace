@@ -88,6 +88,13 @@ export interface Node {
   /** The person's own name for the node's type ("Kriteeri", "Tavoite"…), shown instead of the built-in root, option or
    * group tag, or of the semantic chip on a reason. Display only; never read by scoring (owner 2026-11-09). */
   typeLabel?: string;
+  /** Owner 2026-11-10: a note or a plain fact that is not rated. It has no credence or influence sliders, never scores
+   * into its parent and never makes it incomplete; reviews given earlier are kept and count again when it is switched
+   * back. A new neutral reason starts unrated. */
+  unrated?: true;
+  /** Owner 2026-11-10: the influence slider of this relation moves in 0.1 steps instead of 0.5. Display only; the
+   * data accepts 0.1 steps everywhere. */
+  fineInfluence?: true;
 }
 export const TYPE_LABEL_MAX = 40;
 export interface SharedReason {
@@ -222,16 +229,26 @@ export const scoreFor = (scoring: ScoringVersion) =>
 export const isGate = (n: Node | undefined | null): boolean =>
   n?.semanticType === 'constraint' || n?.semanticType === 'prerequisite';
 export const isValue = (n: Node | undefined | null): boolean => n?.semanticType === 'value';
+export const isUnrated = (n: Node | undefined | null): boolean => n?.unrated === true;
+/** Gates, values and unrated notes never score into their parent as reasons. */
+export const outOfScore = (n: Node | undefined | null): boolean => isGate(n) || isValue(n) || isUnrated(n);
 export const truthAssessable = (n: Node | undefined | null): boolean =>
-  !!n && n.kind === 'claim' && !isGate(n) && !isValue(n);
+  !!n && n.kind === 'claim' && !isGate(n) && !isValue(n) && !isUnrated(n);
 export const indexAssessable = (n: Node | undefined | null): boolean =>
   !!n && (n.kind === 'option' || truthAssessable(n));
 export const assessmentFields = (node: Node | undefined | null): { credence: boolean; impact: boolean } => ({
   credence: truthAssessable(node),
-  impact: node?.kind === 'claim' && !!node.parentId && !isGate(node),
+  impact: node?.kind === 'claim' && !!node.parentId && !isGate(node) && !isUnrated(node),
 });
 export const isAiProfile = (user: User | undefined | null): boolean => user?.profileKind === 'ai';
-export const isHalfStep = (value: number): boolean => Math.round(value * 2) === value * 2;
+/** Owner 2026-11-10: a signed influence is −5…+5 in 0.1 steps (the prototype's 0.5 steps are a subset); the UI moves in
+ * 0.5 steps unless the relation asks for the fine scale. */
+export const INFLUENCE_STEP = 0.1;
+export const INFLUENCE_STEP_COARSE = 0.5;
+export const isInfluenceStep = (value: number): boolean =>
+  Math.abs(value * 10 - Math.round(value * 10)) < 1e-9;
+/** Removes the floating-point noise of a 0.1-step value (0.30000000000000004 → 0.3). */
+export const roundInfluence = (value: number): number => Math.round(value * 10) / 10;
 export const signedLinkImpact = (link: Link): number =>
   link.relation === 'oppose' ? -link.impact : link.impact;
 export const signedInfluence = (node: Node): number | null => {

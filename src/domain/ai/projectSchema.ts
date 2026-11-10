@@ -387,7 +387,7 @@ export const PROJECT_SCHEMA: JsonSchema = {
             type: 'number',
             minimum: -5,
             maximum: 5,
-            multipleOf: 0.5,
+            multipleOf: 0.1,
           },
         },
       },
@@ -536,6 +536,13 @@ export const PROJECT_SCHEMA: JsonSchema = {
           type: 'string',
           minLength: 1,
           maxLength: 40,
+        },
+        // Added 2026-11-10 (owner): an unrated note, and a relation rated in 0.1 steps.
+        unrated: {
+          const: true,
+        },
+        fineInfluence: {
+          const: true,
         },
         constraintStatus: {
           enum: ['unknown', 'met', 'unmet'],
@@ -705,7 +712,7 @@ export const PROJECT_SCHEMA: JsonSchema = {
           type: 'number',
           minimum: -5,
           maximum: 5,
-          multipleOf: 0.5,
+          multipleOf: 0.1,
         },
         fingerprint: {
           type: 'string',

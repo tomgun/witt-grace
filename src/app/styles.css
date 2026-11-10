@@ -8826,3 +8826,31 @@ input[type='range'].range-unset:focus-visible {
 .node .node-header > button {
   flex: none;
 }
+/* An unrated note (owner 2026-11-10): dotted grey border, muted text; its branch is dimmed. */
+.node.unrated-node {
+  border-style: dotted;
+  border-color: var(--muted);
+}
+.node.unrated-node .node-title {
+  color: var(--muted);
+}
+.node.under-unrated {
+  opacity: 0.6;
+}
+.inspector-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+.impact-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.unrated-block {
+  opacity: 0.75;
+}

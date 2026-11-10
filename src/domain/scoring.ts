@@ -9,8 +9,7 @@ import {
   SCORING_V3,
   indexAssessable,
   isAiProfile,
-  isGate,
-  isValue,
+  outOfScore,
   relationFingerprint,
   signedLinkImpact,
 } from './model.ts';
@@ -139,13 +138,13 @@ function hasReasons(
 ): boolean {
   if (
     (children.get(node.id) ?? []).some(
-      (c) => c.relation !== 'option' && c.relation !== 'group' && !isGate(c) && !isValue(c)
+      (c) => c.relation !== 'option' && c.relation !== 'group' && !outOfScore(c)
     )
   )
     return true;
   return (incoming.get(node.id) ?? []).some((link) => {
     const source = nodeById(project, link.sourceId);
-    return !!source && !isGate(source) && !isValue(source);
+    return !!source && !outOfScore(source);
   });
 }
 /** evidence-v4-reasons and logodds-reasons-v1: the base of a claim with reasons is neutral once one of them scores, else there is no result. */
@@ -229,11 +228,9 @@ export function evaluate(project: Project): Scores {
       (thesis ? info.count > 0 && info.count < expectedHumanReviews : info.count < expectedHumanReviews);
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
-      if (child.relation === 'option' || child.relation === 'group' || isGate(child) || isValue(child))
-        continue;
+      if (child.relation === 'option' || child.relation === 'group' || outOfScore(child)) continue;
       const result = visit(child);
       let signed: number | null;
-      let missing = false;
       if (mode === 'structural')
         signed =
           child.relation === 'oppose' ? -child.impact : child.relation === 'neutral' ? 0 : child.impact;
@@ -249,10 +246,12 @@ export function evaluate(project: Project): Scores {
           signed = summary.value;
           if (summary.count < expectedHumanReviews) incomplete = true;
         }
-        missing = signed === null || result.score === null;
-        incomplete ||= missing || Boolean(result.incomplete);
       }
-      if (missing || signed === null || result.score === null) {
+      // Owner 2026-11-10: a deliberate "no effect" (influence 0) needs no credence under the reasons-decide versions.
+      const settled = reasonsDecide && signed === 0;
+      const missing = signed === null || (result.score === null && !settled);
+      if (mode !== 'structural') incomplete ||= missing || (!settled && Boolean(result.incomplete));
+      if (missing || signed === null) {
         contributions.push({
           id: child.id,
           subjectType: 'primary',
@@ -265,8 +264,7 @@ export function evaluate(project: Project): Scores {
         });
         continue;
       }
-      const strength = evidenceFactor(result.score);
-      const magnitude = Math.abs(signed) * strength;
+      const magnitude = settled ? 0 : Math.abs(signed) * evidenceFactor(result.score as number);
       if (signed > 0) positive += magnitude;
       if (signed < 0) negative += magnitude;
       contributions.push({
@@ -283,7 +281,7 @@ export function evaluate(project: Project): Scores {
     // Secondary links reuse the source's ONE computed credibility but are rated independently per edge.
     for (const link of incoming.get(node.id) ?? []) {
       const source = nodeById(project, link.sourceId);
-      if (!source || isGate(source) || isValue(source)) continue;
+      if (!source || outOfScore(source)) continue;
       const result = visit(source);
       let signed: number | null = mode === 'structural' ? signedLinkImpact(link) : null;
       if (mode !== 'structural') {
@@ -390,13 +388,14 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
     let incomplete = base === null && !fromReasons;
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
-      if (child.relation === 'option' || child.relation === 'group' || isGate(child) || isValue(child))
-        continue;
+      if (child.relation === 'option' || child.relation === 'group' || outOfScore(child)) continue;
       const result = visit(child);
       const inherited = child.sharedReasonId ? sharedReason(project, child.sharedReasonId) : null;
       const edge = ownEdges.get('primary:' + child.id);
       const fingerprint = relationFingerprint(child, node, child.relation);
-      if (result.score === null || (!inherited && (!edge || edge.fingerprint !== fingerprint))) {
+      const current = inherited || (!!edge && edge.fingerprint === fingerprint);
+      const settled = reasonsDecide && !inherited && current && edge?.influence === 0;
+      if (!current || (result.score === null && !settled)) {
         incomplete = true;
         contributions.push({
           id: child.id,
@@ -411,11 +410,10 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         continue;
       }
       const impact = inherited ? inherited.influence : (edge as { influence: number }).influence;
-      const credibility = evidenceFactor(result.score);
-      const magnitude = Math.abs(impact) * credibility;
+      const magnitude = settled ? 0 : Math.abs(impact) * evidenceFactor(result.score as number);
       if (impact >= 0) positive += magnitude;
       else negative += magnitude;
-      if (result.incomplete) incomplete = true;
+      if (!settled && result.incomplete) incomplete = true;
       contributions.push({
         id: child.id,
         subjectType: 'primary',
@@ -430,7 +428,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
     }
     for (const link of incoming.get(node.id) ?? []) {
       const source = nodeById(project, link.sourceId);
-      if (!source || isGate(source) || isValue(source)) continue;
+      if (!source || outOfScore(source)) continue;
       const result = visit(source);
       const edge = ownEdges.get('secondary:' + link.id);
       const fingerprint = relationFingerprint(source, node, link.relation);
@@ -565,7 +563,7 @@ export function marginalTargetEffects(
         break;
       }
       if (changedNode.parentId === null || changedNode.relation === 'option') break;
-      if (isGate(changedNode) || isValue(changedNode)) {
+      if (outOfScore(changedNode)) {
         valid = false;
         break;
       }

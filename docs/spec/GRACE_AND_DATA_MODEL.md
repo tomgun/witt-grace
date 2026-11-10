@@ -8,8 +8,10 @@
 
 - `decision`: a question/root, NOT a factual claim with a truth rating. Decision alternatives are `option` nodes; a `group` contains alternatives but does NOT become an additional rated/votable option. `argument` mode has a main claim/root with a computed explanatory balance.
 - A `claim` may be a fact, assumption, value, constraint or prerequisite; semantic type affects whether probability scoring and feasibility rules apply. A value judgement is not automatically a factual truth vote.
-- A premise has subjective **credibility/credence** `p` in 0..100% *where it is used*. A directed claim→target relationship has **signed impact** `w` in -5..+5, half-step increments. This is **one** signed scale: negative = opposes; zero = neutral; positive = supports. The +/- add buttons create initial relationships; subsequently the visible direction follows the current assessor's actual signed rating, without rewriting other people's ratings.
+- A premise has subjective **credibility/credence** `p` in 0..100% *where it is used*. A directed claim→target relationship has **signed impact** `w` in -5..+5 in 0.1 steps (owner 2026-11-10; the prototype's half steps are a subset and the UI moves in half steps unless a relation sets `fineInfluence`). This is **one** signed scale: negative = opposes; zero = neutral; positive = supports. The +/- add buttons create initial relationships; subsequently the visible direction follows the current assessor's actual signed rating, without rewriting other people's ratings.
 - A node may carry `typeLabel` (1–40 characters, added 2026-11-09): the person's own name for its type ("Kriteeri", "Tavoite"), shown instead of the built-in tag. Display only; no scoring rule reads it. A new option, group or value on the same level copies its sibling's label.
+- A reason may be `unrated` (owner 2026-11-10): a note or a plain fact. It has no credence or influence input, is never a contribution of its parent (like gates and values, it is skipped: no 0, no missing, no incomplete) and its parent does not count it among its reasons. Reviews given before it was switched off are kept and count again when it is switched back; reasons below it may still be rated but reach nothing above it. The app starts a new neutral reason unrated.
+- A relation may carry `fineInfluence` (owner 2026-11-10): display only, its slider moves in 0.1 steps.
 - The **only two numeric input axes** for ordinary reasons are credibility and influence. Do not introduce a third global priority/utility slider or infer one from text.
 - A newly created premise has an editable 100% **template default** but no invented human assessment; unassessed inputs remain unassessed in human modes.
 - Structurally asserted support/oppose/neutral is distinct from each assessor's personally evaluated signed influence. Displaying another person's view must not mutate authored relations.
@@ -48,6 +50,8 @@ One rule differs from `evidence-v3-links`: a claim that has reasons (a primary c
 | --- | ---: | ---: |
 | Claim with own 80 %, one 100 % / −3.5 reason | +25 | −35 |
 | Claim with own 80 %, its only reason unassessed | +60 | — |
+
+*No effect* (owner 2026-11-10, v4 and `logodds-reasons-v1`, not v3): a relation whose influence is 0 — one person's own 0 in their viewpoint, or a pooled mean of 0 — is a complete contribution of magnitude 0 even when the reason's credence is missing, so the parent is neither incomplete nor without a result because of it. The app saves such a review with `review.personal` without a credence (“Ei vaikutusta”). Example: a claim whose only reason has influence 0 and no credence gets the neutral base, balance 0, not `—`. Twenty fully credible reasons give +100 at 0.5 each under v4 (the cap is reached) and +20 at 0.1 each; under log-odds +80 and +21.6.
 
 ### `logodds-reasons-v1` (owner request 2026-11-09, selectable)
 

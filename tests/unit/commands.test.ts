@@ -608,7 +608,7 @@ test('refused edits leave the input untouched and name the reason', () => {
       userId: me,
       influence: 1.25,
     },
-    /puolen pisteen/
+    /0,1 pisteen/
   );
   refuse(
     { type: 'review.credence', id: 'x', nodeId: pair.mine.nodes[1]!.id, userId: me, credence: 50 },

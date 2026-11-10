@@ -4,7 +4,9 @@
 import {
   isAiProfile,
   isGate,
-  isHalfStep,
+  isInfluenceStep,
+  isUnrated,
+  roundInfluence,
   isValue,
   truthAssessable,
   assessmentFields,
@@ -58,6 +60,8 @@ export type Command =
       title?: string;
       /** Only `value` for now: the `,` shortcut adds a value reason in one step. */
       semanticType?: 'value';
+      /** The app starts a new neutral reason as an unrated note (owner 2026-11-10). */
+      unrated?: boolean;
     }
   | {
       type: 'node.edit';
@@ -70,6 +74,10 @@ export type Command =
       sources?: SourceRef[];
       /** The person's own type name; `null` restores the built-in one. */
       typeLabel?: string | null;
+      /** Not rated: no sliders, never scores; earlier reviews are kept and count again when switched back. */
+      unrated?: boolean;
+      /** The influence slider moves in 0.1 steps. */
+      fineInfluence?: boolean;
     }
   | { type: 'node.move'; id: string; parentId: string }
   | { type: 'node.remove'; id: string }
@@ -139,7 +147,7 @@ const requireProfile = (p: Project, userId: string): void => {
   if (!p.users.some((u) => u.id === userId)) fail('Tuntematon arvioijaprofiili');
 };
 const checkInfluence = (value: number, message: string): void => {
-  if (!Number.isFinite(value) || value < -5 || value > 5 || !isHalfStep(value)) fail(message);
+  if (!Number.isFinite(value) || value < -5 || value > 5 || !isInfluenceStep(value)) fail(message);
 };
 
 // ---- nodes ----
@@ -264,7 +272,7 @@ function removeSubtree(p: Project, id: string): void {
 function applyTemplate(p: Project, id: string, credence: number, influence: number | null): void {
   const n = node(p, id);
   if (n.sharedReasonId) fail('Yhteisperusteen arvio on lukittu kirjastoon');
-  if (!truthAssessable(n))
+  if (!truthAssessable(n) && !isUnrated(n))
     fail('Tälle solmulle ei voi lisätä totuususkottavuuden arviota (arvo tai reunaehto)');
   if (typeof credence !== 'number' || !Number.isFinite(credence) || credence < 0 || credence > 100)
     fail('Uskottavuusarvion on oltava välillä 0–100');
@@ -306,7 +314,7 @@ export function canAddLink(p: Project, sourceId: string, targetId: string): bool
   ]);
 }
 const checkSignedLinkValue = (value: number) =>
-  checkInfluence(value, 'Lisäyhteyden vaikutuksen on oltava −5…+5 puolen pisteen askelin');
+  checkInfluence(value, 'Lisäyhteyden vaikutuksen on oltava −5…+5 0,1 pisteen askelin');
 function addSignedLink(
   p: Project,
   id: string,
@@ -379,7 +387,8 @@ function upsertEdgeAssessment(
   if (subjectType === 'primary' && p.nodes.some((n) => n.id === subjectId && n.sharedReasonId))
     fail('Yhteisperusteen vaikutus on lukittu kirjastoon');
   const relation = assessmentRelation(p, subjectType, subjectId);
-  checkInfluence(influence, 'Suhteen vaikutuksen on oltava −5…+5, puolen pisteen askelin');
+  checkInfluence(influence, 'Suhteen vaikutuksen on oltava −5…+5, 0,1 pisteen askelin');
+  influence = roundInfluence(influence);
   const old = p.edgeAssessments.find(
     (a) => a.subjectType === subjectType && a.subjectId === subjectId && a.userId === userId
   );
@@ -413,7 +422,9 @@ function applyPersonalAssessment(
   requireProfile(p, userId);
   const fields = assessmentFields(n);
   if (!fields.credence && !fields.impact) fail('Tälle solmulle ei ole totuus- tai suhdearviota');
-  if (fields.credence) {
+  // "No effect" (influence 0) is a complete review without a credence (owner 2026-11-10).
+  const noEffect = fields.impact && influence === 0 && credence === null;
+  if (fields.credence && !noEffect) {
     if (!Number.isInteger(credence) || (credence as number) < 0 || (credence as number) > 100)
       fail('Uskottavuusarvion on oltava välillä 0–100');
   } else if (credence !== null) fail('Arvostukselle ei voi lisätä totuususkottavuuden arviota');
@@ -424,11 +435,11 @@ function applyPersonalAssessment(
       !Number.isFinite(influence) ||
       influence < -5 ||
       influence > 5 ||
-      !isHalfStep(influence)
+      !isInfluenceStep(influence)
     )
       fail('Vaikutusarvion on oltava −5…+5');
   } else if (influence !== null) fail('Tällä perusteella ei ole arvioitavaa vanhempisuhdetta');
-  if (fields.credence) upsertVote(p, voteId, nodeId, userId, credence as number, now);
+  if (fields.credence && credence !== null) upsertVote(p, voteId, nodeId, userId, credence, now);
   if (fields.impact)
     upsertEdgeAssessment(p, assessmentId, 'primary', nodeId, userId, influence as number, now);
 }
@@ -465,7 +476,7 @@ function assertSharedInputs(title: string, confidence: number, influence: number
     fail('Yhteisperusteen otsikon pituus on 1–200');
   if (typeof confidence !== 'number' || !Number.isFinite(confidence) || confidence < 0 || confidence > 100)
     fail('Yhteisperusteen uskottavuuden on oltava 0–100 %');
-  checkInfluence(influence, 'Yhteisperusteen vaikutuksen on oltava −5…+5, 0,5 tarkkuudella');
+  checkInfluence(influence, 'Yhteisperusteen vaikutuksen on oltava −5…+5, 0,1 tarkkuudella');
 }
 const stanceOf = (influence: number): 'support' | 'oppose' | 'neutral' =>
   influence > 0 ? 'support' : influence < 0 ? 'oppose' : 'neutral';
@@ -841,6 +852,10 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
         if (c.semanticType !== 'value' || created.kind !== 'claim') fail('Virheellinen semanttinen luokitus');
         created.semanticType = 'value';
       }
+      if (c.unrated) {
+        if (created.kind !== 'claim') fail('Vain perustelu voi olla arvioimaton huomio');
+        created.unrated = true;
+      }
       // A new option, group or value takes the type name its siblings of the same kind use, so naming one
       // "Kriteeri" names the next one too.
       const sibling = p.nodes
@@ -881,6 +896,16 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
         if (label.length > TYPE_LABEL_MAX) fail('Tyyppinimi on liian pitkä');
         if (label) n.typeLabel = label;
         else delete n.typeLabel;
+      }
+      if (c.unrated !== undefined) {
+        if (c.unrated && (n.kind !== 'claim' || n.parentId === null))
+          fail('Vain perustelu voi olla arvioimaton huomio');
+        if (c.unrated) n.unrated = true;
+        else delete n.unrated;
+      }
+      if (c.fineInfluence !== undefined) {
+        if (c.fineInfluence) n.fineInfluence = true;
+        else delete n.fineInfluence;
       }
       return;
     }

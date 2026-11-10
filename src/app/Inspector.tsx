@@ -9,7 +9,10 @@ import {
   decisionRanking,
   decisionRankingForAssessor,
   descendants,
+  INFLUENCE_STEP,
+  INFLUENCE_STEP_COARSE,
   isGate,
+  isUnrated,
   isValue,
   optionFeasibility,
   optionValueProfile,
@@ -249,6 +252,55 @@ function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
         </datalist>
       </Field>
       <p className="inspector-note">{t('typeLabelHelp')}</p>
+    </>
+  );
+}
+function Toggle({
+  id,
+  testId,
+  label,
+  checked,
+  editable,
+  onChange,
+}: {
+  id: string;
+  testId?: string;
+  label: string;
+  checked: boolean;
+  editable: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="inspector-check" htmlFor={id}>
+      <input
+        id={id}
+        data-testid={testId}
+        type="checkbox"
+        checked={checked}
+        disabled={!editable}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span>{label}</span>
+    </label>
+  );
+}
+/** Owner 2026-11-10: a reason can be a note that is not rated; earlier reviews are kept and count again when it is
+ * switched back. */
+function UnratedField({ node, editable }: { node: Node; editable: boolean }) {
+  const t = useTranslator();
+  if (!node.parentId || node.kind !== 'claim' || node.sharedReasonId || isGate(node) || isValue(node))
+    return null;
+  return (
+    <>
+      <Toggle
+        id="nodeUnrated"
+        testId="node-unrated"
+        label={t('unratedToggle')}
+        checked={isUnrated(node)}
+        editable={editable}
+        onChange={(unrated) => getStore().dispatch({ type: 'node.edit', id: node.id, unrated })}
+      />
+      <p className="inspector-note">{t('unratedHelp')}</p>
     </>
   );
 }
@@ -833,8 +885,9 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
   const otherScore: NodeScore | undefined =
     view.indexMode === 'personal' ? assessment : frame.actorScores.get(node.id);
   const credenceShown = !otherPerspective && !node.sharedReasonId && truthAssessable(node);
+  const unrated = isUnrated(node);
   const impactShown =
-    !otherPerspective && !node.sharedReasonId && !!node.parentId && node.relation !== 'option';
+    !otherPerspective && !node.sharedReasonId && !!node.parentId && node.relation !== 'option' && !unrated;
   const commit = (credence: number | null, influence: number | null) => {
     // Saving one axis also saves the other one as the slider shows it, when the person has none yet: they saw both
     // values and left that one as it was (owner decision 2026-11-09). A stale impact still asks to be reassessed.
@@ -866,6 +919,20 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
         userId: actorId,
         influence,
       });
+  };
+  const noEffectSaved =
+    project.settings.scoring !== SCORING_V3 && !!ownImpact?.current && ownImpact.record?.influence === 0;
+  // "No effect": the person's own influence 0, saved without asking for a credence (owner 2026-11-10).
+  const noEffect = () => {
+    store.setView({ indexMode: 'personal', viewAssessorId: null });
+    store.dispatch({
+      type: 'review.influence',
+      id: newId(),
+      subjectType: 'primary',
+      subjectId: node.id,
+      userId: actorId,
+      influence: 0,
+    });
   };
   const beforeClamp =
     effective && effective.base !== null && effective.score !== null
@@ -915,6 +982,35 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
       {!otherPerspective && node.sharedReasonId ? (
         <p className="inspector-note">{t('sharedFixedExplanation')}</p>
       ) : null}
+      {unrated && !otherPerspective ? (
+        <div className="unrated-block" data-testid="unrated-note">
+          <Range
+            unset
+            id="nodeConfidence"
+            label={t('ownCredence')}
+            value={node.confidence}
+            min={0}
+            max={100}
+            step={1}
+            editable={false}
+            format={(v) => `${v} %`}
+            onCommit={() => undefined}
+          />
+          <Range
+            unset
+            id="nodeImpact"
+            label={t('profileInfluence')}
+            value={0}
+            min={-5}
+            max={5}
+            step={INFLUENCE_STEP_COARSE}
+            editable={false}
+            format={(v) => `${signed(v)} / 5`}
+            onCommit={() => undefined}
+          />
+          <p className="inspector-note">{t('unratedNote')}</p>
+        </div>
+      ) : null}
       {credenceShown ? (
         <>
           <Range
@@ -934,7 +1030,9 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           {credenceIsFeeling(project, node) ? (
             <p className="inspector-note">{t('ownCredenceFeelingNote')}</p>
           ) : !ownVote ? (
-            <p className="inline-warning">{t('profileUnsetHint')}</p>
+            <p className={noEffectSaved ? 'inspector-note' : 'inline-warning'}>
+              {t(noEffectSaved ? 'noEffectSaved' : 'profileUnsetHint')}
+            </p>
           ) : null}
         </>
       ) : null}
@@ -953,7 +1051,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             }
             min={-5}
             max={5}
-            step={0.5}
+            step={node.fineInfluence ? INFLUENCE_STEP : INFLUENCE_STEP_COARSE}
             editable={editable}
             format={(v) => `${signed(v)} / 5`}
             onCommit={(v) => commit(null, v)}
@@ -961,6 +1059,27 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           {!ownImpact?.current ? (
             <p className="inline-warning">{t(ownImpact?.record ? 'profileStale' : 'profileUnsetHint')}</p>
           ) : null}
+          <div className="impact-tools">
+            <Toggle
+              id="nodeFineInfluence"
+              testId="node-fine-influence"
+              label={t('fineInfluenceToggle')}
+              checked={!!node.fineInfluence}
+              editable={editable}
+              onChange={(fineInfluence) => store.dispatch({ type: 'node.edit', id: node.id, fineInfluence })}
+            />
+            <button
+              type="button"
+              className="btn quiet"
+              id="nodeNoEffect"
+              data-testid="review-no-effect"
+              title={t('noEffectHelp')}
+              disabled={!editable}
+              onClick={() => noEffect()}
+            >
+              {t('noEffect')}
+            </button>
+          </div>
         </>
       ) : null}
       {summary &&
@@ -1373,6 +1492,7 @@ export function Inspector({ frame }: { frame: Frame }) {
         {!node.sharedReasonId ? (
           <TypeLabelField key={`type:${node.id}:${node.typeLabel ?? ''}`} node={node} editable={editable} />
         ) : null}
+        <UnratedField node={node} editable={editable} />
         {node.relation === 'option' ? <OptionValues node={node} /> : null}
         {project.mode === 'decision' && node.parentId === null ? <DecisionValueMatrix /> : null}
         {project.mode === 'decision' && (node.parentId === null || node.relation === 'option') ? (

@@ -50,7 +50,10 @@ export function addNode(relation: AddRelation, parentId?: string, semanticType?:
   const fourWay = before.view.orientation === 'four-way';
   const oldFrame = fourWay ? frameOf(before) : null;
   store.select(parent);
-  if (!store.dispatch({ type: 'node.add', id, parentId: parent, relation, semanticType })) return null;
+  // A new neutral reason starts as an unrated note (owner 2026-11-10).
+  const unrated = relation === 'neutral' && !semanticType ? true : undefined;
+  if (!store.dispatch({ type: 'node.add', id, parentId: parent, relation, semanticType, unrated }))
+    return null;
   if (fourWay && oldFrame) {
     const project = store.get().project;
     const root = rootNode(project) as Node;

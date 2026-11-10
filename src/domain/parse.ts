@@ -15,7 +15,8 @@ import {
   isAiProfile,
   isGate,
   TYPE_LABEL_MAX,
-  isHalfStep,
+  isInfluenceStep,
+  isUnrated,
   truthAssessable,
 } from './model.ts';
 import type {
@@ -180,7 +181,7 @@ export function parseProject(input: unknown): Project {
     const title = str(p.title, 200, 'Yhteisperusteen otsikko', false);
     const confidence = num(p.confidence, 0, 100, 'Yhteisperusteen uskottavuus');
     const influence = num(p.influence, -5, 5, 'Yhteisperusteen vaikutus');
-    if (!isHalfStep(influence)) refuse('Yhteisperusteen tarkkuus on 0,5');
+    if (!isInfluenceStep(influence)) refuse('Yhteisperusteen tarkkuus on 0,1');
     return { id, title, confidence, influence };
   });
   if (sharedReasons.length > 200) refuse('Liikaa yhteisperusteita');
@@ -238,6 +239,8 @@ export function parseProject(input: unknown): Project {
       ...(p.typeLabel !== undefined
         ? { typeLabel: str(p.typeLabel, TYPE_LABEL_MAX, 'Tyyppinimi', false) }
         : {}),
+      ...(p.unrated === true ? { unrated: true as const } : {}),
+      ...(p.fineInfluence === true ? { fineInfluence: true as const } : {}),
     };
   });
   const roots = nodes.filter((n) => n.parentId === null);
@@ -348,7 +351,13 @@ export function parseProject(input: unknown): Project {
     )
       refuse('Arvion kohde puuttuu tai arvio on päällekkäinen');
     const t = target as Node;
-    if (!truthAssessable(t) && t.kind !== 'option' && !(nodeId === root.id && root.kind === 'decision'))
+    // An unrated note keeps the reviews given before it was switched off (owner 2026-11-10).
+    if (
+      !truthAssessable(t) &&
+      !isUnrated(t) &&
+      t.kind !== 'option' &&
+      !(nodeId === root.id && root.kind === 'decision')
+    )
       refuse('Arvokäsitteelle tai reunaehdolle ei voi lisätä totuusarviota');
     seenVotes.add(JSON.stringify([nodeId, userId]));
     return {
@@ -641,7 +650,7 @@ export function parseProject(input: unknown): Project {
     )
       refuse('Suhdearvio on virheellinen tai päällekkäinen');
     const influence = num(p.influence, -5, 5, 'Suhdearvion vaikutus');
-    if (!isHalfStep(influence)) refuse('Suhdearvion tarkkuus on 0,5');
+    if (!isInfluenceStep(influence)) refuse('Suhdearvion tarkkuus on 0,1');
     edgeRatingIds.add(id);
     edgeRatingPairs.add(key);
     return {

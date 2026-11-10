@@ -3,7 +3,14 @@
 // (inv-review-vote-table §A). Only the parent's TYPE selects the fixed question template; content never does.
 import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
-import { assessmentFields, personalCredence, personalInfluence, signedInfluence } from '../domain/index.ts';
+import {
+  INFLUENCE_STEP,
+  INFLUENCE_STEP_COARSE,
+  assessmentFields,
+  personalCredence,
+  personalInfluence,
+  signedInfluence,
+} from '../domain/index.ts';
 import type { Node, PersonalInfluence } from '../domain/index.ts';
 import { translator } from '../lib/i18n/i18n.ts';
 import { newId } from '../lib/providers.ts';
@@ -156,13 +163,40 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
       done = new Set(done);
       done.add(pass.cursorId);
     }
-    const next = index + direction;
+    go(index + direction, done);
+  };
+  const go = (next: number, done: Set<string>) => {
     let updated: AssessmentPass = { ...pass, done };
     if (next >= pass.order.length) updated = { ...updated, finished: true };
     else if (next >= 0) updated = { ...updated, cursorId: pass.order[next] ?? null, finished: false };
     persist(updated);
     setPass(updated);
     setInputs(null);
+  };
+  /** Owner 2026-11-10: "no effect" is the person's own influence 0 without a credence; "not rated" turns the reason
+   * into a note for everyone. Both count as handled and move on. */
+  const settle = (how: 'noEffect' | 'unrated') => {
+    if (!pass.cursorId || !node) return;
+    if (!canEdit(store.get())) {
+      store.showMessage(t('viewerCannotEdit'));
+      return;
+    }
+    const ok =
+      how === 'noEffect'
+        ? store.dispatch({
+            type: 'review.personal',
+            voteId: newId(),
+            assessmentId: newId(),
+            nodeId: node.id,
+            userId: actorId,
+            credence: null,
+            influence: 0,
+          })
+        : store.dispatch({ type: 'node.edit', id: node.id, unrated: true });
+    if (!ok) return;
+    const done = new Set(pass.done);
+    done.add(pass.cursorId);
+    go(pass.order.indexOf(pass.cursorId) + 1, done);
   };
   const previous = () => {
     if (pass.finished) setPass({ ...pass, finished: false });
@@ -336,7 +370,7 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                       id="assessmentInfluence"
                       min={-5}
                       max={5}
-                      step={0.5}
+                      step={node.fineInfluence ? INFLUENCE_STEP : INFLUENCE_STEP_COARSE}
                       value={values.influence}
                       aria-describedby="assessmentImpactReflection"
                       onChange={(e) => setInputs({ ...values, influence: Number(e.target.value) })}
@@ -349,6 +383,40 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                     <span>{t('assessmentOppose')}</span>
                     <span>{t('assessmentNeutral')}</span>
                     <span>{t('assessmentSupport')}</span>
+                  </div>
+                  <div className="impact-tools">
+                    <label className="inspector-check" htmlFor="assessmentFineInfluence">
+                      <input
+                        type="checkbox"
+                        id="assessmentFineInfluence"
+                        checked={!!node.fineInfluence}
+                        onChange={(e) =>
+                          store.dispatch({ type: 'node.edit', id: node.id, fineInfluence: e.target.checked })
+                        }
+                      />
+                      <span>{t('fineInfluenceToggle')}</span>
+                    </label>
+                    <span>
+                      <button
+                        type="button"
+                        className="btn quiet"
+                        id="btnAssessNoEffect"
+                        title={t('noEffectHelp')}
+                        onClick={() => settle('noEffect')}
+                      >
+                        {t('noEffect')}
+                      </button>{' '}
+                      <button
+                        type="button"
+                        className="btn quiet"
+                        id="btnAssessUnrated"
+                        title={t('unratedHelp')}
+                        hidden={!node.parentId || node.kind !== 'claim' || !!node.sharedReasonId}
+                        onClick={() => settle('unrated')}
+                      >
+                        {t('unratedMark')}
+                      </button>
+                    </span>
                   </div>
                 </div>
                 <p className="assessment-muted" id="assessmentReviewedMarker">

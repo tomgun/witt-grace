@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-10 — `GRACE_AND_DATA_MODEL.md`, `METHOD_INTENT.md`, `REQUIREMENTS.md`, `UX_AND_WORKFLOWS.md`, `UI_INVENTORY.md` — Owner decisions: an unrated note (`node.unrated`, a new neutral reason starts so; earlier reviews kept), a per-relation fine scale (`node.fineInfluence`), influence in 0.1 steps everywhere in the data, and “no effect” (influence 0 without a credence is a complete review under v4 and log-odds; v3 unchanged) (G-01, G-02, S-15).
 - 2026-11-09 — `UI_INVENTORY.md` — Owner decision: a reason's own type name reads with its direction (“PUOLTAVA TOSIASIA”); card buttons at the right edge; marks on a row under the header (S-15).
 - 2026-11-09 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner request: a third selectable method `logodds-reasons-v1` (reasons decide; contributions combine as odds, k = ln 3 / 5, no cap) with explanations per method in the inspector and the help dialog.
 - 2026-11-09 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner decision: a claim's result comes from its reasons; its own credence is a felt sense that does not count. New scoring version `evidence-v4-reasons` (name provisional, the owner may rename it), the default for new documents; `evidence-v3-links` stays selectable per document (Arviointi → Laskentatapa) and pins the golden fixtures.

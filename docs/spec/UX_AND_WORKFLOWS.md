@@ -42,7 +42,7 @@
 
 ## UX-D. Review, decisions and ballots
 
-- **UX-D01**: Credibility/probability UI 0–100%; signed relation UI **-5 opposes, 0 neutral, +5 supports**, 0.5 steps. Show clear axis labels, do not split relation type and a separate unsigned "strength 1..5" in ordinary UI.
+- **UX-D01**: Credibility/probability UI 0–100%; signed relation UI **-5 opposes, 0 neutral, +5 supports**, 0.5 steps (0.1 when the relation's fine scale is on, owner 2026-11-10). Show clear axis labels, do not split relation type and a separate unsigned "strength 1..5" in ordinary UI.
 - **UX-D02**: New claim's editable template credence 100%, but no saved human vote until reviewed. The main **argumentation thesis** gets a computed net from reviewed descendants even with no thesis credibility vote. A decision-question root is not itself rated.
 - **UX-D03**: Person choice and aggregation visibility: when no AI review exists, avoid needless "only humans" captions. The current individual may have an editable human display name. Selecting another human/AI viewpoint must not switch or overwrite active editor identity unless explicitly requested.
 - **UX-D04**: Decision option scores and feasibility are visible *before* optional vote. Voting is not required for computationally assisted decision comparison. In vote dialog, show prior calculated option background appropriately.

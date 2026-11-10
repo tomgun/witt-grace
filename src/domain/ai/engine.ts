@@ -4,7 +4,7 @@
 // at the end, as the prototype does with Core.validateProject). commands.ts owns the same rules for interactive
 // edits; this file exists because a draft import or a contribution merge must call the primitives in exactly the
 // prototype's order to reproduce its ids, which the Command log cannot express.
-import { isHalfStep, truthAssessable } from '../model.ts';
+import { isInfluenceStep, truthAssessable } from '../model.ts';
 import type { Link, LinkRelation, Node, Project, SharedReason, Stance, SubjectType } from '../model.ts';
 import { childrenOf, graphHasCycle, sharedReason } from '../graph.ts';
 import { newNode } from '../project.ts';
@@ -183,8 +183,8 @@ export function upsertEdgeAssessment(
   if (subjectType === 'primary' && p.nodes.some((n) => n.id === subjectId && n.sharedReasonId))
     fail('Yhteisperusteen vaikutus on lukittu kirjastoon');
   const relation = assessmentRelation(p, subjectType, subjectId);
-  if (!Number.isFinite(influence) || influence < -5 || influence > 5 || !isHalfStep(influence))
-    fail('Suhteen vaikutuksen on oltava −5…+5, puolen pisteen askelin');
+  if (!Number.isFinite(influence) || influence < -5 || influence > 5 || !isInfluenceStep(influence))
+    fail('Suhteen vaikutuksen on oltava −5…+5, 0,1 pisteen askelin');
   const old = p.edgeAssessments.find(
     (a) => a.subjectType === subjectType && a.subjectId === subjectId && a.userId === userId
   );
@@ -223,9 +223,9 @@ export function addSharedReason(
     !Number.isFinite(influence) ||
     influence < -5 ||
     influence > 5 ||
-    !isHalfStep(influence)
+    !isInfluenceStep(influence)
   )
-    fail('Yhteisperusteen vaikutuksen on oltava −5…+5, 0,5 tarkkuudella');
+    fail('Yhteisperusteen vaikutuksen on oltava −5…+5, 0,1 tarkkuudella');
   p.sharedReasons ??= [];
   if (p.sharedReasons.length >= 200) fail('Yhteisperusteita voi olla enintään 200');
   const reason: SharedReason = { id: newId(), title: title.trim(), confidence, influence };

@@ -9,7 +9,7 @@ This is the **current product/method ledger** for Claude Code PRs. `Implemented`
 | ID | Status | Requirement (non-regressible) | Evidence |
 | --- | --- | --- | --- |
 | G-01 | Implemented | Argumentation and Decision are separate modes, one canonical v8 graph document. | `src/core.js`, `tests/core.test.cjs` |
-| G-02 | Implemented | Credibility `p` 0–100%, signed relationship influence `w` -5…+5 with half steps; no extra value slider. | `tests/weighted-upward-dev20.test.cjs` |
+| G-02 | Implemented | Credibility `p` 0–100%, signed relationship influence `w` -5…+5 in 0.1 steps (half steps in the prototype; owner 2026-11-10); no extra value slider. | `tests/weighted-upward-dev20.test.cjs` |
 | G-03 | Implemented | Public signed explanatory balance -100..+100; neutral 0; no calibrated truth probability. | `tests/signed-balance-dev21.test.cjs` |
 | G-04 | Implemented | Recursive leaf → intermediate → root/option propagation; no automatic grandchild double count. | `tests/deep-argument-propagation-dev20.test.cjs` |
 | G-05 | Implemented | One perfect +5 support = +50 display, two = +100; opposite -5 = -50. | `tests/evidence-v2-dev21.test.cjs`, `tests/handoff-contract.test.cjs` |

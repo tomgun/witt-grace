@@ -10,6 +10,7 @@ import {
   influenceSummary,
   isAiProfile,
   isGate,
+  isUnrated,
   isValue,
   navigate,
   NAV_KEYS,
@@ -454,6 +455,16 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     for (let node = byId.get(id); node?.parentId; node = byId.get(node.parentId)) depth++;
     return depth;
   };
+  /** Below an unrated note nothing scores upward, so its branch is shown dimmed (owner 2026-11-10). */
+  const underUnrated = (node: Node): boolean => {
+    for (
+      let up = node.parentId ? byId.get(node.parentId) : undefined;
+      up;
+      up = up.parentId ? byId.get(up.parentId) : undefined
+    )
+      if (isUnrated(up)) return true;
+    return false;
+  };
   const renderCard = (node: Node) => {
     const pos = visualPosition(node);
     const relation = displayedPrimaryRelation(frame, node);
@@ -466,11 +477,14 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     if (node.parentId === null) classes.push('is-root');
     if (important) classes.push('important-reason');
     if (frame.leadingOptionIds?.has(node.id)) classes.push('ai-leading-option');
+    if (isUnrated(node)) classes.push('unrated-node');
+    else if (underUnrated(node)) classes.push('under-unrated');
     if (
       view.indexMode === 'personal' &&
       node.parentId &&
       node.relation !== 'option' &&
-      node.relation !== 'group'
+      node.relation !== 'group' &&
+      !isUnrated(node)
     ) {
       const direction = shownInfluence(frame, node);
       classes.push(
@@ -676,6 +690,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         </div>
         {node.sharedReasonId ||
         node.reasonConceptId ||
+        isUnrated(node) ||
         (node.semanticType &&
           node.semanticType !== 'unspecified' &&
           !node.sharedReasonId &&
@@ -683,6 +698,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           <div className="node-marks">
             {node.sharedReasonId ? <small className="shared-node-mark">{t('sharedBadge')}</small> : null}
             {node.reasonConceptId ? <small className="shared-node-mark">{t('contextBadge')}</small> : null}
+            {isUnrated(node) ? <small className="node-unrated-mark">{t('unratedMark')}</small> : null}
             {node.semanticType &&
             node.semanticType !== 'unspecified' &&
             !node.sharedReasonId &&
