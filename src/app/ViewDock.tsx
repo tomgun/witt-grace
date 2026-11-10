@@ -2,6 +2,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { arrangeTree, toggleCompactVisible, toggleOptionBranches } from './actions.ts';
 import { canEdit } from './actions.ts';
+import { userTraces } from './derive.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import { LAYER_NAMES, LAYER_PRESETS, currentPreset } from './view.ts';
@@ -407,7 +408,63 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
                 peek: frame.projection.peekIds.size,
               })}
         </p>
+        <div className="dock-divider" />
+        <UserHighlight />
       </div>
+    </div>
+  );
+}
+
+/** Owner request 2026-11-10: highlight one person's traces in the tree, chosen apart from the active profile. */
+function UserHighlight() {
+  const state = useAppState();
+  const t = useTranslator();
+  const store = getStore();
+  const { project, view, actorId } = state;
+  const chosen = project.users.find((u) => u.id === view.highlightUserId) ?? null;
+  const traces = chosen ? [...userTraces(project, chosen.id).values()] : [];
+  return (
+    <div className="dock-user-highlight">
+      <label className="dock-label" htmlFor="highlightUserSelect">
+        {t('highlightUserLabel')}
+      </label>
+      <select
+        id="highlightUserSelect"
+        data-testid="highlight-user"
+        value={chosen?.id ?? ''}
+        onChange={(e) => store.setView({ highlightUserId: e.target.value || null })}
+      >
+        <option value="">{t('highlightNone')}</option>
+        {project.users.map((u) => (
+          <option key={u.id} value={u.id}>
+            {u.name}
+          </option>
+        ))}
+      </select>
+      {chosen ? (
+        <>
+          <p className="focus-summary" id="highlightSummary" role="status">
+            {t('highlightSummary', {
+              created: traces.filter((x) => x.created).length,
+              edited: traces.filter((x) => x.edited).length,
+              commented: traces.filter((x) => x.commented).length,
+            })}
+          </p>
+          <button
+            type="button"
+            id="btnHighlightRatings"
+            className="btn quiet dock-button"
+            onClick={() =>
+              store.setView({
+                indexMode: 'personal',
+                viewAssessorId: chosen.id === actorId ? null : chosen.id,
+              })
+            }
+          >
+            {t('highlightShowRatings')}
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }

@@ -71,6 +71,8 @@ export interface ViewState {
   dockScreenPosition: { x: number; y: number } | null;
   indexMode: IndexMode;
   viewAssessorId: string | null;
+  /** Owner request 2026-11-10: the person whose created, edited and commented nodes the tree highlights. */
+  highlightUserId: string | null;
   highlightOptions: boolean;
   showImportance: boolean;
   showSharedReasons: boolean;
@@ -94,6 +96,7 @@ export function defaultView(windowWidth = 1440): ViewState {
     dockScreenPosition: null,
     indexMode: 'shared',
     viewAssessorId: null,
+    highlightUserId: null,
     highlightOptions: false,
     showImportance: false,
     showSharedReasons: true,
@@ -145,6 +148,7 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
         : null,
     indexMode: saved.indexMode === 'personal' ? 'personal' : 'shared',
     viewAssessorId: typeof saved.viewAssessorId === 'string' ? saved.viewAssessorId : null,
+    highlightUserId: typeof saved.highlightUserId === 'string' ? saved.highlightUserId : null,
     highlightOptions: !!saved.highlightOptions,
     showImportance: !!saved.showImportance,
     showSharedReasons: saved.showSharedReasons !== false,

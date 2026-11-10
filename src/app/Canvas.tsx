@@ -42,6 +42,7 @@ import {
   reasonTypeLabel,
   shownInfluence,
   signed,
+  userTraces,
   viewedAssessorId,
 } from './derive.ts';
 import { asciiEdgeParts } from './AsciiEdge.tsx';
@@ -457,6 +458,12 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     for (let node = byId.get(id); node?.parentId; node = byId.get(node.parentId)) depth++;
     return depth;
   };
+  // Owner request 2026-11-10: one person's created, edited and commented nodes stand out; the rest fade.
+  const highlightUser =
+    view.highlightUserId && project.users.some((u) => u.id === view.highlightUserId)
+      ? view.highlightUserId
+      : null;
+  const traces = highlightUser ? userTraces(project, highlightUser) : null;
   /** Below an unrated note nothing scores upward, so its branch is shown dimmed (owner 2026-11-10). */
   const underUnrated = (node: Node): boolean => {
     for (
@@ -479,6 +486,13 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     if (node.parentId === null) classes.push('is-root');
     if (important) classes.push('important-reason');
     if (frame.leadingOptionIds?.has(node.id)) classes.push('ai-leading-option');
+    const trace = traces?.get(node.id);
+    if (traces) {
+      if (trace?.created) classes.push('user-created');
+      if (trace?.edited) classes.push('user-edited');
+      if (trace?.commented) classes.push('user-commented');
+      if (!trace) classes.push('user-other');
+    }
     if (isUnrated(node)) classes.push('unrated-node');
     else if (
       underUnrated(node) ||
@@ -698,6 +712,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         {node.sharedReasonId ||
         node.reasonConceptId ||
         isUnrated(node) ||
+        !!trace ||
         (node.semanticType &&
           node.semanticType !== 'unspecified' &&
           !node.sharedReasonId &&
@@ -706,6 +721,17 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             {node.sharedReasonId ? <small className="shared-node-mark">{t('sharedBadge')}</small> : null}
             {node.reasonConceptId ? <small className="shared-node-mark">{t('contextBadge')}</small> : null}
             {isUnrated(node) ? <small className="node-unrated-mark">{t('unratedMark')}</small> : null}
+            {trace ? (
+              <small className="node-trace-mark" data-testid="trace-mark">
+                {[
+                  trace.created ? t('traceCreated') : null,
+                  trace.edited ? t('traceEdited') : null,
+                  trace.commented ? t('traceCommented') : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </small>
+            ) : null}
             {node.semanticType &&
             node.semanticType !== 'unspecified' &&
             !node.sharedReasonId &&

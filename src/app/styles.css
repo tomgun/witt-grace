@@ -8854,3 +8854,25 @@ input[type='range'].range-unset:focus-visible {
 .unrated-block {
   opacity: 0.75;
 }
+/* One person's traces (owner request 2026-11-10): created = solid ring, edited = dashed ring, commented = mark. */
+.node.user-created {
+  box-shadow: 0 0 0 3px #d99a00;
+}
+.node.user-edited {
+  outline: 3px dashed #d99a00;
+  outline-offset: 2px;
+}
+.node.user-commented:not(.user-created):not(.user-edited) {
+  box-shadow: 0 0 0 2px #d99a0080;
+}
+.node.user-other {
+  opacity: 0.4;
+}
+.node .node-trace-mark {
+  color: #a87400;
+  font-weight: 600;
+}
+.dock-user-highlight {
+  display: grid;
+  gap: 6px;
+}

@@ -313,3 +313,25 @@ export function cardChips(
     chips.push({ label: t('linksChip'), value: String(linkCount), cls: 'meta-links', title: t('linksHint') });
   return chips;
 }
+
+export interface UserTrace {
+  created: boolean;
+  edited: boolean;
+  commented: boolean;
+}
+/** Owner request 2026-11-10: what one person has left on each node (created it, edited it last, commented on it). */
+export function userTraces(project: Project, userId: string): Map<string, UserTrace> {
+  const traces = new Map<string, UserTrace>();
+  const at = (id: string) => {
+    let trace = traces.get(id);
+    if (!trace) traces.set(id, (trace = { created: false, edited: false, commented: false }));
+    return trace;
+  };
+  for (const node of project.nodes) {
+    if (node.createdBy === userId) at(node.id).created = true;
+    if (node.lastEditedBy === userId && node.createdBy !== userId) at(node.id).edited = true;
+  }
+  for (const comment of project.comments ?? [])
+    if (comment.authorId === userId) at(comment.nodeId).commented = true;
+  return traces;
+}

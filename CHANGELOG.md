@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner request 2026-11-10: *Korosta käyttäjän jäljet* in the view dock highlights the nodes one chosen person created, edited last or commented on (rings and a mark; other nodes fade), independent of the active profile, with a shortcut to that person's ratings. Nine languages; `tests/e2e/highlight-walk.spec.ts`.
 - Owner request 2026-11-10: a fourth calculation method, *Nettotulos välittyy (kokeellinen)* (`signed-reasons-v1`): a reason passes its net result upward (strength = max(0, net / 100)), so a neutral or refuted reason adds nothing. Explained in the inspector and the quick guide (nine languages); the comparison examples' tables gain its column.
 - Owner request 2026-11-10: a ninth example, *Syvä väittely: keskustan ruuhkat* (same script): counter-claims to counter-claims 14 and 11 levels deep with parallel claims, against two short options.
 - Owner request 2026-11-10: an eighth example, *Laskentatapojen vertailu: tietokoneiden uusiminen* (`scripts/build-scoring-example.ts`, `--table` prints each option's net under every method): four options with long, deep and short sets of reasons for comparing the calculation methods.
