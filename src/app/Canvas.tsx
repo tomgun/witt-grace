@@ -42,6 +42,7 @@ import {
   relationLabel,
   reasonTypeLabel,
   shownInfluence,
+  shownScore,
   signed,
   userTraces,
   viewedAssessorId,
@@ -389,6 +390,17 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   const positionsForEdges = new Map(nodes.map((n) => [n.id, visualPosition(n)]));
   const ids = frame.projection.visibleIds;
   const focusing = view.focus.mode !== 'all';
+  // Owner request 2026-11-10: an edge's width and a reason's opacity follow the weight it actually carries
+  // (|influence| × strength under the document's method, 0…5 → 0…1), so many weak reasons do not look decisive.
+  const carried = (child: Node): number | null => {
+    if (!view.weightByRatings || !child.parentId) return null;
+    const contribution = shownScore(frame, child.parentId)?.contributions.find(
+      (c) => c.id === child.id && c.subjectType === 'primary'
+    );
+    return contribution && !contribution.missing && contribution.magnitude !== null
+      ? clamp(contribution.magnitude / 5, 0, 1)
+      : null;
+  };
   const edges = nodes.flatMap((child) => {
     if (!child.parentId || !ids.has(child.parentId)) return [];
     const parent = byId.get(child.parentId);
@@ -459,12 +471,18 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           {asciiEdgeParts(d)}
         </g>,
       ];
+    const weight = carried(child);
     return [
       <path
         key={child.id}
         className={classes.join(' ')}
         data-focus-stance={focusing ? view.focus.mode : undefined}
         data-importance-delta={importanceDelta}
+        data-child={child.id}
+        data-weight={weight === null ? undefined : weight.toFixed(2)}
+        style={
+          weight === null ? undefined : { strokeWidth: 1.5 + 4 * weight, strokeOpacity: 0.3 + 0.7 * weight }
+        }
         d={d}
       >
         {title ? <title>{title}</title> : null}
@@ -535,6 +553,8 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       if (trace?.commented) classes.push('user-commented');
       if (!trace) classes.push('user-other');
     }
+    const carriedWeight = carried(node);
+    if (carriedWeight !== null && carriedWeight < 0.15) classes.push('weak-reason');
     if (isUnrated(node)) classes.push('unrated-node');
     else if (
       underUnrated(node) ||

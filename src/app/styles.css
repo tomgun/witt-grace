@@ -8948,3 +8948,7 @@ input[type='range'].range-unset:focus-visible {
   align-items: center;
   gap: 8px;
 }
+/* A reason that carries almost no weight fades (owner request 2026-11-10). */
+.node.weak-reason {
+  opacity: 0.55;
+}

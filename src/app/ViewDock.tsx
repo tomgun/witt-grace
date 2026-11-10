@@ -262,6 +262,16 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
             />
             <span>{t('sharedShowInTree')}</span>
           </label>
+          <label>
+            <input
+              id="weightByRatings"
+              type="checkbox"
+              data-testid="weight-by-ratings"
+              checked={view.weightByRatings}
+              onChange={(e) => store.setView({ weightByRatings: e.target.checked })}
+            />
+            <span title={t('weightByRatingsHelp')}>{t('weightByRatings')}</span>
+          </label>
         </div>
         <div className="dock-tree-tools">
           <label htmlFor="orientationSelect">{t('orientation')}</label>

@@ -75,6 +75,8 @@ export interface ViewState {
   highlightUserId: string | null;
   /** Owner request 2026-11-10: the reading view shows every card's whole text and lays the tree out by card size. */
   readingMode: boolean;
+  /** Owner request 2026-11-10: edges and reasons look as heavy as the weight they actually carry. */
+  weightByRatings: boolean;
   readingWidth: number;
   readingLines: number;
   highlightOptions: boolean;
@@ -106,6 +108,7 @@ export function defaultView(windowWidth = 1440): ViewState {
     viewAssessorId: null,
     highlightUserId: null,
     readingMode: false,
+    weightByRatings: true,
     readingWidth: 320,
     readingLines: 10,
     highlightOptions: false,
@@ -161,6 +164,7 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
     viewAssessorId: typeof saved.viewAssessorId === 'string' ? saved.viewAssessorId : null,
     highlightUserId: typeof saved.highlightUserId === 'string' ? saved.highlightUserId : null,
     readingMode: saved.readingMode === true,
+    weightByRatings: saved.weightByRatings !== false,
     readingWidth: READING_WIDTHS.includes(saved.readingWidth as number)
       ? (saved.readingWidth as number)
       : 320,
