@@ -17,6 +17,7 @@ import test from 'node:test';
 import {
   evaluate,
   parseProject,
+  SCORING_CHAIN,
   SCORING_LOGODDS,
   SCORING_SIGNED,
   SCORING_V3,
@@ -63,6 +64,7 @@ test('the scoring comparison examples are the generator output and its options d
   assert.deepEqual(nets(SCORING_V4), [27.6, 100, 30, 0.1]);
   assert.deepEqual(nets(SCORING_LOGODDS), [29.5, 82.9, 31.8, 0.2]);
   assert.deepEqual(nets(SCORING_SIGNED), [18.1, 100, 30, 4]);
+  assert.deepEqual(nets(SCORING_CHAIN), [66.7, 99.9, 80, 14.6]);
   assert.deepEqual(nets(SCORING_V3), [38.8, 100, 30, -20.1]);
 });
 
@@ -95,5 +97,6 @@ test('the deep debate example is the generator output, 14 and 11 levels deep, an
   assert.deepEqual(nets(SCORING_V4), [0.6, 9.2, 16, -10]);
   assert.deepEqual(nets(SCORING_LOGODDS), [1.1, 10, 17.4, -10.9]);
   assert.deepEqual(nets(SCORING_SIGNED), [0, 0, 22, -10]);
+  assert.deepEqual(nets(SCORING_CHAIN), [0, 0, 66.7, -35.1]);
   assert.deepEqual(nets(SCORING_V3), [-3.9, 4.1, 16, -10]);
 });

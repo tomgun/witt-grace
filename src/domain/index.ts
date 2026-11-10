@@ -19,6 +19,7 @@ export {
   assessmentWeighting,
   assessmentPower,
   baseConfidence,
+  median,
 } from './scoring.ts';
 export type { Contribution, NodeScore, Scores, MarginalEffect, TargetEffect } from './scoring.ts';
 export {

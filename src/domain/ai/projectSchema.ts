@@ -65,7 +65,7 @@ export const PROJECT_SCHEMA: JsonSchema = {
           type: 'boolean',
         },
         assessmentWeighting: {
-          enum: ['structural', 'equal', 'shares'],
+          enum: ['structural', 'equal', 'shares', 'median'],
           description:
             'Required. equal = one human one review (default new projects), shares = human review weighted by shares, structural = optional document-authored baseline preview. Independent of votingRound.',
         },

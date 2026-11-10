@@ -248,6 +248,7 @@ test('a new document lets reasons decide; the calculation method switches in the
     'Perustelut ratkaisevat (oletus)',
     'Log-odds: näyttö kertyy kertoimina',
     'Nettotulos välittyy (kokeellinen)',
+    'Vahva ketju välittyy (log-odds, kokeellinen)',
     'Oma arvio + perustelut (prototyyppi)',
   ]);
   await page.getByTestId('scoring-select').selectOption('logodds-reasons-v1');

@@ -15,7 +15,18 @@ export const SCORING_LOGODDS = 'logodds-reasons-v1' as const;
  * max(0, (I − 50) / 50), so a reason at the neutral 50 (or a leaf at 50 % credence) adds nothing and a refuted one
  * adds nothing either (it never turns against its parent). Combination as in v4. */
 export const SCORING_SIGNED = 'signed-reasons-v1' as const;
-export const SCORING_VERSIONS = [SCORING_V3, SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED] as const;
+/** Owner request 2026-11-10: a strong chain carries upward. Reasons decide and pass their net result (as in
+ * signed-reasons-v1), combined as log-odds with a steeper k: one fully credible ±5 reason alone takes a claim to net
+ * ±95 (I = 97.5), so a chain of strong, credible links keeps nearly its full weight however deep it is, while a weak or
+ * contested link still damps it. */
+export const SCORING_CHAIN = 'chain-logodds-v1' as const;
+export const SCORING_VERSIONS = [
+  SCORING_V3,
+  SCORING_V4,
+  SCORING_LOGODDS,
+  SCORING_SIGNED,
+  SCORING_CHAIN,
+] as const;
 export type ScoringVersion = (typeof SCORING_VERSIONS)[number];
 /** The version a new document gets. */
 export const SCORING_VERSION: ScoringVersion = SCORING_V4;
@@ -35,7 +46,8 @@ export const SEMANTIC_TYPES = [
 export const GATE_STATUSES = ['unknown', 'met', 'unmet'] as const;
 export const ROLES = ['owner', 'editor', 'viewer'] as const;
 export const VOTE_WEIGHTINGS = ['equal', 'shares'] as const;
-export const ASSESSMENT_WEIGHTINGS = ['structural', 'equal', 'shares'] as const;
+/** `median` (owner request 2026-11-10): the middle review of each value, so one extreme assessor cannot pull it. */
+export const ASSESSMENT_WEIGHTINGS = ['structural', 'equal', 'shares', 'median'] as const;
 export const PROFILE_KINDS = ['human', 'ai'] as const;
 export const AUDIT_ACTIONS = ['open', 'cast', 'update', 'retract', 'close'] as const;
 
@@ -234,21 +246,30 @@ export const evidenceFactor = (score: number): number => clamp(score / 100, 0, 1
 export const netFactor = (score: number): number => clamp((score - 50) / 50, 0, 1);
 /** The strength a reason passes to its parent under a scoring version. */
 export const strengthFor = (scoring: ScoringVersion) =>
-  scoring === SCORING_SIGNED ? netFactor : evidenceFactor;
+  scoring === SCORING_SIGNED || scoring === SCORING_CHAIN ? netFactor : evidenceFactor;
 export const evidenceScore = (base: number, positive: number, negative: number): number =>
   clamp(base + 5 * (positive - negative), 0, 100);
 const LOGODDS_K = Math.log(3) / 5;
+/** chain-logodds-v1: one fully credible ±5 reason gives I = 97.5 from the neutral base. */
+const CHAIN_K = Math.log(0.975 / 0.025) / 5;
 /** The log-odds combination: no net evidence leaves the base as it is; otherwise the base (kept off 0 and 100) moves
  * on the logit scale. */
-export const logOddsScore = (base: number, positive: number, negative: number): number => {
-  const net = positive - negative;
-  if (Math.abs(net) < 1e-12) return base;
-  const p = clamp(base, 0.5, 99.5) / 100;
-  return 100 / (1 + Math.exp(-(Math.log(p / (1 - p)) + LOGODDS_K * net)));
-};
+const logOddsWith =
+  (k: number) =>
+  (base: number, positive: number, negative: number): number => {
+    const net = positive - negative;
+    if (Math.abs(net) < 1e-12) return base;
+    const p = clamp(base, 0.5, 99.5) / 100;
+    return 100 / (1 + Math.exp(-(Math.log(p / (1 - p)) + k * net)));
+  };
+export const logOddsScore = logOddsWith(LOGODDS_K);
+export const chainScore = logOddsWith(CHAIN_K);
 /** The score formula of a scoring version. */
 export const scoreFor = (scoring: ScoringVersion) =>
-  scoring === SCORING_LOGODDS ? logOddsScore : evidenceScore;
+  scoring === SCORING_LOGODDS ? logOddsScore : scoring === SCORING_CHAIN ? chainScore : evidenceScore;
+/** The versions that combine as log-odds: no ±100 cap, so the cap notes are not shown. */
+export const isLogOdds = (scoring: ScoringVersion): boolean =>
+  scoring === SCORING_LOGODDS || scoring === SCORING_CHAIN;
 
 export const isGate = (n: Node | undefined | null): boolean =>
   n?.semanticType === 'constraint' || n?.semanticType === 'prerequisite';

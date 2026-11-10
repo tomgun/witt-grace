@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import {
   childrenOf,
   isAiProfile,
+  SCORING_CHAIN,
   SCORING_LOGODDS,
   SCORING_SIGNED,
   SCORING_V3,
@@ -409,7 +410,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
                 store.dispatch({ type: 'project.setScoring', scoring: e.target.value as ScoringVersion })
               }
             >
-              {[SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED, SCORING_V3].map((v) => (
+              {[SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED, SCORING_CHAIN, SCORING_V3].map((v) => (
                 <option key={v} value={v}>
                   {t(
                     v === SCORING_V4
@@ -418,7 +419,9 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
                         ? 'scoringLogOdds'
                         : v === SCORING_SIGNED
                           ? 'scoringSigned'
-                          : 'scoringPrototype'
+                          : v === SCORING_CHAIN
+                            ? 'scoringChain'
+                            : 'scoringPrototype'
                   )}
                 </option>
               ))}

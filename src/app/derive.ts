@@ -192,7 +192,9 @@ export function nodeAssessmentSnapshot(
           ? t('assessmentSummaryWeighted')
           : mode === 'equal'
             ? t('assessmentSummaryMean')
-            : t('assessmentSummaryStructural');
+            : mode === 'median'
+              ? t('assessmentSummaryMedian')
+              : t('assessmentSummaryStructural');
   if (
     node.parentId === null &&
     node.kind === 'claim' &&

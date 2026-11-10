@@ -153,6 +153,7 @@ export function PeopleDialog({ open, onClose }: { open: boolean; onClose: () => 
                 <option value="structural">{t('assessmentWeightStructural')}</option>
                 <option value="equal">{t('assessmentWeightEqual')}</option>
                 <option value="shares">{t('assessmentWeightShares')}</option>
+                <option value="median">{t('assessmentWeightMedian')}</option>
               </select>
               <p className="inspector-note">{t('assessmentWeightHint')}</p>
             </div>

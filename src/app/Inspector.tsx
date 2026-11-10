@@ -27,7 +27,9 @@ import {
   summarizeInfluenceReviews,
   truthAssessable,
   TYPE_LABEL_MAX,
+  SCORING_CHAIN,
   SCORING_LOGODDS,
+  isLogOdds,
   SCORING_SIGNED,
   SCORING_V3,
 } from '../domain/index.ts';
@@ -1148,12 +1150,10 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           <div className="score-explain">
             {t(view.indexMode === 'personal' ? 'personalIndexExplain' : 'heuristicExplain')}
           </div>
-          {project.settings.scoring !== SCORING_LOGODDS &&
-          beforeClamp !== null &&
-          beforeClamp > 100 + 1e-9 ? (
+          {!isLogOdds(project.settings.scoring) && beforeClamp !== null && beforeClamp > 100 + 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedHigh')}</p>
           ) : null}
-          {project.settings.scoring !== SCORING_LOGODDS && beforeClamp !== null && beforeClamp < 0 - 1e-9 ? (
+          {!isLogOdds(project.settings.scoring) && beforeClamp !== null && beforeClamp < 0 - 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedLow')}</p>
           ) : null}
           <details className="score-help">
@@ -1164,9 +1164,11 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
                   ? 'indexExplain'
                   : project.settings.scoring === SCORING_LOGODDS
                     ? 'indexExplainLogOdds'
-                    : project.settings.scoring === SCORING_SIGNED
-                      ? 'indexExplainSigned'
-                      : 'indexExplainReasons'
+                    : project.settings.scoring === SCORING_CHAIN
+                      ? 'indexExplainChain'
+                      : project.settings.scoring === SCORING_SIGNED
+                        ? 'indexExplainSigned'
+                        : 'indexExplainReasons'
               )}
             </p>
             {effective && derivedResult(node, effective) ? (

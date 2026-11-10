@@ -75,6 +75,10 @@ strength = max(0, (I − 50) / 50)        (v3, v4 and log-odds: strength = I / 1
 
 A reason at net 0 — a claim whose reasons cancel out, or a leaf at 50 % credence — adds nothing; a leaf at 75 % passes half its influence; a refuted reason (net below 0) adds nothing and never turns against its parent (owner's choice, so that “Hinta mahtuu budjettiin” being refuted is not read as its opposite). Example: a claim with one 100 % +3 and one 100 % −3 reason is at net 0; as a +5 reason of the thesis it gives 0 here and +25 under v4. In long contested chains the far levels hardly reach the top (the deep debate example: both deep options at 0).
 
+### `chain-logodds-v1` (owner request 2026-11-10, selectable, experimental)
+
+Reasons decide and pass their net result (strength as in `signed-reasons-v1`), combined as log-odds with a steeper constant: `k = ln(0.975 / 0.025) / 5`, so one fully credible ±5 reason alone takes a claim from the neutral base to I = 97.5 (net ±95). A chain of strong, credible links therefore keeps nearly its full weight however deep it is (five +5 / 100 % links: +93.8, where v4 gives +33.4 and `signed-reasons-v1` +3.1); a weaker link damps it in proportion and a contested claim (its reasons cancel) passes nothing. No clamp, so the ±100 notes are not shown.
+
 ### Marginal effect Δ (“Korosta painavimmat”)
 
 A diagnostic, never an input to any score. For every scored relation `e` from child `c` into parent `t` (missing, zero-impact and unassessed contributions are skipped):
@@ -100,6 +104,7 @@ The old `heuristic-v1` formula and v5/v6 scoring docs are **historical**, not a 
 
 - Default `assessmentWeighting = equal`: pool human credence and signed relationship reviews with equal **per-user** weights, not text authored impact values.
 - Optional `shares`: weight participating human reviews by each local user's document-level positive `shares` value. A five-share reviewer counts five units in averaging each input axis, not 5× a final score. A zero-share user has zero weighting in this mode. Different assessments may be absent/stale and stay incomplete; never substitute another person's assessment.
+- `median` (owner request 2026-11-10): each credence and each relation influence is the middle human review (the mean of the two middle ones for an even count), so one assessor's extreme ratings cannot pull the pooled value. Example: one assessor rates four opposing reasons 100 % / −5 and the one supporting reason 30 % / +1, two others rate them 20 % / −1 and 90 % / +5; under v4 the claim is −17.9 with `equal` and +37 with `median` (signed-reasons-v1: +14.7 and +40).
 - `structural` is a deliberate **author-provided preview**, not a collective human vote.
 - Individual human views use that human's own reviews. AI viewpoints are named, isolated, explicitly selected and excluded from human pooled results by default. AI responses are reviewable proposals, not automatic truth.
 - Voting-share weighting of **decision ballots** is a distinct field and frozen snapshot. It must not silently alter the argument-score setting.

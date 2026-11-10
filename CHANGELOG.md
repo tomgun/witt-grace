@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner requests 2026-11-10: *Arvioijien arviot, mediaani* as a way to pool reviews (one extreme assessor no longer decides), and a fifth calculation method *Vahva ketju välittyy (log-odds, kokeellinen)* (`chain-logodds-v1`): one fully credible ±5 reason reaches ±95, so a strong chain carries up from deep down. Nine languages; `tests/unit/median-chain.test.ts`.
 - Owner request 2026-11-10: the child-count chip reads *2 / 16 alisolmua · alipuu* (direct children / the whole subtree) when the subtree is larger; nine languages.
 - Owner request 2026-11-10: card text visibility. A title now uses the card's room (four lines instead of two); *Näytä kaikki tekstit (lukunäkymä)* in the view dock grows every card to its text and lays the tree out by size, with card width and line limit per browser (`src/app/reading.ts`); a selected card can be resized from its corner and keeps that size in the document (`layout.nodeSizes`, `node.resize`, double click restores). Nine languages; `tests/unit/cards.test.ts`, `tests/e2e/cards-walk.spec.ts`.
 - Owner request 2026-11-10: *Korosta käyttäjän jäljet* in the view dock highlights the nodes one chosen person created, edited last or commented on (rings and a mark; other nodes fade), independent of the active profile, with a shortcut to that person's ratings. Nine languages; `tests/e2e/highlight-walk.spec.ts`.

@@ -65,13 +65,17 @@ export function weightedHumanMean<T extends { userId: string }>(
   let total = 0;
   let sum = 0;
   let effective = 0;
+  const counted: number[] = [];
   for (const record of records) {
     const power = assessmentPower(project, record.userId);
     if (power <= 0) continue;
     total += power;
     sum += power * (record[field] as number);
     effective++;
+    counted.push(record[field] as number);
   }
+  if (assessmentWeighting(project) === 'median')
+    return { mean: median(counted), totalPower: total, effectiveVotes: effective };
   return { mean: total > 0 ? sum / total : null, totalPower: total, effectiveVotes: effective };
 }
 /** The collective base credence of a node before its reasons act on it. */
@@ -101,7 +105,17 @@ interface Weighted {
   weight: number;
   fingerprint?: string;
 }
-function weighted(values: Weighted[] | undefined): {
+/** The middle value (the mean of the two middle ones for an even count); null for none. */
+export function median(values: number[]): number | null {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
+}
+function weighted(
+  values: Weighted[] | undefined,
+  useMedian = false
+): {
   value: number | null;
   count: number;
   totalPower: number;
@@ -109,12 +123,15 @@ function weighted(values: Weighted[] | undefined): {
   let count = 0;
   let totalPower = 0;
   let sum = 0;
+  const counted: number[] = [];
   for (const item of values ?? [])
     if (item.weight > 0) {
       count++;
       totalPower += item.weight;
       sum += item.value * item.weight;
+      counted.push(item.value);
     }
+  if (useMedian) return { value: median(counted), count, totalPower };
   return { value: totalPower ? sum / totalPower : null, count, totalPower };
 }
 const empty = (incomplete: boolean, collective: boolean): NodeScore => ({
@@ -216,7 +233,7 @@ export function evaluate(project: Project): Scores {
       active.delete(node.id);
       return result;
     }
-    const info = weighted(credence.get(node.id));
+    const info = weighted(credence.get(node.id), mode === 'median');
     const shared = node.sharedReasonId ? sharedReason(project, node.sharedReasonId) : null;
     // In argument mode the thesis is a RESULT of its reasons: an unassessed thesis starts neutral (50), never from a
     // synthetic review. A deliberately entered root vote is respected.
@@ -259,7 +276,7 @@ export function evaluate(project: Project): Scores {
           const current = (impacts.get('primary:' + child.id) ?? []).filter(
             (row) => row.fingerprint === expected
           );
-          const summary = weighted(current);
+          const summary = weighted(current, mode === 'median');
           signed = summary.value;
           // Everyone who could rate this relation chose "En arvioi": it takes no part, like an unrated note.
           if (summary.count === 0 && expectedAt(child.id) <= 0 && excusals.has(child.id)) continue;
@@ -308,7 +325,7 @@ export function evaluate(project: Project): Scores {
         const current = (impacts.get('secondary:' + link.id) ?? []).filter(
           (row) => row.fingerprint === expected
         );
-        const summary = weighted(current);
+        const summary = weighted(current, mode === 'median');
         signed = summary.value;
         if (summary.count < expectedHumanReviews) incomplete = true;
       }
