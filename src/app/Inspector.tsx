@@ -28,6 +28,7 @@ import {
   truthAssessable,
   TYPE_LABEL_MAX,
   SCORING_LOGODDS,
+  SCORING_SIGNED,
   SCORING_V3,
 } from '../domain/index.ts';
 import type { InfluenceSummary, Node, NodeScore, SemanticType, Stance } from '../domain/index.ts';
@@ -1163,7 +1164,9 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
                   ? 'indexExplain'
                   : project.settings.scoring === SCORING_LOGODDS
                     ? 'indexExplainLogOdds'
-                    : 'indexExplainReasons'
+                    : project.settings.scoring === SCORING_SIGNED
+                      ? 'indexExplainSigned'
+                      : 'indexExplainReasons'
               )}
             </p>
             {effective && derivedResult(node, effective) ? (

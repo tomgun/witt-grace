@@ -65,6 +65,16 @@ I(target) = 100 · σ( logit(base/100) + k · (positive − negative) )      bas
 
 A fully credible +5 reason multiplies the odds by 3. From a neutral base: one such reason +50 (as in v3/v4), two +80, three +92.9, one +5 and one −5 cancel to 0. There is no clamp, so the ±100 saturation notes are not shown. Δ uses the same formula (two +5 reasons: Δ of each is +30).
 
+### `signed-reasons-v1` (owner request 2026-11-10, selectable, experimental)
+
+The v4 rule and the v4 capped sum, with one change: a reason passes its **net** result upward instead of the internal 0…100 value. With `I` the reason's internal result (for a leaf its credence):
+
+```text
+strength = max(0, (I − 50) / 50)        (v3, v4 and log-odds: strength = I / 100)
+```
+
+A reason at net 0 — a claim whose reasons cancel out, or a leaf at 50 % credence — adds nothing; a leaf at 75 % passes half its influence; a refuted reason (net below 0) adds nothing and never turns against its parent (owner's choice, so that “Hinta mahtuu budjettiin” being refuted is not read as its opposite). Example: a claim with one 100 % +3 and one 100 % −3 reason is at net 0; as a +5 reason of the thesis it gives 0 here and +25 under v4. In long contested chains the far levels hardly reach the top (the deep debate example: both deep options at 0).
+
 ### Marginal effect Δ (“Korosta painavimmat”)
 
 A diagnostic, never an input to any score. For every scored relation `e` from child `c` into parent `t` (missing, zero-impact and unassessed contributions are skipped):

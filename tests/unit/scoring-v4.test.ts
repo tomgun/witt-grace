@@ -4,7 +4,9 @@
  *       reasons assessed it has no result; a leaf keeps its own credence; the same holds for one assessor's
  *       viewpoint; `project.setScoring` switches the version both ways and refuses an unknown one; a new app
  *       document gets v4 while the prototype's documents stay v3; logodds-reasons-v1 keeps the v4 rule and combines
- *       reasons as odds (+50, +80, +93, never capped) with Δ on the same formula (owner decisions 2026-11-09)
+ *       reasons as odds (+50, +80, +93, never capped) with Δ on the same formula (owner decisions 2026-11-09);
+ *       signed-reasons-v1 passes a reason's net upward: a leaf at 50 % or a claim at net 0 adds nothing, a leaf at
+ *       75 % passes half, a refuted reason adds nothing and never turns against its parent (owner 2026-11-10)
  * test: tests/unit/scoring-v4.test.ts
  * red-against: the own credence still used as the base, an unassessed claim scored as 0, the v3 golden numbers moved
  */
@@ -17,6 +19,7 @@ import {
   evaluateAssessor,
   marginalTargetEffects,
   SCORING_LOGODDS,
+  SCORING_SIGNED,
   SCORING_V3,
   SCORING_V4,
 } from '../../src/domain/index.ts';
@@ -120,4 +123,79 @@ test('log-odds: reasons decide as in v4 and combine as odds: +50, +80, +93, no c
   // The own credence of a claim with reasons does not count here either.
   const withOwn = run(p, { type: 'review.credence', id: 'v-own', nodeId: 'T', userId: 'u1', credence: 10 });
   assert.equal(S(evaluate(withOwn).get('T')?.score), 80);
+});
+
+test('signed-reasons-v1: a reason passes its net result upward, cut at zero', () => {
+  const thesis = (...reasons: [string, number, number][]) => {
+    let p = createBlankProject({
+      projectId: 'p',
+      rootId: 'T',
+      userId: 'u1',
+      now: ctx.now,
+      scoring: SCORING_SIGNED,
+    });
+    for (const [id, credence, influence] of reasons)
+      p = run(
+        p,
+        { type: 'node.add', id, parentId: 'T', relation: influence < 0 ? 'oppose' : 'support' },
+        { type: 'review.credence', id: `v-${id}`, nodeId: id, userId: 'u1', credence },
+        {
+          type: 'review.influence',
+          id: `a-${id}`,
+          subjectType: 'primary',
+          subjectId: id,
+          userId: 'u1',
+          influence,
+        }
+      );
+    return S(evaluate(p).get('T')?.score);
+  };
+  assert.equal(thesis(['A', 100, 5]), 50);
+  assert.equal(thesis(['A', 75, 4]), 20);
+  assert.equal(thesis(['A', 50, 5]), 0);
+  assert.equal(thesis(['A', 20, 5]), 0);
+  assert.equal(thesis(['A', 100, 5], ['B', 20, -5]), 50);
+  // A claim whose reasons cancel out (net 0) adds nothing to its parent.
+  let p = createBlankProject({
+    projectId: 'p',
+    rootId: 'T',
+    userId: 'u1',
+    now: ctx.now,
+    scoring: SCORING_SIGNED,
+  });
+  p = run(
+    p,
+    { type: 'node.add', id: 'C', parentId: 'T', relation: 'support' },
+    {
+      type: 'review.influence',
+      id: 'a-C',
+      subjectType: 'primary',
+      subjectId: 'C',
+      userId: 'u1',
+      influence: 5,
+    },
+    { type: 'node.add', id: 'P', parentId: 'C', relation: 'support' },
+    { type: 'review.credence', id: 'v-P', nodeId: 'P', userId: 'u1', credence: 100 },
+    {
+      type: 'review.influence',
+      id: 'a-P',
+      subjectType: 'primary',
+      subjectId: 'P',
+      userId: 'u1',
+      influence: 3,
+    },
+    { type: 'node.add', id: 'O', parentId: 'C', relation: 'oppose' },
+    { type: 'review.credence', id: 'v-O', nodeId: 'O', userId: 'u1', credence: 100 },
+    {
+      type: 'review.influence',
+      id: 'a-O',
+      subjectType: 'primary',
+      subjectId: 'O',
+      userId: 'u1',
+      influence: -3,
+    }
+  );
+  assert.equal(S(evaluate(p).get('C')?.score), 0);
+  assert.equal(S(evaluate(p).get('T')?.score), 0);
+  assert.equal(S(evaluate({ ...p, settings: { ...p.settings, scoring: SCORING_V4 } }).get('T')?.score), 25);
 });

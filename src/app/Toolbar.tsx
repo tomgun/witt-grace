@@ -1,7 +1,14 @@
 // The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
 import type { ReactNode } from 'react';
-import { childrenOf, isAiProfile, SCORING_LOGODDS, SCORING_V3, SCORING_V4 } from '../domain/index.ts';
+import {
+  childrenOf,
+  isAiProfile,
+  SCORING_LOGODDS,
+  SCORING_SIGNED,
+  SCORING_V3,
+  SCORING_V4,
+} from '../domain/index.ts';
 import type { Mode, ScoringVersion } from '../domain/index.ts';
 import {
   ADD_LOCAL_USER,
@@ -402,14 +409,16 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
                 store.dispatch({ type: 'project.setScoring', scoring: e.target.value as ScoringVersion })
               }
             >
-              {[SCORING_V4, SCORING_LOGODDS, SCORING_V3].map((v) => (
+              {[SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED, SCORING_V3].map((v) => (
                 <option key={v} value={v}>
                   {t(
                     v === SCORING_V4
                       ? 'scoringReasons'
                       : v === SCORING_LOGODDS
                         ? 'scoringLogOdds'
-                        : 'scoringPrototype'
+                        : v === SCORING_SIGNED
+                          ? 'scoringSigned'
+                          : 'scoringPrototype'
                   )}
                 </option>
               ))}

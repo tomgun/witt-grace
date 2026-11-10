@@ -10,6 +10,7 @@ import {
   createBlankProject,
   evaluate,
   SCORING_LOGODDS,
+  SCORING_SIGNED,
   SCORING_V3,
   SCORING_V4,
   SCORING_VERSION,
@@ -460,12 +461,14 @@ export function scoringExample(): Project {
 
 function table(project: Project, options: [string, string, ...unknown[]][]): void {
   for (const [oid, title, ...rest] of options) {
-    const nets = [SCORING_V4, SCORING_LOGODDS, SCORING_V3].map((scoring) => {
+    const nets = [SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED, SCORING_V3].map((scoring) => {
       const score = evaluate({ ...project, settings: { ...project.settings, scoring } }).get(oid)?.score;
       return score == null ? '—' : (2 * score - 100).toFixed(1);
     });
     const reasons = rest.find(Array.isArray) as Reason[];
-    console.log(`${title} (${depthOf(reasons)} levels): v4 ${nets[0]} · log-odds ${nets[1]} · v3 ${nets[2]}`);
+    console.log(
+      `${title} (${depthOf(reasons)} levels): v4 ${nets[0]} · log-odds ${nets[1]} · signed ${nets[2]} · v3 ${nets[3]}`
+    );
   }
 }
 

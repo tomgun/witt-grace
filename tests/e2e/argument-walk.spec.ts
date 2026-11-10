@@ -247,6 +247,7 @@ test('a new document lets reasons decide; the calculation method switches in the
   await expect(page.locator('#scoringSelect option')).toHaveText([
     'Perustelut ratkaisevat (oletus)',
     'Log-odds: näyttö kertyy kertoimina',
+    'Nettotulos välittyy (kokeellinen)',
     'Oma arvio + perustelut (prototyyppi)',
   ]);
   await page.getByTestId('scoring-select').selectOption('logodds-reasons-v1');

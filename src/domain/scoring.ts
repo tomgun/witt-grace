@@ -4,7 +4,7 @@
 // and combines the reasons on the log-odds scale instead of the capped sum (`scoreFor` in model.ts). Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
 import {
   argumentBalance,
-  evidenceFactor,
+  strengthFor,
   scoreFor,
   SCORING_V3,
   indexAssessable,
@@ -158,6 +158,7 @@ const reasonsBase = (contributions: Contribution[]): number | null =>
 export function evaluate(project: Project): Scores {
   const reasonsDecide = project.settings.scoring !== SCORING_V3;
   const combine = scoreFor(project.settings.scoring);
+  const strength = strengthFor(project.settings.scoring);
   const mode = assessmentWeighting(project);
   const human = new Map<string, User>(project.users.filter((u) => !isAiProfile(u)).map((u) => [u.id, u]));
   const expectedHumanReviews = [...human.values()].filter(
@@ -282,7 +283,7 @@ export function evaluate(project: Project): Scores {
         });
         continue;
       }
-      const magnitude = settled ? 0 : Math.abs(signed) * evidenceFactor(result.score as number);
+      const magnitude = settled ? 0 : Math.abs(signed) * strength(result.score as number);
       if (signed > 0) positive += magnitude;
       if (signed < 0) negative += magnitude;
       contributions.push({
@@ -326,7 +327,7 @@ export function evaluate(project: Project): Scores {
         });
         continue;
       }
-      const magnitude = Math.abs(signed) * evidenceFactor(result.score);
+      const magnitude = Math.abs(signed) * strength(result.score);
       if (signed > 0) positive += magnitude;
       if (signed < 0) negative += magnitude;
       contributions.push({
@@ -381,6 +382,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
   );
   const reasonsDecide = project.settings.scoring !== SCORING_V3;
   const combine = scoreFor(project.settings.scoring);
+  const strength = strengthFor(project.settings.scoring);
   const ownEdges = new Map(
     (project.edgeAssessments ?? [])
       .filter(
@@ -436,7 +438,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         continue;
       }
       const impact = inherited ? inherited.influence : (edge as { influence: number }).influence;
-      const magnitude = settled ? 0 : Math.abs(impact) * evidenceFactor(result.score as number);
+      const magnitude = settled ? 0 : Math.abs(impact) * strength(result.score as number);
       if (impact >= 0) positive += magnitude;
       else negative += magnitude;
       if (!settled && result.incomplete) incomplete = true;
@@ -473,7 +475,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         continue;
       }
       const impact = edge.influence;
-      const magnitude = Math.abs(impact) * evidenceFactor(result.score);
+      const magnitude = Math.abs(impact) * strength(result.score);
       if (impact > 0) positive += magnitude;
       if (impact < 0) negative += magnitude;
       incomplete ||= Boolean(result.incomplete);
@@ -569,6 +571,7 @@ export function marginalTargetEffects(
   localEffects: Map<string, MarginalEffect> = marginalIndexEffects(project, evaluated)
 ): Map<string, TargetEffect> {
   const combine = scoreFor(project.settings.scoring);
+  const strength = strengthFor(project.settings.scoring);
   const result = new Map<string, TargetEffect>();
   const byId = new Map(project.nodes.map((n) => [n.id, n]));
   for (const effect of localEffects.values()) {
@@ -618,7 +621,7 @@ export function marginalTargetEffects(
         valid = false;
         break;
       }
-      const afterMagnitude = Math.abs(signed) * evidenceFactor(afterScore);
+      const afterMagnitude = Math.abs(signed) * strength(afterScore);
       const change = afterMagnitude - contribution.magnitude;
       const positive = Math.max(0, parentResult.positive + (signed > 0 ? change : 0));
       const negative = Math.max(0, parentResult.negative + (signed < 0 ? change : 0));

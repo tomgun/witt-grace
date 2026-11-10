@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-10 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner request: a fourth selectable method `signed-reasons-v1` (a reason passes its net result upward, strength = max(0, (I − 50) / 50); name provisional) for comparing which method is most sensible.
 - 2026-11-10 — `UI_INVENTORY.md` — Owner request: a ninth example, a deep debate (14 levels) for comparing the calculation methods (S-15).
 - 2026-11-10 — `UI_INVENTORY.md` — Owner request: an eighth example for comparing the calculation methods (S-15).
 - 2026-11-10 — `UI_INVENTORY.md` — Owner feedback: the personal abstention reads “Jätän tämän arvioimatta (muut voivat arvioida)” instead of “En arvioi tätä – koskee vain minua”, which sounded as if the claim were about the person (S-15).

@@ -11,7 +11,11 @@ export const SCORING_V4 = 'evidence-v4-reasons' as const;
  * claim's internal value is 100·σ(logit(base) + k·(positive − negative)), k = ln 3 / 5, so one fully credible +5
  * reason still gives 75 (+50) from a neutral base, two give 90 (+80) instead of the capped 100. */
 export const SCORING_LOGODDS = 'logodds-reasons-v1' as const;
-export const SCORING_VERSIONS = [SCORING_V3, SCORING_V4, SCORING_LOGODDS] as const;
+/** Owner request 2026-11-10: reasons decide as in v4, but a reason passes its NET result upward: strength =
+ * max(0, (I − 50) / 50), so a reason at the neutral 50 (or a leaf at 50 % credence) adds nothing and a refuted one
+ * adds nothing either (it never turns against its parent). Combination as in v4. */
+export const SCORING_SIGNED = 'signed-reasons-v1' as const;
+export const SCORING_VERSIONS = [SCORING_V3, SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED] as const;
 export type ScoringVersion = (typeof SCORING_VERSIONS)[number];
 /** The version a new document gets. */
 export const SCORING_VERSION: ScoringVersion = SCORING_V4;
@@ -219,6 +223,11 @@ export const clamp = (x: number, lo: number, hi: number): number => Math.max(lo,
 export const argumentBalance = (internal: number | null): number | null =>
   internal !== null && Number.isFinite(internal) ? clamp(2 * internal - 100, -100, 100) : null;
 export const evidenceFactor = (score: number): number => clamp(score / 100, 0, 1);
+/** signed-reasons-v1: the strength is the reason's net balance, cut at 0. */
+export const netFactor = (score: number): number => clamp((score - 50) / 50, 0, 1);
+/** The strength a reason passes to its parent under a scoring version. */
+export const strengthFor = (scoring: ScoringVersion) =>
+  scoring === SCORING_SIGNED ? netFactor : evidenceFactor;
 export const evidenceScore = (base: number, positive: number, negative: number): number =>
   clamp(base + 5 * (positive - negative), 0, 100);
 const LOGODDS_K = Math.log(3) / 5;
