@@ -25,7 +25,7 @@ test('an example and the practice open through the replacement dialog; the pract
   await page.locator('#btnHomeDemo').click();
   const examples = page.locator('#examplesDialog');
   await expect(examples).toBeVisible();
-  await expect(examples.locator('.example-card')).toHaveCount(8);
+  await expect(examples.locator('.example-card')).toHaveCount(9);
   const card = examples.locator('.example-card[data-example="painonhallinta"]');
   await expect(card).toContainText('Painonhallinta: mikä on kestävä tapa?');
   await expect(card).toContainText('13 väitettä · 3 arvioijaa');

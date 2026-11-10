@@ -78,4 +78,13 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     participants: ['Arvioija'],
     nodeCount: 44,
   },
+  {
+    id: 'syva-vaittely',
+    title: 'Syvä väittely: keskustan ruuhkat',
+    description:
+      'Vastaväitteitä vastaväitteille jopa 14 tasoa ja rinnakkaisia väitteitä matkan varrella; kaksi vaihtoehtoa vain parilla perusteella. Vertaa laskentatapoja.',
+    filename: 'syva-vaittely-ruuhkat.witt.json',
+    participants: ['Arvioija'],
+    nodeCount: 59,
+  },
 ];

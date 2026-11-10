@@ -1,0 +1,1850 @@
+{
+  "schemaVersion": 8,
+  "id": "ex-syva-vaittely",
+  "title": "Syvä väittely: keskustan ruuhkat",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v4-reasons",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "u-arvioija",
+      "name": "Arvioija",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Miten keskustan ruuhkia vähennetään?",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 2814.430989583333
+      },
+      "createdBy": "u-arvioija",
+      "lastEditedBy": "u-arvioija"
+    },
+    {
+      "id": "d-maksu",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Otetaan käyttöön ruuhkamaksu",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1576.8072916666667
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-001",
+      "parentId": "d-maksu",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ruuhkamaksu vähentää autoliikennettä keskustassa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1183.421875
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-004",
+      "parentId": "r-001",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Autoilijat vain siirtävät ajonsa maksuajan ulkopuolelle",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1002.84375
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-007",
+      "parentId": "r-004",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Suurin osa ruuhka-ajan matkoista on työmatkoja, joiden ajankohtaa ei voi siirtää",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 823.6875
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-010",
+      "parentId": "r-007",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Liukuva työaika on yleistynyt",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1764,
+        "y": 647.375
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-013",
+      "parentId": "r-010",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Liukuma koskee lähinnä toimistotyötä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2104,
+        "y": 476.75
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-016",
+      "parentId": "r-013",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Keskustan työpaikoista valtaosa on toimistotyötä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2444,
+        "y": 476.75
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-019",
+      "parentId": "r-016",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kaupan ja palvelujen työpaikat kasvavat keskustassa nopeimmin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2784,
+        "y": 317.5
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-022",
+      "parentId": "r-019",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Verkkokauppa vähentää kivijalkakaupan työpaikkoja",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3124,
+        "y": 181
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-025",
+      "parentId": "r-022",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Keskustan kivijalkaliikkeiden määrä on pysynyt ennallaan",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3464,
+        "y": 181
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-028",
+      "parentId": "r-025",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tilasto kattaa vain kolme vuotta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3804,
+        "y": 90
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-031",
+      "parentId": "r-028",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Yksi vuosista oli poikkeuksellinen pandemiavuosi",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 4144,
+        "y": 90
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-034",
+      "parentId": "r-031",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Pandemiavuosi on poistettu vertailusta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 4484,
+        "y": 90
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-037",
+      "parentId": "r-034",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Menetelmäkuvaus vahvistaa poiston",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 4824,
+        "y": 90
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-040",
+      "parentId": "r-037",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Menetelmäkuvausta on muokattu jälkikäteen",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 5164,
+        "y": 90
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-043",
+      "parentId": "r-025",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Liiketilojen vajaakäyttö on kasvanut",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3804,
+        "y": 272
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-046",
+      "parentId": "r-019",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Uusi kauppakeskus tuo 400 työpaikkaa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3124,
+        "y": 454
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-049",
+      "parentId": "r-016",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Toimistotyöntekijät ajavat keskustaan harvemmin kuin muut",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2784,
+        "y": 636
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-052",
+      "parentId": "r-010",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kyselyssä 40 % voisi siirtää työaikaansa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2104,
+        "y": 818
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-055",
+      "parentId": "r-007",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Etätyöpäivinä työmatka jää kokonaan pois",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1764,
+        "y": 1000
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-058",
+      "parentId": "r-004",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Navigaattorit ohjaavat jo nyt autoja ruuhkan ohi",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 1182
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-061",
+      "parentId": "r-001",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Tukholmassa ja Lontoossa liikenne väheni noin viidenneksen",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1364
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-064",
+      "parentId": "r-061",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Ne ovat paljon suurempia kaupunkeja",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 1364
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-067",
+      "parentId": "r-064",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Göteborgissa vaikutus oli samaa luokkaa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1764,
+        "y": 1364
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-070",
+      "parentId": "d-maksu",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Maksu rasittaa pienituloisia",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1637
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-073",
+      "parentId": "r-070",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tuotot voidaan ohjata joukkoliikenteen hintoihin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1546
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-076",
+      "parentId": "r-073",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Korvamerkintä ei sido tulevia valtuustoja",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 1546
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-079",
+      "parentId": "r-076",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Lontoossa korvamerkintä on pysynyt 20 vuotta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1764,
+        "y": 1546
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-082",
+      "parentId": "r-070",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Pienituloiset ajavat autolla keskustaan harvemmin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1728
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-085",
+      "parentId": "d-maksu",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Järjestelmän rakentaminen maksaa 40 miljoonaa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1910
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-088",
+      "parentId": "r-085",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tuotot kattavat kustannukset kolmessa vuodessa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1910
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "d-vuorot",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Lisätään joukkoliikenteen vuoroja",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 2766.9166666666665
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-091",
+      "parentId": "d-vuorot",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Tiheämpi vuoroväli houkuttelee autoilijoita bussiin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2478.75
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-094",
+      "parentId": "r-091",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Autoilijat arvostavat matka-aikaa enemmän kuin vuoroväliä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 2478.75
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-097",
+      "parentId": "r-094",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Bussimatka kestää kaksi kertaa autoa kauemmin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 2319.5
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-100",
+      "parentId": "r-097",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Bussikaistat lyhentävät matka-aikaa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1764,
+        "y": 2319.5
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-103",
+      "parentId": "r-100",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Bussikaistoja on vain kahdella pääväylällä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2104,
+        "y": 2319.5
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-106",
+      "parentId": "r-103",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kolmas kaista on suunnitteilla",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2444,
+        "y": 2183
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-109",
+      "parentId": "r-106",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Suunnitelma odottaa rahoitusta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2784,
+        "y": 2183
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-112",
+      "parentId": "r-109",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Rahoitus voidaan ottaa ruuhkamaksun tuotoista",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3124,
+        "y": 2092
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-115",
+      "parentId": "r-112",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Ruuhkamaksusta ei ole päätetty",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3464,
+        "y": 2092
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-118",
+      "parentId": "r-115",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Valtuuston enemmistö kallistuu maksun kannalle",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3804,
+        "y": 2092
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-121",
+      "parentId": "r-118",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Arvio perustuu yhteen mielipidekyselyyn",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 4144,
+        "y": 2092
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-124",
+      "parentId": "r-109",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Valtionavustusta voi hakea keväällä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 3124,
+        "y": 2274
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-127",
+      "parentId": "r-103",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Liikennevalojen etuudet nopeuttavat busseja muuallakin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 2444,
+        "y": 2456
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-130",
+      "parentId": "r-094",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kyselyssä 30 % autoilijoista vaihtaisi bussiin tiheämmillä vuoroilla",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 2638
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-133",
+      "parentId": "d-vuorot",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Lisävuorot maksavat 3 miljoonaa vuodessa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2820
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-136",
+      "parentId": "r-133",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Valtio tukee joukkoliikennettä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 2820
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-139",
+      "parentId": "r-136",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tuki on määräaikainen",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 2820
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-142",
+      "parentId": "d-vuorot",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Päästöt vähenevät",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3002
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-145",
+      "parentId": "r-142",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Dieselbussit saastuttavat",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 3002
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-148",
+      "parentId": "r-145",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kalusto on jo puoliksi sähköistetty",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 3002
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "d-pysakointi",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Korotetaan pysäköintimaksuja",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 3275
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-151",
+      "parentId": "d-pysakointi",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Nopea ja halpa toteuttaa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3184
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-154",
+      "parentId": "d-pysakointi",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Siirtää pysäköintiä asuinalueille",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3366
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "d-ei",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Ei uusia toimia nyt",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 3639
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-157",
+      "parentId": "d-ei",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ruuhkat kestävät alle tunnin päivässä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3548
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-160",
+      "parentId": "d-ei",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Ruuhkat kasvavat väestön myötä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3730
+      },
+      "createdBy": "u-arvioija"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+    {
+      "id": "v-002",
+      "nodeId": "r-001",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-005",
+      "nodeId": "r-004",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-008",
+      "nodeId": "r-007",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-011",
+      "nodeId": "r-010",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-014",
+      "nodeId": "r-013",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-017",
+      "nodeId": "r-016",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-020",
+      "nodeId": "r-019",
+      "userId": "u-arvioija",
+      "confidence": 50,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-023",
+      "nodeId": "r-022",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-026",
+      "nodeId": "r-025",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-029",
+      "nodeId": "r-028",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-032",
+      "nodeId": "r-031",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-035",
+      "nodeId": "r-034",
+      "userId": "u-arvioija",
+      "confidence": 40,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-038",
+      "nodeId": "r-037",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-041",
+      "nodeId": "r-040",
+      "userId": "u-arvioija",
+      "confidence": 50,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-044",
+      "nodeId": "r-043",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-047",
+      "nodeId": "r-046",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-050",
+      "nodeId": "r-049",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-053",
+      "nodeId": "r-052",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-056",
+      "nodeId": "r-055",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-059",
+      "nodeId": "r-058",
+      "userId": "u-arvioija",
+      "confidence": 50,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-062",
+      "nodeId": "r-061",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-065",
+      "nodeId": "r-064",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-068",
+      "nodeId": "r-067",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-071",
+      "nodeId": "r-070",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-074",
+      "nodeId": "r-073",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-077",
+      "nodeId": "r-076",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-080",
+      "nodeId": "r-079",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-083",
+      "nodeId": "r-082",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-086",
+      "nodeId": "r-085",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-089",
+      "nodeId": "r-088",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-092",
+      "nodeId": "r-091",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-095",
+      "nodeId": "r-094",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-098",
+      "nodeId": "r-097",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-101",
+      "nodeId": "r-100",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-104",
+      "nodeId": "r-103",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-107",
+      "nodeId": "r-106",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-110",
+      "nodeId": "r-109",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-113",
+      "nodeId": "r-112",
+      "userId": "u-arvioija",
+      "confidence": 40,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-116",
+      "nodeId": "r-115",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-119",
+      "nodeId": "r-118",
+      "userId": "u-arvioija",
+      "confidence": 40,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-122",
+      "nodeId": "r-121",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-125",
+      "nodeId": "r-124",
+      "userId": "u-arvioija",
+      "confidence": 50,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-128",
+      "nodeId": "r-127",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-131",
+      "nodeId": "r-130",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-134",
+      "nodeId": "r-133",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-137",
+      "nodeId": "r-136",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-140",
+      "nodeId": "r-139",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-143",
+      "nodeId": "r-142",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-146",
+      "nodeId": "r-145",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-149",
+      "nodeId": "r-148",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-152",
+      "nodeId": "r-151",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-155",
+      "nodeId": "r-154",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-158",
+      "nodeId": "r-157",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-161",
+      "nodeId": "r-160",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "a-003",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-001",
+      "influence": 4,
+      "fingerprint": "[\"r-001\",\"d-maksu\",\"Ruuhkamaksu vähentää autoliikennettä keskustassa\",\"Otetaan käyttöön ruuhkamaksu\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-006",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-004",
+      "influence": -2,
+      "fingerprint": "[\"r-004\",\"r-001\",\"Autoilijat vain siirtävät ajonsa maksuajan ulkopuolelle\",\"Ruuhkamaksu vähentää autoliikennettä keskustassa\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-009",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-007",
+      "influence": -3,
+      "fingerprint": "[\"r-007\",\"r-004\",\"Suurin osa ruuhka-ajan matkoista on työmatkoja, joiden ajankohtaa ei voi siirtää\",\"Autoilijat vain siirtävät ajonsa maksuajan ulkopuolelle\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-012",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-010",
+      "influence": -2,
+      "fingerprint": "[\"r-010\",\"r-007\",\"Liukuva työaika on yleistynyt\",\"Suurin osa ruuhka-ajan matkoista on työmatkoja, joiden ajankohtaa ei voi siirtää\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-015",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-013",
+      "influence": -2,
+      "fingerprint": "[\"r-013\",\"r-010\",\"Liukuma koskee lähinnä toimistotyötä\",\"Liukuva työaika on yleistynyt\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-018",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-016",
+      "influence": -2,
+      "fingerprint": "[\"r-016\",\"r-013\",\"Keskustan työpaikoista valtaosa on toimistotyötä\",\"Liukuma koskee lähinnä toimistotyötä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-021",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-019",
+      "influence": -1.5,
+      "fingerprint": "[\"r-019\",\"r-016\",\"Kaupan ja palvelujen työpaikat kasvavat keskustassa nopeimmin\",\"Keskustan työpaikoista valtaosa on toimistotyötä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-024",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-022",
+      "influence": -1.5,
+      "fingerprint": "[\"r-022\",\"r-019\",\"Verkkokauppa vähentää kivijalkakaupan työpaikkoja\",\"Kaupan ja palvelujen työpaikat kasvavat keskustassa nopeimmin\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-027",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-025",
+      "influence": -1,
+      "fingerprint": "[\"r-025\",\"r-022\",\"Keskustan kivijalkaliikkeiden määrä on pysynyt ennallaan\",\"Verkkokauppa vähentää kivijalkakaupan työpaikkoja\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-030",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-028",
+      "influence": -1,
+      "fingerprint": "[\"r-028\",\"r-025\",\"Tilasto kattaa vain kolme vuotta\",\"Keskustan kivijalkaliikkeiden määrä on pysynyt ennallaan\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-033",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-031",
+      "influence": 1,
+      "fingerprint": "[\"r-031\",\"r-028\",\"Yksi vuosista oli poikkeuksellinen pandemiavuosi\",\"Tilasto kattaa vain kolme vuotta\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-036",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-034",
+      "influence": -1.5,
+      "fingerprint": "[\"r-034\",\"r-031\",\"Pandemiavuosi on poistettu vertailusta\",\"Yksi vuosista oli poikkeuksellinen pandemiavuosi\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-039",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-037",
+      "influence": 1,
+      "fingerprint": "[\"r-037\",\"r-034\",\"Menetelmäkuvaus vahvistaa poiston\",\"Pandemiavuosi on poistettu vertailusta\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-042",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-040",
+      "influence": -0.5,
+      "fingerprint": "[\"r-040\",\"r-037\",\"Menetelmäkuvausta on muokattu jälkikäteen\",\"Menetelmäkuvaus vahvistaa poiston\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-045",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-043",
+      "influence": -1,
+      "fingerprint": "[\"r-043\",\"r-025\",\"Liiketilojen vajaakäyttö on kasvanut\",\"Keskustan kivijalkaliikkeiden määrä on pysynyt ennallaan\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-048",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-046",
+      "influence": 1,
+      "fingerprint": "[\"r-046\",\"r-019\",\"Uusi kauppakeskus tuo 400 työpaikkaa\",\"Kaupan ja palvelujen työpaikat kasvavat keskustassa nopeimmin\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-051",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-049",
+      "influence": -1,
+      "fingerprint": "[\"r-049\",\"r-016\",\"Toimistotyöntekijät ajavat keskustaan harvemmin kuin muut\",\"Keskustan työpaikoista valtaosa on toimistotyötä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-054",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-052",
+      "influence": 1.5,
+      "fingerprint": "[\"r-052\",\"r-010\",\"Kyselyssä 40 % voisi siirtää työaikaansa\",\"Liukuva työaika on yleistynyt\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-057",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-055",
+      "influence": -1.5,
+      "fingerprint": "[\"r-055\",\"r-007\",\"Etätyöpäivinä työmatka jää kokonaan pois\",\"Suurin osa ruuhka-ajan matkoista on työmatkoja, joiden ajankohtaa ei voi siirtää\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-060",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-058",
+      "influence": 1,
+      "fingerprint": "[\"r-058\",\"r-004\",\"Navigaattorit ohjaavat jo nyt autoja ruuhkan ohi\",\"Autoilijat vain siirtävät ajonsa maksuajan ulkopuolelle\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-063",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-061",
+      "influence": 3,
+      "fingerprint": "[\"r-061\",\"r-001\",\"Tukholmassa ja Lontoossa liikenne väheni noin viidenneksen\",\"Ruuhkamaksu vähentää autoliikennettä keskustassa\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-066",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-064",
+      "influence": -1.5,
+      "fingerprint": "[\"r-064\",\"r-061\",\"Ne ovat paljon suurempia kaupunkeja\",\"Tukholmassa ja Lontoossa liikenne väheni noin viidenneksen\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-069",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-067",
+      "influence": -1.5,
+      "fingerprint": "[\"r-067\",\"r-064\",\"Göteborgissa vaikutus oli samaa luokkaa\",\"Ne ovat paljon suurempia kaupunkeja\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-072",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-070",
+      "influence": -3,
+      "fingerprint": "[\"r-070\",\"d-maksu\",\"Maksu rasittaa pienituloisia\",\"Otetaan käyttöön ruuhkamaksu\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-075",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-073",
+      "influence": -2,
+      "fingerprint": "[\"r-073\",\"r-070\",\"Tuotot voidaan ohjata joukkoliikenteen hintoihin\",\"Maksu rasittaa pienituloisia\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-078",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-076",
+      "influence": -2,
+      "fingerprint": "[\"r-076\",\"r-073\",\"Korvamerkintä ei sido tulevia valtuustoja\",\"Tuotot voidaan ohjata joukkoliikenteen hintoihin\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-081",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-079",
+      "influence": 1.5,
+      "fingerprint": "[\"r-079\",\"r-076\",\"Lontoossa korvamerkintä on pysynyt 20 vuotta\",\"Korvamerkintä ei sido tulevia valtuustoja\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-084",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-082",
+      "influence": -2,
+      "fingerprint": "[\"r-082\",\"r-070\",\"Pienituloiset ajavat autolla keskustaan harvemmin\",\"Maksu rasittaa pienituloisia\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-087",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-085",
+      "influence": -2,
+      "fingerprint": "[\"r-085\",\"d-maksu\",\"Järjestelmän rakentaminen maksaa 40 miljoonaa\",\"Otetaan käyttöön ruuhkamaksu\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-090",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-088",
+      "influence": -2,
+      "fingerprint": "[\"r-088\",\"r-085\",\"Tuotot kattavat kustannukset kolmessa vuodessa\",\"Järjestelmän rakentaminen maksaa 40 miljoonaa\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-093",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-091",
+      "influence": 3,
+      "fingerprint": "[\"r-091\",\"d-vuorot\",\"Tiheämpi vuoroväli houkuttelee autoilijoita bussiin\",\"Lisätään joukkoliikenteen vuoroja\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-096",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-094",
+      "influence": -2,
+      "fingerprint": "[\"r-094\",\"r-091\",\"Autoilijat arvostavat matka-aikaa enemmän kuin vuoroväliä\",\"Tiheämpi vuoroväli houkuttelee autoilijoita bussiin\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-099",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-097",
+      "influence": 2,
+      "fingerprint": "[\"r-097\",\"r-094\",\"Bussimatka kestää kaksi kertaa autoa kauemmin\",\"Autoilijat arvostavat matka-aikaa enemmän kuin vuoroväliä\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-102",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-100",
+      "influence": -2,
+      "fingerprint": "[\"r-100\",\"r-097\",\"Bussikaistat lyhentävät matka-aikaa\",\"Bussimatka kestää kaksi kertaa autoa kauemmin\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-105",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-103",
+      "influence": -1.5,
+      "fingerprint": "[\"r-103\",\"r-100\",\"Bussikaistoja on vain kahdella pääväylällä\",\"Bussikaistat lyhentävät matka-aikaa\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-108",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-106",
+      "influence": -1,
+      "fingerprint": "[\"r-106\",\"r-103\",\"Kolmas kaista on suunnitteilla\",\"Bussikaistoja on vain kahdella pääväylällä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-111",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-109",
+      "influence": -1,
+      "fingerprint": "[\"r-109\",\"r-106\",\"Suunnitelma odottaa rahoitusta\",\"Kolmas kaista on suunnitteilla\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-114",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-112",
+      "influence": -1.5,
+      "fingerprint": "[\"r-112\",\"r-109\",\"Rahoitus voidaan ottaa ruuhkamaksun tuotoista\",\"Suunnitelma odottaa rahoitusta\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-117",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-115",
+      "influence": -2,
+      "fingerprint": "[\"r-115\",\"r-112\",\"Ruuhkamaksusta ei ole päätetty\",\"Rahoitus voidaan ottaa ruuhkamaksun tuotoista\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-120",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-118",
+      "influence": -1,
+      "fingerprint": "[\"r-118\",\"r-115\",\"Valtuuston enemmistö kallistuu maksun kannalle\",\"Ruuhkamaksusta ei ole päätetty\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-123",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-121",
+      "influence": -1,
+      "fingerprint": "[\"r-121\",\"r-118\",\"Arvio perustuu yhteen mielipidekyselyyn\",\"Valtuuston enemmistö kallistuu maksun kannalle\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-126",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-124",
+      "influence": -0.5,
+      "fingerprint": "[\"r-124\",\"r-109\",\"Valtionavustusta voi hakea keväällä\",\"Suunnitelma odottaa rahoitusta\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-129",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-127",
+      "influence": -1,
+      "fingerprint": "[\"r-127\",\"r-103\",\"Liikennevalojen etuudet nopeuttavat busseja muuallakin\",\"Bussikaistoja on vain kahdella pääväylällä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-132",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-130",
+      "influence": -2,
+      "fingerprint": "[\"r-130\",\"r-094\",\"Kyselyssä 30 % autoilijoista vaihtaisi bussiin tiheämmillä vuoroilla\",\"Autoilijat arvostavat matka-aikaa enemmän kuin vuoroväliä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-135",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-133",
+      "influence": -3,
+      "fingerprint": "[\"r-133\",\"d-vuorot\",\"Lisävuorot maksavat 3 miljoonaa vuodessa\",\"Lisätään joukkoliikenteen vuoroja\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-138",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-136",
+      "influence": -1.5,
+      "fingerprint": "[\"r-136\",\"r-133\",\"Valtio tukee joukkoliikennettä\",\"Lisävuorot maksavat 3 miljoonaa vuodessa\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-141",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-139",
+      "influence": -1,
+      "fingerprint": "[\"r-139\",\"r-136\",\"Tuki on määräaikainen\",\"Valtio tukee joukkoliikennettä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-144",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-142",
+      "influence": 2,
+      "fingerprint": "[\"r-142\",\"d-vuorot\",\"Päästöt vähenevät\",\"Lisätään joukkoliikenteen vuoroja\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-147",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-145",
+      "influence": -1,
+      "fingerprint": "[\"r-145\",\"r-142\",\"Dieselbussit saastuttavat\",\"Päästöt vähenevät\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-150",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-148",
+      "influence": -1.5,
+      "fingerprint": "[\"r-148\",\"r-145\",\"Kalusto on jo puoliksi sähköistetty\",\"Dieselbussit saastuttavat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-153",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-151",
+      "influence": 4,
+      "fingerprint": "[\"r-151\",\"d-pysakointi\",\"Nopea ja halpa toteuttaa\",\"Korotetaan pysäköintimaksuja\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-156",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-154",
+      "influence": -3,
+      "fingerprint": "[\"r-154\",\"d-pysakointi\",\"Siirtää pysäköintiä asuinalueille\",\"Korotetaan pysäköintimaksuja\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-159",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-157",
+      "influence": 2,
+      "fingerprint": "[\"r-157\",\"d-ei\",\"Ruuhkat kestävät alle tunnin päivässä\",\"Ei uusia toimia nyt\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-162",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-160",
+      "influence": -3,
+      "fingerprint": "[\"r-160\",\"d-ei\",\"Ruuhkat kasvavat väestön myötä\",\"Ei uusia toimia nyt\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-10T09:00:00.000Z",
+  "updatedAt": "2026-11-10T09:00:00.000Z"
+}
