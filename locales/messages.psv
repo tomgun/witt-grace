@@ -53,7 +53,7 @@ layerLabels|Otsikkorivi ja argumenttityyppi|Kopfzeile und Argumenttyp|Header and
 layerDetails|Perustelut / muistiinpanot|Begründungen / Notizen|Reasoning / notes|Fundamentos / notas|Justifications / notes|Обоснования / заметки|理由与备注|理由・メモ|근거 / 메모
 layerIndex|Perustelutulos|Argumentbilanz|Argument balance|Balance argumental|Bilan argumentatif|Баланс аргументов|论证净结果|論拠の収支|논거 순결과
 layerComments|Kommentit|Kommentare|Comments|Comentarios|Commentaires|Комментарии|评论|コメント|댓글
-layerCounts|Alisolmujen määrä|Anzahl Unterknoten|Number of child nodes|Número de subnodos|Nombre de sous-nœuds|Число дочерних узлов|子节点数量|子ノード数|하위 노드 수
+layerCounts|Alisolmujen määrä (suorat / koko alipuu)|Anzahl Unterknoten (direkt / ganzer Teilbaum)|Number of child nodes (direct / whole subtree)|Número de subnodos (directos / subárbol)|Nombre de sous-nœuds (directs / sous-arbre)|Число дочерних узлов (прямых / всего поддерева)|子节点数量（直接 / 整个子树）|子ノード数（直接 / 部分木全体）|하위 노드 수 (직속 / 전체 하위 트리)
 focusHeading|HAARAN KOROSTUS|ZWEIG HERVORHEBEN|BRANCH HIGHLIGHT|RESALTAR RAMA|METTRE UNE BRANCHE EN AVANT|ВЫДЕЛЕНИЕ ВЕТВИ|分支高亮|枝の強調表示|가지 강조
 all|Kaikki|Alle|All|Todos|Tous|Все|全部|すべて|전체
 focusSupport|+ Puoltavat|+ Unterstützende|+ Supporting|+ A favor|+ Favorables|+ Поддерживают|+ 支持|+ 支持|+ 찬성
@@ -106,6 +106,8 @@ credenceHint|Subjektiivinen uskottavuusarvio.|Subjektive Glaubwürdigkeitsbewert
 impactHint|Perusteen vaikutuspaino suhteessa vanhempaan.|Einflussgewicht auf die übergeordnete Aussage.|Impact weight relative to the parent claim.|Peso relativo a la afirmación principal.|Poids de l’argument par rapport au parent.|Вес влияния на родительский тезис.|相对于父节点的影响权重。|親の主張に対する影響度。|상위 주장에 대한 영향 가중치.
 commentsHint|Solmukohtaisten kommenttien määrä.|Anzahl Knotenkommentare.|Number of node comments.|Número de comentarios del nodo.|Nombre de commentaires du nœud.|Число комментариев к узлу.|节点评论数。|ノードのコメント数。|노드 댓글 수.
 childrenHint|Suorien alisolmujen määrä.|Anzahl direkter Unterknoten.|Number of immediate child nodes.|Número de hijos directos.|Nombre d’enfants directs.|Число прямых потомков.|直接子节点数量。|直接の子ノード数。|직속 하위 노드 수.
+subtreeChip|alisolmua · alipuu|Unterknoten · Teilbaum|children · subtree|subnodos · subárbol|enfants · sous-arbre|дочерних · поддерево|子节点 · 子树|子 · 部分木|하위 · 하위 트리
+subtreeHint|{direct} suoraa alisolmua, koko alipuussa yhteensä {all} solmua.|{direct} direkte Unterknoten, im ganzen Teilbaum {all} Knoten.|{direct} direct children, {all} nodes in the whole subtree.|{direct} hijos directos, {all} nodos en todo el subárbol.|{direct} enfants directs, {all} nœuds dans tout le sous-arbre.|{direct} прямых потомков, {all} узлов во всём поддереве.|{direct} 个直接子节点，整个子树共 {all} 个节点。|直接の子 {direct}、部分木全体で {all} ノード。|직속 하위 {direct}개, 전체 하위 트리 {all}개 노드.
 rootNote|Asiakirjan lähtökohta|Startpunkt des Dokuments|Document starting point|Punto de partida del documento|Point de départ du document|Начало документа|文档起点|文書の起点|문서 시작점
 impactNote|Paino koskee vaikutusta vanhempaan|Gewicht bezieht sich auf die übergeordnete Aussage|Weight measures impact on the parent claim|El peso mide el impacto en la afirmación superior|Le poids mesure l’impact sur l’argument parent|Вес измеряет влияние на родительский тезис|权重表示对父论点的影响|重みは親の主張への影響度|가중치는 상위 주장에 대한 영향도
 claimTitle|Väite / otsikko|Aussage / Titel|Claim / title|Afirmación / título|Proposition / titre|Тезис / заголовок|论点 / 标题|主張 / タイトル|주장 / 제목

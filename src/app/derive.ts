@@ -4,6 +4,7 @@ import {
   argumentBalance,
   assessmentFields,
   baseConfidence,
+  descendants,
   directionFromInfluence,
   indexAssessable,
   isGate,
@@ -280,6 +281,7 @@ export function cardChips(
   const effect = importance.effects.get(node.id);
   const important = importance.importantIds.has(node.id);
   const childCount = project.nodes.filter((n) => n.parentId === node.id).length;
+  const subtreeCount = l.counts && childCount ? descendants(project, node.id).length : 0;
   const linkCount = (project.links ?? []).filter(
     (x) => x.sourceId === node.id || x.targetId === node.id
   ).length;
@@ -308,7 +310,16 @@ export function cardChips(
   if (l.comments)
     chips.push({ label: t('commentsChip'), value: String(commentCount), title: t('commentsHint') });
   if (l.counts && childCount)
-    chips.push({ label: t('childrenChip'), value: String(childCount), title: t('childrenHint') });
+    chips.push(
+      // Owner request 2026-11-10: direct children and the whole subtree, "2 / 16", when they differ.
+      subtreeCount > childCount
+        ? {
+            label: t('subtreeChip'),
+            value: `${childCount} / ${subtreeCount}`,
+            title: t('subtreeHint', { direct: childCount, all: subtreeCount }),
+          }
+        : { label: t('childrenChip'), value: String(childCount), title: t('childrenHint') }
+    );
   if (l.links && linkCount)
     chips.push({ label: t('linksChip'), value: String(linkCount), cls: 'meta-links', title: t('linksHint') });
   return chips;

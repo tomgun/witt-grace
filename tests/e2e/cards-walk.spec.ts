@@ -1,10 +1,12 @@
 /**
- * must: a card's title uses the room the card has (four lines on a card with chips, three on the compact one); the reading view (Näkymäasetukset →
- *       Näytä kaikki tekstit) grows a long card so its whole title shows unclipped and is stored per browser; a
+ * must: a card's title uses the room the card has (four lines on a card with chips, three on the compact one);
+ *       the reading view (Näkymäasetukset → Näytä kaikki tekstit) grows a long card so its whole title shows unclipped and is stored per browser; a
  *       selected card's corner drags it to its own size, kept in the document, and a double click on the corner
- *       restores the default (owner request 2026-11-10, UI_INVENTORY S-15)
+ *       restores the default; the child-count chip reads "1 / 3" for one child and three nodes below (owner
+ *       requests 2026-11-10, UI_INVENTORY S-15)
  * test: tests/e2e/cards-walk.spec.ts (desktop)
- * red-against: a two-line title in an empty card, a reading view that still clips the text, a resize that is lost
+ * red-against: a two-line title in an empty card, a reading view that still clips the text, a resize that is lost,
+ *              a subtree count that shows only the direct children
  */
 import { expect, test } from '@playwright/test';
 import { addNamed, startBlank } from './helpers.ts';
@@ -59,4 +61,20 @@ test('text fills the card, the reading view shows it all, and a card can be resi
   await page.reload();
   await page.locator('#btnHomeContinue').click();
   await expect(card).toHaveClass(/reading-card/);
+});
+
+test('the child-count chip shows direct children and the whole subtree', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the desktop walk covers the flow');
+  await startBlank(page, 'argument');
+  await addNamed(page, '#btnSupport', 'Haara');
+  await addNamed(page, '#btnSupport', 'Lehti 1');
+  await page.locator('[data-testid^="outline-"]', { hasText: 'Haara' }).click();
+  await addNamed(page, '#btnOppose', 'Lehti 2');
+  await page.locator('#viewport').focus();
+  await page.keyboard.press('Alt+V');
+  await page.locator('#viewPreset').selectOption('all');
+  const root = page.locator('#nodesLayer .node.is-root');
+  await expect(root.locator('.meta-chip', { hasText: 'alipuu' })).toHaveText('1 / 3alisolmua · alipuu');
+  const branch = page.locator('#nodesLayer .node', { hasText: 'Haara' });
+  await expect(branch.locator('.meta-chip', { hasText: 'alisolmua' })).toHaveText('2alisolmua');
 });
