@@ -8854,3 +8854,7 @@ input[type='range'].range-unset:focus-visible {
 .unrated-block {
   opacity: 0.75;
 }
+.no-effect-state {
+  font-size: 13px;
+  font-weight: 600;
+}

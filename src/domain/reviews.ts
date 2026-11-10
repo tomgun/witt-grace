@@ -1,6 +1,48 @@
 // Reading people's reviews: which relation a review is about, whether it is still current, and read-only summaries.
-import { directionFromInfluence, isAiProfile, relationFingerprint } from './model.ts';
+import { SCORING_V3, directionFromInfluence, isAiProfile, relationFingerprint } from './model.ts';
 import type { EdgeAssessment, Node, Project, Stance, SubjectType, Vote } from './model.ts';
+
+const excusalCache = new WeakMap<Project, Map<string, Set<string>>>();
+/**
+ * Owner 2026-11-10: a person whose CURRENT own influence on a reason is 0 ("Ei vaikutusta") has said the branch below
+ * it does not matter; their reviews inside that branch (credences and the primary relations below the reason) count
+ * nowhere, in the shared result as in their own viewpoint, and they are not expected to give them. The 0 itself
+ * counts. Kept, not deleted: they return when the 0 changes. Only under the reasons-decide versions; v3 is the
+ * prototype's. Returns node id → the people excused there.
+ */
+export function noEffectExcusals(project: Project): Map<string, Set<string>> {
+  const cached = excusalCache.get(project);
+  if (cached) return cached;
+  const result = new Map<string, Set<string>>();
+  excusalCache.set(project, result);
+  if (project.settings.scoring === SCORING_V3) return result;
+  const byId = new Map(project.nodes.map((n) => [n.id, n]));
+  const children = new Map<string, Node[]>();
+  for (const n of project.nodes)
+    if (n.parentId) {
+      if (!children.has(n.parentId)) children.set(n.parentId, []);
+      children.get(n.parentId)?.push(n);
+    }
+  for (const a of project.edgeAssessments ?? []) {
+    if (a.subjectType !== 'primary' || a.influence !== 0) continue;
+    const source = byId.get(a.subjectId);
+    const target = source?.parentId ? byId.get(source.parentId) : undefined;
+    if (!source || !target || a.fingerprint !== relationFingerprint(source, target, source.relation))
+      continue;
+    const stack = [...(children.get(source.id) ?? [])];
+    const seen = new Set<string>();
+    for (let n = stack.pop(); n; n = stack.pop()) {
+      if (seen.has(n.id)) continue;
+      seen.add(n.id);
+      if (!result.has(n.id)) result.set(n.id, new Set());
+      result.get(n.id)?.add(a.userId);
+      stack.push(...(children.get(n.id) ?? []));
+    }
+  }
+  return result;
+}
+export const isExcused = (project: Project, nodeId: string, userId: string): boolean =>
+  noEffectExcusals(project).get(nodeId)?.has(userId) ?? false;
 
 export interface AssessmentRelation {
   subjectType: SubjectType;
@@ -99,7 +141,8 @@ export function currentInfluenceReviews(
       a.subjectType === subjectType &&
       a.subjectId === subjectId &&
       a.fingerprint === relation.fingerprint &&
-      eligible.has(a.userId)
+      eligible.has(a.userId) &&
+      !(subjectType === 'primary' && isExcused(project, subjectId, a.userId))
   );
 }
 export type InfluenceStatus =

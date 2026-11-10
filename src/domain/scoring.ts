@@ -15,6 +15,7 @@ import {
 } from './model.ts';
 import type { AssessmentWeighting, Node, Project, SubjectType, User } from './model.ts';
 import { childrenIndex, incomingIndex, nodeById, secondaryOverlapWarning, sharedReason } from './graph.ts';
+import { isExcused, noEffectExcusals } from './reviews.ts';
 
 export interface Contribution {
   id: string;
@@ -81,7 +82,10 @@ export function baseConfidence(
   if (node.kind === 'group' || node.kind === 'decision')
     return { base: null, votesCount: 0, effectiveVotes: 0, totalPower: 0 };
   if (node.kind === 'option') return { base: 50, votesCount: 0, effectiveVotes: 0, totalPower: 0 };
-  const votes = project.votes.filter((v) => v.nodeId === node.id && assessmentPower(project, v.userId) > 0);
+  const votes = project.votes.filter(
+    (v) =>
+      v.nodeId === node.id && assessmentPower(project, v.userId) > 0 && !isExcused(project, node.id, v.userId)
+  );
   const summary = weightedHumanMean(project, votes, 'confidence');
   return {
     base:
@@ -163,9 +167,20 @@ export function evaluate(project: Project): Scores {
   const incoming = incomingIndex(project.links ?? []);
   const credence = new Map<string, Weighted[]>();
   const impacts = new Map<string, Weighted[]>();
+  // People who said "no effect" above a node are neither counted nor expected there (owner 2026-11-10).
+  const excusals = noEffectExcusals(project);
+  const expectedAt = (nodeId: string): number => {
+    let excused = 0;
+    for (const userId of excusals.get(nodeId) ?? []) {
+      const user = human.get(userId);
+      if (user && (mode !== 'shares' || user.shares > 0)) excused++;
+    }
+    return expectedHumanReviews - excused;
+  };
   for (const v of project.votes) {
     const user = human.get(v.userId);
     if (!user || (mode === 'shares' && user.shares === 0)) continue;
+    if (excusals.get(v.nodeId)?.has(v.userId)) continue;
     if (!credence.has(v.nodeId)) credence.set(v.nodeId, []);
     credence.get(v.nodeId)?.push({ value: v.confidence, weight: mode === 'shares' ? user.shares : 1 });
   }
@@ -175,7 +190,8 @@ export function evaluate(project: Project): Scores {
       if (
         (a.subjectType !== 'primary' && a.subjectType !== 'secondary') ||
         !user ||
-        (mode === 'shares' && user.shares === 0)
+        (mode === 'shares' && user.shares === 0) ||
+        (a.subjectType === 'primary' && excusals.get(a.subjectId)?.has(a.userId))
       )
         continue;
       const key = a.subjectType + ':' + a.subjectId;
@@ -225,7 +241,7 @@ export function evaluate(project: Project): Scores {
       !shared &&
       node.kind !== 'option' &&
       !fromReasons &&
-      (thesis ? info.count > 0 && info.count < expectedHumanReviews : info.count < expectedHumanReviews);
+      (thesis ? info.count > 0 && info.count < expectedAt(node.id) : info.count < expectedAt(node.id));
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
       if (child.relation === 'option' || child.relation === 'group' || outOfScore(child)) continue;
@@ -244,7 +260,7 @@ export function evaluate(project: Project): Scores {
           );
           const summary = weighted(current);
           signed = summary.value;
-          if (summary.count < expectedHumanReviews) incomplete = true;
+          if (summary.count < expectedAt(child.id)) incomplete = true;
         }
       }
       // Owner 2026-11-10: a deliberate "no effect" (influence 0) needs no credence under the reasons-decide versions.
@@ -355,14 +371,20 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
   const visiting = new Set<string>();
   const children = childrenIndex(project.nodes);
   const incoming = incomingIndex(project.links ?? []);
+  // Reviews inside a branch the person marked "no effect" count nowhere, here as in the shared result.
   const ownVotes = new Map(
-    project.votes.filter((v) => v.userId === userId).map((v) => [v.nodeId, v.confidence])
+    project.votes
+      .filter((v) => v.userId === userId && !isExcused(project, v.nodeId, userId))
+      .map((v) => [v.nodeId, v.confidence])
   );
   const reasonsDecide = project.settings.scoring !== SCORING_V3;
   const combine = scoreFor(project.settings.scoring);
   const ownEdges = new Map(
     (project.edgeAssessments ?? [])
-      .filter((a) => a.userId === userId)
+      .filter(
+        (a) =>
+          a.userId === userId && !(a.subjectType === 'primary' && isExcused(project, a.subjectId, userId))
+      )
       .map((a) => [a.subjectType + ':' + a.subjectId, a])
   );
   function visit(node: Node): NodeScore {

@@ -10,6 +10,7 @@ import {
   influenceSummary,
   isAiProfile,
   isGate,
+  isExcused,
   isUnrated,
   isValue,
   navigate,
@@ -41,6 +42,7 @@ import {
   reasonTypeLabel,
   shownInfluence,
   signed,
+  viewedAssessorId,
 } from './derive.ts';
 import { asciiEdgeParts } from './AsciiEdge.tsx';
 import { dropRestoredGhosts } from './fade.ts';
@@ -478,7 +480,12 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     if (important) classes.push('important-reason');
     if (frame.leadingOptionIds?.has(node.id)) classes.push('ai-leading-option');
     if (isUnrated(node)) classes.push('unrated-node');
-    else if (underUnrated(node)) classes.push('under-unrated');
+    else if (
+      underUnrated(node) ||
+      (view.indexMode === 'personal' &&
+        isExcused(project, node.id, viewedAssessorId(project, view, state.actorId)))
+    )
+      classes.push('under-unrated');
     if (
       view.indexMode === 'personal' &&
       node.parentId &&

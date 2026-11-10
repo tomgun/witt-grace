@@ -104,6 +104,8 @@ export type Command =
       credence: number | null;
       influence: number | null;
     }
+  /** Owner 2026-11-10: takes back one's own influence review of a reason (e.g. a "no effect"); the credence stays. */
+  | { type: 'review.retractInfluence'; nodeId: string; userId: string }
   | { type: 'link.add'; id: string; sourceId: string; targetId: string; value: number }
   | { type: 'link.update'; id: string; value: number }
   | { type: 'link.remove'; id: string }
@@ -938,6 +940,15 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
     case 'review.influence':
       upsertEdgeAssessment(p, c.id, c.subjectType, c.subjectId, c.userId, c.influence, ctx.now);
       return;
+    case 'review.retractInfluence': {
+      requireProfile(p, c.userId);
+      const before = p.edgeAssessments.length;
+      p.edgeAssessments = p.edgeAssessments.filter(
+        (a) => !(a.subjectType === 'primary' && a.subjectId === c.nodeId && a.userId === c.userId)
+      );
+      if (p.edgeAssessments.length === before) fail('Perutettavaa vaikutusarviota ei ole');
+      return;
+    }
     case 'review.personal':
       applyPersonalAssessment(
         p,

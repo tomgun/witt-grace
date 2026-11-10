@@ -29,6 +29,8 @@ export {
   currentInfluenceReviews,
   summarizeInfluenceReviews,
   influenceSummary,
+  noEffectExcusals,
+  isExcused,
 } from './reviews.ts';
 export type { AssessmentRelation, PersonalInfluence, InfluenceSummary, InfluenceStatus } from './reviews.ts';
 export { optionFeasibility } from './eligibility.ts';

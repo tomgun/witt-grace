@@ -4,7 +4,7 @@
 import { isAiProfile, truthAssessable } from './model.ts';
 import type { EdgeAssessment, Project, Vote } from './model.ts';
 import { descendants } from './graph.ts';
-import { personalInfluence, summarizeInfluenceReviews } from './reviews.ts';
+import { isExcused, personalInfluence, summarizeInfluenceReviews } from './reviews.ts';
 import type { InfluenceSummary } from './reviews.ts';
 import { decisionRankingForAssessor } from './ranking.ts';
 import type { PersonalRankedOption } from './ranking.ts';
@@ -57,8 +57,10 @@ export interface Lens {
 export function projectLens(project: Project, ids: string[] | null = null): Lens {
   const people = lensSelected(project, ids);
   const filtered = ids !== null && ids !== undefined;
-  const votes = project.votes.filter((v) => people.has(v.userId));
-  const edges = (project.edgeAssessments ?? []).filter((a) => people.has(a.userId));
+  const votes = project.votes.filter((v) => people.has(v.userId) && !isExcused(project, v.nodeId, v.userId));
+  const edges = (project.edgeAssessments ?? []).filter(
+    (a) => people.has(a.userId) && !(a.subjectType === 'primary' && isExcused(project, a.subjectId, a.userId))
+  );
   const credence = new Map<string, CredenceStats>();
   const impact = new Map<string, ImpactStats>();
   const rows: Disagreement[] = [];

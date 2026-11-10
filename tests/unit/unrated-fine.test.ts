@@ -4,7 +4,9 @@
  *       still be rated without reaching above it; "no effect" (influence 0 without a credence) is a complete review
  *       under the reasons-decide versions and still a missing one under evidence-v3-links; influences are accepted in
  *       0.1 steps (0.3 yes, 1.25 no), so twenty small 0.1 reasons give +20 under v4 where twenty 0.5 ones hit +100;
- *       both flags survive a save and reload (owner decisions 2026-11-10)
+ *       both flags survive a save and reload; a person's "no effect" on a reason excuses their reviews in the branch
+ *       below it from the shared result, their own viewpoint and the lens alike (they are not expected there either),
+ *       and `review.retractInfluence` takes the 0 back so the branch counts again (owner decisions 2026-11-10)
  * test: tests/unit/unrated-fine.test.ts
  * red-against: an unrated note counted as a 0 or as missing, its earlier reviews deleted, a "no effect" review that
  *              still waits for a credence, 0.1 steps refused or rounded to 0.5
@@ -13,6 +15,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   applyCommand,
+  baseConfidence,
+  noEffectExcusals,
+  projectLens,
   createBlankProject,
   evaluate,
   evaluateAssessor,
@@ -188,4 +193,75 @@ test('the unrated and fine-scale flags survive a save and reload', () => {
   assert.equal(reloaded.edgeAssessments.find((a) => a.subjectId === 'A')?.influence, 0.3);
   const off = run(reloaded, { type: 'node.edit', id: 'A', fineInfluence: false });
   assert.equal(off.nodes.find((n) => n.id === 'A')?.fineInfluence, undefined);
+});
+
+function twoPeople(scoring: ScoringVersion = SCORING_V4): Project {
+  let p = createBlankProject({ projectId: 'p', rootId: 'T', userId: 'u1', now: ctx.now, scoring });
+  p = run(
+    p,
+    { type: 'user.add', id: 'u2', name: 'Bea' },
+    { type: 'node.add', id: 'C', parentId: 'T', relation: 'support' },
+    { type: 'node.add', id: 'E', parentId: 'C', relation: 'support' },
+    {
+      type: 'review.personal',
+      voteId: 'v1',
+      assessmentId: 'a1',
+      nodeId: 'C',
+      userId: 'u1',
+      credence: null,
+      influence: 0,
+    },
+    {
+      type: 'review.influence',
+      id: 'a2',
+      subjectType: 'primary',
+      subjectId: 'C',
+      userId: 'u2',
+      influence: 4,
+    },
+    { type: 'review.credence', id: 'v3', nodeId: 'E', userId: 'u1', credence: 40 },
+    {
+      type: 'review.influence',
+      id: 'a3',
+      subjectType: 'primary',
+      subjectId: 'E',
+      userId: 'u1',
+      influence: -5,
+    },
+    { type: 'review.credence', id: 'v4', nodeId: 'E', userId: 'u2', credence: 100 },
+    { type: 'review.influence', id: 'a4', subjectType: 'primary', subjectId: 'E', userId: 'u2', influence: 5 }
+  );
+  return p;
+}
+
+test('"no effect" excuses the person\'s reviews below the reason everywhere; retracting it brings them back', () => {
+  const p = twoPeople();
+  assert.deepEqual([...(noEffectExcusals(p).get('E') ?? [])], ['u1']);
+  const shared = evaluate(p);
+  assert.equal(S(shared.get('C')?.score), 50);
+  assert.equal(shared.get('C')?.incomplete, false);
+  assert.equal(S(shared.get('T')?.score), 15);
+  assert.equal(shared.get('T')?.incomplete, false);
+  assert.equal(
+    baseConfidence(
+      p,
+      p.nodes.find((n) => n.id === 'E')!
+    ).base,
+    100
+  );
+  assert.equal(projectLens(p).credence.get('E')?.count, 1);
+  const own = evaluateAssessor(p, 'u1');
+  assert.equal(own.get('C')?.score, null);
+  assert.equal(S(own.get('T')?.score), 0);
+  assert.equal(own.get('T')?.incomplete, false);
+  const back = run(p, { type: 'review.retractInfluence', nodeId: 'C', userId: 'u1' });
+  assert.equal(noEffectExcusals(back).size, 0);
+  assert.equal(S(evaluate(back).get('C')?.score), 0);
+  assert.equal(S(evaluate(back).get('T')?.score), 20);
+  assert.equal(evaluate(back).get('T')?.incomplete, true);
+  assert.equal(back.votes.length, 2);
+  assert.throws(() =>
+    applyCommand(back, { type: 'review.retractInfluence', nodeId: 'C', userId: 'u1' }, ctx)
+  );
+  assert.equal(noEffectExcusals(twoPeople(SCORING_V3)).size, 0);
 });

@@ -11,6 +11,7 @@ import {
   descendants,
   INFLUENCE_STEP,
   INFLUENCE_STEP_COARSE,
+  isExcused,
   isGate,
   isUnrated,
   isValue,
@@ -920,8 +921,9 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
         influence,
       });
   };
-  const noEffectSaved =
-    project.settings.scoring !== SCORING_V3 && !!ownImpact?.current && ownImpact.record?.influence === 0;
+  const excused = isExcused(project, node.id, actorId);
+  const ownZero = !!ownImpact?.current && ownImpact.record?.influence === 0;
+  const noEffectSaved = project.settings.scoring !== SCORING_V3 && ownZero;
   // "No effect": the person's own influence 0, saved without asking for a credence (owner 2026-11-10).
   const noEffect = () => {
     store.setView({ indexMode: 'personal', viewAssessorId: null });
@@ -979,6 +981,11 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
       ) : (
         <p className="inspector-note">{t('profileActive', { name: me?.name ?? '' })}</p>
       )}
+      {!otherPerspective && excused ? (
+        <p className="inline-warning" data-testid="no-effect-branch">
+          {t('noEffectBranchNote')}
+        </p>
+      ) : null}
       {!otherPerspective && node.sharedReasonId ? (
         <p className="inspector-note">{t('sharedFixedExplanation')}</p>
       ) : null}
@@ -1029,7 +1036,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           />
           {credenceIsFeeling(project, node) ? (
             <p className="inspector-note">{t('ownCredenceFeelingNote')}</p>
-          ) : !ownVote ? (
+          ) : !ownVote && !excused ? (
             <p className={noEffectSaved ? 'inspector-note' : 'inline-warning'}>
               {t(noEffectSaved ? 'noEffectSaved' : 'profileUnsetHint')}
             </p>
@@ -1056,7 +1063,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             format={(v) => `${signed(v)} / 5`}
             onCommit={(v) => commit(null, v)}
           />
-          {!ownImpact?.current ? (
+          {!ownImpact?.current && !excused ? (
             <p className="inline-warning">{t(ownImpact?.record ? 'profileStale' : 'profileUnsetHint')}</p>
           ) : null}
           <div className="impact-tools">
@@ -1068,17 +1075,36 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
               editable={editable}
               onChange={(fineInfluence) => store.dispatch({ type: 'node.edit', id: node.id, fineInfluence })}
             />
-            <button
-              type="button"
-              className="btn quiet"
-              id="nodeNoEffect"
-              data-testid="review-no-effect"
-              title={t('noEffectHelp')}
-              disabled={!editable}
-              onClick={() => noEffect()}
-            >
-              {t('noEffect')}
-            </button>
+            {ownZero ? (
+              <span className="no-effect-state" data-testid="no-effect-state">
+                {`✓ ${t('noEffectState')}`}{' '}
+                <button
+                  type="button"
+                  className="btn quiet"
+                  id="nodeNoEffectUndo"
+                  data-testid="review-no-effect-undo"
+                  title={t('noEffectUndoHelp')}
+                  disabled={!editable}
+                  onClick={() =>
+                    store.dispatch({ type: 'review.retractInfluence', nodeId: node.id, userId: actorId })
+                  }
+                >
+                  {t('noEffectUndo')}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="btn quiet"
+                id="nodeNoEffect"
+                data-testid="review-no-effect"
+                title={t('noEffectHelp')}
+                disabled={!editable}
+                onClick={() => noEffect()}
+              >
+                {t('noEffect')}
+              </button>
+            )}
           </div>
         </>
       ) : null}

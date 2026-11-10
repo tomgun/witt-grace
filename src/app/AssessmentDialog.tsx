@@ -7,6 +7,7 @@ import {
   INFLUENCE_STEP,
   INFLUENCE_STEP_COARSE,
   assessmentFields,
+  isExcused,
   personalCredence,
   personalInfluence,
   signedInfluence,
@@ -397,15 +398,37 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                       <span>{t('fineInfluenceToggle')}</span>
                     </label>
                     <span>
-                      <button
-                        type="button"
-                        className="btn quiet"
-                        id="btnAssessNoEffect"
-                        title={t('noEffectHelp')}
-                        onClick={() => settle('noEffect')}
-                      >
-                        {t('noEffect')}
-                      </button>{' '}
+                      {impact?.current && impact.record?.influence === 0 ? (
+                        <span className="no-effect-state" id="assessmentNoEffectState">
+                          {`✓ ${t('noEffectState')}`}{' '}
+                          <button
+                            type="button"
+                            className="btn quiet"
+                            id="btnAssessNoEffectUndo"
+                            title={t('noEffectUndoHelp')}
+                            onClick={() => {
+                              store.dispatch({
+                                type: 'review.retractInfluence',
+                                nodeId: node.id,
+                                userId: actorId,
+                              });
+                              setInputs(null);
+                            }}
+                          >
+                            {t('noEffectUndo')}
+                          </button>
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn quiet"
+                          id="btnAssessNoEffect"
+                          title={t('noEffectHelp')}
+                          onClick={() => settle('noEffect')}
+                        >
+                          {t('noEffect')}
+                        </button>
+                      )}{' '}
                       <button
                         type="button"
                         className="btn quiet"
@@ -419,6 +442,11 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                     </span>
                   </div>
                 </div>
+                {isExcused(project, node.id, actorId) ? (
+                  <p className="inline-warning" id="assessmentNoEffectBranch">
+                    {t('noEffectBranchNote')}
+                  </p>
+                ) : null}
                 <p className="assessment-muted" id="assessmentReviewedMarker">
                   {pass.done.has(node.id) ? t('assessmentAlreadyReviewed') : t('assessmentNotReviewed')}
                 </p>
