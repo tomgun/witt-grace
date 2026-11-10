@@ -67,4 +67,15 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     participants: ['Aino · myyntijohtaja', 'Bertil · HR', 'Ceren · tiimin myyjä'],
     nodeCount: 13,
   },
+  // Added 2026-11-10 (owner): the same decision under every calculation method, built by
+  // scripts/build-scoring-example.ts. Fictional data.
+  {
+    id: 'laskentavertailu',
+    title: 'Laskentatapojen vertailu: tietokoneiden uusiminen',
+    description:
+      'Neljä vaihtoehtoa: yhdellä parikymmentä pientä perustetta, yhdellä syvä puu, kahdella muutama vahva. Vaihda Arviointi → Laskentatapa ja vertaa nettoja.',
+    filename: 'laskentatapojen-vertailu.witt.json',
+    participants: ['Arvioija'],
+    nodeCount: 44,
+  },
 ];

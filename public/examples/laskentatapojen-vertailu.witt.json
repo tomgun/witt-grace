@@ -1,0 +1,1390 @@
+{
+  "schemaVersion": 8,
+  "id": "ex-laskentavertailu",
+  "title": "Laskentatapojen vertailu: tiimin tietokoneiden uusiminen",
+  "mode": "decision",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "evidence-v4-reasons",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "u-arvioija",
+      "name": "Arvioija",
+      "shares": 1,
+      "role": "owner"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "parentId": null,
+      "relation": "root",
+      "kind": "decision",
+      "title": "Miten uusimme tiimin tietokoneet?",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 3393.083333333333
+      },
+      "createdBy": "u-arvioija",
+      "lastEditedBy": "u-arvioija"
+    },
+    {
+      "id": "o-light",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Ostetaan kevyet kannettavat",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1667.3333333333333
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-001",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Akku kestää koko työpäivän",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 181
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-004",
+      "parentId": "r-001",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Testissä 11 tuntia verkkoselailua",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 90
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-007",
+      "parentId": "r-001",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Videopalavereissa kesto putoaa noin seitsemään tuntiin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 272
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-010",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kevyt kantaa asiakaskäynneille",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 545
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-013",
+      "parentId": "r-010",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Paino 1,1 kg",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 454
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-016",
+      "parentId": "r-010",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Mahtuu pieneen reppuun",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 636
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-019",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Näyttö riittää toimistotyöhön",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 909
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-022",
+      "parentId": "r-019",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kaikilla ei ole ulkoista näyttöä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 818
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-025",
+      "parentId": "r-019",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Telakoita on jo kuusi",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1000
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-028",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Hiljainen, ei tuuletinta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1182
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-031",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Toimittaja on tuttu",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1364
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-034",
+      "parentId": "o-light",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "16 Gt muisti voi loppua raskaissa töissä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1637
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-037",
+      "parentId": "r-034",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kaksi kehittäjää ajaa paikallisia kontteja",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1546
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-040",
+      "parentId": "r-034",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Raskaat ajot voi siirtää pilveen",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 1728
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-043",
+      "parentId": "o-light",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Korjattavuus heikko: akku on liimattu",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1910
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-046",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Hinta 1 200 € koneelta mahtuu budjettiin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2092
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-049",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kolmen vuoden takuu",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2274
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-052",
+      "parentId": "o-light",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Toimitusaika kuusi viikkoa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2456
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-055",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Käyttäjät pitävät näppäimistöstä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2638
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "r-058",
+      "parentId": "o-light",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Energiatehokas",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 2820
+      },
+      "createdBy": "u-arvioija",
+      "fineInfluence": true
+    },
+    {
+      "id": "o-lease",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Vuokrataan koneet palveluna",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 3275
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-061",
+      "parentId": "o-lease",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ei isoa kertainvestointia",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3002
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-064",
+      "parentId": "o-lease",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Rikkoutunut kone vaihdetaan seuraavana päivänä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3184
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-067",
+      "parentId": "o-lease",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Ylläpito ja päivitykset sisältyvät hintaan",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3366
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-070",
+      "parentId": "o-lease",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kolmen vuoden kokonaiskustannus noin 25 % suurempi",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3548
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "o-repair",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Korjataan nykyiset koneet",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 3821
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-073",
+      "parentId": "o-repair",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Halvin: noin 300 € koneelta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3730
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-076",
+      "parentId": "o-repair",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Koneet ovat jo viisi vuotta vanhoja",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 3912
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "o-power",
+      "parentId": "root",
+      "relation": "option",
+      "kind": "option",
+      "title": "Ostetaan tehokkaat työasemat",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 4809
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-079",
+      "parentId": "o-power",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Raskaat ajot nopeutuvat",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 4185
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-082",
+      "parentId": "r-079",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Käännösajat puolittuivat testissä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 4094
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-085",
+      "parentId": "r-082",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Testi tehtiin vain yhdellä projektilla",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1424,
+        "y": 4094
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-088",
+      "parentId": "r-079",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Vain kaksi henkilöä tarvitsee tehoa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 4276
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-091",
+      "parentId": "o-power",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Painavia, eivät kulje asiakkaalle",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 4458
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-094",
+      "parentId": "r-091",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Asiakaskäyntejä on vain 2–3 kuussa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 4458
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-097",
+      "parentId": "o-power",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Hinta 2 800 € koneelta ylittää budjetin",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 4640
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-100",
+      "parentId": "r-097",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Ensi vuoden budjettiin voi hakea lisää",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 4640
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-103",
+      "parentId": "o-power",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Riittävät vielä kuuden vuoden päästä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 4822
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-106",
+      "parentId": "o-power",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Iso näyttö tehostaa työtä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 5004
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-109",
+      "parentId": "r-106",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Isot näytöt on jo hankittu",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 5004
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-112",
+      "parentId": "o-power",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Tuuletin kuuluu avotoimistossa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 5186
+      },
+      "createdBy": "u-arvioija"
+    },
+    {
+      "id": "r-115",
+      "parentId": "o-power",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Tuki ja varaosat paikallisesti",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 5368
+      },
+      "createdBy": "u-arvioija"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+    {
+      "id": "v-002",
+      "nodeId": "r-001",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-005",
+      "nodeId": "r-004",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-008",
+      "nodeId": "r-007",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-011",
+      "nodeId": "r-010",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-014",
+      "nodeId": "r-013",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-017",
+      "nodeId": "r-016",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-020",
+      "nodeId": "r-019",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-023",
+      "nodeId": "r-022",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-026",
+      "nodeId": "r-025",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-029",
+      "nodeId": "r-028",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-032",
+      "nodeId": "r-031",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-035",
+      "nodeId": "r-034",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-038",
+      "nodeId": "r-037",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-041",
+      "nodeId": "r-040",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-044",
+      "nodeId": "r-043",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-047",
+      "nodeId": "r-046",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-050",
+      "nodeId": "r-049",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-053",
+      "nodeId": "r-052",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-056",
+      "nodeId": "r-055",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-059",
+      "nodeId": "r-058",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-062",
+      "nodeId": "r-061",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-065",
+      "nodeId": "r-064",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-068",
+      "nodeId": "r-067",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-071",
+      "nodeId": "r-070",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-074",
+      "nodeId": "r-073",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-077",
+      "nodeId": "r-076",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-080",
+      "nodeId": "r-079",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-083",
+      "nodeId": "r-082",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-086",
+      "nodeId": "r-085",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-089",
+      "nodeId": "r-088",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-092",
+      "nodeId": "r-091",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-095",
+      "nodeId": "r-094",
+      "userId": "u-arvioija",
+      "confidence": 90,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-098",
+      "nodeId": "r-097",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-101",
+      "nodeId": "r-100",
+      "userId": "u-arvioija",
+      "confidence": 50,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-104",
+      "nodeId": "r-103",
+      "userId": "u-arvioija",
+      "confidence": 60,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-107",
+      "nodeId": "r-106",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-110",
+      "nodeId": "r-109",
+      "userId": "u-arvioija",
+      "confidence": 100,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-113",
+      "nodeId": "r-112",
+      "userId": "u-arvioija",
+      "confidence": 70,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "v-116",
+      "nodeId": "r-115",
+      "userId": "u-arvioija",
+      "confidence": 80,
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "a-003",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-001",
+      "influence": 1,
+      "fingerprint": "[\"r-001\",\"o-light\",\"Akku kestää koko työpäivän\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-006",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-004",
+      "influence": 0.8,
+      "fingerprint": "[\"r-004\",\"r-001\",\"Testissä 11 tuntia verkkoselailua\",\"Akku kestää koko työpäivän\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-009",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-007",
+      "influence": -0.6,
+      "fingerprint": "[\"r-007\",\"r-001\",\"Videopalavereissa kesto putoaa noin seitsemään tuntiin\",\"Akku kestää koko työpäivän\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-012",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-010",
+      "influence": 1.5,
+      "fingerprint": "[\"r-010\",\"o-light\",\"Kevyt kantaa asiakaskäynneille\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-015",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-013",
+      "influence": 0.7,
+      "fingerprint": "[\"r-013\",\"r-010\",\"Paino 1,1 kg\",\"Kevyt kantaa asiakaskäynneille\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-018",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-016",
+      "influence": 0.3,
+      "fingerprint": "[\"r-016\",\"r-010\",\"Mahtuu pieneen reppuun\",\"Kevyt kantaa asiakaskäynneille\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-021",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-019",
+      "influence": 0.8,
+      "fingerprint": "[\"r-019\",\"o-light\",\"Näyttö riittää toimistotyöhön\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-024",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-022",
+      "influence": -0.4,
+      "fingerprint": "[\"r-022\",\"r-019\",\"Kaikilla ei ole ulkoista näyttöä\",\"Näyttö riittää toimistotyöhön\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-027",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-025",
+      "influence": 0.5,
+      "fingerprint": "[\"r-025\",\"r-019\",\"Telakoita on jo kuusi\",\"Näyttö riittää toimistotyöhön\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-030",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-028",
+      "influence": 0.4,
+      "fingerprint": "[\"r-028\",\"o-light\",\"Hiljainen, ei tuuletinta\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-033",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-031",
+      "influence": 0.6,
+      "fingerprint": "[\"r-031\",\"o-light\",\"Toimittaja on tuttu\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-036",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-034",
+      "influence": -1.2,
+      "fingerprint": "[\"r-034\",\"o-light\",\"16 Gt muisti voi loppua raskaissa töissä\",\"Ostetaan kevyet kannettavat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-039",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-037",
+      "influence": 0.9,
+      "fingerprint": "[\"r-037\",\"r-034\",\"Kaksi kehittäjää ajaa paikallisia kontteja\",\"16 Gt muisti voi loppua raskaissa töissä\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-042",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-040",
+      "influence": -0.7,
+      "fingerprint": "[\"r-040\",\"r-034\",\"Raskaat ajot voi siirtää pilveen\",\"16 Gt muisti voi loppua raskaissa töissä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-045",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-043",
+      "influence": -0.8,
+      "fingerprint": "[\"r-043\",\"o-light\",\"Korjattavuus heikko: akku on liimattu\",\"Ostetaan kevyet kannettavat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-048",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-046",
+      "influence": 0.9,
+      "fingerprint": "[\"r-046\",\"o-light\",\"Hinta 1 200 € koneelta mahtuu budjettiin\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-051",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-049",
+      "influence": 0.5,
+      "fingerprint": "[\"r-049\",\"o-light\",\"Kolmen vuoden takuu\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-054",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-052",
+      "influence": -0.5,
+      "fingerprint": "[\"r-052\",\"o-light\",\"Toimitusaika kuusi viikkoa\",\"Ostetaan kevyet kannettavat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-057",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-055",
+      "influence": 0.3,
+      "fingerprint": "[\"r-055\",\"o-light\",\"Käyttäjät pitävät näppäimistöstä\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-060",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-058",
+      "influence": 0.2,
+      "fingerprint": "[\"r-058\",\"o-light\",\"Energiatehokas\",\"Ostetaan kevyet kannettavat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-063",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-061",
+      "influence": 5,
+      "fingerprint": "[\"r-061\",\"o-lease\",\"Ei isoa kertainvestointia\",\"Vuokrataan koneet palveluna\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-066",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-064",
+      "influence": 5,
+      "fingerprint": "[\"r-064\",\"o-lease\",\"Rikkoutunut kone vaihdetaan seuraavana päivänä\",\"Vuokrataan koneet palveluna\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-069",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-067",
+      "influence": 4,
+      "fingerprint": "[\"r-067\",\"o-lease\",\"Ylläpito ja päivitykset sisältyvät hintaan\",\"Vuokrataan koneet palveluna\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-072",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-070",
+      "influence": -3,
+      "fingerprint": "[\"r-070\",\"o-lease\",\"Kolmen vuoden kokonaiskustannus noin 25 % suurempi\",\"Vuokrataan koneet palveluna\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-075",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-073",
+      "influence": 5,
+      "fingerprint": "[\"r-073\",\"o-repair\",\"Halvin: noin 300 € koneelta\",\"Korjataan nykyiset koneet\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-078",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-076",
+      "influence": -2,
+      "fingerprint": "[\"r-076\",\"o-repair\",\"Koneet ovat jo viisi vuotta vanhoja\",\"Korjataan nykyiset koneet\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-081",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-079",
+      "influence": 3,
+      "fingerprint": "[\"r-079\",\"o-power\",\"Raskaat ajot nopeutuvat\",\"Ostetaan tehokkaat työasemat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-084",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-082",
+      "influence": 3,
+      "fingerprint": "[\"r-082\",\"r-079\",\"Käännösajat puolittuivat testissä\",\"Raskaat ajot nopeutuvat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-087",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-085",
+      "influence": -2,
+      "fingerprint": "[\"r-085\",\"r-082\",\"Testi tehtiin vain yhdellä projektilla\",\"Käännösajat puolittuivat testissä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-090",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-088",
+      "influence": -3,
+      "fingerprint": "[\"r-088\",\"r-079\",\"Vain kaksi henkilöä tarvitsee tehoa\",\"Raskaat ajot nopeutuvat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-093",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-091",
+      "influence": -3,
+      "fingerprint": "[\"r-091\",\"o-power\",\"Painavia, eivät kulje asiakkaalle\",\"Ostetaan tehokkaat työasemat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-096",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-094",
+      "influence": -2,
+      "fingerprint": "[\"r-094\",\"r-091\",\"Asiakaskäyntejä on vain 2–3 kuussa\",\"Painavia, eivät kulje asiakkaalle\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-099",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-097",
+      "influence": -4,
+      "fingerprint": "[\"r-097\",\"o-power\",\"Hinta 2 800 € koneelta ylittää budjetin\",\"Ostetaan tehokkaat työasemat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-102",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-100",
+      "influence": -2,
+      "fingerprint": "[\"r-100\",\"r-097\",\"Ensi vuoden budjettiin voi hakea lisää\",\"Hinta 2 800 € koneelta ylittää budjetin\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-105",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-103",
+      "influence": 2,
+      "fingerprint": "[\"r-103\",\"o-power\",\"Riittävät vielä kuuden vuoden päästä\",\"Ostetaan tehokkaat työasemat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-108",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-106",
+      "influence": 2,
+      "fingerprint": "[\"r-106\",\"o-power\",\"Iso näyttö tehostaa työtä\",\"Ostetaan tehokkaat työasemat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-111",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-109",
+      "influence": -1.5,
+      "fingerprint": "[\"r-109\",\"r-106\",\"Isot näytöt on jo hankittu\",\"Iso näyttö tehostaa työtä\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-114",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-112",
+      "influence": -1.5,
+      "fingerprint": "[\"r-112\",\"o-power\",\"Tuuletin kuuluu avotoimistossa\",\"Ostetaan tehokkaat työasemat\",\"oppose\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "a-117",
+      "userId": "u-arvioija",
+      "subjectType": "primary",
+      "subjectId": "r-115",
+      "influence": 1,
+      "fingerprint": "[\"r-115\",\"o-power\",\"Tuki ja varaosat paikallisesti\",\"Ostetaan tehokkaat työasemat\",\"support\"]",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-10T09:00:00.000Z",
+  "updatedAt": "2026-11-10T09:00:00.000Z"
+}

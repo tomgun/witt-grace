@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-10 — `UI_INVENTORY.md` — Owner request: an eighth example for comparing the calculation methods (S-15).
 - 2026-11-10 — `UI_INVENTORY.md` — Owner feedback: the personal abstention reads “Jätän tämän arvioimatta (muut voivat arvioida)” instead of “En arvioi tätä – koskee vain minua”, which sounded as if the claim were about the person (S-15).
 - 2026-11-10 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner decision replacing the line below: the personal button is “En arvioi tätä – koskee vain minua” (abstention, new `abstentions` and `review.abstain`), not a 0; the person is left out of the reason and its branch everywhere and not expected there. A 0 from the slider is an ordinary rating again; `review.retractInfluence` is withdrawn (G-02, S-15).
 - 2026-11-10 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner decisions: a person's “no effect” excuses their reviews in the branch below it from the shared result, the lens and their own viewpoint (not expected there either); “Peru” (`review.retractInfluence`) takes the 0 back; the own state shows as “✓ Oma arviosi: ei vaikutusta”, the branch is dimmed in the person's view, and the wording separates “koskee kaikkia” from “vain oma arviosi” (G-02, S-15).
