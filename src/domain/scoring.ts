@@ -15,7 +15,7 @@ import {
 } from './model.ts';
 import type { AssessmentWeighting, Node, Project, SubjectType, User } from './model.ts';
 import { childrenIndex, incomingIndex, nodeById, secondaryOverlapWarning, sharedReason } from './graph.ts';
-import { isExcused, noEffectExcusals } from './reviews.ts';
+import { abstentionExcusals, isExcused } from './reviews.ts';
 
 export interface Contribution {
   id: string;
@@ -167,8 +167,8 @@ export function evaluate(project: Project): Scores {
   const incoming = incomingIndex(project.links ?? []);
   const credence = new Map<string, Weighted[]>();
   const impacts = new Map<string, Weighted[]>();
-  // People who said "no effect" above a node are neither counted nor expected there (owner 2026-11-10).
-  const excusals = noEffectExcusals(project);
+  // People who chose "En arvioi" on a node or above it are neither counted nor expected there (owner 2026-11-10).
+  const excusals = abstentionExcusals(project);
   const expectedAt = (nodeId: string): number => {
     let excused = 0;
     for (const userId of excusals.get(nodeId) ?? []) {
@@ -260,6 +260,8 @@ export function evaluate(project: Project): Scores {
           );
           const summary = weighted(current);
           signed = summary.value;
+          // Everyone who could rate this relation chose "En arvioi": it takes no part, like an unrated note.
+          if (summary.count === 0 && expectedAt(child.id) <= 0 && excusals.has(child.id)) continue;
           if (summary.count < expectedAt(child.id)) incomplete = true;
         }
       }
@@ -411,6 +413,8 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
       if (child.relation === 'option' || child.relation === 'group' || outOfScore(child)) continue;
+      // The person chose "En arvioi" here: the reason takes no part in their viewpoint.
+      if (isExcused(project, child.id, userId)) continue;
       const result = visit(child);
       const inherited = child.sharedReasonId ? sharedReason(project, child.sharedReasonId) : null;
       const edge = ownEdges.get('primary:' + child.id);

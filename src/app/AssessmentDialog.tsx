@@ -7,6 +7,7 @@ import {
   INFLUENCE_STEP,
   INFLUENCE_STEP_COARSE,
   assessmentFields,
+  hasAbstained,
   isExcused,
   personalCredence,
   personalInfluence,
@@ -98,6 +99,7 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
   const parent = node?.parentId ? project.nodes.find((n) => n.id === node.parentId) : undefined;
   const fields = assessmentFields(node);
   const hasEdge = fields.impact;
+  const abstained = !!node && hasAbstained(project, node.id, actorId);
   const claim = node && fields.credence ? personalCredence(project, node.id, actorId) : null;
   let impact: PersonalInfluence | null = null;
   if (node && hasEdge) {
@@ -127,7 +129,11 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
     const index = pass.order.indexOf(pass.cursorId);
     if (index < 0) return;
     let done = pass.done;
-    if (saveCurrent) {
+    if (saveCurrent && abstained) {
+      // "En arvioi": nothing to save, the step is handled.
+      done = new Set(done);
+      done.add(pass.cursorId);
+    } else if (saveCurrent) {
       const credence = fields.credence ? Number(values.credenceText) : null;
       if (
         fields.credence &&
@@ -174,27 +180,14 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
     setPass(updated);
     setInputs(null);
   };
-  /** Owner 2026-11-10: "no effect" is the person's own influence 0 without a credence; "not rated" turns the reason
-   * into a note for everyone. Both count as handled and move on. */
-  const settle = (how: 'noEffect' | 'unrated') => {
+  /** Owner 2026-11-10: "Ei arvioida" turns the reason into a note for everyone; it counts as handled and moves on. */
+  const markUnrated = () => {
     if (!pass.cursorId || !node) return;
     if (!canEdit(store.get())) {
       store.showMessage(t('viewerCannotEdit'));
       return;
     }
-    const ok =
-      how === 'noEffect'
-        ? store.dispatch({
-            type: 'review.personal',
-            voteId: newId(),
-            assessmentId: newId(),
-            nodeId: node.id,
-            userId: actorId,
-            credence: null,
-            influence: 0,
-          })
-        : store.dispatch({ type: 'node.edit', id: node.id, unrated: true });
-    if (!ok) return;
+    if (!store.dispatch({ type: 'node.edit', id: node.id, unrated: true })) return;
     const done = new Set(pass.done);
     done.add(pass.cursorId);
     go(pass.order.indexOf(pass.cursorId) + 1, done);
@@ -309,7 +302,11 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                 <p id="assessmentDetails" className="assessment-details">
                   {node.details || ''}
                 </p>
-                <div className="assessment-field" id="assessmentCredenceField" hidden={!fields.credence}>
+                <div
+                  className="assessment-field"
+                  id="assessmentCredenceField"
+                  hidden={!fields.credence || abstained}
+                >
                   <p className="assessment-axis">{t('assessmentCredenceAxis')}</p>
                   <label htmlFor="assessmentCredence">{t('assessmentCredence')}</label>
                   <div className="assessment-scale">
@@ -349,7 +346,7 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                     <span aria-hidden="true">/ 100</span>
                   </div>
                 </div>
-                <div className="assessment-field" id="assessmentImpactField" hidden={!hasEdge}>
+                <div className="assessment-field" id="assessmentImpactField" hidden={!hasEdge || abstained}>
                   <p className="assessment-axis">
                     {t(parent?.kind === 'option' ? 'assessmentSignificanceAxis' : 'assessmentInfluenceAxis')}
                   </p>
@@ -397,54 +394,45 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                       />
                       <span>{t('fineInfluenceToggle')}</span>
                     </label>
-                    <span>
-                      {impact?.current && impact.record?.influence === 0 ? (
-                        <span className="no-effect-state" id="assessmentNoEffectState">
-                          {`✓ ${t('noEffectState')}`}{' '}
-                          <button
-                            type="button"
-                            className="btn quiet"
-                            id="btnAssessNoEffectUndo"
-                            title={t('noEffectUndoHelp')}
-                            onClick={() => {
-                              store.dispatch({
-                                type: 'review.retractInfluence',
-                                nodeId: node.id,
-                                userId: actorId,
-                              });
-                              setInputs(null);
-                            }}
-                          >
-                            {t('noEffectUndo')}
-                          </button>
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn quiet"
-                          id="btnAssessNoEffect"
-                          title={t('noEffectHelp')}
-                          onClick={() => settle('noEffect')}
-                        >
-                          {t('noEffect')}
-                        </button>
-                      )}{' '}
-                      <button
-                        type="button"
-                        className="btn quiet"
-                        id="btnAssessUnrated"
-                        title={t('unratedHelp')}
-                        hidden={!node.parentId || node.kind !== 'claim' || !!node.sharedReasonId}
-                        onClick={() => settle('unrated')}
-                      >
-                        {t('unratedMark')}
-                      </button>
-                    </span>
                   </div>
                 </div>
-                {isExcused(project, node.id, actorId) ? (
-                  <p className="inline-warning" id="assessmentNoEffectBranch">
-                    {t('noEffectBranchNote')}
+                {fields.credence || fields.impact ? (
+                  <div className="impact-tools">
+                    <label className="inspector-check" htmlFor="assessmentAbstain">
+                      <input
+                        type="checkbox"
+                        id="assessmentAbstain"
+                        checked={abstained}
+                        onChange={(e) =>
+                          store.dispatch({
+                            type: 'review.abstain',
+                            nodeId: node.id,
+                            userId: actorId,
+                            abstain: e.target.checked,
+                          })
+                        }
+                      />
+                      <span>{t('abstain')}</span>
+                    </label>
+                    <button
+                      type="button"
+                      className="btn quiet"
+                      id="btnAssessUnrated"
+                      title={t('unratedHelp')}
+                      hidden={!node.parentId || node.kind !== 'claim' || !!node.sharedReasonId}
+                      onClick={markUnrated}
+                    >
+                      {t('unratedMark')}
+                    </button>
+                  </div>
+                ) : null}
+                {abstained ? (
+                  <p className="assessment-muted" id="assessmentAbstainNote">
+                    {t('abstainHelp')}
+                  </p>
+                ) : isExcused(project, node.id, actorId) ? (
+                  <p className="inline-warning" id="assessmentAbstainBranch">
+                    {t('abstainBranchNote')}
                   </p>
                 ) : null}
                 <p className="assessment-muted" id="assessmentReviewedMarker">

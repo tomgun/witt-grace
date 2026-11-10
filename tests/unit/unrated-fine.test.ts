@@ -1,22 +1,22 @@
 /**
  * must: an unrated note (node.unrated) never scores into its parent and never leaves it incomplete, refuses a
  *       credence, keeps the reviews given earlier and counts them again when switched back, and its own reasons can
- *       still be rated without reaching above it; "no effect" (influence 0 without a credence) is a complete review
+ *       still be rated without reaching above it; an influence 0 without a credence is a complete review
  *       under the reasons-decide versions and still a missing one under evidence-v3-links; influences are accepted in
  *       0.1 steps (0.3 yes, 1.25 no), so twenty small 0.1 reasons give +20 under v4 where twenty 0.5 ones hit +100;
- *       both flags survive a save and reload; a person's "no effect" on a reason excuses their reviews in the branch
- *       below it from the shared result, their own viewpoint and the lens alike (they are not expected there either),
- *       and `review.retractInfluence` takes the 0 back so the branch counts again (owner decisions 2026-11-10)
+ *       both flags survive a save and reload; "En arvioi" (`review.abstain`) leaves the person's reviews of the reason
+ *       and its branch out of the shared result, their own viewpoint and the lens alike (they are not expected there
+ *       either), is kept in the file, and clearing it brings them back (owner decisions 2026-11-10)
  * test: tests/unit/unrated-fine.test.ts
- * red-against: an unrated note counted as a 0 or as missing, its earlier reviews deleted, a "no effect" review that
- *              still waits for a credence, 0.1 steps refused or rounded to 0.5
+ * red-against: an unrated note counted as a 0 or as missing, its earlier reviews deleted, an influence 0 that still
+ *              waits for a credence, 0.1 steps refused or rounded to 0.5, an "En arvioi" person counted or expected
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   applyCommand,
   baseConfidence,
-  noEffectExcusals,
+  abstentionExcusals,
   projectLens,
   createBlankProject,
   evaluate,
@@ -98,27 +98,26 @@ test('a new unrated note leaves its parent complete, refuses a credence, and its
   assert.equal(S(evaluate(p).get('T')?.score), 20);
 });
 
-test('"no effect" is a complete review without a credence under v4 and log-odds, a missing one under v3', () => {
-  const noEffect = (scoring: ScoringVersion) => {
+test('an influence 0 needs no credence under v4 and log-odds, a missing one under v3', () => {
+  const zeroInfluence = (scoring: ScoringVersion) => {
     let p = createBlankProject({ projectId: 'p', rootId: 'T', userId: 'u1', now: ctx.now, scoring });
     p = run(
       p,
       { type: 'node.add', id: 'C', parentId: 'T', relation: 'support' },
       { type: 'node.add', id: 'E', parentId: 'C', relation: 'support' },
       {
-        type: 'review.personal',
-        voteId: 'v',
-        assessmentId: 'a',
-        nodeId: 'E',
+        type: 'review.influence',
+        id: 'a',
+        subjectType: 'primary',
+        subjectId: 'E',
         userId: 'u1',
-        credence: null,
         influence: 0,
       }
     );
     return p;
   };
   for (const scoring of [SCORING_V4, SCORING_LOGODDS]) {
-    const p = noEffect(scoring);
+    const p = zeroInfluence(scoring);
     assert.equal(p.votes.length, 0);
     assert.equal(p.edgeAssessments.length, 1);
     const c = evaluate(p).get('C');
@@ -127,7 +126,7 @@ test('"no effect" is a complete review without a credence under v4 and log-odds,
     assert.equal(c?.incomplete, false);
     assert.equal(S(evaluateAssessor(p, 'u1').get('C')?.score), 0);
   }
-  const v3 = evaluate(noEffect(SCORING_V3)).get('C');
+  const v3 = evaluate(zeroInfluence(SCORING_V3)).get('C');
   assert.equal(v3?.contributions[0]?.missing, true);
 });
 
@@ -195,21 +194,26 @@ test('the unrated and fine-scale flags survive a save and reload', () => {
   assert.equal(off.nodes.find((n) => n.id === 'A')?.fineInfluence, undefined);
 });
 
-function twoPeople(scoring: ScoringVersion = SCORING_V4): Project {
-  let p = createBlankProject({ projectId: 'p', rootId: 'T', userId: 'u1', now: ctx.now, scoring });
+function twoPeople(): Project {
+  let p = createBlankProject({
+    projectId: 'p',
+    rootId: 'T',
+    userId: 'u1',
+    now: ctx.now,
+    scoring: SCORING_V4,
+  });
   p = run(
     p,
     { type: 'user.add', id: 'u2', name: 'Bea' },
     { type: 'node.add', id: 'C', parentId: 'T', relation: 'support' },
     { type: 'node.add', id: 'E', parentId: 'C', relation: 'support' },
     {
-      type: 'review.personal',
-      voteId: 'v1',
-      assessmentId: 'a1',
-      nodeId: 'C',
+      type: 'review.influence',
+      id: 'a1',
+      subjectType: 'primary',
+      subjectId: 'C',
       userId: 'u1',
-      credence: null,
-      influence: 0,
+      influence: -3,
     },
     {
       type: 'review.influence',
@@ -229,18 +233,26 @@ function twoPeople(scoring: ScoringVersion = SCORING_V4): Project {
       influence: -5,
     },
     { type: 'review.credence', id: 'v4', nodeId: 'E', userId: 'u2', credence: 100 },
-    { type: 'review.influence', id: 'a4', subjectType: 'primary', subjectId: 'E', userId: 'u2', influence: 5 }
+    {
+      type: 'review.influence',
+      id: 'a4',
+      subjectType: 'primary',
+      subjectId: 'E',
+      userId: 'u2',
+      influence: 5,
+    },
+    { type: 'review.abstain', nodeId: 'C', userId: 'u1', abstain: true }
   );
   return p;
 }
 
-test('"no effect" excuses the person\'s reviews below the reason everywhere; retracting it brings them back', () => {
+test('"En arvioi" leaves the person out of the reason and its branch everywhere; clearing it brings them back', () => {
   const p = twoPeople();
-  assert.deepEqual([...(noEffectExcusals(p).get('E') ?? [])], ['u1']);
+  assert.deepEqual([...(abstentionExcusals(p).get('E') ?? [])], ['u1']);
+  assert.deepEqual([...(abstentionExcusals(p).get('C') ?? [])], ['u1']);
   const shared = evaluate(p);
   assert.equal(S(shared.get('C')?.score), 50);
-  assert.equal(shared.get('C')?.incomplete, false);
-  assert.equal(S(shared.get('T')?.score), 15);
+  assert.equal(S(shared.get('T')?.score), 30);
   assert.equal(shared.get('T')?.incomplete, false);
   assert.equal(
     baseConfidence(
@@ -251,17 +263,28 @@ test('"no effect" excuses the person\'s reviews below the reason everywhere; ret
   );
   assert.equal(projectLens(p).credence.get('E')?.count, 1);
   const own = evaluateAssessor(p, 'u1');
-  assert.equal(own.get('C')?.score, null);
-  assert.equal(S(own.get('T')?.score), 0);
-  assert.equal(own.get('T')?.incomplete, false);
-  const back = run(p, { type: 'review.retractInfluence', nodeId: 'C', userId: 'u1' });
-  assert.equal(noEffectExcusals(back).size, 0);
-  assert.equal(S(evaluate(back).get('C')?.score), 0);
-  assert.equal(S(evaluate(back).get('T')?.score), 20);
-  assert.equal(evaluate(back).get('T')?.incomplete, true);
+  assert.equal(own.get('T')?.contributions.length, 0);
+  const back = run(p, { type: 'review.abstain', nodeId: 'C', userId: 'u1', abstain: false });
+  assert.equal(back.abstentions, undefined);
+  assert.equal(abstentionExcusals(back).size, 0);
+  assert.equal(S(evaluate(back).get('T')?.score), 2.5);
   assert.equal(back.votes.length, 2);
+  assert.equal(back.edgeAssessments.length, 4);
   assert.throws(() =>
-    applyCommand(back, { type: 'review.retractInfluence', nodeId: 'C', userId: 'u1' }, ctx)
+    applyCommand(back, { type: 'review.abstain', nodeId: 'C', userId: 'u1', abstain: false }, ctx)
   );
-  assert.equal(noEffectExcusals(twoPeople(SCORING_V3)).size, 0);
+  assert.throws(() =>
+    applyCommand(back, { type: 'review.abstain', nodeId: 'T', userId: 'u1', abstain: true }, ctx)
+  );
+  const everyone = run(p, { type: 'review.abstain', nodeId: 'C', userId: 'u2', abstain: true });
+  assert.equal(
+    evaluate(everyone)
+      .get('T')
+      ?.contributions.some((c) => c.id === 'C'),
+    false
+  );
+  const reloaded = parseProject(JSON.parse(JSON.stringify(p)));
+  assert.deepEqual(reloaded.abstentions, p.abstentions);
+  const removed = run(p, { type: 'node.remove', id: 'C' });
+  assert.equal(removed.abstentions, undefined);
 });

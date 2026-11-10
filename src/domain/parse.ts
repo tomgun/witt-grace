@@ -37,6 +37,7 @@ import type {
   VoteAuditEntry,
   VoteHistoryEntry,
   VotingRound,
+  Abstention,
 } from './model.ts';
 import { graphHasCycle } from './graph.ts';
 
@@ -663,6 +664,22 @@ export function parseProject(input: unknown): Project {
       updatedAt: str(p.updatedAt, 50, 'Suhdearvion aika', false),
     };
   });
+  // Added 2026-11-10 (owner): "En arvioi (muut voivat)" per person and reason.
+  if (raw.abstentions !== undefined && (!Array.isArray(raw.abstentions) || raw.abstentions.length > 10000))
+    refuse('Virheellinen pidättäytymisten määrä');
+  const abstentionPairs = new Set<string>();
+  const abstentions: Abstention[] = ((raw.abstentions ?? []) as unknown[]).map((a) => {
+    if (!isPlain(a)) refuse('Virheellinen pidättäytyminen');
+    const p = a as Plain;
+    const userId = str(p.userId, 100, 'Pidättäytyjä', false);
+    const nodeId = str(p.nodeId, 100, 'Pidättäytymisen perustelu', false);
+    const target = nodesById.get(nodeId);
+    const key = JSON.stringify([userId, nodeId]);
+    if (!userIds.has(userId) || !target || !target.parentId || abstentionPairs.has(key))
+      refuse('Pidättäytyminen on virheellinen tai päällekkäinen');
+    abstentionPairs.add(key);
+    return { userId, nodeId, updatedAt: str(p.updatedAt, 50, 'Pidättäytymisen aika', false) };
+  });
 
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -683,6 +700,7 @@ export function parseProject(input: unknown): Project {
     ...(raw.reasonConcepts === undefined ? {} : { reasonConcepts }),
     votes,
     edgeAssessments,
+    ...(abstentions.length ? { abstentions } : {}),
     ballots,
     votingRound,
     voteAudit,

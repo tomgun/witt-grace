@@ -124,6 +124,13 @@ export interface EdgeAssessment {
   fingerprint: string;
   updatedAt: string;
 }
+/** Owner 2026-11-10: "En arvioi (muut voivat)": the person takes no part in rating this reason and the branch below
+ * it. Their reviews there are kept but count nowhere and are not expected; removing the record brings them back. */
+export interface Abstention {
+  userId: string;
+  nodeId: string;
+  updatedAt: string;
+}
 export interface Ballot {
   id: string;
   optionId: string;
@@ -195,6 +202,7 @@ export interface Project {
   reasonConcepts?: ReasonConcept[];
   votes: Vote[];
   edgeAssessments: EdgeAssessment[];
+  abstentions?: Abstention[];
   ballots: Ballot[];
   votingRound: VotingRound | null;
   voteAudit: VoteAuditEntry[];

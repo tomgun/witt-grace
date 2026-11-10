@@ -130,6 +130,29 @@ export const PROJECT_SCHEMA: JsonSchema = {
         $ref: '#/$defs/edgeAssessment',
       },
     },
+    // Added 2026-11-10 (owner): "En arvioi (muut voivat)" per person and reason.
+    abstentions: {
+      type: 'array',
+      maxItems: 10000,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['userId', 'nodeId', 'updatedAt'],
+        properties: {
+          userId: {
+            $ref: '#/$defs/id',
+          },
+          nodeId: {
+            $ref: '#/$defs/id',
+          },
+          updatedAt: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 50,
+          },
+        },
+      },
+    },
     layout: {
       type: 'object',
       additionalProperties: false,

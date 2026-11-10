@@ -104,8 +104,8 @@ export type Command =
       credence: number | null;
       influence: number | null;
     }
-  /** Owner 2026-11-10: takes back one's own influence review of a reason (e.g. a "no effect"); the credence stays. */
-  | { type: 'review.retractInfluence'; nodeId: string; userId: string }
+  /** Owner 2026-11-10: "En arvioi (muut voivat)" on a reason, or `abstain: false` to take it back. */
+  | { type: 'review.abstain'; nodeId: string; userId: string; abstain: boolean }
   | { type: 'link.add'; id: string; sourceId: string; targetId: string; value: number }
   | { type: 'link.update'; id: string; value: number }
   | { type: 'link.remove'; id: string }
@@ -259,6 +259,10 @@ function removeSubtree(p: Project, id: string): void {
   const removed = new Set([id, ...descendants(p, id)]);
   p.nodes = p.nodes.filter((n) => !removed.has(n.id));
   p.votes = p.votes.filter((v) => !removed.has(v.nodeId));
+  if (p.abstentions) {
+    p.abstentions = p.abstentions.filter((a) => !removed.has(a.nodeId));
+    if (!p.abstentions.length) delete p.abstentions;
+  }
   const removedLinks = new Set(
     (p.links ?? []).filter((l) => removed.has(l.sourceId) || removed.has(l.targetId)).map((l) => l.id)
   );
@@ -424,9 +428,7 @@ function applyPersonalAssessment(
   requireProfile(p, userId);
   const fields = assessmentFields(n);
   if (!fields.credence && !fields.impact) fail('Tälle solmulle ei ole totuus- tai suhdearviota');
-  // "No effect" (influence 0) is a complete review without a credence (owner 2026-11-10).
-  const noEffect = fields.impact && influence === 0 && credence === null;
-  if (fields.credence && !noEffect) {
+  if (fields.credence) {
     if (!Number.isInteger(credence) || (credence as number) < 0 || (credence as number) > 100)
       fail('Uskottavuusarvion on oltava välillä 0–100');
   } else if (credence !== null) fail('Arvostukselle ei voi lisätä totuususkottavuuden arviota');
@@ -441,7 +443,7 @@ function applyPersonalAssessment(
     )
       fail('Vaikutusarvion on oltava −5…+5');
   } else if (influence !== null) fail('Tällä perusteella ei ole arvioitavaa vanhempisuhdetta');
-  if (fields.credence && credence !== null) upsertVote(p, voteId, nodeId, userId, credence, now);
+  if (fields.credence) upsertVote(p, voteId, nodeId, userId, credence as number, now);
   if (fields.impact)
     upsertEdgeAssessment(p, assessmentId, 'primary', nodeId, userId, influence as number, now);
 }
@@ -692,6 +694,10 @@ function removeLocalProfile(p: Project, userId: string): void {
     fail('Aiemman äänestyskierroksen osallistujaa ei voi poistaa; nimeä hänet uudelleen');
   p.users = p.users.filter((u) => u.id !== userId);
   p.votes = p.votes.filter((v) => v.userId !== userId);
+  if (p.abstentions) {
+    p.abstentions = p.abstentions.filter((a) => a.userId !== userId);
+    if (!p.abstentions.length) delete p.abstentions;
+  }
   p.edgeAssessments = (p.edgeAssessments ?? []).filter((a) => a.userId !== userId);
   p.ballots = p.ballots.filter((b) => b.userId !== userId);
 }
@@ -940,13 +946,16 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
     case 'review.influence':
       upsertEdgeAssessment(p, c.id, c.subjectType, c.subjectId, c.userId, c.influence, ctx.now);
       return;
-    case 'review.retractInfluence': {
+    case 'review.abstain': {
       requireProfile(p, c.userId);
-      const before = p.edgeAssessments.length;
-      p.edgeAssessments = p.edgeAssessments.filter(
-        (a) => !(a.subjectType === 'primary' && a.subjectId === c.nodeId && a.userId === c.userId)
-      );
-      if (p.edgeAssessments.length === before) fail('Perutettavaa vaikutusarviota ei ole');
+      const n = node(p, c.nodeId);
+      if (n.kind !== 'claim' || n.parentId === null || n.sharedReasonId)
+        fail('Vain perustelun arvioinnista voi pidättäytyä');
+      const others = (p.abstentions ?? []).filter((a) => !(a.nodeId === c.nodeId && a.userId === c.userId));
+      if (c.abstain) p.abstentions = [...others, { userId: c.userId, nodeId: c.nodeId, updatedAt: ctx.now }];
+      else if (others.length === (p.abstentions ?? []).length) fail('Pidättäytymistä ei ole');
+      else if (others.length) p.abstentions = others;
+      else delete p.abstentions;
       return;
     }
     case 'review.personal':

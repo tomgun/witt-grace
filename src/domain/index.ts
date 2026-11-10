@@ -29,7 +29,8 @@ export {
   currentInfluenceReviews,
   summarizeInfluenceReviews,
   influenceSummary,
-  noEffectExcusals,
+  abstentionExcusals,
+  hasAbstained,
   isExcused,
 } from './reviews.ts';
 export type { AssessmentRelation, PersonalInfluence, InfluenceSummary, InfluenceStatus } from './reviews.ts';

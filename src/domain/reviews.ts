@@ -1,48 +1,46 @@
 // Reading people's reviews: which relation a review is about, whether it is still current, and read-only summaries.
-import { SCORING_V3, directionFromInfluence, isAiProfile, relationFingerprint } from './model.ts';
+import { directionFromInfluence, isAiProfile, relationFingerprint } from './model.ts';
 import type { EdgeAssessment, Node, Project, Stance, SubjectType, Vote } from './model.ts';
 
 const excusalCache = new WeakMap<Project, Map<string, Set<string>>>();
 /**
- * Owner 2026-11-10: a person whose CURRENT own influence on a reason is 0 ("Ei vaikutusta") has said the branch below
- * it does not matter; their reviews inside that branch (credences and the primary relations below the reason) count
- * nowhere, in the shared result as in their own viewpoint, and they are not expected to give them. The 0 itself
- * counts. Kept, not deleted: they return when the 0 changes. Only under the reasons-decide versions; v3 is the
- * prototype's. Returns node id → the people excused there.
+ * Owner 2026-11-10: a person who chose "En arvioi (muut voivat)" on a reason takes no part in it or in the branch below
+ * it: their credences and primary influences there count nowhere (the shared result, the lens, the shown means, their
+ * own viewpoint) and they are not expected there. Kept, not deleted. Returns node id → the people excused there.
  */
-export function noEffectExcusals(project: Project): Map<string, Set<string>> {
+export function abstentionExcusals(project: Project): Map<string, Set<string>> {
   const cached = excusalCache.get(project);
   if (cached) return cached;
   const result = new Map<string, Set<string>>();
   excusalCache.set(project, result);
-  if (project.settings.scoring === SCORING_V3) return result;
-  const byId = new Map(project.nodes.map((n) => [n.id, n]));
+  if (!project.abstentions?.length) return result;
   const children = new Map<string, Node[]>();
   for (const n of project.nodes)
     if (n.parentId) {
       if (!children.has(n.parentId)) children.set(n.parentId, []);
       children.get(n.parentId)?.push(n);
     }
-  for (const a of project.edgeAssessments ?? []) {
-    if (a.subjectType !== 'primary' || a.influence !== 0) continue;
-    const source = byId.get(a.subjectId);
-    const target = source?.parentId ? byId.get(source.parentId) : undefined;
-    if (!source || !target || a.fingerprint !== relationFingerprint(source, target, source.relation))
-      continue;
-    const stack = [...(children.get(source.id) ?? [])];
+  const byId = new Map(project.nodes.map((n) => [n.id, n]));
+  for (const abstention of project.abstentions) {
+    const start = byId.get(abstention.nodeId);
+    if (!start) continue;
+    const stack = [start];
     const seen = new Set<string>();
     for (let n = stack.pop(); n; n = stack.pop()) {
       if (seen.has(n.id)) continue;
       seen.add(n.id);
       if (!result.has(n.id)) result.set(n.id, new Set());
-      result.get(n.id)?.add(a.userId);
+      result.get(n.id)?.add(abstention.userId);
       stack.push(...(children.get(n.id) ?? []));
     }
   }
   return result;
 }
+/** The person chose "En arvioi" on this reason itself (not only above it). */
+export const hasAbstained = (project: Project, nodeId: string, userId: string): boolean =>
+  (project.abstentions ?? []).some((a) => a.nodeId === nodeId && a.userId === userId);
 export const isExcused = (project: Project, nodeId: string, userId: string): boolean =>
-  noEffectExcusals(project).get(nodeId)?.has(userId) ?? false;
+  abstentionExcusals(project).get(nodeId)?.has(userId) ?? false;
 
 export interface AssessmentRelation {
   subjectType: SubjectType;

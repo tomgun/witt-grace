@@ -47,7 +47,7 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 - Owner decisions that change the prototype's visible UI are listed in `docs/spec/UI_INVENTORY.md` S-15 (decided deviations).
 
 ## Next 5
-1. WG-028 — the remaining open items (a separate importance for values, a criteria mode); the unrated note, *Ei vaikutusta* and the 0.1 scale are done (2026-11-10).
+1. WG-028 — the remaining open items (a separate importance for values, a criteria mode); the unrated note, *En arvioi* and the 0.1 scale are done (2026-11-10).
 2. WG-024 — owner decisions on the remaining S-15 quirks.
 3. WG-001 close-out — enable Pages, confirm CI and `/proto/` live (owner).
 4. WG-027 — customisable toolbar proposal (owner decision first).
