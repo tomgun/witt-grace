@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner request 2026-11-10: a compact assessment round: the guidance texts and questions sit behind a ? button, spacing is tighter, and the buttons stay in view at the bottom (the dialog fits a 680 px high window). Nine languages.
 - Owner request 2026-11-10: *Painota viivat ja perustelut arvioiden mukaan* (on by default, in the layers panel): an edge's width and opacity follow the weight its reason actually carries under the document's method, and a nearly weightless reason fades, so four weak counter-reasons no longer look decisive. Nine languages.
 - Owner requests 2026-11-10: *Arvioijien arviot, mediaani* as a way to pool reviews (one extreme assessor no longer decides), and a fifth calculation method *Vahva ketju välittyy (log-odds, kokeellinen)* (`chain-logodds-v1`): one fully credible ±5 reason reaches ±95, so a strong chain carries up from deep down. Nine languages; `tests/unit/median-chain.test.ts`.
 - Owner request 2026-11-10: the child-count chip reads *2 / 16 alisolmua · alipuu* (direct children / the whole subtree) when the subtree is larger; nine languages.

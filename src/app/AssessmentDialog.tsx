@@ -46,6 +46,8 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
     return loadAssessmentPass(passStore(), current.project, current.actorId);
   });
   const [inputs, setInputs] = useState<Inputs | null>(null);
+  // Owner request 2026-11-10: the guidance texts sit behind "?", so the dialog fits without scrolling.
+  const [showHelp, setShowHelp] = useState(false);
   const startable = canEdit(state) && pass.order.length > 0;
 
   // The prototype's `startAssessment`: a viewer never starts, an empty queue is a notice, Punnitse goes on
@@ -261,6 +263,17 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
             </div>
             <button
               type="button"
+              className="btn icon-btn assessment-help-toggle"
+              id="btnAssessHelp"
+              aria-pressed={showHelp}
+              title={t(showHelp ? 'assessmentHelpHide' : 'assessmentHelpShow')}
+              aria-label={t(showHelp ? 'assessmentHelpHide' : 'assessmentHelpShow')}
+              onClick={() => setShowHelp((v) => !v)}
+            >
+              ?
+            </button>
+            <button
+              type="button"
               className="btn icon-btn"
               id="btnAssessClose"
               aria-label={t('close')}
@@ -275,7 +288,7 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
           <p id="assessmentNotYet" className="assessment-muted">
             {pass.finished ? '' : notYet}
           </p>
-          <p id="assessmentIntro" className="assessment-muted">
+          <p id="assessmentIntro" className={showHelp ? 'assessment-muted' : 'visually-hidden'}>
             {t('assessmentIntro')}
           </p>
           <div className="assessment-progress-row">
@@ -308,7 +321,9 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                   hidden={!fields.credence || abstained}
                 >
                   <p className="assessment-axis">{t('assessmentCredenceAxis')}</p>
-                  <label htmlFor="assessmentCredence">{t('assessmentCredence')}</label>
+                  <label htmlFor="assessmentCredence" className={showHelp ? undefined : 'visually-hidden'}>
+                    {t('assessmentCredence')}
+                  </label>
                   <div className="assessment-scale">
                     <input
                       type="range"
@@ -350,10 +365,17 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                   <p className="assessment-axis">
                     {t(parent?.kind === 'option' ? 'assessmentSignificanceAxis' : 'assessmentInfluenceAxis')}
                   </p>
-                  <label htmlFor="assessmentInfluence" id="assessmentInfluenceLabel">
+                  <label
+                    htmlFor="assessmentInfluence"
+                    id="assessmentInfluenceLabel"
+                    className={showHelp ? undefined : 'visually-hidden'}
+                  >
                     {t(parent?.kind === 'option' ? 'assessmentInfluenceOption' : 'assessmentInfluenceClaim')}
                   </label>
-                  <div id="assessmentImpactReflection" className="assessment-reflection">
+                  <div
+                    id="assessmentImpactReflection"
+                    className={showHelp ? 'assessment-reflection' : 'visually-hidden'}
+                  >
                     <p>
                       {t(
                         parent?.kind === 'option'

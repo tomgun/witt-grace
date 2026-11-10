@@ -7,7 +7,8 @@
  *       renames and refuses a duplicate name with the prototype's notice, changes shares and switches the actor;
  *       the vote dialog opens a round, keeps unsaved drafts apart from saved ballots, seals results while the round
  *       is open, and after closing shows the weighted preference per option, the audit rows and the ballots by
- *       person (UX_AND_WORKFLOWS §Arviointikierros, §Arvioijat, §Päätösäänestys; UI_INVENTORY S-05, S-09, S-10)
+ *       person; the round's questions and guidance sit behind its ? button and the buttons stay in view
+ *       (UX_AND_WORKFLOWS §Arviointikierros, §Arvioijat, §Päätösäänestys; UI_INVENTORY S-05, S-09, S-10, S-15)
  * test: tests/e2e/review-walk.spec.ts (desktop)
  * red-against: a skipped item counted as reviewed, the round restarting from the first item on reopen, a review
  *              written under the wrong person, an unsaved slider draft counted as a ballot, results shown while
@@ -54,6 +55,13 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   await expect(page.locator('#assessmentInfluenceLabel')).toHaveText(
     'Kuinka vahvasti peruste puoltaa tai vastustaa tämän vaihtoehdon valitsemista?'
   );
+  // The questions and guidance sit behind "?" (owner 2026-11-10); the buttons stay in view.
+  await expect(page.locator('#assessmentInfluenceLabel')).toHaveClass(/visually-hidden/);
+  await expect(page.locator('#btnAssessNext')).toBeInViewport();
+  await page.locator('#btnAssessHelp').click();
+  await expect(page.locator('#assessmentInfluenceLabel')).toBeVisible();
+  await expect(page.locator('#assessmentImpactReflection')).toBeVisible();
+  await page.locator('#btnAssessHelp').click();
   await page.locator('#assessmentCredenceNumber').fill('80');
   await expect(page.locator('#assessmentCredence')).toHaveValue('80');
   await page.locator('#assessmentInfluence').fill('4');

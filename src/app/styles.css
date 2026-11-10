@@ -8952,3 +8952,50 @@ input[type='range'].range-unset:focus-visible {
 .node.weak-reason {
   opacity: 0.55;
 }
+/* A compact assessment round (owner request 2026-11-10): guidance behind "?", tighter spacing, and the buttons stay
+   in view at the bottom while the dialog scrolls. */
+.assessment-shell {
+  gap: 10px;
+  padding: clamp(16px, 2.4vw, 24px);
+}
+.assessment-topline h2 {
+  font-size: clamp(18px, 2.4vw, 22px);
+}
+.assessment-topline {
+  align-items: center;
+}
+.assessment-topline > div:first-child {
+  flex: 1;
+}
+.assessment-profile {
+  margin: 0;
+}
+.assessment-muted:empty {
+  display: none;
+}
+.assessment-question {
+  gap: 8px;
+}
+.assessment-parent {
+  padding: 6px 10px;
+}
+.assessment-claim {
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.35;
+}
+.assessment-field {
+  padding-top: 10px;
+  gap: 6px;
+}
+.assessment-help-toggle[aria-pressed='true'] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.assessment-bottom {
+  position: sticky;
+  bottom: calc(-1 * clamp(16px, 2.4vw, 24px));
+  margin-bottom: calc(-1 * clamp(16px, 2.4vw, 24px));
+  padding-bottom: clamp(16px, 2.4vw, 24px);
+  background: var(--surface);
+  z-index: 1;
+}
