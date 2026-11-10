@@ -1,7 +1,7 @@
 /**
  * must: a neutral reason added from the left panel starts as an unrated note: dotted card with "Ei arvioida", greyed
- *       sliders, no effect on the thesis (+20.0 without †); unchecking it brings the sliders back; "En arvioi tätä –
- *       koskee vain minua" hides the person's sliders, keeps the thesis complete, dims the branch below in their view
+ *       sliders, no effect on the thesis (+20.0 without †); unchecking it brings the sliders back; "Jätän tämän
+ *       arvioimatta" hides the person's sliders, keeps the thesis complete, dims the branch below in their view
  *       and leaves it out; clearing it brings the sliders back; "Tarkka asteikko (0,1)" turns the influence slider to
  *       0.1 steps and a +0.3 rating moves the thesis to +23.0 (owner decisions 2026-11-10, S-15)
  * test: tests/e2e/unrated-walk.spec.ts (desktop)
