@@ -6,6 +6,7 @@ import {
   isGate,
   isInfluenceStep,
   isUnrated,
+  NODE_SIZE_LIMITS,
   roundInfluence,
   isValue,
   truthAssessable,
@@ -31,6 +32,7 @@ import type {
   SubjectType,
   Theme,
   VoteWeighting,
+  Size,
 } from './model.ts';
 import { childrenOf, descendants, graphHasCycle, reasonConcept, rootNode, sharedReason } from './graph.ts';
 import { parseProject } from './parse.ts';
@@ -83,6 +85,8 @@ export type Command =
   | { type: 'node.remove'; id: string }
   | { type: 'node.collapse'; id: string; collapsed: boolean }
   | { type: 'node.position'; positions: Record<string, Position> }
+  /** Owner request 2026-11-10: a card's own size; `null` restores the default. */
+  | { type: 'node.resize'; id: string; size: Size | null }
   | { type: 'node.template'; id: string; credence: number; influence: number | null }
   | { type: 'layout.auto' }
   | { type: 'layout.fourWay'; offsets: Record<string, Position> }
@@ -272,7 +276,11 @@ function removeSubtree(p: Project, id: string): void {
   p.ballots = p.ballots.filter((b) => !removed.has(b.optionId));
   p.comments = (p.comments ?? []).filter((c) => !removed.has(c.nodeId));
   p.links = (p.links ?? []).filter((l) => !removed.has(l.sourceId) && !removed.has(l.targetId));
-  for (const nodeId of removed) delete p.layout.fourWayOffsets[nodeId];
+  for (const nodeId of removed) {
+    delete p.layout.fourWayOffsets[nodeId];
+    if (p.layout.nodeSizes) delete p.layout.nodeSizes[nodeId];
+  }
+  if (p.layout.nodeSizes && !Object.keys(p.layout.nodeSizes).length) delete p.layout.nodeSizes;
 }
 /** The authored template (credence and signed influence) — a structural starting point, never a person's review. */
 function applyTemplate(p: Project, id: string, credence: number, influence: number | null): void {
@@ -937,6 +945,21 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
     case 'layout.auto':
       for (const [id, position] of autoLayoutPositions(p)) node(p, id).position = position;
       return;
+    case 'node.resize': {
+      node(p, c.id);
+      const sizes = { ...(p.layout.nodeSizes ?? {}) };
+      if (c.size === null) delete sizes[c.id];
+      else {
+        const { w, h } = c.size;
+        const L = NODE_SIZE_LIMITS;
+        if (![w, h].every(Number.isFinite) || w < L.minW || w > L.maxW || h < L.minH || h > L.maxH)
+          fail('Solmun koko on rajojen ulkopuolella');
+        sizes[c.id] = { w: Math.round(w), h: Math.round(h) };
+      }
+      if (Object.keys(sizes).length) p.layout.nodeSizes = sizes;
+      else delete p.layout.nodeSizes;
+      return;
+    }
     case 'layout.fourWay':
       p.layout.fourWayOffsets = structuredClone(c.offsets);
       return;

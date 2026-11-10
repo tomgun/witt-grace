@@ -17,10 +17,20 @@ import {
   rootNode,
   viewPosition,
 } from '../domain/index.ts';
-import type { Direction, FocusProjection, Lens, Node, Position, Project, Scores } from '../domain/index.ts';
+import type {
+  Direction,
+  FocusProjection,
+  Lens,
+  Node,
+  Position,
+  Project,
+  Scores,
+  Size,
+} from '../domain/index.ts';
 import { recalculateImportance, viewedAssessorId } from './derive.ts';
 import type { DeriveContext, Importance } from './derive.ts';
 import { cardHeight } from './view.ts';
+import { readingCard, readingLayout } from './reading.ts';
 import type { ViewState } from './view.ts';
 import type { AppState } from './store.ts';
 
@@ -40,6 +50,12 @@ export interface Frame extends DeriveContext {
   visualPosition: (node: Node) => Position;
   /** A node counts as collapsed when its flag is set, or, under a depth limit, when a child is hidden. */
   isNodeCollapsed: (node: Node) => boolean;
+  /** The reading view is on (owner request 2026-11-10). */
+  reading: boolean;
+  /** A card's size: its own (dragged), its text's in the reading view, else the layer set's default. */
+  sizeOf: (id: string) => Size;
+  /** Title lines a card shows in the reading view; null outside it. */
+  titleLinesOf: (id: string) => number | null;
 }
 
 export function buildFrame(
@@ -123,7 +139,22 @@ export function buildFrame(
   let positions = new Map<string, Position>();
   let directions = new Map<string, Direction>();
   const compact = view.depthLimit !== null ? view.depthCompact : view.compactVisible;
-  if (compact) {
+  // Owner request 2026-11-10: a card's own size (dragged by its corner), or in the reading view its text's size.
+  const reading = view.readingMode && view.presentation === 'tree';
+  const sizes = new Map<string, Size>();
+  const titleLines = new Map<string, number>();
+  if (reading) {
+    for (const n of project.nodes)
+      if (projection.visibleIds.has(n.id)) {
+        const card = readingCard(n, view.readingWidth, view.readingLines, view.layers, hasMarks(n));
+        sizes.set(n.id, { w: view.readingWidth, h: card.h });
+        titleLines.set(n.id, card.titleLines);
+      }
+  } else for (const [id, size] of Object.entries(project.layout.nodeSizes ?? {})) sizes.set(id, { ...size });
+  const sizeOf = (id: string): Size => sizes.get(id) ?? { w: CARD_W, h: cardH };
+  if (reading) {
+    positions = readingLayout(project.nodes, projection.visibleIds, root.id, view.orientation, sizeOf);
+  } else if (compact) {
     const result = compactVisibleProjection(
       project.nodes,
       projection.visibleIds,
@@ -161,6 +192,9 @@ export function buildFrame(
     rootId: root.id,
     visualPosition,
     isNodeCollapsed,
+    reading,
+    sizeOf,
+    titleLinesOf: (id: string) => titleLines.get(id) ?? null,
   };
 }
 
@@ -186,5 +220,15 @@ export function useFrame(state: AppState): Frame {
         reviewIds,
       }),
     [project, view, actorId, selectedId, depthOverrides, explicitlyClosedIds, tableRevealId, reviewIds]
+  );
+}
+
+/** The marks row shows on a card (reused, recurring, unrated or a semantic type without an own type name). */
+function hasMarks(n: Node): boolean {
+  return (
+    !!n.sharedReasonId ||
+    !!n.reasonConceptId ||
+    !!n.unrated ||
+    (!!n.semanticType && n.semanticType !== 'unspecified' && !n.typeLabel)
   );
 }

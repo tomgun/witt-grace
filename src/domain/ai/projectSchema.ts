@@ -158,6 +158,28 @@ export const PROJECT_SCHEMA: JsonSchema = {
       additionalProperties: false,
       required: ['fourWayOffsets'],
       properties: {
+        // Added 2026-11-10 (owner): a card's own size, dragged by its corner.
+        nodeSizes: {
+          type: 'object',
+          maxProperties: 1000,
+          additionalProperties: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['w', 'h'],
+            properties: {
+              w: {
+                type: 'number',
+                minimum: 180,
+                maximum: 640,
+              },
+              h: {
+                type: 'number',
+                minimum: 80,
+                maximum: 600,
+              },
+            },
+          },
+        },
         fourWayOffsets: {
           type: 'object',
           maxProperties: 1000,

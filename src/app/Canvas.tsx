@@ -11,13 +11,14 @@ import {
   isAiProfile,
   isGate,
   isExcused,
+  NODE_SIZE_LIMITS,
   isUnrated,
   isValue,
   navigate,
   NAV_KEYS,
   secondaryLinkPath,
 } from '../domain/index.ts';
-import type { Node, Position } from '../domain/index.ts';
+import type { Node, Position, Size } from '../domain/index.ts';
 import {
   addNode,
   arrangeTree,
@@ -122,6 +123,11 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const nodes = frame.projection.nodes;
   const byId = new Map(project.nodes.map((n) => [n.id, n]));
+  // A card being resized shows its live size (owner request 2026-11-10).
+  const [liveSize, setLiveSize] = useState<{ id: string; size: Size } | null>(null);
+  const sizeOf = (id: string): Size => (liveSize && liveSize.id === id ? liveSize.size : frame.sizeOf(id));
+  // The reading view lays every orientation out as a tidy tree; four directions read left to right there.
+  const edgeOrientation = frame.reading && view.orientation === 'four-way' ? 'horizontal' : view.orientation;
   const visualPosition = useCallback(
     (node: Node): Position => (live && live.id === node.id ? live.pos : frame.visualPosition(node)),
     [live, frame]
@@ -134,11 +140,11 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     const vw = viewport.clientWidth;
     const vh = viewport.clientHeight;
     if (!vw || !vh) return;
-    const points = nodes.map((n) => frame.visualPosition(n));
+    const points = nodes.map((n) => ({ ...frame.visualPosition(n), ...frame.sizeOf(n.id) }));
     const minX = Math.min(...points.map((p) => p.x));
     const minY = Math.min(...points.map((p) => p.y));
-    const maxX = Math.max(...points.map((p) => p.x + CARD_W));
-    const maxY = Math.max(...points.map((p) => p.y + H));
+    const maxX = Math.max(...points.map((p) => p.x + p.w));
+    const maxY = Math.max(...points.map((p) => p.y + p.h));
     const gap = 100;
     const scale = clamp(Math.min((vw - gap) / (maxX - minX), (vh - gap) / (maxY - minY)), 0.3, 1.15);
     setCamera({
@@ -146,22 +152,23 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       x: (vw - (maxX - minX) * scale) / 2 - minX * scale,
       y: (vh - (maxY - minY) * scale) / 2 - minY * scale,
     });
-  }, [nodes, frame, H]);
+  }, [nodes, frame]);
   const centerNode = useCallback(
     (id: string) => {
       const viewport = viewportRef.current;
       const node = byId.get(id);
       if (!viewport || !node) return;
       const pos = frame.visualPosition(node);
+      const size = frame.sizeOf(node.id);
       const { scale } = cameraRef.current;
       setCamera({
         scale,
-        x: viewport.clientWidth / 2 - (pos.x + CARD_W / 2) * scale,
-        y: viewport.clientHeight / 2 - (pos.y + H / 2) * scale,
+        x: viewport.clientWidth / 2 - (pos.x + size.w / 2) * scale,
+        y: viewport.clientHeight / 2 - (pos.y + size.h / 2) * scale,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [frame, H]
+    [frame]
   );
   const zoomAround = useCallback((nextScale: number, clientX: number, clientY: number) => {
     const viewport = viewportRef.current;
@@ -244,12 +251,41 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   };
 
   // ---- node drag ------------------------------------------------------------------------------------------------
+  /** Owner request 2026-11-10: drag a card's corner to give it its own size; a double click restores the default. */
+  const beginResize = (e: ReactPointerEvent<HTMLElement>, node: Node) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const handle = e.currentTarget;
+    const start = { x: e.clientX, y: e.clientY, ...frame.sizeOf(node.id) };
+    const L = NODE_SIZE_LIMITS;
+    let size: Size | null = null;
+    handle.setPointerCapture(e.pointerId);
+    const move = (ev: PointerEvent) => {
+      const scale = cameraRef.current.scale;
+      size = {
+        w: Math.round(clamp(start.w + (ev.clientX - start.x) / scale, L.minW, L.maxW)),
+        h: Math.round(clamp(start.h + (ev.clientY - start.y) / scale, L.minH, L.maxH)),
+      };
+      setLiveSize({ id: node.id, size });
+    };
+    const finish = () => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', finish);
+      handle.removeEventListener('pointercancel', finish);
+      setLiveSize(null);
+      if (size) store.dispatch({ type: 'node.resize', id: node.id, size });
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', finish);
+    handle.addEventListener('pointercancel', finish);
+  };
   const beginNodeDrag = (e: ReactPointerEvent<HTMLElement>, node: Node, fromTitle: boolean) => {
     if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
     if (!fromTitle) e.preventDefault();
     e.stopPropagation();
     if (state.selectedId !== node.id || state.selectedLibraryReason) store.select(node.id);
-    if (!editable) return;
+    if (!editable || frame.reading) return;
     if ((view.depthLimit !== null && view.depthCompact) || view.compactVisible) {
       store.showMessage(t('compactDragHint'));
       return;
@@ -345,11 +381,11 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       ?.focus({ preventScroll: true });
 
   // ---- edges ----------------------------------------------------------------------------------------------------
-  const points = nodes.map((n) => visualPosition(n));
+  const points = nodes.map((n) => ({ ...visualPosition(n), ...sizeOf(n.id) }));
   const minX = points.length ? Math.min(...points.map((p) => p.x)) - 180 : 0;
   const minY = points.length ? Math.min(...points.map((p) => p.y)) - 180 : 0;
-  const maxX = points.length ? Math.max(...points.map((p) => p.x + CARD_W)) + 180 : 8000;
-  const maxY = points.length ? Math.max(...points.map((p) => p.y + H)) + 180 : 8000;
+  const maxX = points.length ? Math.max(...points.map((p) => p.x + p.w)) + 180 : 8000;
+  const maxY = points.length ? Math.max(...points.map((p) => p.y + p.h)) + 180 : 8000;
   const positionsForEdges = new Map(nodes.map((n) => [n.id, visualPosition(n)]));
   const ids = frame.projection.visibleIds;
   const focusing = view.focus.mode !== 'all';
@@ -405,7 +441,10 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             ? 'focus-context'
             : 'focus-muted'
       );
-    const d = edgeGeometry(parent, child, view.orientation, CARD_W, H, positionsForEdges, frame.directions);
+    const d = edgeGeometry(parent, child, edgeOrientation, CARD_W, H, positionsForEdges, frame.directions, {
+      from: sizeOf(parent.id),
+      to: sizeOf(child.id),
+    });
     const importanceDelta =
       effect && frame.importance.importantIds.has(child.id) ? String(effect.delta) : undefined;
     if (state.appearance === 'ascii')
@@ -444,7 +483,10 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             className={`edge edge-secondary edge-${link.relation}${focusing ? ' focus-muted' : ''}${selectedLink ? ' link-selected' : ''}`}
             markerEnd={`url(#secondary-${link.relation}-arrow)`}
             data-link-id={link.id}
-            d={secondaryLinkPath(visualPosition(source), visualPosition(target), CARD_W, H)}
+            d={secondaryLinkPath(visualPosition(source), visualPosition(target), CARD_W, H, {
+              from: sizeOf(source.id),
+              to: sizeOf(target.id),
+            })}
           >
             <title>{`${source.title} → ${target.title} (${t(link.relation === 'support' ? 'supportWord' : 'opposeWord')}, ${link.impact}/5)`}</title>
           </path>,
@@ -524,7 +566,15 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     if (isGate(node)) classes.push('semantic-gate');
     if (isValue(node)) classes.push('semantic-value');
     if (selected) classes.push('selected');
-    if (H === 94) classes.push('text-only');
+    if (H === 94 && !frame.reading) classes.push('text-only');
+    // Owner request 2026-11-10: the reading view's whole text, or a card's own dragged size.
+    const ownSize =
+      frame.reading || project.layout.nodeSizes?.[node.id] || liveSize?.id === node.id
+        ? sizeOf(node.id)
+        : null;
+    const titleLines = frame.titleLinesOf(node.id);
+    if (frame.reading) classes.push('reading-card');
+    else if (ownSize) classes.push('sized-card');
     if (focusing) {
       classes.push(
         frame.projection.matchIds.has(node.id)
@@ -560,7 +610,12 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         data-importance-delta={effect && view.showImportance ? String(effect.delta) : undefined}
         data-editing={state.inlineEditId === node.id ? 'true' : undefined}
         data-testid={`node-${node.id}`}
-        style={{ left: pos.x, top: pos.y }}
+        style={{
+          left: pos.x,
+          top: pos.y,
+          ...(ownSize ? { width: ownSize.w, height: ownSize.h } : {}),
+          ...(titleLines ? { ['--title-lines' as string]: titleLines } : {}),
+        }}
         tabIndex={selected ? 0 : -1}
         role="treeitem"
         aria-selected={selected}
@@ -761,6 +816,20 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
               store.setInlineEdit(null);
               if (title && title !== node.title) store.dispatch({ type: 'node.edit', id: node.id, title });
               requestAnimationFrame(() => focusCard(node.id));
+            }}
+          />
+        ) : null}
+        {selected && editable && !frame.reading && view.presentation === 'tree' ? (
+          <span
+            className="node-resize"
+            data-testid="node-resize"
+            title={t('resizeCard')}
+            aria-hidden="true"
+            onPointerDown={(e) => beginResize(e, node)}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              if (project.layout.nodeSizes?.[node.id])
+                store.dispatch({ type: 'node.resize', id: node.id, size: null });
             }}
           />
         ) : null}

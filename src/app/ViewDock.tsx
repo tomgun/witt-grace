@@ -5,7 +5,7 @@ import { canEdit } from './actions.ts';
 import { userTraces } from './derive.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
-import { LAYER_NAMES, LAYER_PRESETS, currentPreset } from './view.ts';
+import { LAYER_NAMES, LAYER_PRESETS, READING_LINES, READING_WIDTHS, currentPreset } from './view.ts';
 import type { FocusMode, LayerName, LayerPreset, Orientation } from './view.ts';
 
 const LAYER_KEYS: Record<
@@ -409,6 +409,8 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               })}
         </p>
         <div className="dock-divider" />
+        <ReadingSettings />
+        <div className="dock-divider" />
         <UserHighlight />
       </div>
     </div>
@@ -465,6 +467,61 @@ function UserHighlight() {
           </button>
         </>
       ) : null}
+    </div>
+  );
+}
+
+/** Owner request 2026-11-10: the reading view and its card width and line limit, per browser. */
+function ReadingSettings() {
+  const { view } = useAppState();
+  const t = useTranslator();
+  const store = getStore();
+  const set = (patch: Partial<typeof view>) => {
+    store.setView(patch);
+    store.requestFit();
+  };
+  return (
+    <div className="dock-reading">
+      <label className="dock-check" htmlFor="readingMode">
+        <input
+          id="readingMode"
+          type="checkbox"
+          data-testid="reading-mode"
+          checked={view.readingMode}
+          disabled={view.presentation !== 'tree'}
+          onChange={(e) => set({ readingMode: e.target.checked })}
+        />
+        <span>{t('readingMode')}</span>
+      </label>
+      {view.readingMode ? (
+        <div className="dock-reading-options">
+          <label htmlFor="readingWidth">{t('readingWidth')}</label>
+          <select
+            id="readingWidth"
+            value={view.readingWidth}
+            onChange={(e) => set({ readingWidth: Number(e.target.value) })}
+          >
+            {READING_WIDTHS.map((w, i) => (
+              <option key={w} value={w}>
+                {t(i === 0 ? 'readingWidthNarrow' : i === 1 ? 'readingWidthWide' : 'readingWidthWidest')}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="readingLines">{t('readingLines')}</label>
+          <select
+            id="readingLines"
+            value={view.readingLines}
+            onChange={(e) => set({ readingLines: Number(e.target.value) })}
+          >
+            {READING_LINES.map((n) => (
+              <option key={n} value={n}>
+                {t('readingLinesValue', { lines: n })}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+      <p className="focus-summary">{t('readingHelp')}</p>
     </div>
   );
 }

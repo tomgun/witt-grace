@@ -1,7 +1,7 @@
 // Display projections of the tree, ported line for line from the prototype's `src/view-layout.js` (UI_INVENTORY S-07,
 // inv-canvas §5). Horizontal/vertical positions are reversible transforms of the document's positions; four-way and
 // compact positions are derived from the tree and never written back. Pure: no DOM, no clock, no random.
-import type { Position } from './model.ts';
+import type { Position, Size } from './model.ts';
 
 export interface LayoutNode {
   id: string;
@@ -164,61 +164,77 @@ export function edgeGeometry(
   cardWidth: number,
   cardHeight: number,
   positions?: Map<string, Position>,
-  groups?: Map<string, Direction>
+  groups?: Map<string, Direction>,
+  /** Owner request 2026-11-10: cards of their own size (dragged, or in the reading view). */
+  sizes?: { from: Size; to: Size }
 ): string {
   const from = positions?.get(parent.id) ?? viewPosition(parent.position, orientation);
   const to = positions?.get(child.id) ?? viewPosition(child.position, orientation);
+  const fw = sizes?.from.w ?? cardWidth;
+  const fh = sizes?.from.h ?? cardHeight;
+  const tw = sizes?.to.w ?? cardWidth;
+  const th = sizes?.to.h ?? cardHeight;
   let direction: string = orientation;
   if (orientation === 'four-way') {
-    const dx = to.x + cardWidth / 2 - (from.x + cardWidth / 2);
-    const dy = to.y + cardHeight / 2 - (from.y + cardHeight / 2);
+    const dx = to.x + tw / 2 - (from.x + fw / 2);
+    const dy = to.y + th / 2 - (from.y + fh / 2);
     // All edges within one branch follow its cardinal direction; a visual offset must not flip the anchors.
     direction =
       groups?.get(child.id) ??
       (Math.abs(dx) > Math.abs(dy) ? (dx >= 0 ? 'right' : 'left') : dy >= 0 ? 'down' : 'up');
   }
   if (direction === 'vertical' || direction === 'down') {
-    const sx = from.x + cardWidth / 2;
-    const sy = from.y + cardHeight - 1;
-    const ex = to.x + cardWidth / 2;
+    const sx = from.x + fw / 2;
+    const sy = from.y + fh - 1;
+    const ex = to.x + tw / 2;
     const ey = to.y + 1;
     const bend = Math.max(34, Math.abs(ey - sy) * 0.46);
     return `M ${sx} ${sy} C ${sx} ${sy + bend}, ${ex} ${ey - bend}, ${ex} ${ey}`;
   }
   if (direction === 'up') {
-    const sx = from.x + cardWidth / 2;
+    const sx = from.x + fw / 2;
     const sy = from.y + 1;
-    const ex = to.x + cardWidth / 2;
-    const ey = to.y + cardHeight - 1;
+    const ex = to.x + tw / 2;
+    const ey = to.y + th - 1;
     const bend = Math.max(34, Math.abs(sy - ey) * 0.46);
     return `M ${sx} ${sy} C ${sx} ${sy - bend}, ${ex} ${ey + bend}, ${ex} ${ey}`;
   }
   if (direction === 'left') {
     const sx = from.x + 1;
-    const sy = from.y + cardHeight / 2;
-    const ex = to.x + cardWidth - 1;
-    const ey = to.y + cardHeight / 2;
+    const sy = from.y + fh / 2;
+    const ex = to.x + tw - 1;
+    const ey = to.y + th / 2;
     const bend = Math.max(50, Math.abs(sx - ex) * 0.46);
     return `M ${sx} ${sy} C ${sx - bend} ${sy}, ${ex + bend} ${ey}, ${ex} ${ey}`;
   }
-  const sx = from.x + cardWidth - 1;
-  const sy = from.y + cardHeight / 2;
+  const sx = from.x + fw - 1;
+  const sy = from.y + fh / 2;
   const ex = to.x + 1;
-  const ey = to.y + cardHeight / 2;
+  const ey = to.y + th / 2;
   const bend = Math.max(50, Math.abs(ex - sx) * 0.46);
   return `M ${sx} ${sy} C ${sx + bend} ${sy}, ${ex - bend} ${ey}, ${ex} ${ey}`;
 }
 
 /** Directed, dashed cross-connection between two already laid-out claims; ports chosen by relative position. */
-export function secondaryLinkPath(from: Position, to: Position, width = 252, height = 154): string {
-  const dx = to.x + width / 2 - (from.x + width / 2);
-  const dy = to.y + height / 2 - (from.y + height / 2);
+export function secondaryLinkPath(
+  from: Position,
+  to: Position,
+  width = 252,
+  height = 154,
+  sizes?: { from: Size; to: Size }
+): string {
+  const fw = sizes?.from.w ?? width;
+  const fh = sizes?.from.h ?? height;
+  const tw = sizes?.to.w ?? width;
+  const th = sizes?.to.h ?? height;
+  const dx = to.x + tw / 2 - (from.x + fw / 2);
+  const dy = to.y + th / 2 - (from.y + fh / 2);
   if (Math.abs(dx) >= Math.abs(dy)) {
     const direction = dx >= 0 ? 1 : -1;
-    const sx = from.x + (direction > 0 ? width : 0);
-    const ex = to.x + (direction > 0 ? 0 : width);
-    const sy = from.y + height / 2;
-    const ey = to.y + height / 2;
+    const sx = from.x + (direction > 0 ? fw : 0);
+    const ex = to.x + (direction > 0 ? 0 : tw);
+    const sy = from.y + fh / 2;
+    const ey = to.y + th / 2;
     const bend = Math.max(44, Math.abs(ex - sx) * 0.35);
     // A relation that skips a claim on a nearly straight row arches below the row instead of crossing the card.
     const detour = Math.abs(dx) > width * 1.8 && Math.abs(dy) < height * 0.6;
@@ -226,10 +242,10 @@ export function secondaryLinkPath(from: Position, to: Position, width = 252, hei
     return `M ${sx} ${sy} C ${sx + direction * bend} ${sy + arc}, ${ex - direction * bend} ${ey + arc}, ${ex} ${ey}`;
   }
   const direction = dy >= 0 ? 1 : -1;
-  const sx = from.x + width / 2;
-  const ex = to.x + width / 2;
-  const sy = from.y + (direction > 0 ? height : 0);
-  const ey = to.y + (direction > 0 ? 0 : height);
+  const sx = from.x + fw / 2;
+  const ex = to.x + tw / 2;
+  const sy = from.y + (direction > 0 ? fh : 0);
+  const ey = to.y + (direction > 0 ? 0 : th);
   const bend = Math.max(35, Math.abs(ey - sy) * 0.35);
   const detour = Math.abs(dy) > height * 2.2 && Math.abs(dx) < width * 0.65;
   const arc = detour ? width * 1.6 : 0;

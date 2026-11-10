@@ -8876,3 +8876,75 @@ input[type='range'].range-unset:focus-visible {
   display: grid;
   gap: 6px;
 }
+/* Text that fits (owner request 2026-11-10): the title uses the room the card has instead of leaving it empty. */
+#nodesLayer .node:not(.text-only):not(.reading-card) .node-title {
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  flex: 0 1 auto;
+  min-height: 0;
+}
+#nodesLayer .node:not(.text-only):not(.reading-card):has(.node-marks) .node-title,
+#nodesLayer .node:not(.text-only):not(.reading-card):has(.node-details) .node-title {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+#nodesLayer .node .node-meta {
+  margin-top: auto;
+}
+/* The reading view: the card's own height, the whole title up to the chosen limit, details unclamped too. */
+#nodesLayer .node.reading-card .node-title {
+  -webkit-line-clamp: var(--title-lines, 10);
+  line-clamp: var(--title-lines, 10);
+  min-height: 0;
+}
+#nodesLayer .node.reading-card .node-details {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  display: block;
+  overflow: hidden;
+}
+/* A card's own size: the title clamps by the room it has. */
+#nodesLayer .node.sized-card .node-title {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  display: block;
+  flex: 1 1 auto;
+  overflow: hidden;
+  min-height: 0;
+}
+.node .node-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  background: linear-gradient(
+    135deg,
+    transparent 50%,
+    var(--muted) 50%,
+    var(--muted) 60%,
+    transparent 60%,
+    transparent 70%,
+    var(--muted) 70%,
+    var(--muted) 80%,
+    transparent 80%
+  );
+  opacity: 0.7;
+  touch-action: none;
+}
+.dock-reading {
+  display: grid;
+  gap: 6px;
+}
+.dock-reading-options {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 8px;
+  align-items: center;
+}
+.dock-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

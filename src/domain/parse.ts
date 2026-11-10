@@ -17,6 +17,7 @@ import {
   TYPE_LABEL_MAX,
   isInfluenceStep,
   isUnrated,
+  NODE_SIZE_LIMITS,
   truthAssessable,
 } from './model.ts';
 import type {
@@ -38,6 +39,7 @@ import type {
   VoteHistoryEntry,
   VotingRound,
   Abstention,
+  Size,
 } from './model.ts';
 import { graphHasCycle } from './graph.ts';
 
@@ -111,7 +113,21 @@ function validateLayout(layout: unknown, nodeIds: Set<string>): Layout {
       y: num(p.y, -100000, 100000, 'Nelisuuntaisen Y'),
     };
   }
-  return { fourWayOffsets: offsets };
+  const sizes: Record<string, Size> = {};
+  const rawSizes = (layout as Plain).nodeSizes;
+  if (rawSizes !== undefined) {
+    if (!isPlain(rawSizes)) refuse('Solmujen koot ovat virheelliset');
+    for (const [nodeId, wh] of Object.entries(rawSizes as Plain)) {
+      if (!nodeIds.has(nodeId) || !isPlain(wh) || Object.keys(wh).some((k) => k !== 'w' && k !== 'h'))
+        refuse('Solmun koko on virheellinen');
+      const s = wh as Plain;
+      sizes[nodeId] = {
+        w: num(s.w, NODE_SIZE_LIMITS.minW, NODE_SIZE_LIMITS.maxW, 'Solmun leveys'),
+        h: num(s.h, NODE_SIZE_LIMITS.minH, NODE_SIZE_LIMITS.maxH, 'Solmun korkeus'),
+      };
+    }
+  }
+  return { fourWayOffsets: offsets, ...(Object.keys(sizes).length ? { nodeSizes: sizes } : {}) };
 }
 
 /** Parse an untrusted document. Throws ParseError; never mutates the input; the result is a fresh, normalized Project. */

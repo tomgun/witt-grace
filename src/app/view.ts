@@ -73,6 +73,10 @@ export interface ViewState {
   viewAssessorId: string | null;
   /** Owner request 2026-11-10: the person whose created, edited and commented nodes the tree highlights. */
   highlightUserId: string | null;
+  /** Owner request 2026-11-10: the reading view shows every card's whole text and lays the tree out by card size. */
+  readingMode: boolean;
+  readingWidth: number;
+  readingLines: number;
   highlightOptions: boolean;
   showImportance: boolean;
   showSharedReasons: boolean;
@@ -82,6 +86,10 @@ export interface ViewState {
   depthCompact: boolean;
 }
 export type Zones = Record<Zone, boolean>;
+
+/** Reading view card widths and title line limits (per browser, owner request 2026-11-10). */
+export const READING_WIDTHS = [252, 320, 400] as const as readonly number[];
+export const READING_LINES = [4, 6, 10, 16] as const as readonly number[];
 
 /** The prototype's `loadView` defaults: a narrow window (≤ 600 px) starts in the table presentation. */
 export function defaultView(windowWidth = 1440): ViewState {
@@ -97,6 +105,9 @@ export function defaultView(windowWidth = 1440): ViewState {
     indexMode: 'shared',
     viewAssessorId: null,
     highlightUserId: null,
+    readingMode: false,
+    readingWidth: 320,
+    readingLines: 10,
     highlightOptions: false,
     showImportance: false,
     showSharedReasons: true,
@@ -149,6 +160,11 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
     indexMode: saved.indexMode === 'personal' ? 'personal' : 'shared',
     viewAssessorId: typeof saved.viewAssessorId === 'string' ? saved.viewAssessorId : null,
     highlightUserId: typeof saved.highlightUserId === 'string' ? saved.highlightUserId : null,
+    readingMode: saved.readingMode === true,
+    readingWidth: READING_WIDTHS.includes(saved.readingWidth as number)
+      ? (saved.readingWidth as number)
+      : 320,
+    readingLines: READING_LINES.includes(saved.readingLines as number) ? (saved.readingLines as number) : 10,
     highlightOptions: !!saved.highlightOptions,
     showImportance: !!saved.showImportance,
     showSharedReasons: saved.showSharedReasons !== false,

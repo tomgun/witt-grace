@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-10 — `UI_INVENTORY.md` — Owner request: card text visibility: titles use the card's room, a reading view that shows every text and lays the tree out by card size (per browser), and a card's own size dragged by its corner (document field `layout.nodeSizes`, command `node.resize`) (S-07, S-12, S-15).
 - 2026-11-10 — `UI_INVENTORY.md` — Owner request: highlight one person's created, edited and commented nodes from the view dock, chosen apart from the active profile (S-07, S-12 `witt-view-v1` gains `highlightUserId`, S-15).
 - 2026-11-10 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner request: a fourth selectable method `signed-reasons-v1` (a reason passes its net result upward, strength = max(0, (I − 50) / 50); name provisional) for comparing which method is most sensible.
 - 2026-11-10 — `UI_INVENTORY.md` — Owner request: a ninth example, a deep debate (14 levels) for comparing the calculation methods (S-15).

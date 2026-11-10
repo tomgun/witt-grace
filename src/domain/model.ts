@@ -183,8 +183,15 @@ export interface Link {
   impact: number;
   createdBy?: string;
 }
+export interface Size {
+  w: number;
+  h: number;
+}
+/** Owner request 2026-11-10: a card dragged larger (or smaller) by its corner keeps its own size. */
+export const NODE_SIZE_LIMITS = { minW: 180, maxW: 640, minH: 80, maxH: 600 } as const;
 export interface Layout {
   fourWayOffsets: Record<string, Position>;
+  nodeSizes?: Record<string, Size>;
 }
 export interface Settings {
   voteWeighting: VoteWeighting;
