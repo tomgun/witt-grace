@@ -138,6 +138,7 @@ export const ENDED_TEXT: Record<EndCause, MessageKey> = {
   'refused-invite-used': 'collabEndedInviteUsed',
   'refused-removed': 'collabEndedRemoved',
   'refused-name': 'collabEndedName',
+  'refused-name-taken': 'collabJoinNameTaken',
   'refused-password': 'collabWrongPassword',
   'refused-locked': 'collabEndedLocked',
   'refused-revoked': 'collabEndedRevoked',
@@ -157,7 +158,8 @@ const SEAT_GONE: readonly EndCause[] = [
 
 type Given = { name?: string; password?: string; seat?: string };
 export type JoinRequest =
-  | { step: 'name'; invite: Invite }
+  /** `taken`: the host refused the name just tried; another one is asked. */
+  | { step: 'name'; invite: Invite; taken?: true }
   | { step: 'password'; invite: Invite; wrong: boolean }
   | { step: 'connecting'; invite: Invite }
   /** The host was not reached: absent (`unreachable`) or found without a direct path (`no-direct`); retry offered. */
@@ -244,6 +246,9 @@ export async function join(invite: Invite, given: Given = {}) {
       if (cause === 'refused-password') {
         store.clearCollab();
         setJoin({ step: 'password', invite, wrong: true });
+      } else if (cause === 'refused-name-taken') {
+        store.clearCollab();
+        setJoin({ step: 'name', invite, taken: true });
       } else if (cause === 'unreachable' || cause === 'no-direct') {
         store.clearCollab();
         setJoin({ step: 'failed', invite, given, cause });

@@ -6,13 +6,15 @@
  *       password invite moves between browsers and locks on wrong passwords; a new link drops the old browser;
  *       the host reloading continues the same links while participants wait and reconnect; a host that never
  *       returns ends the wait and everyone keeps the document; a new password keeps the link; a host found without a
- *       direct connection is told apart from an absent one (WG-030, P2P-01, P2P-02)
+ *       direct connection is told apart from an absent one; a second person with a name in use is refused by name
+ *       and the host cannot invite a name in use (WG-030, P2P-01, P2P-02)
  * test: tests/unit/session-flow.test.ts
  * red-against: the participant applying its proposal optimistically and again on commit (a duplicate node); the
  *              participant stamping its own clock; seq ignored; the welcome accepted from a peer that is not the host;
  *              the joiner's profile added before they agreed to join; a returning browser added as a second person;
  *              a resumed host with a new key that participants accept; proposals sent into the void while reconnecting;
- *              a password change that issues a new link; a failed ICE check reported as an absent host
+ *              a password change that issues a new link; a failed ICE check reported as an absent host; a second
+ *              "Aino" let in under another label
  * Note: host keys and tokens come from WebCrypto (the controller's job); no assertion depends on their values.
  */
 import assert from 'node:assert/strict';
@@ -154,10 +156,10 @@ test('two participants and the host converge; commits carry the host clock and t
   assert.ok(aino);
   assert.equal(a.session.status().selfUserId, aino.id);
 
-  const b = await join(hub, invite, 'B', 'Aino');
+  const b = await join(hub, invite, 'B', 'Bertta');
   b.session.accept();
   await settle(hub);
-  assert.equal(b.session.status().selfName, 'Aino (2)');
+  assert.equal(b.session.status().selfName, 'Bertta');
 
   // Interleaved: the host edits locally, both participants propose.
   const ctx = { now: '2026-11-11T11:00:00.000Z', actorId: 'u-host' };
@@ -190,7 +192,7 @@ test('two participants and the host converge; commits carry the host clock and t
     [
       ['Isäntä', true, true],
       ['Aino', false, true],
-      ['Aino (2)', false, true],
+      ['Bertta', false, true],
     ]
   );
   assert.deepEqual(a.session.status().people, session.status().people);
@@ -343,6 +345,17 @@ test('a new password keeps the link: the old password is refused, the new one ad
   const fresh = await join(hub, parsed.invite, 'N', { password: 'Uusi sana tuolla noin' });
   assert.equal(fresh.session.status().phase, 'confirm');
   assert.equal(fresh.session.status().selfName, 'Kalle');
+});
+
+test('a second person with a name in use is refused by name; the host cannot invite a name in use', async () => {
+  const { hub, session, invite } = await setup();
+  const a = await join(hub, invite, 'A', 'Aino');
+  assert.equal(a.session.status().phase, 'confirm');
+  const b = await join(hub, invite, 'B', ' aino ');
+  assert.equal(b.session.status().ended, 'refused-name-taken');
+  await assert.rejects(session.invite({ name: 'AINO' }, { mode: 'personal' }), /name taken/);
+  const c = await join(hub, invite, 'C', 'Aino K');
+  assert.equal(c.session.status().selfName, 'Aino K');
 });
 
 test('a new link for a person replaces the old link and drops the old browser; the profile and reviews stay', async () => {

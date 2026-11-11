@@ -179,7 +179,16 @@ export interface Person {
   host: boolean;
 }
 export type RefuseReason =
-  'version' | 'closed' | 'full' | 'invite-used' | 'removed' | 'name' | 'password' | 'locked' | 'revoked';
+  | 'version'
+  | 'closed'
+  | 'full'
+  | 'invite-used'
+  | 'removed'
+  | 'name'
+  | 'name-taken'
+  | 'password'
+  | 'locked'
+  | 'revoked';
 /** `replaced`: the same person joined from another browser; `revoked`: the host made a new link for this person. */
 export type EndReason = 'ended' | 'removed' | 'replaced' | 'revoked';
 export type RejectReason = 'rate' | 'forbidden' | 'refused' | 'not-ready';
@@ -355,6 +364,7 @@ const REFUSE_REASONS: readonly RefuseReason[] = [
   'invite-used',
   'removed',
   'name',
+  'name-taken',
   'password',
   'locked',
   'revoked',
@@ -480,9 +490,15 @@ export type Authorization = { ok: true; command: Command } | { ok: false; reason
 /**
  * May this participant propose this command? Deny by default: every command type is listed, governance (people,
  * weights, method, mode, rounds) stays with the host, and every field that names a person must name the seat's own
- * profile. `comment.add` gets the seat's name whatever the message said. `applyCommand` still decides validity.
+ * profile. `comment.add` gets the seat's name whatever the message said; a rename to a name `inUse` says is taken is
+ * refused. `applyCommand` still decides validity.
  */
-export function authorizeCommand(project: Project, command: Command, seat: SeatIdentity): Authorization {
+export function authorizeCommand(
+  project: Project,
+  command: Command,
+  seat: SeatIdentity,
+  inUse: (name: string) => boolean = () => false
+): Authorization {
   const allow: Authorization = { ok: true, command };
   const deny: Authorization = { ok: false, reason: 'forbidden' };
   const own = (userId: string) => (userId === seat.userId ? allow : deny);
@@ -536,7 +552,7 @@ export function authorizeCommand(project: Project, command: Command, seat: SeatI
       return comment && comment.authorId === seat.userId ? allow : deny;
     }
     case 'user.rename':
-      return !seat.personal && command.id === seat.userId ? allow : deny;
+      return !seat.personal && command.id === seat.userId && !inUse(command.name) ? allow : deny;
     case 'project.setMode':
     case 'project.setAssessmentWeighting':
     case 'project.setVoteWeighting':
@@ -605,10 +621,29 @@ export const createHostState = (sessionId: string, generalToken: string): HostSt
   invites: [],
 });
 
-/** A name nobody in the document has yet (`user.add` refuses duplicates): "Maija", "Maija (2)", … */
-export function uniqueName(project: Project, wanted: string, reserved: readonly string[] = []): string {
+/** Names compare as people read them: surrounding space, case and Unicode composition do not count. */
+export const sameName = (a: string, b: string): boolean =>
+  a.trim().normalize('NFC').toLocaleLowerCase() === b.trim().normalize('NFC').toLocaleLowerCase();
+/**
+ * Is the name someone else's in this session: a profile in the document, a seat not removed, or the person a live
+ * invite names? `except` is the person the name is for (renaming themself). One name never stands for two people.
+ */
+export function nameInUse(state: HostState, project: Project, name: string, except?: string): boolean {
+  const other = (userId: string) => userId !== except;
+  return [
+    ...project.users.filter((u) => other(u.id)).map((u) => u.name),
+    ...state.seats.filter((s) => !s.removed && other(s.userId)).map((s) => s.name),
+    ...state.invites.filter((i) => !i.revoked && other(i.userId)).map((i) => i.name),
+  ].some((taken) => sameName(taken, name));
+}
+
+/**
+ * A name nobody in the document has yet (`user.add` refuses duplicates): "Maija", "Maija (2)", … Only for the rare
+ * race where the document gained the name between a seat's admission and its profile.
+ */
+export function uniqueName(project: Project, wanted: string): string {
   const base = wanted.trim().slice(0, 110);
-  const taken = new Set([...project.users.map((u) => u.name), ...reserved].map((n) => n.toLocaleLowerCase()));
+  const taken = new Set(project.users.map((u) => u.name.toLocaleLowerCase()));
   if (!taken.has(base.toLocaleLowerCase())) return base;
   for (let i = 2; ; i++) {
     const candidate = `${base} (${i})`;
@@ -628,9 +663,9 @@ export type Admission =
   | { ok: false; reason: RefuseReason; state: HostState };
 /**
  * A hello from `peerId`. A known seat token comes back as its person. Otherwise the link's token decides: the
- * general token admits a new person under a unique name; a personal token is claimed by the first browser; a
- * password token admits any browser whose proof matches (counting wrong tries up to a lock) and takes the person's
- * seat over from another browser. Ids and tokens come in.
+ * general token admits a new person under a name nobody else in the session has (`name-taken` otherwise); a personal
+ * token is claimed by the first browser; a password token admits any browser whose proof matches (counting wrong
+ * tries up to a lock) and takes the person's seat over from another browser. Ids and tokens come in.
  */
 export function admit(
   state: HostState,
@@ -665,10 +700,10 @@ export function admit(
     if (active >= MAX_SEATS) return refuse('full');
     const wanted = hello.name?.trim();
     if (!wanted) return refuse('name');
-    const reserved = [...state.seats.map((s) => s.name), ...state.invites.map((i) => i.name)];
+    if (nameInUse(state, project, wanted)) return refuse('name-taken');
     const seat: Seat = {
       userId: fresh.userId,
-      name: uniqueName(project, wanted, reserved),
+      name: wanted.slice(0, 110),
       personal: false,
       seat: fresh.seat,
       peerId,

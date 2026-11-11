@@ -12,6 +12,7 @@ import {
   documentDigest,
   encodeInvite,
   issueInvite,
+  nameInUse,
   parseProject,
   parseToHost,
   parseToPeer,
@@ -165,8 +166,9 @@ export interface HostSession extends Common {
   /** Called by the store after the host replaced the whole document with a version of the same one. */
   replaced(next: Project): void;
   /**
-   * A personal link for a new name or an existing profile; the opener cannot change the name. Earlier links and
-   * seats of the same profile stop working. `password` mode admits any browser with the password.
+   * A personal link for a new name or an existing profile; the opener cannot change the name. A new name must not be
+   * in use in the session (`nameInUse`; throws otherwise). Earlier links and seats of the same profile stop working.
+   * `password` mode admits any browser with the password.
    */
   invite(
     person: { name: string } | { userId: string },
@@ -336,7 +338,9 @@ export async function startHost(options: {
         }
         const project = port.current();
         const name = project.users.find((u) => u.id === seat.userId)?.name ?? seat.name;
-        const verdict = authorizeCommand(project, message.command, { ...seat, name });
+        const verdict = authorizeCommand(project, message.command, { ...seat, name }, (wanted) =>
+          nameInUse(state, project, wanted, seat.userId)
+        );
         if (!verdict.ok) {
           send(peerId, { t: 'reject', id: message.id, reason: 'forbidden' });
           return;
@@ -403,6 +407,7 @@ export async function startHost(options: {
       const existing = 'userId' in person ? project.users.find((u) => u.id === person.userId) : undefined;
       const name = existing?.name ?? ('name' in person ? person.name.trim() : '');
       if (!name) throw new Error('name required');
+      if (!existing && nameInUse(state, project, name)) throw new Error('name taken');
       const verifier =
         access.mode === 'password'
           ? await passwordProof(access.password, passwordSalt(key.fingerprint, token), options.passwordRounds)

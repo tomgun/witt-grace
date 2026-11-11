@@ -7,6 +7,7 @@ import {
   isTurnUrl,
   normalizePassword,
   parseInvite,
+  sameName,
 } from '../domain/index.ts';
 import type { Signal } from '../domain/index.ts';
 import { suggestPassword } from '../lib/p2p/keys.ts';
@@ -422,10 +423,15 @@ function HostSection({
     status.invites.some((i) => i.userId === id) || status.people.some((p) => p.userId === id);
   const target = chosen ? state.project.users.find((u) => u.id === chosen) : undefined;
   const weak = mode === 'password' && normalizePassword(password).length < MIN_PASSWORD_LENGTH;
+  /** A new name someone in the document or the session already has: pick that person from the list instead. */
+  const taken =
+    !chosen &&
+    name.trim() !== '' &&
+    [...state.project.users, ...status.invites, ...status.people].some((p) => sameName(p.name, name));
   const fresh = created ? status.invites.find((i) => i.token === created) : undefined;
   const others = status.invites.filter((i) => i.token !== fresh?.token);
   const invite = async () => {
-    if (!chosen && !name.trim()) return;
+    if (!chosen && (!name.trim() || taken)) return;
     if (mode === 'password' && !normalizePassword(password)) return;
     if (
       target &&
@@ -434,11 +440,18 @@ function HostSection({
     )
       return;
     setBusy(true);
-    const made = await link.session.invite(
-      chosen ? { userId: chosen } : { name: name.trim() },
-      mode === 'password' ? { mode, password } : { mode }
-    );
-    setBusy(false);
+    let made: string;
+    try {
+      made = await link.session.invite(
+        chosen ? { userId: chosen } : { name: name.trim() },
+        mode === 'password' ? { mode, password } : { mode }
+      );
+    } catch {
+      // The name was taken in the meantime; the form shows why once the status catches up.
+      return;
+    } finally {
+      setBusy(false);
+    }
     const parsed = parseInvite(made);
     if (!parsed.ok) return;
     if (mode === 'password') rememberPassword(parsed.invite.access.token, password);
@@ -536,6 +549,11 @@ function HostSection({
                 />
               )}
             </div>
+            {taken ? (
+              <p className="inline-warning" role="alert" id="collabInviteNameTaken">
+                {t('collabInviteNameTaken')}
+              </p>
+            ) : null}
             {target && hasLink(target.id) ? (
               <p className="inline-warning" id="collabReissueNote">
                 {t('collabReissueNote', { name: target.name })}
@@ -601,7 +619,9 @@ function HostSection({
               className="btn primary"
               onClick={() => void invite()}
               disabled={
-                busy || (!chosen && !name.trim()) || (mode === 'password' && !normalizePassword(password))
+                busy ||
+                (!chosen && (!name.trim() || taken)) ||
+                (mode === 'password' && !normalizePassword(password))
               }
             >
               {busy ? t('collabConnecting') : t('collabInviteCreate')}
@@ -735,6 +755,11 @@ export function JoinDialog() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
+              {request.taken ? (
+                <p className="inline-warning" role="alert">
+                  {t('collabJoinNameTaken')}
+                </p>
+              ) : null}
             </>
           ) : (
             <>

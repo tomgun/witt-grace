@@ -5,13 +5,15 @@
  *       personal token (first browser only) or by a password token (any browser with the proof, one at a time,
  *       wrong tries up to a lock); a new password keeps the link and the admitted seats but not the old password;
  *       a new link for a person revokes the old link and seat; seats and rate are limited;
- *       names stay unique (WG-030, P2P-02, P2P-03)
+ *       one name never stands for two people in a session: a general join, a host's new invite or a participant's
+ *       rename to a name in the document, a live seat or a live invite is refused (WG-030, P2P-02, P2P-03)
  * test: tests/unit/session-protocol.test.ts
  * red-against: authorization reading the claimed actor instead of the seat; a comment keeping a forged authorName;
  *              a personal invite taken by a second browser; an unknown token treated as the general one; a missing
  *              password counted as a wrong try; a locked invite opened by the right password; a revoked seat
  *              coming back; the hello's name winning over the host's; a password change that leaves the old proof
- *              working, keeps the lock, or reaches a personal or revoked invite
+ *              working, keeps the lock, or reaches a personal or revoked invite; a second "Maija" admitted as "Maija (2)";
+ *              names compared case-sensitively; a removed seat or a revoked invite keeping its name forever
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -28,6 +30,7 @@ import {
   createBlankProject,
   createHostState,
   issueInvite,
+  nameInUse,
   setInvitePassword,
   unlockInvite,
   MAX_PASSWORD_FAILURES,
@@ -362,11 +365,19 @@ const VERIFIER = 'a'.repeat(64);
 const WRONG = 'b'.repeat(64);
 const host = (): HostState => createHostState('s', GEN);
 
-test('the general link admits under a unique name; the hello cannot pick an existing profile', () => {
+test('the general link admits under a name nobody in the session has; the hello cannot pick an existing profile', () => {
   const project = withGuest();
-  const result = admit(host(), project, hello({ name: 'Vieras' }), 'peer-a', fresh(0));
+  const reason = (r: { ok: boolean }) => (r as { reason?: string }).reason;
+  assert.equal(reason(admit(host(), project, hello({ name: ' vieras ' }), 'peer-a', fresh(0))), 'name-taken');
+  assert.equal(reason(admit(host(), project, hello({ name: 'ISÄNTÄ' }), 'peer-a', fresh(0))), 'name-taken');
+  const result = admit(host(), project, hello({ name: ' Maija ' }), 'peer-a', fresh(0));
   assert.ok(result.ok);
-  assert.equal(result.seat.name, 'Vieras (2)');
+  assert.equal(result.seat.name, 'Maija');
+  assert.equal(
+    reason(admit(result.state, project, hello({ name: 'maija' }), 'peer-b', fresh(1))),
+    'name-taken',
+    'a seat not yet in the document holds its name'
+  );
   assert.equal(result.seat.userId, 'u-new-0');
   assert.equal(result.seat.personal, false);
   assert.equal(result.seat.joined, false);
@@ -559,11 +570,55 @@ test('seats are capped and proposals are rate-limited', () => {
   assert.equal(spendRate(seat, 100).ok, true);
 });
 
+test('a name in use: profiles, live seats and live invites, compared as people read them; except the person', () => {
+  const project = withGuest();
+  const invited = issueInvite(host(), {
+    token: T3,
+    mode: 'personal',
+    userId: 'u-kalle',
+    name: 'Kalle',
+    verifier: null,
+  }).state;
+  assert.equal(nameInUse(invited, project, 'KALLE'), true, 'a live invite holds its name');
+  assert.equal(nameInUse(invited, project, 'Kalle', 'u-kalle'), false, 'the person themself');
+  assert.equal(nameInUse(invited, project, 'Va\u0308ino\u0308'), false);
+  assert.equal(nameInUse(invited, project, 'Vieras'), true);
+  assert.equal(nameInUse(invited, project, 'Vieras', 'u-guest'), false);
+  const revoked = issueInvite(invited, {
+    token: T2,
+    mode: 'personal',
+    userId: 'u-kalle',
+    name: 'Kalle',
+    verifier: null,
+  }).state;
+  assert.equal(nameInUse(revoked, project, 'Kalle'), true, 'the new invite holds it');
+  const gone = { ...revoked, invites: revoked.invites.filter((i) => i.token !== T2) };
+  assert.equal(nameInUse(gone, project, 'Kalle'), false, 'a revoked invite frees the name');
+  const seated = admit(host(), project, hello({ name: 'Väinö' }), 'peer-a', fresh(0));
+  assert.ok(seated.ok);
+  assert.equal(
+    nameInUse(seated.state, project, 'va\u0308ino\u0308'),
+    true,
+    'decomposed ä and ö are the same letters'
+  );
+  const removed = { ...seated.state, seats: seated.state.seats.map((s) => ({ ...s, removed: true })) };
+  assert.equal(nameInUse(removed, project, 'Väinö'), false, 'a removed seat frees the name');
+});
+
+test('a participant cannot rename themself to a name in use', () => {
+  const project = withGuest();
+  const inUse = (name: string) => nameInUse(host(), project, name, SEAT.userId);
+  const rename = (name: string) =>
+    authorizeCommand(project, { type: 'user.rename', id: 'u-guest', name }, SEAT, inUse).ok;
+  assert.equal(rename('isäntä'), false);
+  assert.equal(rename('VIERAS'), true, 'their own name in another case');
+  assert.equal(rename('Maija'), true);
+});
+
 test('unique names and commit order', () => {
   const project = withGuest();
   assert.equal(uniqueName(project, '  Maija '), 'Maija');
   assert.equal(uniqueName(project, 'vieras'), 'vieras (2)');
-  assert.equal(uniqueName(project, 'Maija', ['maija', 'Maija (2)']), 'Maija (3)');
   assert.equal(commitOrder(4, 5), 'apply');
   assert.equal(commitOrder(4, 4), 'stale');
   assert.equal(commitOrder(4, 7), 'gap');

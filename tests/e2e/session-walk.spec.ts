@@ -3,11 +3,12 @@
  *       types a name and sees the tree; the participant's new reason reaches the host and the host's title edit
  *       reaches the participant; undo is off while collaborating; a personal invite needs no name and shows the
  *       host-given one; the invite's link and password show together in full; after a reload the password is no
- *       longer shown and can be changed; ending tells the participant and keeps the document; a broken link says so
- *       (WG-030)
+ *       longer shown and can be changed; a name already in the session is refused when joining and when inviting;
+ *       ending tells the participant and keeps the document; a broken link says so (WG-030)
  * test: tests/e2e/session-walk.spec.ts (desktop; two and three Chromium contexts over the local relay on 8787)
  * red-against: a name prompt for a personal invite; a commit applied to the store without a re-render; the joiner's
- *              work replaced before the host answered; undo replacing the shared document locally
+ *              work replaced before the host answered; undo replacing the shared document locally; a second "Aino"
+ *              let in silently
  */
 import { expect, test } from '@playwright/test';
 import type { Browser, Page } from '@playwright/test';
@@ -57,6 +58,14 @@ test('two people edit one document, a personal invite joins by the host’s name
   await expect(guest.locator('#projectTitle')).toHaveValue('Yhteinen pohdinta');
   await expect(guest.locator('#collabChip')).toHaveText(/Yhteistyössä · 2/);
   await expect(host.locator('#collabPeople')).toContainText('Aino');
+  // A second person with the same name is asked for another one.
+  const twin = await newPage(browser);
+  await twin.goto(general);
+  await twin.locator('#joinName').fill('aino');
+  await twin.locator('#btnJoin').click();
+  await expect(twin.locator('#joinDialog')).toContainText('Tällä nimellä on jo joku', { timeout: 20_000 });
+  await expect(twin.locator('#joinName')).toHaveValue('aino');
+  await twin.close();
   await expect(guest.locator('#actorSelect')).toBeDisabled();
   await expect(guest.locator('#actorSelect option:checked')).toHaveText('Aino');
   await expect(guest.locator('#btnUndoTop')).toBeDisabled();
@@ -79,6 +88,9 @@ test('two people edit one document, a personal invite joins by the host’s name
   // A personal invite: no name prompt, the host's name.
   await openCollab(host);
   await host.locator('#collabWhoNamed').check();
+  await host.locator('#collabInviteName').fill('AINO');
+  await expect(host.locator('#collabInviteNameTaken')).toBeVisible();
+  await expect(host.locator('#btnCollabInvite')).toBeDisabled();
   await host.locator('#collabInviteName').fill('Kalle');
   await host.locator('#btnCollabInvite').click();
   const personal = (await host.locator('#collabInviteResult code[id^="collabInvite-"]').textContent()) ?? '';
