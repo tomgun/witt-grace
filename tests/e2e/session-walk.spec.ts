@@ -2,7 +2,9 @@
  * must: the host starts a collaboration from the open document and copies the general link; a second browser opens it,
  *       types a name and sees the tree; the participant's new reason reaches the host and the host's title edit
  *       reaches the participant; undo is off while collaborating; a personal invite needs no name and shows the
- *       host-given one; ending tells the participant and keeps the document; a broken link says so (WG-030)
+ *       host-given one; the invite's link and password show together in full; after a reload the password is no
+ *       longer shown and can be changed; ending tells the participant and keeps the document; a broken link says so
+ *       (WG-030)
  * test: tests/e2e/session-walk.spec.ts (desktop; two and three Chromium contexts over the local relay on 8787)
  * red-against: a name prompt for a personal invite; a commit applied to the store without a re-render; the joiner's
  *              work replaced before the host answered; undo replacing the shared document locally
@@ -39,7 +41,7 @@ test('two people edit one document, a personal invite joins by the host’s name
   await host.locator('#collabSignalRelay').check();
   await host.locator('#collabRelayUrl').fill('ws://127.0.0.1:8787');
   await host.locator('#btnCollabStart').click();
-  const general = await host.locator('#collabLink').inputValue();
+  const general = (await host.locator('#collabLink').textContent()) ?? '';
   expect(general).toMatch(
     /#join=1\.r~[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{22}\.g[A-Za-z0-9_-]{22}$/
   );
@@ -76,16 +78,17 @@ test('two people edit one document, a personal invite joins by the host’s name
 
   // A personal invite: no name prompt, the host's name.
   await openCollab(host);
+  await host.locator('#collabWhoNamed').check();
   await host.locator('#collabInviteName').fill('Kalle');
   await host.locator('#btnCollabInvite').click();
-  const personal = await host.locator('#collabInvites input').first().inputValue();
+  const personal = (await host.locator('#collabInviteResult code[id^="collabInvite-"]').textContent()) ?? '';
   const kalle = await newPage(browser);
   await kalle.goto(personal);
   await expect(kalle.locator('#joinName')).toHaveCount(0);
   await expect(kalle.getByTestId('app')).toBeVisible({ timeout: 20_000 });
   await expect(kalle.locator('#actorSelect option:checked')).toHaveText('Kalle');
   await expect(host.locator('#collabPeople')).toContainText('Kalle');
-  await expect(host.locator('#collabInvites')).toContainText('käytössä');
+  await expect(host.locator('#collabInviteResult')).toContainText('käytössä');
 
   // The host ends; the participants are told and keep the document.
   await host.locator('#btnCollabEnd').click();
@@ -108,14 +111,15 @@ test('a password invite asks the password; the host reloads and the collaboratio
   await host.locator('#collabSignalRelay').check();
   await host.locator('#collabRelayUrl').fill('ws://127.0.0.1:8787');
   await host.locator('#btnCollabStart').click();
+  await host.locator('#collabWhoNamed').check();
   await host.locator('#collabInviteName').fill('Kalle');
   await host.locator('#collabModePassword').check();
   const password = await host.locator('#collabInvitePassword').inputValue();
   expect(password.split('-')).toHaveLength(4);
   await host.locator('#btnCollabInvite').click();
-  const link = await host.locator('#collabInvites input').first().inputValue();
+  const link = (await host.locator('#collabInviteResult code[id^="collabInvite-"]').textContent()) ?? '';
   expect(link).toMatch(/\.k[A-Za-z0-9_-]{22}$/);
-  await expect(host.locator('#collabInvites input').nth(1)).toHaveValue(password);
+  await expect(host.locator('#collabInviteResult code[id^="collabInvitePw-"]')).toHaveText(password);
 
   const kalle = await newPage(browser);
   await kalle.goto(link);
@@ -134,6 +138,13 @@ test('a password invite asks the password; the host reloads and the collaboratio
   await host.locator('#btnHomeContinue').click();
   await expect(host.locator('#collabChip')).toHaveText(/Yhteistyössä · 2/, { timeout: 20_000 });
   await expect(kalle.locator('#collabChip')).toHaveText(/Yhteistyössä · 2/, { timeout: 20_000 });
+  // The reloaded host no longer knows the password; it keeps the same link and can set a new password.
+  await host.locator('#collabChip').click();
+  const card = host.locator('#collabInvites .collab-invite-card').first();
+  await expect(card).toContainText('Salasana ei ole enää näkyvissä');
+  await expect(card.locator('code[id^="collabInvite-"]')).toHaveText(link);
+  await expect(card.getByRole('button', { name: 'Vaihda salasana' })).toBeVisible();
+  await host.keyboard.press('Escape');
   await addNamed(kalle, '#btnSupport', 'Kallen perustelu');
   await expect(host.locator('.node-title', { hasText: 'Kallen perustelu' })).toBeVisible();
 

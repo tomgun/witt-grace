@@ -9037,3 +9037,118 @@ input[type='range'].range-unset:focus-visible {
   background: var(--accent-soft);
   color: var(--accent-text);
 }
+
+/* Collaboration dialog (WG-030): links and passwords shown whole, one card per invite, choices with their help. */
+.collab-dialog.action-dialog {
+  width: min(620px, calc(100vw - 24px));
+  max-width: 620px;
+  box-sizing: border-box;
+}
+.collab-dialog h3 {
+  margin: 14px 0 6px;
+  font-size: 13px;
+}
+.collab-choice {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 8px;
+  border: 0;
+  padding: 0;
+}
+.collab-choice legend {
+  margin-bottom: 4px;
+  font-weight: 650;
+}
+.collab-choice label {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.4;
+}
+.collab-choice-help {
+  display: block;
+  color: var(--subtle);
+  font-size: 11px;
+}
+.collab-invite-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.collab-invite-result {
+  display: grid;
+  gap: 8px;
+}
+.collab-invite-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: baseline;
+}
+.collab-invite-head span {
+  color: var(--subtle);
+  font-size: 11px;
+}
+.collab-invite-row,
+.collab-invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.collab-invite-row input,
+.collab-invite-row select {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+.collab-invites {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.collab-copy {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  align-items: center;
+}
+.collab-copy-label {
+  grid-column: 1 / -1;
+  color: var(--subtle);
+  font-size: 11px;
+}
+.collab-copy-value {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--bg);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  user-select: all;
+}
+.collab-copy-password .collab-copy-value {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  word-break: normal;
+}
+.collab-password-edit {
+  display: grid;
+  gap: 6px;
+}
+.collab-turn {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  border: 0;
+  padding: 0;
+}
+.collab-turn legend {
+  font-weight: 650;
+}

@@ -1,35 +1,59 @@
 // Live collaboration UI (WG-030, UI_INVENTORY S-15): the collaboration dialog (start, invite, participants, end),
 // the join dialog a link opens, the notice when a session ends, and the status chip beside the document title.
 import { useState } from 'react';
-import { MIN_PASSWORD_LENGTH, isRelayUrl, normalizePassword, parseInvite } from '../domain/index.ts';
+import {
+  MIN_PASSWORD_LENGTH,
+  isRelayUrl,
+  isTurnUrl,
+  normalizePassword,
+  parseInvite,
+} from '../domain/index.ts';
 import type { Signal } from '../domain/index.ts';
 import { suggestPassword } from '../lib/p2p/keys.ts';
-import type { CollabStatus } from '../lib/p2p/session.ts';
+import type { CollabStatus, InviteView } from '../lib/p2p/session.ts';
 import {
   ENDED_TEXT,
   cancelJoin,
   closeCollab,
   inviteUrl,
   join,
+  madePassword,
   readSignal,
+  readTurn,
+  rememberPassword,
   startCollab,
   useJoinRequest,
+  writeTurn,
 } from './collab.ts';
 import { Modal } from './dialogs.tsx';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
-function CopyField({ id, value, label }: { id: string; value: string; label: string }) {
+/** A link or a password shown whole (wrapped, selectable at one click) with its own copy button. */
+function CopyBlock({
+  id,
+  value,
+  label,
+  kind,
+}: {
+  id: string;
+  value: string;
+  label: string;
+  kind: 'link' | 'password';
+}) {
   const t = useTranslator();
   const [copied, setCopied] = useState(false);
   return (
-    <div className="collab-link-row">
-      <label className="visually-hidden" htmlFor={id}>
+    <div className={`collab-copy collab-copy-${kind}`}>
+      <span className="collab-copy-label" id={`${id}-label`}>
         {label}
-      </label>
-      <input id={id} data-testid={id} readOnly value={value} onFocus={(e) => e.target.select()} />
+      </span>
+      <code id={id} data-testid={id} className="collab-copy-value" aria-labelledby={`${id}-label`}>
+        {value}
+      </code>
       <button
         type="button"
         className="btn quiet"
+        aria-label={`${t('collabCopy')}: ${label}`}
         onClick={() => {
           void navigator.clipboard?.writeText(value).then(
             () => setCopied(true),
@@ -37,16 +61,13 @@ function CopyField({ id, value, label }: { id: string; value: string; label: str
           );
         }}
       >
-        {t('collabCopy')}
+        <span role="status">{copied ? t('collabCopied') : t('collabCopy')}</span>
       </button>
-      <span role="status" className="collab-copied">
-        {copied ? t('collabCopied') : ''}
-      </span>
     </div>
   );
 }
 
-function PrivacyNote({ signal }: { signal: Signal }) {
+function PrivacyNote({ signal, turn }: { signal: Signal; turn: string[] | null }) {
   const t = useTranslator();
   return (
     <div className="inspector-note collab-privacy" id="collabPrivacy">
@@ -57,7 +78,70 @@ function PrivacyNote({ signal }: { signal: Signal }) {
           ? t('collabPrivacyNostr')
           : t('collabPrivacyRelay', { url: signal.urls.join(', ') })}
       </p>
+      {turn ? <p>{t('collabPrivacyTurn', { url: turn.join(', ') })}</p> : null}
     </div>
+  );
+}
+
+/** This browser's TURN server: saved as typed (when valid), used by every later connection from this browser. */
+function useTurnDraft() {
+  const [draft, setDraft] = useState(() => {
+    const saved = readTurn();
+    return {
+      urls: saved?.urls.join(' ') ?? '',
+      username: saved?.username ?? '',
+      credential: saved?.credential ?? '',
+    };
+  });
+  const listOf = (urls: string) => urls.split(/\s+/).filter(Boolean);
+  const validList = (list: string[]) => list.length <= 3 && list.every(isTurnUrl);
+  const list = listOf(draft.urls);
+  const update = (patch: Partial<typeof draft>) => {
+    const next = { ...draft, ...patch };
+    setDraft(next);
+    const urls = listOf(next.urls);
+    if (validList(urls))
+      writeTurn(urls.length ? { urls, username: next.username, credential: next.credential } : null);
+  };
+  return { draft, update, valid: validList(list), active: validList(list) && list.length ? list : null };
+}
+
+function TurnFields({ turn }: { turn: ReturnType<typeof useTurnDraft> }) {
+  const t = useTranslator();
+  return (
+    <fieldset className="collab-turn">
+      <legend>{t('collabTurn')}</legend>
+      <p className="inspector-note">{t('collabTurnHelp')}</p>
+      <input
+        id="collabTurnUrl"
+        placeholder="turn:turn.example.org:3478"
+        aria-label={t('collabTurn')}
+        spellCheck={false}
+        value={turn.draft.urls}
+        onChange={(e) => turn.update({ urls: e.target.value })}
+      />
+      <div className="collab-invite-row">
+        <input
+          id="collabTurnUser"
+          placeholder={t('collabTurnUser')}
+          aria-label={t('collabTurnUser')}
+          autoComplete="off"
+          spellCheck={false}
+          value={turn.draft.username}
+          onChange={(e) => turn.update({ username: e.target.value })}
+        />
+        <input
+          id="collabTurnCredential"
+          type="password"
+          placeholder={t('collabTurnCredential')}
+          aria-label={t('collabTurnCredential')}
+          autoComplete="off"
+          value={turn.draft.credential}
+          onChange={(e) => turn.update({ credential: e.target.value })}
+        />
+      </div>
+      {turn.valid ? null : <p className="inline-warning">{t('collabTurnInvalid')}</p>}
+    </fieldset>
   );
 }
 
@@ -65,6 +149,7 @@ function StartSection() {
   const t = useTranslator();
   const store = getStore();
   const remembered = readSignal();
+  const turn = useTurnDraft();
   const [source, setSource] = useState<'current' | 'argument' | 'decision'>('current');
   const [strategy, setStrategy] = useState<Signal['strategy']>(remembered.strategy);
   const [relay, setRelay] = useState(remembered.strategy === 'relay' ? remembered.urls.join(' ') : '');
@@ -99,41 +184,45 @@ function StartSection() {
           </label>
         ))}
       </fieldset>
-      <PrivacyNote signal={signal} />
+      <PrivacyNote signal={signal} turn={turn.active} />
       <details className="collab-advanced">
         <summary>{t('collabAdvanced')}</summary>
-        <label>
+        <fieldset>
+          <legend>{t('collabSignal')}</legend>
+          <label>
+            <input
+              type="radio"
+              name="collabSignal"
+              id="collabSignalNostr"
+              checked={strategy === 'nostr'}
+              onChange={() => setStrategy('nostr')}
+            />{' '}
+            {t('collabSignalNostr')}
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="collabSignal"
+              id="collabSignalRelay"
+              checked={strategy === 'relay'}
+              onChange={() => setStrategy('relay')}
+            />{' '}
+            {t('collabSignalRelay')}
+          </label>
           <input
-            type="radio"
-            name="collabSignal"
-            id="collabSignalNostr"
-            checked={strategy === 'nostr'}
-            onChange={() => setStrategy('nostr')}
-          />{' '}
-          {t('collabSignalNostr')}
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="collabSignal"
-            id="collabSignalRelay"
-            checked={strategy === 'relay'}
-            onChange={() => setStrategy('relay')}
-          />{' '}
-          {t('collabSignalRelay')}
-        </label>
-        <input
-          id="collabRelayUrl"
-          data-testid="collab-relay-url"
-          placeholder="wss://…"
-          value={relay}
-          disabled={strategy !== 'relay'}
-          aria-label={t('collabSignalRelay')}
-          onChange={(e) => setRelay(e.target.value)}
-        />
-        {strategy === 'relay' && !relayValid ? (
-          <p className="inline-warning">{t('collabRelayInvalid')}</p>
-        ) : null}
+            id="collabRelayUrl"
+            data-testid="collab-relay-url"
+            placeholder="wss://…"
+            value={relay}
+            disabled={strategy !== 'relay'}
+            aria-label={t('collabSignalRelay')}
+            onChange={(e) => setRelay(e.target.value)}
+          />
+          {strategy === 'relay' && !relayValid ? (
+            <p className="inline-warning">{t('collabRelayInvalid')}</p>
+          ) : null}
+        </fieldset>
+        <TurnFields turn={turn} />
       </details>
       <div className="dialog-actions">
         <button type="button" className="btn quiet" onClick={() => store.openDialog(null)}>
@@ -143,7 +232,7 @@ function StartSection() {
           type="button"
           id="btnCollabStart"
           className="btn primary"
-          disabled={busy || (strategy === 'relay' && !relayValid)}
+          disabled={busy || (strategy === 'relay' && !relayValid) || !turn.valid}
           onClick={() => void start()}
         >
           {busy ? t('collabConnecting') : t('collabStart')}
@@ -195,12 +284,125 @@ function People({ status, onReissue }: { status: CollabStatus; onReissue?: (user
   );
 }
 
+/** One personal invite: its link and (while this tab knows it) its password together, and what can be done to it. */
+function InviteCard({ invite, fresh = false }: { invite: InviteView; fresh?: boolean }) {
+  const t = useTranslator();
+  const store = getStore();
+  const { language } = useAppState();
+  const link = store.collabLink();
+  const [draft, setDraft] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  if (link?.role !== 'host') return null;
+  const password = madePassword(invite.token);
+  const isPassword = invite.mode === 'password';
+  const state = invite.locked
+    ? t('collabInviteLocked', { count: invite.failures })
+    : invite.claimed
+      ? t('collabInviteUsed')
+      : t('collabInviteWaiting');
+  const save = async () => {
+    if (draft === null || !normalizePassword(draft)) return;
+    setBusy(true);
+    await link.session.setPassword(invite.token, draft);
+    rememberPassword(invite.token, draft);
+    setBusy(false);
+    setDraft(null);
+  };
+  return (
+    <div className="collab-invite-card" data-token={invite.token}>
+      <div className="collab-invite-head">
+        <strong>{invite.name}</strong>
+        <span>
+          {isPassword ? t('collabInvitePassword') : t('collabInviteKindPersonal')} · {state}
+        </span>
+      </div>
+      {invite.mode === 'personal' && invite.claimed ? (
+        <p className="inspector-note">{t('collabInviteClaimedNote')}</p>
+      ) : (
+        <CopyBlock
+          id={`collabInvite-${invite.token}`}
+          value={inviteUrl(invite.link)}
+          label={t('collabLinkLabel')}
+          kind="link"
+        />
+      )}
+      {isPassword && draft === null ? (
+        password ? (
+          <CopyBlock
+            id={`collabInvitePw-${invite.token}`}
+            value={password}
+            label={t('collabPassword')}
+            kind="password"
+          />
+        ) : (
+          <p className="inspector-note">{t('collabPasswordHidden')}</p>
+        )
+      ) : null}
+      {fresh && isPassword && password ? <p className="inspector-note">{t('collabSendSeparately')}</p> : null}
+      {isPassword && draft !== null ? (
+        <div className="collab-password-edit">
+          <label htmlFor={`collabNewPassword-${invite.token}`}>{t('collabPasswordNew')}</label>
+          <div className="collab-invite-row">
+            <input
+              id={`collabNewPassword-${invite.token}`}
+              autoComplete="off"
+              spellCheck={false}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+            />
+            <button type="button" className="btn quiet" onClick={() => setDraft(suggestPassword(language))}>
+              {t('collabPasswordSuggest')}
+            </button>
+          </div>
+          {normalizePassword(draft).length < MIN_PASSWORD_LENGTH ? (
+            <p className="inline-warning">{t('collabPasswordWeak', { count: MIN_PASSWORD_LENGTH })}</p>
+          ) : null}
+          <p className="inspector-note">{t('collabPasswordChangeHelp')}</p>
+          <div className="collab-invite-actions">
+            <button type="button" className="btn quiet" onClick={() => setDraft(null)}>
+              {t('cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn primary"
+              disabled={busy || !normalizePassword(draft)}
+              onClick={() => void save()}
+            >
+              {t('collabPasswordSave')}
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {draft === null && (isPassword || invite.locked) ? (
+        <div className="collab-invite-actions">
+          {isPassword ? (
+            <button type="button" className="btn quiet" onClick={() => setDraft(suggestPassword(language))}>
+              {t('collabPasswordChange')}
+            </button>
+          ) : null}
+          {invite.locked ? (
+            <button type="button" className="btn quiet" onClick={() => link.session.unlock(invite.token)}>
+              {t('collabInviteUnlock')}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+type Who = 'anyone' | 'named';
+
 function HostSection({
   status,
+  who,
+  setWho,
   chosen,
   choose,
 }: {
   status: CollabStatus;
+  who: Who;
+  setWho: (who: Who) => void;
   chosen: string;
   choose: (id: string) => void;
 }) {
@@ -212,17 +414,19 @@ function HostSection({
   const [mode, setMode] = useState<'personal' | 'password'>('personal');
   const [password, setPassword] = useState(() => suggestPassword(state.language));
   const [busy, setBusy] = useState(false);
-  /** Passwords made in this dialog, shown once beside their link (the host keeps only a verifier). */
-  const [made, setMade] = useState<Record<string, string>>({});
+  /** The invite just made: shown in place of the form, link and password together, until the next one. */
+  const [created, setCreated] = useState<string | null>(null);
   if (link?.role !== 'host') return null;
   const people = state.project.users.filter((u) => u.id !== status.selfUserId && u.profileKind !== 'ai');
   const hasLink = (id: string) =>
     status.invites.some((i) => i.userId === id) || status.people.some((p) => p.userId === id);
+  const target = chosen ? state.project.users.find((u) => u.id === chosen) : undefined;
   const weak = mode === 'password' && normalizePassword(password).length < MIN_PASSWORD_LENGTH;
+  const fresh = created ? status.invites.find((i) => i.token === created) : undefined;
+  const others = status.invites.filter((i) => i.token !== fresh?.token);
   const invite = async () => {
     if (!chosen && !name.trim()) return;
     if (mode === 'password' && !normalizePassword(password)) return;
-    const target = chosen ? state.project.users.find((u) => u.id === chosen) : null;
     if (
       target &&
       hasLink(target.id) &&
@@ -230,156 +434,194 @@ function HostSection({
     )
       return;
     setBusy(true);
-    const created = await link.session.invite(
+    const made = await link.session.invite(
       chosen ? { userId: chosen } : { name: name.trim() },
       mode === 'password' ? { mode, password } : { mode }
     );
     setBusy(false);
-    const token = parseInvite(created);
-    if (token.ok && mode === 'password') setMade({ ...made, [token.invite.access.token]: password });
+    const parsed = parseInvite(made);
+    if (!parsed.ok) return;
+    if (mode === 'password') rememberPassword(parsed.invite.access.token, password);
+    setCreated(parsed.invite.access.token);
+  };
+  const another = () => {
+    setCreated(null);
     setName('');
     choose('');
     setPassword(suggestPassword(state.language));
   };
   return (
     <>
-      <section aria-labelledby="collabGeneralHeading">
-        <h3 id="collabGeneralHeading">{t('collabGeneralLink')}</h3>
-        <p className="inspector-note">{t('collabGeneralHelp')}</p>
-        <CopyField id="collabLink" value={inviteUrl(status.link ?? '')} label={t('collabGeneralLink')} />
-        <label className="collab-check">
-          <input
-            type="checkbox"
-            id="collabGeneralOpen"
-            checked={status.generalOpen}
-            onChange={(e) => link.session.setGeneralOpen(e.target.checked)}
-          />{' '}
-          {t('collabGeneralOpen')}
-        </label>
-      </section>
-      <section aria-labelledby="collabInvitesHeading" id="collabInviteForm">
-        <h3 id="collabInvitesHeading">{t('collabPersonal')}</h3>
-        <p className="inspector-note">{t('collabPersonalHelp')}</p>
-        <div className="collab-invite-row">
-          {people.length ? (
-            <select
-              id="collabInviteProfile"
-              aria-label={t('collabInviteProfile')}
-              value={chosen}
-              onChange={(e) => choose(e.target.value)}
-            >
-              <option value="">{t('collabInviteNew')}</option>
-              {people.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {hasLink(u.id) ? t('collabInviteReplaces', { name: u.name }) : u.name}
-                </option>
-              ))}
-            </select>
-          ) : null}
-          {chosen ? null : (
-            <input
-              id="collabInviteName"
-              data-testid="collab-invite-name"
-              maxLength={110}
-              placeholder={t('collabInviteName')}
-              aria-label={t('collabInviteName')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          )}
-        </div>
-        <fieldset className="collab-mode">
-          <legend className="visually-hidden">{t('collabInviteMode')}</legend>
+      <section aria-labelledby="collabInviteHeading" id="collabInviteForm">
+        <h3 id="collabInviteHeading">{t('collabInviteHeading')}</h3>
+        <fieldset className="collab-choice">
+          <legend>{t('collabWho')}</legend>
           <label>
             <input
               type="radio"
-              name="collabInviteMode"
-              id="collabModePersonal"
-              checked={mode === 'personal'}
-              onChange={() => setMode('personal')}
+              name="collabWho"
+              id="collabWhoAnyone"
+              checked={who === 'anyone'}
+              onChange={() => setWho('anyone')}
             />{' '}
-            {t('collabModePersonal')}
+            {t('collabWhoAnyone')}
           </label>
           <label>
             <input
               type="radio"
-              name="collabInviteMode"
-              id="collabModePassword"
-              checked={mode === 'password'}
-              onChange={() => setMode('password')}
+              name="collabWho"
+              id="collabWhoNamed"
+              checked={who === 'named'}
+              onChange={() => setWho('named')}
             />{' '}
-            {t('collabModePassword')}
+            {t('collabWhoNamed')}
           </label>
         </fieldset>
-        {mode === 'password' ? (
-          <div className="collab-invite-row">
-            <label className="visually-hidden" htmlFor="collabInvitePassword">
-              {t('collabPassword')}
-            </label>
-            <input
-              id="collabInvitePassword"
-              data-testid="collab-invite-password"
-              autoComplete="off"
-              spellCheck={false}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+        {who === 'anyone' ? (
+          <div className="collab-invite-card">
+            <p className="inspector-note">{t('collabGeneralHelp')}</p>
+            <CopyBlock
+              id="collabLink"
+              value={inviteUrl(status.link ?? '')}
+              label={t('collabGeneralLink')}
+              kind="link"
             />
-            <button
-              type="button"
-              className="btn quiet"
-              onClick={() => setPassword(suggestPassword(state.language))}
-            >
-              {t('collabPasswordSuggest')}
+            <label className="collab-check">
+              <input
+                type="checkbox"
+                id="collabGeneralOpen"
+                checked={status.generalOpen}
+                onChange={(e) => link.session.setGeneralOpen(e.target.checked)}
+              />{' '}
+              {t('collabGeneralOpen')}
+            </label>
+          </div>
+        ) : fresh ? (
+          <div id="collabInviteResult" className="collab-invite-result">
+            <p role="status">
+              <strong>{t('collabInviteReady', { name: fresh.name })}</strong>
+            </p>
+            <InviteCard invite={fresh} fresh />
+            <button type="button" id="btnCollabInviteAnother" className="btn quiet" onClick={another}>
+              {t('collabInviteAnother')}
             </button>
           </div>
-        ) : null}
-        {weak ? (
-          <p className="inline-warning">{t('collabPasswordWeak', { count: MIN_PASSWORD_LENGTH })}</p>
-        ) : null}
-        <p className="inspector-note">
-          {mode === 'password' ? t('collabModePasswordHelp') : t('collabModePersonalHelp')}
-        </p>
-        <button
-          type="button"
-          id="btnCollabInvite"
-          className="btn quiet"
-          onClick={() => void invite()}
-          disabled={
-            busy || (!chosen && !name.trim()) || (mode === 'password' && !normalizePassword(password))
-          }
-        >
-          {busy ? t('collabConnecting') : t('collabInviteCreate')}
-        </button>
-        <ul className="collab-invites" id="collabInvites">
-          {status.invites.map((i) => (
-            <li key={i.token}>
-              <strong>{i.name}</strong> ·{' '}
-              {i.locked
-                ? t('collabInviteLocked', { count: i.failures })
-                : i.mode === 'password'
-                  ? t('collabInvitePassword')
-                  : i.claimed
-                    ? t('collabInviteUsed')
-                    : t('collabInviteWaiting')}
-              {i.locked ? (
-                <button type="button" className="btn quiet" onClick={() => link.session.unlock(i.token)}>
-                  {t('collabInviteUnlock')}
-                </button>
+        ) : (
+          <div className="collab-invite-card">
+            <div className="collab-invite-row">
+              {people.length ? (
+                <select
+                  id="collabInviteProfile"
+                  aria-label={t('collabInviteProfile')}
+                  value={chosen}
+                  onChange={(e) => choose(e.target.value)}
+                >
+                  <option value="">{t('collabInviteNew')}</option>
+                  {people.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {hasLink(u.id) ? t('collabInviteReplaces', { name: u.name }) : u.name}
+                    </option>
+                  ))}
+                </select>
               ) : null}
-              {i.mode === 'personal' && i.claimed ? null : (
-                <CopyField id={`collabInvite-${i.token}`} value={inviteUrl(i.link)} label={i.name} />
-              )}
-              {made[i.token] ? (
-                <CopyField
-                  id={`collabInvitePw-${i.token}`}
-                  value={made[i.token] as string}
-                  label={t('collabPassword')}
+              {chosen ? null : (
+                <input
+                  id="collabInviteName"
+                  data-testid="collab-invite-name"
+                  maxLength={110}
+                  placeholder={t('collabInviteName')}
+                  aria-label={t('collabInviteName')}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
-              ) : null}
-            </li>
-          ))}
-        </ul>
+              )}
+            </div>
+            {target && hasLink(target.id) ? (
+              <p className="inline-warning" id="collabReissueNote">
+                {t('collabReissueNote', { name: target.name })}
+              </p>
+            ) : null}
+            <fieldset className="collab-choice">
+              <legend>{t('collabInviteMode')}</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="collabInviteMode"
+                  id="collabModePersonal"
+                  checked={mode === 'personal'}
+                  onChange={() => setMode('personal')}
+                />{' '}
+                <span>
+                  <strong>{t('collabModePersonal')}</strong>
+                  <span className="collab-choice-help">{t('collabModePersonalHelp')}</span>
+                </span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="collabInviteMode"
+                  id="collabModePassword"
+                  checked={mode === 'password'}
+                  onChange={() => setMode('password')}
+                />{' '}
+                <span>
+                  <strong>{t('collabModePassword')}</strong>
+                  <span className="collab-choice-help">{t('collabModePasswordHelp')}</span>
+                </span>
+              </label>
+            </fieldset>
+            {mode === 'password' ? (
+              <>
+                <label htmlFor="collabInvitePassword">{t('collabPassword')}</label>
+                <div className="collab-invite-row">
+                  <input
+                    id="collabInvitePassword"
+                    data-testid="collab-invite-password"
+                    autoComplete="off"
+                    spellCheck={false}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="btn quiet"
+                    onClick={() => setPassword(suggestPassword(state.language))}
+                  >
+                    {t('collabPasswordSuggest')}
+                  </button>
+                </div>
+                {weak ? (
+                  <p className="inline-warning">{t('collabPasswordWeak', { count: MIN_PASSWORD_LENGTH })}</p>
+                ) : null}
+              </>
+            ) : null}
+            <button
+              type="button"
+              id="btnCollabInvite"
+              className="btn primary"
+              onClick={() => void invite()}
+              disabled={
+                busy || (!chosen && !name.trim()) || (mode === 'password' && !normalizePassword(password))
+              }
+            >
+              {busy ? t('collabConnecting') : t('collabInviteCreate')}
+            </button>
+          </div>
+        )}
       </section>
+      {others.length ? (
+        <section aria-labelledby="collabInvitesHeading">
+          <h3 id="collabInvitesHeading">{t('collabPersonal')}</h3>
+          <p className="inspector-note">{t('collabPersonalHelp')}</p>
+          <ul className="collab-invites" id="collabInvites">
+            {others.map((i) => (
+              <li key={i.token}>
+                <InviteCard invite={i} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </>
   );
 }
@@ -389,10 +631,12 @@ export function CollabDialog() {
   const t = useTranslator();
   const store = getStore();
   const state = useAppState();
+  const [who, setWho] = useState<Who>('anyone');
   const [chosen, choose] = useState('');
   const status = state.collab && state.collab.phase !== 'ended' ? state.collab : null;
   const close = () => store.openDialog(null);
   const reissue = (userId: string) => {
+    setWho('named');
     choose(userId);
     document.getElementById('collabInviteForm')?.scrollIntoView({ block: 'nearest' });
   };
@@ -406,7 +650,9 @@ export function CollabDialog() {
       className="action-dialog collab-dialog"
     >
       {!status ? <StartSection /> : null}
-      {status?.role === 'host' ? <HostSection status={status} chosen={chosen} choose={choose} /> : null}
+      {status?.role === 'host' ? (
+        <HostSection status={status} who={who} setWho={setWho} chosen={chosen} choose={choose} />
+      ) : null}
       {status ? <People status={status} {...(status.role === 'host' ? { onReissue: reissue } : {})} /> : null}
       {status ? (
         <>
@@ -441,6 +687,7 @@ export function JoinDialog() {
   const request = useJoinRequest();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const turn = useTurnDraft();
   if (!request) return null;
   const close = () => {
     const link = getStore().collabLink();
@@ -508,7 +755,7 @@ export function JoinDialog() {
               ) : null}
             </>
           )}
-          <PrivacyNote signal={request.invite.signal} />
+          <PrivacyNote signal={request.invite.signal} turn={turn.active} />
           <div className="dialog-actions">
             <button type="button" className="btn quiet" onClick={close}>
               {t('cancel')}
@@ -527,10 +774,35 @@ export function JoinDialog() {
       {request.step === 'connecting' ? (
         <>
           <p role="status">{t('collabConnectingHost')}</p>
-          <PrivacyNote signal={request.invite.signal} />
+          <PrivacyNote signal={request.invite.signal} turn={turn.active} />
           <div className="dialog-actions">
             <button type="button" className="btn quiet" onClick={close}>
               {t('cancel')}
+            </button>
+          </div>
+        </>
+      ) : null}
+      {request.step === 'failed' ? (
+        <>
+          <p className="inline-warning" role="alert">
+            {t(ENDED_TEXT[request.cause])}
+          </p>
+          <details className="collab-advanced" open={request.cause === 'no-direct'}>
+            <summary>{t('collabAdvanced')}</summary>
+            <TurnFields turn={turn} />
+          </details>
+          <div className="dialog-actions">
+            <button type="button" className="btn quiet" onClick={close}>
+              {t('cancel')}
+            </button>
+            <button
+              type="button"
+              id="btnJoinRetry"
+              className="btn primary"
+              disabled={!turn.valid}
+              onClick={() => void join(request.invite, request.given)}
+            >
+              {t('collabRetry')}
             </button>
           </div>
         </>
@@ -553,7 +825,10 @@ export function CollabEndedDialog() {
   )
     return null;
   const kept =
-    collab.selfUserId !== null && collab.ended !== 'unreachable' && !collab.ended.startsWith('refused');
+    collab.selfUserId !== null &&
+    collab.ended !== 'unreachable' &&
+    collab.ended !== 'no-direct' &&
+    !collab.ended.startsWith('refused');
   return (
     <Modal
       open

@@ -3,13 +3,15 @@
  *       may propose tree edits and their own reviews, never governance or another person's reviews, ballots or
  *       comments (deny by default over every command type); the host admits by seat, by the general token, by a
  *       personal token (first browser only) or by a password token (any browser with the proof, one at a time,
- *       wrong tries up to a lock); a new link for a person revokes the old link and seat; seats and rate are limited;
+ *       wrong tries up to a lock); a new password keeps the link and the admitted seats but not the old password;
+ *       a new link for a person revokes the old link and seat; seats and rate are limited;
  *       names stay unique (WG-030, P2P-02, P2P-03)
  * test: tests/unit/session-protocol.test.ts
  * red-against: authorization reading the claimed actor instead of the seat; a comment keeping a forged authorName;
  *              a personal invite taken by a second browser; an unknown token treated as the general one; a missing
  *              password counted as a wrong try; a locked invite opened by the right password; a revoked seat
- *              coming back; the hello's name winning over the host's
+ *              coming back; the hello's name winning over the host's; a password change that leaves the old proof
+ *              working, keeps the lock, or reaches a personal or revoked invite
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -26,6 +28,7 @@ import {
   createBlankProject,
   createHostState,
   issueInvite,
+  setInvitePassword,
   unlockInvite,
   MAX_PASSWORD_FAILURES,
   documentDigest,
@@ -457,6 +460,37 @@ test('a password invite counts wrong tries up to a lock, admits any browser with
   const locked = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0));
   assert.equal((locked as { reason: string }).reason, 'locked', 'locked even for the right password');
   assert.ok(admit(unlockInvite(state, T3), project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0)).ok);
+});
+
+test('a new password keeps the token and the admitted seat, clears the lock and retires the old password', () => {
+  const project = withGuest();
+  let state = issueInvite(host(), {
+    token: T3,
+    mode: 'password',
+    userId: 'u-k',
+    name: 'Kalle',
+    verifier: VERIFIER,
+  }).state;
+  const phone = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'phone', fresh(1));
+  assert.ok(phone.ok);
+  state = phone.state;
+  for (let i = 0; i < MAX_PASSWORD_FAILURES; i++)
+    state = admit(state, project, hello({ token: T3, proof: WRONG }), 'x', fresh(0)).state;
+  state = setInvitePassword(state, T3, WRONG);
+  assert.equal(state.invites[0]?.token, T3, 'same token: the link does not change');
+  assert.equal(state.invites[0]?.failures, 0);
+  assert.equal(state.seats[0]?.removed, false, 'the phone keeps its seat');
+  const old = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0));
+  assert.equal((old as { reason: string }).reason, 'password', 'the old password stops working');
+  assert.ok(admit(state, project, hello({ token: T3, proof: WRONG }), 'y', fresh(0)).ok);
+  const personal = issueInvite(host(), {
+    token: T3,
+    mode: 'personal',
+    userId: 'u-k',
+    name: 'Kalle',
+    verifier: null,
+  }).state;
+  assert.deepEqual(setInvitePassword(personal, T3, WRONG), personal, 'a personal invite gets no password');
 });
 
 test('a new link for a person revokes the old link and seat; the person keeps their profile', () => {

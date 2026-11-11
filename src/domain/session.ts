@@ -57,6 +57,16 @@ export function isRelayUrl(value: string): boolean {
   return url.protocol === 'ws:' && (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
 }
 
+/**
+ * A TURN server a browser may relay its WebRTC traffic through when no direct path opens (RFC 7065 URI: `turn:` or
+ * `turns:`, host, optional port and transport). The relay sees only DTLS-encrypted bytes.
+ */
+export function isTurnUrl(value: string): boolean {
+  return /^turns?:(?:[A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\])(?::\d{1,5})?(?:\?transport=(?:udp|tcp))?$/.test(
+    value
+  );
+}
+
 const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 export function base64url(bytes: Uint8Array): string {
   let out = '';
@@ -730,6 +740,16 @@ export function issueInvite(
     dropped,
   };
 }
+/**
+ * The host gives a password invite a new password: same token, so the link stays the same; the failure count starts
+ * over; seats already admitted keep their place (they return by seat, not by password).
+ */
+export const setInvitePassword = (state: HostState, token: string, verifier: string): HostState => ({
+  ...state,
+  invites: state.invites.map((i) =>
+    i.token === token && i.mode === 'password' && !i.revoked ? { ...i, verifier, failures: 0 } : i
+  ),
+});
 /** The host opens a locked password invite again. */
 export const unlockInvite = (state: HostState, token: string): HostState => ({
   ...state,

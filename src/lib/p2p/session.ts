@@ -21,6 +21,7 @@ import {
   roster,
   seatOfPeer,
   seatProfileCommand,
+  setInvitePassword,
   spendRate,
   unlockInvite,
 } from '../../domain/index.ts';
@@ -59,8 +60,9 @@ export interface CollabClock {
   schedule(run: () => void, ms: number): () => void;
 }
 
+/** `no-direct`: the host was found through signaling, but no direct connection opened (where TURN helps). */
 export type EndCause =
-  EndReason | 'host-left' | 'unreachable' | 'left' | 'diverged' | `refused-${RefuseReason}`;
+  EndReason | 'host-left' | 'unreachable' | 'no-direct' | 'left' | 'diverged' | `refused-${RefuseReason}`;
 export interface CollabStatus {
   role: 'host' | 'participant';
   /** `reconnecting`: a participant lost the host and waits for it to come back (a reload on the host's side). */
@@ -171,6 +173,8 @@ export interface HostSession extends Common {
     access: { mode: 'personal' } | { mode: 'password'; password: string }
   ): Promise<string>;
   unlock(token: string): void;
+  /** A new password for a password invite; the link stays the same and admitted seats stay. */
+  setPassword(token: string, password: string): Promise<void>;
   remove(userId: string): void;
   setGeneralOpen(open: boolean): void;
 }
@@ -421,6 +425,16 @@ export async function startHost(options: {
       keep();
       publish();
     },
+    async setPassword(token, password) {
+      const verifier = await passwordProof(
+        password,
+        passwordSalt(key.fingerprint, token),
+        options.passwordRounds
+      );
+      state = setInvitePassword(state, token, verifier);
+      keep();
+      publish();
+    },
     remove(userId) {
       const seat = state.seats.find((s) => s.userId === userId && !s.removed);
       if (!seat) return;
@@ -485,6 +499,8 @@ export async function joinSession(options: {
   let awaitingSnapshot = false;
   const pending = new Set<string>();
   let finished = false;
+  /** Someone answered through signaling but no direct connection opened; tells a firewall from an absent host. */
+  let noDirect = false;
   const proof = options.password
     ? passwordProof(
         options.password,
@@ -506,8 +522,8 @@ export async function joinSession(options: {
     await network.leave();
   };
   cancelTimer = clock.schedule(() => {
-    if (!welcome) void finish('unreachable');
-  }, options.timeoutMs ?? 20_000);
+    if (!welcome) void finish(noDirect ? 'no-direct' : 'unreachable');
+  }, options.timeoutMs ?? 45_000);
 
   /** Take the host's document; after the first one it must stay the same document (same id). */
   const adopt = (raw: Project, digest: string, seq: number, first = false): boolean => {
@@ -652,6 +668,7 @@ export async function joinSession(options: {
       network.sendTo(event.peerId, JSON.stringify({ t: 'probe', nonce } satisfies ToHost));
     }
     if (event.kind === 'left' && event.peerId === hostPeer && !finished) lostHost();
+    if (event.kind === 'unreachable' && hostPeer === null) noDirect = true;
   });
 
   return {

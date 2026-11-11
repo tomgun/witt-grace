@@ -2,7 +2,11 @@
 // this interface; `trystero.ts` is the WebRTC adapter, `LoopbackHub` an in-memory one for tests. Messages are strings
 // (JSON), so the size limits are checked on what actually crosses the wire.
 
-export type PeerEvent = { peerId: string; kind: 'joined' | 'left' };
+/**
+ * `joined` and `left` follow an open channel. `unreachable`: a peer answered through signaling, but no direct
+ * connection opened (every ICE candidate pair failed: a firewall, a proxy, a browser setting; a TURN server helps).
+ */
+export type PeerEvent = { peerId: string; kind: 'joined' | 'left' | 'unreachable' };
 
 export interface PeerNetwork {
   /** Send to one peer; silently dropped when that peer is gone (the protocol notices through `left`). */
@@ -64,6 +68,11 @@ export class LoopbackHub {
         for (const other of this.peers.keys()) this.queue.push({ from: peerId, to: other, message: null });
       },
     };
+  }
+
+  /** Tell `peerId` that `otherId` was found but no direct connection opened (a failed ICE check). */
+  unreachable(peerId: string, otherId: string) {
+    this.peers.get(peerId)?.events.forEach((l) => l({ peerId: otherId, kind: 'unreachable' }));
   }
 
   /** Deliver everything queued, including what the deliveries send in turn, up to `limit` messages. */

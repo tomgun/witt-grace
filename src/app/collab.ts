@@ -2,7 +2,7 @@
 // from an invite link, coming back to a session this browser was in, and the remembered connection choice. The
 // protocol lives in src/lib/p2p; the store only routes commands.
 import { useSyncExternalStore } from 'react';
-import { encodeInvite, isRelayUrl, parseInvite } from '../domain/index.ts';
+import { encodeInvite, isRelayUrl, isTurnUrl, parseInvite } from '../domain/index.ts';
 import type { Invite, InviteRefusal, Signal } from '../domain/index.ts';
 import type { MessageKey } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
@@ -10,7 +10,8 @@ import { loadHostRecord, saveHostRecord } from '../lib/p2p/hostStore.ts';
 import { roomAddress } from '../lib/p2p/keys.ts';
 import { joinSession, startHost } from '../lib/p2p/session.ts';
 import type { CollabClock, EndCause, HostRecord } from '../lib/p2p/session.ts';
-import { connectTrystero } from '../lib/p2p/trystero.ts';
+import { trysteroConnector } from '../lib/p2p/trystero.ts';
+import type { TurnServer } from '../lib/p2p/trystero.ts';
 import { blankProject, getStore } from './store.ts';
 
 /** Per browser: the connection the host chose last (`nostr`, or relay URLs separated by spaces). */
@@ -19,6 +20,8 @@ export const SIGNAL_KEY = 'witt-collab-signal-v1';
 export const SEATS_KEY = 'witt-collab-seats-v1';
 /** Per tab: the link of the session this tab is in, so a reload rejoins without the address-bar fragment. */
 export const TAB_KEY = 'witt-collab-v1';
+/** Per browser: a TURN server this browser relays through when no direct connection opens (never in a link). */
+export const TURN_KEY = 'witt-collab-turn-v1';
 const SEAT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 const clock: CollabClock = {
@@ -51,6 +54,42 @@ export function writeSignal(signal: Signal) {
     undefined
   );
 }
+export type TurnSetting = TurnServer | null;
+export function readTurn(): TurnSetting {
+  const parsed = safe(() => JSON.parse(window.localStorage.getItem(TURN_KEY) ?? 'null') as unknown, null);
+  if (!parsed || typeof parsed !== 'object') return null;
+  const { urls, username, credential } = parsed as Record<string, unknown>;
+  if (!Array.isArray(urls) || !urls.length || !urls.every((u) => typeof u === 'string' && isTurnUrl(u)))
+    return null;
+  return {
+    urls: urls as string[],
+    username: typeof username === 'string' ? username : '',
+    credential: typeof credential === 'string' ? credential : '',
+  };
+}
+export function writeTurn(turn: TurnSetting) {
+  safe(
+    () =>
+      turn
+        ? window.localStorage.setItem(TURN_KEY, JSON.stringify(turn))
+        : window.localStorage.removeItem(TURN_KEY),
+    undefined
+  );
+}
+/** Connect with this browser's TURN setting, read at the moment of connecting. */
+const connect = () => {
+  const turn = readTurn();
+  return trysteroConnector(turn ? [turn] : []);
+};
+
+/**
+ * Passwords this tab made for its invites, by invite token: shown beside the link until the tab closes. The host
+ * keeps only a verifier, so after a reload the host sets a new password instead (the link stays the same).
+ */
+const madePasswords = new Map<string, string>();
+export const madePassword = (token: string): string | undefined => madePasswords.get(token);
+export const rememberPassword = (token: string, password: string) => madePasswords.set(token, password);
+
 /** The page address with an invite fragment: what the person copies and sends. */
 export const inviteUrl = (fragment: string): string =>
   `${window.location.origin}${window.location.pathname}${window.location.search}#${fragment}`;
@@ -90,6 +129,7 @@ export const ENDED_TEXT: Record<EndCause, MessageKey> = {
   revoked: 'collabEndedRevoked',
   'host-left': 'collabEndedHostLeft',
   unreachable: 'collabEndedUnreachable',
+  'no-direct': 'collabEndedNoDirect',
   left: 'collabEndedLeft',
   diverged: 'collabEndedDiverged',
   'refused-version': 'collabEndedVersion',
@@ -115,10 +155,13 @@ const SEAT_GONE: readonly EndCause[] = [
 
 // ---- the join request: what the join dialog shows before and while connecting ----
 
+type Given = { name?: string; password?: string; seat?: string };
 export type JoinRequest =
   | { step: 'name'; invite: Invite }
   | { step: 'password'; invite: Invite; wrong: boolean }
   | { step: 'connecting'; invite: Invite }
+  /** The host was not reached: absent (`unreachable`) or found without a direct path (`no-direct`); retry offered. */
+  | { step: 'failed'; invite: Invite; given: Given; cause: 'unreachable' | 'no-direct' }
   | { step: 'invalid'; reason: InviteRefusal };
 let joinRequest: JoinRequest | null = null;
 const joinListeners = new Set<() => void>();
@@ -173,13 +216,13 @@ export function readInviteOnStart() {
 }
 
 /** Connect as a participant. The open work is replaced only after the welcome and the person's consent. */
-export async function join(invite: Invite, given: { name?: string; password?: string; seat?: string } = {}) {
+export async function join(invite: Invite, given: Given = {}) {
   const store = getStore();
   setJoin({ step: 'connecting', invite });
   try {
     const session = await joinSession({
       port: store.collabPort(),
-      connect: connectTrystero,
+      connect: connect(),
       invite,
       ...given,
       onSeat: (seat) => void keepSeat(invite, seat),
@@ -201,6 +244,9 @@ export async function join(invite: Invite, given: { name?: string; password?: st
       if (cause === 'refused-password') {
         store.clearCollab();
         setJoin({ step: 'password', invite, wrong: true });
+      } else if (cause === 'unreachable' || cause === 'no-direct') {
+        store.clearCollab();
+        setJoin({ step: 'failed', invite, given, cause });
       } else if (given.seat && cause === 'refused-closed') {
         // The seat is from an earlier session of this room; ask again as a newcomer.
         void keepSeat(invite, null);
@@ -209,8 +255,7 @@ export async function join(invite: Invite, given: { name?: string; password?: st
       } else setJoin(null);
     });
   } catch {
-    setJoin(null);
-    store.notify({ kind: 'error', text: store.translate('collabEndedUnreachable') });
+    setJoin({ step: 'failed', invite, given, cause: 'unreachable' });
   }
 }
 /** The welcome arrived: ask before replacing the open work (unless it already is this document: a return). */
@@ -248,7 +293,7 @@ async function host(signal: Signal, resume?: HostRecord): Promise<boolean> {
   try {
     const session = await startHost({
       port: store.collabPort(),
-      connect: connectTrystero,
+      connect: connect(),
       signal,
       hostUserId: store.get().actorId,
       clock,

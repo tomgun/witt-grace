@@ -3,11 +3,13 @@
  *       always names its own token, so a personal link never yields a general one; relays are wss: except on this
  *       machine; the relay only ever sees hashes of the secret; only the host whose key the link names can prove
  *       itself; a password proof is bound to host key and invite and survives case, Unicode and separators;
- *       suggested passwords come from exactly 2048 Finnish words or a 32-symbol alphabet (WG-030, P2P-02, P2P-06)
+ *       suggested passwords come from exactly 2048 Finnish words or a 32-symbol alphabet; a TURN address is turn: or
+ *       turns: with a host and nothing that could carry credentials or a path (WG-030, P2P-02, P2P-06)
  * test: tests/unit/session-link.test.ts
  * red-against: a link without a door token accepted; a plain ws:// relay on another host accepted; the secret used
  *              verbatim as the room id; a signature from another key accepted; a proof that verifies at another
- *              host; a word list that drifted from 2048 (biased or weaker suggestions)
+ *              host; a word list that drifted from 2048 (biased or weaker suggestions); a stun:, https: or
+ *              user:password@ address taken as a TURN server
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -16,6 +18,7 @@ import {
   encodeInvite,
   fromBase64url,
   isRelayUrl,
+  isTurnUrl,
   normalizePassword,
   parseInvite,
   passwordSalt,
@@ -117,6 +120,19 @@ test('relay URLs: TLS anywhere, plain ws only on this machine, no credentials', 
   assert.equal(isRelayUrl('wss://user:pw@relay.example.org'), false);
   assert.equal(isRelayUrl('javascript:alert(1)'), false);
   assert.equal(isRelayUrl('not a url'), false);
+});
+
+test('TURN addresses: turn: or turns:, a host, an optional port and transport, nothing else', () => {
+  assert.equal(isTurnUrl('turn:turn.example.org:3478'), true);
+  assert.equal(isTurnUrl('turns:turn.example.org:5349?transport=tcp'), true);
+  assert.equal(isTurnUrl('turn:192.168.1.4'), true);
+  assert.equal(isTurnUrl('turn:[2001:db8::1]:3478?transport=udp'), true);
+  assert.equal(isTurnUrl('stun:stun.example.org:3478'), false);
+  assert.equal(isTurnUrl('https://turn.example.org'), false);
+  assert.equal(isTurnUrl('turn:user:pw@turn.example.org'), false);
+  assert.equal(isTurnUrl('turn:turn.example.org/path'), false);
+  assert.equal(isTurnUrl('turn:turn.example.org?transport=quic'), false);
+  assert.equal(isTurnUrl('turn:'), false);
 });
 
 test('the relay sees SHA-256 derivations of the secret, never the secret', async () => {

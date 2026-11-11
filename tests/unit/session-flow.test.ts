@@ -5,12 +5,14 @@
  *       healed by a snapshot; a forged host is ignored; a personal invite's browser comes back after closing; a
  *       password invite moves between browsers and locks on wrong passwords; a new link drops the old browser;
  *       the host reloading continues the same links while participants wait and reconnect; a host that never
- *       returns ends the wait and everyone keeps the document (WG-030, P2P-01, P2P-02)
+ *       returns ends the wait and everyone keeps the document; a new password keeps the link; a host found without a
+ *       direct connection is told apart from an absent one (WG-030, P2P-01, P2P-02)
  * test: tests/unit/session-flow.test.ts
  * red-against: the participant applying its proposal optimistically and again on commit (a duplicate node); the
  *              participant stamping its own clock; seq ignored; the welcome accepted from a peer that is not the host;
  *              the joiner's profile added before they agreed to join; a returning browser added as a second person;
- *              a resumed host with a new key that participants accept; proposals sent into the void while reconnecting
+ *              a resumed host with a new key that participants accept; proposals sent into the void while reconnecting;
+ *              a password change that issues a new link; a failed ICE check reported as an absent host
  * Note: host keys and tokens come from WebCrypto (the controller's job); no assertion depends on their values.
  */
 import assert from 'node:assert/strict';
@@ -325,6 +327,24 @@ test('a password invite works from any browser with the password, one at a time;
   assert.equal(again.session.status().phase, 'confirm');
 });
 
+test('a new password keeps the link: the old password is refused, the new one admitted', async () => {
+  const { hub, session } = await setup();
+  const link = await session.invite(
+    { name: 'Kalle' },
+    { mode: 'password', password: 'vanha-sana-tässä-näin' }
+  );
+  const parsed = parseInvite(link);
+  assert.ok(parsed.ok);
+  await session.setPassword(parsed.invite.access.token, 'uusi-sana-tuolla-noin');
+  assert.equal(session.status().invites.length, 1);
+  assert.equal(session.status().invites[0]?.link, link, 'the same link');
+  const old = await join(hub, parsed.invite, 'O', { password: 'vanha-sana-tässä-näin' });
+  assert.equal(old.session.status().ended, 'refused-password');
+  const fresh = await join(hub, parsed.invite, 'N', { password: 'Uusi sana tuolla noin' });
+  assert.equal(fresh.session.status().phase, 'confirm');
+  assert.equal(fresh.session.status().selfName, 'Kalle');
+});
+
 test('a new link for a person replaces the old link and drops the old browser; the profile and reviews stay', async () => {
   const { hub, host, session } = await setup();
   const first = parseInvite(await session.invite({ name: 'Kalle' }, { mode: 'personal' }));
@@ -448,5 +468,15 @@ test('removing a participant ends it for them; an unreachable host times out wit
   clock.timers[0]?.();
   await settle(lonely);
   assert.equal(s.status().ended, 'unreachable');
+  assert.equal(doc.project.id, 'p-own');
+
+  // Signaling found someone, but no direct path opened: told apart, so the person is offered a TURN server.
+  const walled = new LoopbackHub();
+  const clock2 = makeClock('w');
+  const w = await joinSession({ port: doc, connect: network(walled, 'W'), invite, name: 'W', clock: clock2 });
+  walled.unreachable('W', 'H');
+  clock2.timers[0]?.();
+  await settle(walled);
+  assert.equal(w.status().ended, 'no-direct');
   assert.equal(doc.project.id, 'p-own');
 });
