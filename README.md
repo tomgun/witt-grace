@@ -24,6 +24,7 @@ npm run golden         # regenerate tests/golden from the prototype engine (diff
 npm run proto:check    # the prototype's 372 tests
 npm run proto:build    # static site in witt-grace-gpt-proto/dist (and the one-file standalone)
 npm run proto:dev      # serve the prototype locally; open the printed URL
+node scripts/signal-relay.mjs   # the collaboration relay on ws://127.0.0.1:8787 (also what runs on a VPS behind wss://)
 ```
 Or `/dev` in Claude Code. `witt-grace-gpt-proto/dist/witt-standalone.html` opens directly from disk.
 
@@ -46,7 +47,7 @@ Start with `docs/README.md`. `CLAUDE.md` is the standing brief for Claude Code; 
 - The computed balance is explanatory; the app never presents it as a probability that a decision is right.
 - Browser storage is per origin and is not a backup; export `.witt.json` to keep work.
 - Ballot anonymity is a display option, not a protection.
-- P2P collaboration is designed (`docs/spec/P2P_NO_DATABASE_RFC_R1.md`), database-free by decision, and not built.
+- Live collaboration v1 (WG-030) works browser to browser with a host who orders the changes; nothing is stored on a server. The full P2P room design (quorum, failover, recovery) in `docs/spec/P2P_NO_DATABASE_RFC_R1.md` is not built.
 
 ## Names and licensing
 WITT and GRACE are the method's and tool's working names. No open-source license has been chosen (`witt-grace-gpt-proto/LICENSE-NOTICE.md`, WG-017); do not assume MIT or any redistribution grant.

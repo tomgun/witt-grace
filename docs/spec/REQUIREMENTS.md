@@ -71,12 +71,12 @@ This is the **current product/method ledger** for Claude Code PRs. `Implemented`
 
 | ID | Status | Requirement | Evidence / design |
 | --- | --- | --- | --- |
-| P2P-01 | Planned | Explicit "start online room" from blank/current/library/file; keep source unchanged, separate same-room resume. | `P2P_NO_DATABASE_RFC_R1.md` §13 |
-| P2P-02 | Planned | Owner/admin, sequencer, peers, stable signed identity; room code locator and signed high-entropy invitations. | `P2P_NO_DATABASE_RFC_R1.md` |
-| P2P-03 | Planned | User rights: edit, assess, comment, vote, viewer; adjustable node quotas; default broad access. | `P2P_NO_DATABASE_RFC_R1.md` |
+| P2P-01 | Partial | Explicit "start online room" from blank/current/library/file; keep source unchanged, separate same-room resume. v1 (WG-030): start from the open document or a new blank one; no library/file source, no resume. | `P2P_NO_DATABASE_RFC_R1.md` §13, §15 |
+| P2P-02 | Partial | Owner/admin, sequencer, peers, stable signed identity; room code locator and signed high-entropy invitations. v1 (WG-030): host as sequencer with an ECDSA host key, high-entropy general and single-use personal invites; no owner/admin split, no signed log. | `P2P_NO_DATABASE_RFC_R1.md`, §15 |
+| P2P-03 | Partial | User rights: edit, assess, comment, vote, viewer; adjustable node quotas; default broad access. v1 (WG-030): participants edit and assess (own reviews only); governance host-only; no presets or quotas yet. | `P2P_NO_DATABASE_RFC_R1.md`, §15 |
 | P2P-04 | Planned | Replicate validated signed events and snapshots in peers' IndexedDB; quorum before "committed". | `P2P_NO_DATABASE_RFC_R1.md` |
 | P2P-05 | Planned | Browser crash host succession, owner recovery across devices with keys and peer data, explicit forks. | `P2P_NO_DATABASE_RFC_R1.md` |
-| P2P-06 | Planned | Works without persistent backend DB; volatile rendezvous/STUN/TURN optional, manual signaling fallback. | `P2P_NO_DATABASE_RFC_R1.md` |
+| P2P-06 | Partial | Works without persistent backend DB; volatile rendezvous/STUN/TURN optional, manual signaling fallback. v1 (WG-030): volatile signaling (public Nostr relays or the owner's relay), STUN only, no TURN, no manual signaling. | `P2P_NO_DATABASE_RFC_R1.md`, §15 |
 | P2P-07 | Planned | Host/admin-controlled assessment/ballot stage transitions and frozen round policy. | `P2P_NO_DATABASE_RFC_R1.md` |
 | P2P-08 | Planned | Distinct future hosted database product may reuse protocol, but is not implicit P2P infrastructure. | `P2P_NO_DATABASE_RFC_R1.md` |
 

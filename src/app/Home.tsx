@@ -100,6 +100,9 @@ export function Home() {
               >
                 {t('homeOpen')}
               </button>
+              <button type="button" id="btnHomeCollab" onClick={() => store.openDialog('collab')}>
+                {t('collabHome')}
+              </button>
               <button type="button" id="btnHomeDemo" onClick={() => store.openDialog('examples')}>
                 {t('homeDemo')}
               </button>

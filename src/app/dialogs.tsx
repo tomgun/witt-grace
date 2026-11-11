@@ -16,6 +16,7 @@ import { AiDraftDialog } from './AiDraftDialog.tsx';
 import { AiResultsDialog } from './AiResultsDialog.tsx';
 import { AiReviewDialog } from './AiReviewDialog.tsx';
 import { ImportReportDialog } from './ImportReportDialog.tsx';
+import { CollabDialog, CollabEndedDialog, JoinDialog } from './CollabDialog.tsx';
 
 /** A native <dialog> with focus trapping by the browser; Escape closes it. */
 export function Modal({
@@ -364,6 +365,9 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
       {state.dialog === 'aiDraft' ? <AiDraftDialog /> : null}
       {state.dialog === 'aiReview' ? <AiReviewDialog /> : null}
       {state.dialog === 'aiResults' ? <AiResultsDialog /> : null}
+      {state.dialog === 'collab' ? <CollabDialog /> : null}
+      <JoinDialog />
+      <CollabEndedDialog />
       {state.dialog &&
       ![
         'newWork',
@@ -379,6 +383,7 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
         'aiDraft',
         'aiReview',
         'aiResults',
+        'collab',
       ].includes(state.dialog) ? (
         <PlaceholderDialog name={state.dialog} />
       ) : null}

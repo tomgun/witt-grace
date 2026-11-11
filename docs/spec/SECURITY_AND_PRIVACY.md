@@ -23,6 +23,13 @@ Authoritative sources:
 - https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy
 - https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 
+## Live collaboration v1 (WG-030, 2026-11-11)
+
+- Only during a collaboration the person starts or joins does document content leave the browser, and then only to the session's participants over WebRTC (DTLS). Every participant receives the whole document, including all profiles' assessments, ballots and comments; "anonymous" display and hidden results do not hide them. Participants see each other's IP addresses and can copy whatever they see.
+- Signaling: public Nostr relays (Trystero's default list) or relays the host names, and Google/Cloudflare STUN. They learn IP addresses, timing and a hash of the room secret; WebRTC offers are encrypted with a password derived from the secret, and the host proves its key (fingerprint in the link) before any participant sends a token. Nostr events are ephemeral by protocol but a relay cannot be forced to forget.
+- The invite secret and tokens live only in the URL fragment (removed on arrival), in the tab's `sessionStorage` (`witt-collab-v1`, the link, for a reload) and in `localStorage` (`witt-collab-seats-v1`, the seat token per room for seven days; deleted on leave, end, removal or revocation). The host keeps its session in IndexedDB (`witt-collab`) with a non-extractable ECDSA key, for seven days or until it ends the session. A password invite's password is never in the link and never stored: the host keeps a PBKDF2 verifier (600 000 rounds, salted with the host key fingerprint and the token), the participant sends its proof only after the host has proved its key, and five wrong tries lock the invite. The remaining risk is a forged link: a proof sent to a forged host can be attacked offline, which the suggested passwords (four of 2048 Finnish words, 44 bits, or 12 base32 characters, 60 bits; generated with `crypto.getRandomValues`) make impractical; a short password of the person's own gets a warning. Every peer message is parsed once (`parseToHost`, `parseToPeer`), size-limited and authorized per command type by the host; a document from the host passes `parseProject` before it is adopted.
+- The page CSP allows `connect-src 'self' wss:`; plain `ws:` to this machine is added only by the dev server. Not claimed: end-to-end confidentiality from a participant, protection against a malicious host, secret ballots, availability of public relays.
+
 ## Future P2P
 
 - No mandatory backend document database, permanent signaling directory, or cloud snapshot. Peer replicas and optional **volatile** rendezvous are distinct from a hosted storage product.

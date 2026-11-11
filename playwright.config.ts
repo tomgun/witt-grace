@@ -33,6 +33,13 @@ export default defineConfig({
       reuseExistingServer: true,
       timeout: 60_000,
     },
+    // The self-hostable collaboration relay (WG-030) for the two-browser session walk.
+    {
+      command: 'node scripts/signal-relay.mjs 8787 127.0.0.1',
+      port: 8787,
+      reuseExistingServer: true,
+      timeout: 30_000,
+    },
     // The frozen prototype, for the dual-target parity walk (same steps, same ids, compared digests).
     {
       command: 'PORT=4174 npm run proto:dev',

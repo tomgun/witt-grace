@@ -190,6 +190,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             title={t('profileSelect')}
             aria-label={t('profileSelect')}
             value={state.actorId}
+            disabled={state.collab?.role === 'participant' && state.collab.phase !== 'ended'}
             onChange={(e) => void chooseActor(e.target.value)}
           >
             {project.users.map((u) => (
@@ -271,6 +272,9 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             </Item>
             <Item id="btnLibrary" onClick={() => store.openDialog('library')}>
               {t('documentLibrary')}
+            </Item>
+            <Item id="btnCollab" onClick={() => store.openDialog('collab')}>
+              {state.collab && state.collab.phase !== 'ended' ? t('collabManage') : t('collabInvite')}
             </Item>
             <div className="menu-divider" />
             <Item id="btnAIReview" onClick={() => store.openDialog('aiReview')}>

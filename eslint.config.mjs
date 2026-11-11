@@ -9,6 +9,12 @@ const needsExtension = {
   message: 'Relative imports need the .ts extension: Node runs this code without a bundler',
 };
 
+/** Only the WebRTC adapter imports Trystero, so swapping the transport touches one file (ADR A010). */
+const onlyAdapter = {
+  regex: '^@trystero-p2p/',
+  message: 'Only src/lib/p2p/trystero.ts imports Trystero; use the PeerNetwork interface',
+};
+
 export default tseslint.config(
   {
     ignores: [
@@ -63,6 +69,26 @@ export default tseslint.config(
   },
   {
     files: ['src/lib/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            needsExtension,
+            { regex: '/app/', message: 'src/lib must not depend on app' },
+            onlyAdapter,
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/app/**/*.ts', 'src/app/**/*.tsx'],
+    rules: { 'no-restricted-imports': ['error', { patterns: [onlyAdapter] }] },
+  },
+  {
+    // The WebRTC adapter (ADR A010) is the one module that may name the vendor.
+    files: ['src/lib/p2p/trystero.ts'],
     rules: {
       'no-restricted-imports': [
         'error',

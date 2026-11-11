@@ -79,8 +79,11 @@ export function addNode(relation: AddRelation, parentId?: string, semanticType?:
       // the default projection stands
     }
   }
-  store.select(id);
-  startInlineEdit(id);
+  // In a collaboration the node exists once the host commits it.
+  store.afterNode(id, () => {
+    store.select(id);
+    startInlineEdit(id);
+  });
   return id;
 }
 

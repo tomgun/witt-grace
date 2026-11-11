@@ -5,6 +5,7 @@ import { LANGUAGES, LANGUAGE_NAMES } from '../lib/i18n/i18n.ts';
 import type { Language, MessageKey } from '../lib/i18n/i18n.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
+import { CollabChip } from './CollabDialog.tsx';
 
 const ZONE_BUTTONS: { zone: Zone; id: string; glyph: string; key: MessageKey; shortcut: string }[] = [
   { zone: 'left', id: 'btnZoneLeft', glyph: '◧', key: 'zoneLeft', shortcut: 'Alt+1' },
@@ -85,6 +86,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
+  const inSession = state.collab !== null && state.collab.phase !== 'ended';
   return (
     <header className="topbar" data-testid="topbar">
       <div className="brand" aria-label="WITT">
@@ -137,6 +139,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
           }}
         />
+        <CollabChip />
       </div>
       <div className="header-right">
         <div
@@ -150,7 +153,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             id="btnUndoTop"
             className="zone-toggle"
             disabled={!state.canUndo}
-            title={`${t('undo')} (Ctrl/Cmd+Z)`}
+            title={inSession ? t('collabNoUndo') : `${t('undo')} (Ctrl/Cmd+Z)`}
             aria-label={`${t('undo')} (Ctrl/Cmd+Z)`}
             onClick={() => store.undo()}
           >
@@ -161,7 +164,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             id="btnRedoTop"
             className="zone-toggle"
             disabled={!state.canRedo}
-            title={`${t('redo')} (Ctrl/Cmd+Shift+Z)`}
+            title={inSession ? t('collabNoUndo') : `${t('redo')} (Ctrl/Cmd+Shift+Z)`}
             aria-label={`${t('redo')} (Ctrl/Cmd+Shift+Z)`}
             onClick={() => store.redo()}
           >

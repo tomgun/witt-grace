@@ -41,5 +41,9 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^7.3.7"
+  },
+  "dependencies": {
+    "@trystero-p2p/nostr": "0.26.0",
+    "@trystero-p2p/ws-relay": "0.26.0"
   }
 }

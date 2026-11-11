@@ -8,7 +8,7 @@ import {
   rootNode,
   SCORING_VERSION,
 } from '../domain/index.ts';
-import type { Command, ImportReport, Mode, Project } from '../domain/index.ts';
+import type { Command, ImportReport, Mode, Project, RejectReason } from '../domain/index.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
@@ -22,6 +22,7 @@ import {
   writePreference,
 } from '../lib/storage.ts';
 import type { KeyValueStore } from '../lib/storage.ts';
+import type { CollabStatus, DocumentPort, HostSession, ParticipantSession } from '../lib/p2p/session.ts';
 import { persist as recordActive } from '../lib/workspaceMeta.ts';
 import { assessorKey, readView, readZones, reviewViewKey, writeView, writeZones } from './view.ts';
 import type { ViewState, Zone, Zones } from './view.ts';
@@ -72,7 +73,8 @@ export type DialogName =
   | 'library'
   | 'visualExport'
   | 'contextReasons'
-  | 'sharedReasons';
+  | 'sharedReasons'
+  | 'collab';
 export type ModalRequest =
   | { kind: 'confirm'; text: string; resolve: (ok: boolean) => void }
   | {
@@ -143,7 +145,18 @@ export interface AppState {
   /** A draft existed in storage but could not be read; it was left untouched (home-screen warning). */
   hydrationFailed: boolean;
   notice: Notice | null;
+  /** Live collaboration (WG-030): the session's status while one is open or just ended; null otherwise. */
+  collab: CollabStatus | null;
 }
+const REJECT_TEXT: Record<RejectReason, MessageKey> = {
+  rate: 'collabRejectRate',
+  forbidden: 'collabRejectForbidden',
+  refused: 'collabRejectRefused',
+  'not-ready': 'collabRejectNotReady',
+};
+/** The open collaboration: the host orders changes, a participant proposes them. */
+export type CollabLink =
+  { role: 'host'; session: HostSession } | { role: 'participant'; session: ParticipantSession };
 
 export function blankProject(mode: Mode = 'argument'): Project {
   return createBlankProject({
@@ -218,9 +231,20 @@ export function createStore(
     storagePersistent: persistent,
     hydrationFailed: !loaded.ok && 'reason' in loaded,
     notice: !loaded.ok && 'reason' in loaded ? { kind: 'error', text: loaded.reason } : null,
+    collab: null,
   };
   const past: Project[] = [];
   const future: Project[] = [];
+  let collab: CollabLink | null = null;
+  let collabUnsubscribe: (() => void)[] = [];
+  /** Follow-ups to a participant's proposal (select it, edit its title) that run when the host's commit brings it. */
+  const awaitingNodes = new Map<string, (() => void)[]>();
+  const tr = () => translator(state.messages);
+  /** In a session a participant always acts as their own seat (once the host has added it). */
+  const pinnedActor = (project: Project): string | null => {
+    const self = collab?.role === 'participant' ? collab.session.status().selfUserId : null;
+    return self && project.users.some((u) => u.id === self) ? self : null;
+  };
   const listeners = new Set<() => void>();
   const emit = () => listeners.forEach((l) => l());
   const set = (patch: Partial<AppState>) => {
@@ -234,7 +258,8 @@ export function createStore(
     if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
   };
   const replace = (project: Project, { remember = true } = {}) => {
-    if (remember) {
+    // Undo replaces whole documents, which a shared session cannot replay: no history while one is open.
+    if (remember && !collab) {
       past.push(state.project);
       if (past.length > 60) past.shift();
       future.length = 0;
@@ -242,18 +267,57 @@ export function createStore(
     const selected = project.nodes.some((n) => n.id === state.selectedId)
       ? state.selectedId
       : (rootNode(project) as { id: string }).id;
-    const actor = project.users.some((u) => u.id === state.actorId)
-      ? state.actorId
-      : (project.users[0] as { id: string }).id;
+    const actor =
+      pinnedActor(project) ??
+      (project.users.some((u) => u.id === state.actorId)
+        ? state.actorId
+        : (project.users[0] as { id: string }).id);
     set({
       project,
       selectedId: selected,
       actorId: actor,
       appearance: effectiveAppearance(store, project),
-      canUndo: past.length > 0,
-      canRedo: future.length > 0,
+      canUndo: !collab && past.length > 0,
+      canRedo: !collab && future.length > 0,
     });
     persist(project);
+    for (const [id, runs] of [...awaitingNodes])
+      if (project.nodes.some((n) => n.id === id)) {
+        awaitingNodes.delete(id);
+        runs.forEach((run) => run());
+      }
+  };
+  /** Show a different document: fresh selection, profile and view focus (open, new, join). */
+  const install = (validated: Project) => {
+    const rootId = (rootNode(validated) as { id: string }).id;
+    replace(validated);
+    set({
+      selectedId: rootId,
+      actorId: pinnedActor(validated) ?? restoreActor(store, validated),
+      selectedLibraryReason: null,
+      depthOverrides: new Map(),
+      explicitlyClosedIds: new Set(),
+      tableRevealId: null,
+      reviewIds: readReviewIds(store, validated.id),
+      view: {
+        ...state.view,
+        focus: { mode: 'all', anchorId: rootId },
+        compactVisible: false,
+        depthLimit: null,
+      },
+      home: false,
+    });
+    writeView(store, state.view);
+    api.requestFit();
+  };
+  const detachCollab = () => {
+    collabUnsubscribe.forEach((u) => u());
+    collabUnsubscribe = [];
+    collab = null;
+    awaitingNodes.clear();
+    past.length = 0;
+    future.length = 0;
+    set({ canUndo: false, canRedo: false });
   };
 
   if (state.language !== 'fi')
@@ -268,10 +332,21 @@ export function createStore(
     get: () => state,
     /** Apply one command; a refusal becomes a notice and the document stays as it was. Returns success. */
     dispatch(command: Command): boolean {
+      if (collab?.role === 'participant') {
+        // The host decides; the change appears when its commit arrives.
+        if (collab.session.status().phase !== 'active') {
+          set({ notice: { kind: 'error', text: tr()('collabNotConnected') } });
+          return false;
+        }
+        collab.session.propose(command);
+        return true;
+      }
       try {
-        const next = applyCommand(state.project, command, { now: nowIso(), actorId: state.actorId });
+        const ctx = { now: nowIso(), actorId: state.actorId };
+        const next = applyCommand(state.project, command, ctx);
         if (next === state.project) return false;
         replace(next);
+        if (collab?.role === 'host') collab.session.localApplied(command, ctx, next);
         return true;
       } catch (error) {
         set({ notice: { kind: 'error', text: error instanceof Error ? error.message : String(error) } });
@@ -281,28 +356,87 @@ export function createStore(
     /** Replace the whole document (new, open, import). The person confirmed it already. */
     load(project: Project) {
       const validated = parseProject(project);
-      const rootId = (rootNode(validated) as { id: string }).id;
-      replace(validated);
-      set({
-        selectedId: rootId,
-        actorId: restoreActor(store, validated),
-        selectedLibraryReason: null,
-        depthOverrides: new Map(),
-        explicitlyClosedIds: new Set(),
-        tableRevealId: null,
-        reviewIds: readReviewIds(store, validated.id),
-        view: {
-          ...state.view,
-          focus: { mode: 'all', anchorId: rootId },
-          compactVisible: false,
-          depthLimit: null,
+      if (collab?.role === 'participant') {
+        set({ notice: { kind: 'error', text: tr()('collabLeaveFirst') } });
+        return;
+      }
+      if (collab?.role === 'host') {
+        // The same document changed as a whole (an AI merge, a library copy): everyone gets the new version.
+        if (validated.id === state.project.id) {
+          replace(validated);
+          collab.session.replaced(state.project);
+          return;
+        }
+        void collab.session.close();
+        set({ notice: { kind: 'info', text: tr()('collabEndedByOpen') } });
+      }
+      install(validated);
+    },
+    /** Live collaboration: how the session reads and changes the document, bypassing the undo history. */
+    collabPort(): DocumentPort {
+      return {
+        current: () => state.project,
+        apply(command, ctx) {
+          const next = applyCommand(state.project, command, ctx);
+          if (next !== state.project) replace(next);
+          return state.project;
         },
-        home: false,
-      });
-      writeView(store, state.view);
-      api.requestFit();
+        adopt(project) {
+          if (project.id === state.project.id) replace(project);
+          else install(project);
+        },
+      };
+    },
+    /** Hand the store an opened session; its status shows in `collab` until `clearCollab` after it ends. */
+    attachCollab(link: CollabLink) {
+      detachCollab();
+      collab = link;
+      const onStatus = (status: CollabStatus) => {
+        set({ collab: status });
+        if (status.phase === 'ended' && collab === link) detachCollab();
+        else if (link.role === 'participant') {
+          const actor = pinnedActor(state.project);
+          if (actor && actor !== state.actorId) set({ actorId: actor });
+        }
+      };
+      collabUnsubscribe = [
+        link.session.subscribe(onStatus),
+        link.session.onNotice((notice) => {
+          const t = tr();
+          if (notice.kind === 'rejected')
+            set({
+              notice: {
+                kind: 'error',
+                text: t('collabRejected', { reason: notice.detail ?? t(REJECT_TEXT[notice.reason]) }),
+              },
+            });
+          else
+            set({
+              notice: {
+                kind: 'info',
+                text: t(notice.kind === 'joined' ? 'collabPersonJoined' : 'collabPersonLeft', {
+                  name: notice.name,
+                }),
+              },
+            });
+        }),
+      ];
+      onStatus(link.session.status());
+    },
+    collabLink: (): CollabLink | null => collab,
+    /** Run `run` now if the node exists, else once a commit brings it (a participant's own proposal). */
+    afterNode(id: string, run: () => void) {
+      if (state.project.nodes.some((n) => n.id === id)) run();
+      else awaitingNodes.set(id, [...(awaitingNodes.get(id) ?? []), run]);
+    },
+    /** The active language's text, for flows outside React. */
+    translate: (key: MessageKey, params?: Record<string, string | number>): string => tr()(key, params),
+    /** Forget an ended session's status (the person closed its notice). */
+    clearCollab() {
+      if (!collab) set({ collab: null });
     },
     undo() {
+      if (collab) return;
       const previous = past.pop();
       if (!previous) return;
       future.push(state.project);
@@ -310,6 +444,7 @@ export function createStore(
       set({ canUndo: past.length > 0, canRedo: future.length > 0 });
     },
     redo() {
+      if (collab) return;
       const next = future.pop();
       if (!next) return;
       past.push(state.project);
@@ -327,6 +462,7 @@ export function createStore(
     },
     setActor(id: string) {
       if (!state.project.users.some((u) => u.id === id)) return;
+      if (collab?.role === 'participant' && id !== pinnedActor(state.project)) return;
       writePreference(store, assessorKey(state.project.id), id);
       set({ actorId: id });
     },

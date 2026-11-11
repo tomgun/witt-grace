@@ -43,6 +43,7 @@ import { Tutorial } from './Tutorial.tsx';
 import { ViewDock } from './ViewDock.tsx';
 import { VoteDialog } from './VoteDialog.tsx';
 import { ZONES } from './view.ts';
+import { readInviteOnStart } from './collab.ts';
 
 export const APP_VERSION = '0.2.0-dev';
 
@@ -57,6 +58,9 @@ export function App() {
   const selected = project.nodes.find((n) => n.id === state.selectedId);
 
   // Body state the prototype's CSS keys on.
+  // An invite link in the address bar, or this tab's session before a reload (WG-030).
+  useEffect(() => readInviteOnStart(), []);
+
   useEffect(() => {
     const body = document.body;
     body.dataset.theme = state.appearance;
@@ -265,6 +269,7 @@ export function App() {
     return (
       <>
         <Home />
+        <NoticeBar />
         <ModalHost frame={frame} onShortcutsChanged={() => setShortcutsVersion((v) => v + 1)} />
         <Tutorial />
       </>

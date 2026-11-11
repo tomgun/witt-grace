@@ -151,9 +151,12 @@ export function TableView({ frame }: { frame: Frame }) {
     }
     const id = newId();
     if (!store.dispatch({ type: 'node.add', id, parentId: parent.id, relation, title: value })) return;
-    store.select(id);
-    update({ expandedId: id });
     pendingScroll.current = value;
+    // In a collaboration the row exists once the host commits it.
+    store.afterNode(id, () => {
+      store.select(id);
+      update({ expandedId: id });
+    });
   };
   const isAiAuthored = (node: Node) => project.users.some((u) => u.id === node.createdBy && isAiProfile(u));
 
