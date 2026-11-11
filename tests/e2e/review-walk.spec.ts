@@ -7,7 +7,8 @@
  *       renames and refuses a duplicate name with the prototype's notice, changes shares and switches the actor;
  *       the vote dialog opens a round, keeps unsaved drafts apart from saved ballots, seals results while the round
  *       is open, and after closing shows the weighted preference per option, the audit rows and the ballots by
- *       person; the round's questions and guidance sit behind its ? button and the buttons stay in view
+ *       person; the round's questions and guidance sit behind its ? button, its ⋮ button lists the ancestors up to the
+ *       root, and the buttons stay in view
  *       (UX_AND_WORKFLOWS §Arviointikierros, §Arvioijat, §Päätösäänestys; UI_INVENTORY S-05, S-09, S-10, S-15)
  * test: tests/e2e/review-walk.spec.ts (desktop)
  * red-against: a skipped item counted as reviewed, the round restarting from the first item on reopen, a review
@@ -72,6 +73,16 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   await expect(page.locator('#assessmentReviewed')).toHaveText('Arvioitu 1/3');
   await expect(page.locator('#assessmentContext')).toHaveText('Johtopäätös: Uiminen virkistää');
   await expect(page.locator('#assessmentClaim')).toHaveText('Liike parantaa oloa');
+  // The ⋮ button lists the whole line of ancestors up to the root (owner 2026-11-11) and stays open between steps.
+  await page.locator('#btnAssessChain').click();
+  await expect(page.locator('#assessmentChain li')).toHaveText([
+    '◎Mihin käytämme vapaa-aikamme?',
+    '◇Uimahalliin',
+    '+Uiminen virkistää',
+  ]);
+  await expect(page.locator('#assessmentContext')).toHaveCount(0);
+  await page.locator('#btnAssessChain').click();
+  await expect(page.locator('#assessmentContext')).toHaveText('Johtopäätös: Uiminen virkistää');
   await expect(page.locator('#assessmentInfluenceLabel')).toHaveText(
     'Kuinka voimakkaasti peruste puoltaa tai vastustaa ylemmän väitteen paikkansapitävyyttä?'
   );

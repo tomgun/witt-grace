@@ -30,6 +30,16 @@ interface Inputs {
 }
 const clamp100 = (n: number): number => Math.max(0, Math.min(100, Math.round(n)));
 
+/** The sign each ancestor carries towards its own parent in the chain list. */
+const CHAIN_MARKS: Record<Node['relation'], string> = {
+  root: '◎',
+  support: '+',
+  oppose: '−',
+  neutral: '·',
+  option: '◇',
+  group: '▤',
+};
+
 export function AssessmentDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   return open ? <AssessmentRound onClose={onClose} /> : null;
 }
@@ -48,6 +58,8 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
   const [inputs, setInputs] = useState<Inputs | null>(null);
   // Owner request 2026-11-10: the guidance texts sit behind "?", so the dialog fits without scrolling.
   const [showHelp, setShowHelp] = useState(false);
+  // Owner request 2026-11-11: the whole line of ancestors up to the root, as a list; stays open between steps.
+  const [showChain, setShowChain] = useState(false);
   const startable = canEdit(state) && pass.order.length > 0;
 
   // The prototype's `startAssessment`: a viewer never starts, an empty queue is a notice, Punnitse goes on
@@ -99,6 +111,11 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
   const reviewed = pass.done.size;
   const node: Node | undefined = cursorId ? project.nodes.find((n) => n.id === cursorId) : undefined;
   const parent = node?.parentId ? project.nodes.find((n) => n.id === node.parentId) : undefined;
+  const chain: Node[] = [];
+  for (let up = parent; up; up = up.parentId ? project.nodes.find((n) => n.id === up?.parentId) : undefined) {
+    if (chain.includes(up)) break;
+    chain.unshift(up);
+  }
   const fields = assessmentFields(node);
   const hasEdge = fields.impact;
   const abstained = !!node && hasAbstained(project, node.id, actorId);
@@ -306,8 +323,40 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
           <div id="assessmentQuestion" className="assessment-question" hidden={pass.finished}>
             {node ? (
               <>
-                <div id="assessmentContext" className="assessment-parent">
-                  {contextText}
+                <div className="assessment-parent-row">
+                  {showChain && chain.length > 1 ? (
+                    <ol id="assessmentChain" className="assessment-parent assessment-chain">
+                      {chain.map((up, depth) => (
+                        <li
+                          key={up.id}
+                          data-relation={up.relation}
+                          style={{ paddingInlineStart: depth * 10 }}
+                        >
+                          <span className="assessment-chain-mark" aria-hidden="true">
+                            {CHAIN_MARKS[up.relation]}
+                          </span>
+                          {up.title}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <div id="assessmentContext" className="assessment-parent">
+                      {contextText}
+                    </div>
+                  )}
+                  {chain.length > 1 ? (
+                    <button
+                      type="button"
+                      className="btn icon-btn assessment-chain-toggle"
+                      id="btnAssessChain"
+                      aria-expanded={showChain}
+                      title={t(showChain ? 'assessmentChainHide' : 'assessmentChainShow')}
+                      aria-label={t(showChain ? 'assessmentChainHide' : 'assessmentChainShow')}
+                      onClick={() => setShowChain((v) => !v)}
+                    >
+                      ⋮
+                    </button>
+                  ) : null}
                 </div>
                 <div className="assessment-claim" id="assessmentClaim" tabIndex={-1}>
                   {node.title}

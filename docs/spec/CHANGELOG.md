@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-11 — `UI_INVENTORY.md` — Owner request: the assessment round lists the whole line of ancestors up to the root behind a ⋮ button (S-15).
 - 2026-11-10 — `UI_INVENTORY.md` — Owner request: a compact assessment round, guidance behind ?, buttons always in view (S-11, S-15).
 - 2026-11-10 — `UI_INVENTORY.md` — Owner request: edges and reasons are drawn as heavy as the weight they carry (`#weightByRatings`, on by default), so many weak reasons do not look decisive (S-07.1, S-12, S-15).
 - 2026-11-10 — `GRACE_AND_DATA_MODEL.md`, `UI_INVENTORY.md` — Owner requests: a fourth assessment weighting `median` (G-03) so one extreme assessor cannot decide, and a fifth scoring version `chain-logodds-v1` (a strong chain carries upward; name provisional).

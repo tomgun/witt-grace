@@ -8999,3 +8999,41 @@ input[type='range'].range-unset:focus-visible {
   background: var(--surface);
   z-index: 1;
 }
+.assessment-parent-row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+.assessment-parent-row > .assessment-parent {
+  flex: 1;
+  min-width: 0;
+}
+.assessment-chain {
+  margin: 0;
+  list-style: none;
+  max-height: 28vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.assessment-chain li {
+  line-height: 1.45;
+}
+.assessment-chain li:last-child {
+  color: var(--text);
+  font-weight: 650;
+}
+.assessment-chain-mark {
+  display: inline-block;
+  width: 1.2em;
+  font-weight: 700;
+}
+.assessment-chain li[data-relation='support'] .assessment-chain-mark {
+  color: var(--support, inherit);
+}
+.assessment-chain li[data-relation='oppose'] .assessment-chain-mark {
+  color: var(--oppose, inherit);
+}
+.assessment-chain-toggle[aria-expanded='true'] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
