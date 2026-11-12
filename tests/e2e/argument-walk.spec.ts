@@ -5,8 +5,8 @@
  *       incomplete with †; the work survives a reload; Alt+1..4 and Alt+V toggle the zones and the dock; the file menu
  *       exports v8 JSON; decision mode adds options; themes and languages switch; the top bar's ↶/↷ undo and redo an
  *       added card and its ? opens help without widening the page; × or Delete removes a leaf without asking (a
- *       fading copy stays a second), a subtree asks first, and undo restores it; the added Terminaali, ASCII and
- *       Sarjakuva themes apply and persist, and ASCII draws the edges as characters; an unassessed slider reads "—" and
+ *       fading copy stays a second), a subtree asks first, and undo restores it; the added Terminaali, ASCII,
+ *       Sarjakuva and Lehto themes apply and persist, and ASCII draws the edges as characters; an unassessed slider reads "—" and
  *       saving one axis saves the other as shown in one undo step; the dock has seven layers and no drag-from-text
  *       option; a new document lets reasons decide (the credence of a claim with reasons is a felt sense) and the
  *       Arviointi menu switches the calculation method (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
@@ -182,6 +182,7 @@ test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browse
     ['terminal', '▮ Terminaali'],
     ['ascii', '# ASCII'],
     ['comic', '✎ Sarjakuva'],
+    ['grove', '🌳 Lehto'],
   ] as const) {
     await page.locator('#themeSelect').selectOption(id);
     await expect(page.locator('body')).toHaveAttribute('data-theme', id);
@@ -191,7 +192,8 @@ test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browse
     await expect(page.locator('#edgePaths path.edge')).toHaveCount(id === 'ascii' ? 0 : 1);
   }
   await page.reload();
-  await expect(page.locator('body')).toHaveAttribute('data-theme', 'comic');
+  await expect(page.locator('body')).toHaveAttribute('data-theme', 'grove');
+  expect(await page.evaluate(() => localStorage.getItem('witt-appearance-v1'))).toBe('grove');
 });
 
 test('an unassessed slider reads —; saving one axis saves the other as shown, as one undo step', async ({

@@ -25,6 +25,7 @@ export const APPEARANCE_KEYS: Record<Appearance, MessageKey> = {
   terminal: 'terminalTheme',
   ascii: 'asciiTheme',
   comic: 'comicTheme',
+  grove: 'groveTheme',
 };
 export const ACRONYMS =
   'WITT = Web Interactive Thinking Tool · GRACE = Günther’s Reflective Argumentation & Collaborative Evaluation Method';

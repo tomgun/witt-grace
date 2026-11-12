@@ -39,7 +39,7 @@ export { crc32, zipStored, zipStoredBytes } from './zip.ts';
 export { download } from './raster.ts';
 
 /** Skins the export dialog treats as dark when choosing its default palette. */
-export const DARK_APPEARANCES = ['dark', 'cosmos', 'hologram', 'bitberg', 'terminal'];
+export const DARK_APPEARANCES = ['dark', 'cosmos', 'hologram', 'bitberg', 'terminal', 'grove'];
 
 export interface ExportDefaultsInput {
   /** The effective appearance (document theme or browser skin). */

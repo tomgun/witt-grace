@@ -390,3 +390,322 @@ body[data-theme='comic'] .edge-oppose {
 body[data-theme='comic'] .edge-option {
   stroke: var(--option);
 }
+
+/* ---- 🌳 Lehto (grove), 2026-11-12: a twilight forest. The main claim sits in a large crown at the top (the existing
+   vertical layout) and its reasons hang below as drooping branches; leaves drift, birds glide, fireflies glow and
+   small animals walk the branches (Grove.tsx). All motion is CSS; decorations never take input. ---- */
+body[data-theme='grove'] {
+  color-scheme: dark;
+  --bg: #07120c;
+  --surface: #10231a;
+  --surface-secondary: #153020;
+  --panel: #0a1a11;
+  --canvas: #06100a;
+  --ink: #e8f3dc;
+  --muted: #a3c2a0;
+  --subtle: #bdd8b4;
+  --border: #4f8059;
+  --accent: #f2c75c;
+  --accent-soft: #2b3a17;
+  --accent-text: #ffe29a;
+  --green: #86dc7f;
+  --green-bg: #123a1c;
+  --red: #ff9d6e;
+  --red-bg: #3b1f12;
+  --option: #7fd6e6;
+  --option-bg: #0f3038;
+  --grid: transparent;
+  --shadow: 0 0 18px rgba(242, 199, 92, 0.1);
+  --input: #0b1a11;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+}
+body[data-theme='grove'] :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+body[data-theme='grove'] .canvas-area {
+  background:
+    radial-gradient(ellipse 80% 38% at 50% 0%, rgba(120, 190, 110, 0.22), transparent 72%),
+    radial-gradient(ellipse 60% 30% at 50% 100%, rgba(40, 90, 60, 0.28), transparent 80%),
+    linear-gradient(#0a1a11, #050d08);
+}
+body[data-theme='grove'] #viewport {
+  background-image: none;
+}
+body[data-theme='grove'] .node,
+body[data-theme='grove'] .node[data-relation] {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 20px 6px 20px 6px;
+  box-shadow: none;
+}
+body[data-theme='grove'] .node[data-relation='support'] {
+  border-left: 6px solid var(--green);
+}
+body[data-theme='grove'] .node[data-relation='oppose'] {
+  border-left: 6px solid var(--red);
+}
+body[data-theme='grove'] .node.selected {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 22px rgba(242, 199, 92, 0.35);
+}
+body[data-theme='grove'] .node.is-root {
+  border-color: var(--accent);
+  box-shadow: 0 0 26px rgba(242, 199, 92, 0.3);
+  animation: grove-aura 7s ease-in-out infinite alternate;
+}
+body[data-theme='grove'] .node:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+body[data-theme='grove'] .edge {
+  stroke-width: 3.2;
+  opacity: 0.95;
+}
+body[data-theme='grove'] .edge-support {
+  stroke: #8fc46a;
+}
+body[data-theme='grove'] .edge-oppose {
+  stroke: #e0905f;
+  stroke-dasharray: 7 6;
+}
+body[data-theme='grove'] .legend {
+  padding: 5px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px 4px 12px 4px;
+  color: var(--subtle);
+}
+body[data-theme='grove'] .legend .oppose-mark {
+  background: repeating-linear-gradient(90deg, #e0905f 0 5px, transparent 5px 8px);
+}
+body[data-theme='grove'] .legend .support-mark {
+  background: #8fc46a;
+}
+
+body[data-theme='grove'] .grove-leaves {
+  opacity: 0.92;
+}
+body[data-theme='grove'] .grove-leaves.tone-0 {
+  fill: #17402a;
+}
+body[data-theme='grove'] .grove-leaves.tone-1 {
+  fill: #1f5a35;
+}
+body[data-theme='grove'] .grove-leaves.tone-2 {
+  fill: #2d7a43;
+}
+
+/* Screen-space weather behind the cards. */
+.grove-ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.grove-leaf {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: 14px;
+  height: 14px;
+  border-radius: 0 100% 0 100%;
+  background: linear-gradient(135deg, #9ee06f, #3f8f4a);
+  opacity: 0.7;
+  animation: grove-fall var(--t) linear var(--d) infinite;
+}
+.grove-bird {
+  position: absolute;
+  top: var(--y);
+  left: 0;
+  width: calc(54px * var(--s));
+  fill: #cfe8c0;
+  opacity: 0.55;
+  animation: grove-glide var(--t) linear var(--d) infinite;
+}
+.grove-bird .wings {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: grove-flap 1s ease-in-out infinite alternate;
+}
+.grove-firefly {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffe58a;
+  box-shadow: 0 0 10px 3px rgba(255, 226, 120, 0.55);
+  animation:
+    grove-float 9s ease-in-out var(--d) infinite alternate,
+    grove-glow 5s ease-in-out var(--d) infinite;
+}
+
+/* Small animals on the branches: `offset-path` carries them along the edge; static at mid-branch without motion. */
+.grove-creatures {
+  pointer-events: none;
+}
+.grove-creature {
+  offset-rotate: 0deg;
+  offset-distance: 50%;
+  animation: grove-walk 20s ease-in-out infinite alternate;
+}
+.grove-owl {
+  animation: none;
+  offset-distance: 62%;
+}
+.grove-creature .body {
+  fill: #b5733a;
+}
+.grove-creature .tail {
+  fill: #d98d4c;
+}
+.grove-creature .eye {
+  fill: #140d06;
+}
+.grove-creature .eyewhite {
+  fill: #fff3c4;
+}
+.grove-creature .beak {
+  fill: #f2b84b;
+}
+.grove-owl .body {
+  fill: #9b8157;
+}
+.grove-butterfly .wing.a {
+  fill: #f29ac0;
+}
+.grove-butterfly .wing.b {
+  fill: #ffd36b;
+}
+.grove-butterfly .body {
+  fill: #2a1b2e;
+}
+.grove-butterfly .flap {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: grove-flutter 0.6s ease-in-out infinite alternate;
+}
+.grove-snail .body {
+  fill: #cdb98d;
+  stroke: #cdb98d;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.grove-snail .shell {
+  fill: #a8693b;
+}
+.grove-snail .spiral {
+  fill: none;
+  stroke: #4f2b10;
+  stroke-width: 1.4;
+}
+
+@keyframes grove-fall {
+  0% {
+    transform: translate(0, -8vh) rotate(0deg);
+  }
+  25% {
+    transform: translate(30px, 25vh) rotate(120deg);
+  }
+  50% {
+    transform: translate(-22px, 55vh) rotate(240deg);
+  }
+  75% {
+    transform: translate(34px, 80vh) rotate(330deg);
+  }
+  100% {
+    transform: translate(0, 112vh) rotate(420deg);
+  }
+}
+@keyframes grove-glide {
+  0% {
+    transform: translate(-12vw, 0);
+  }
+  50% {
+    transform: translate(50vw, 14px);
+  }
+  100% {
+    transform: translate(112vw, -6px);
+  }
+}
+@keyframes grove-flap {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.4);
+  }
+}
+@keyframes grove-float {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(26px, -34px);
+  }
+}
+@keyframes grove-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes grove-walk {
+  from {
+    offset-distance: 8%;
+  }
+  to {
+    offset-distance: 92%;
+  }
+}
+@keyframes grove-flutter {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.35);
+  }
+}
+@keyframes grove-aura {
+  from {
+    box-shadow: 0 0 18px rgba(242, 199, 92, 0.22);
+  }
+  to {
+    box-shadow: 0 0 34px rgba(242, 199, 92, 0.42);
+  }
+}
+
+/* Big trees and phones: calm. Reduced motion: no weather at all, the animals stand still on their branches. */
+.grove-calm .grove-ambient,
+.grove-calm .grove-creatures {
+  display: none;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .grove-bird,
+  .grove-firefly {
+    display: none;
+  }
+  .grove-leaf:nth-child(n + 7) {
+    display: none;
+  }
+  .grove-creatures > :nth-of-type(n + 4) {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grove-ambient {
+    display: none;
+  }
+  .grove-creature,
+  .grove-creature .flap,
+  body[data-theme='grove'] .node.is-root {
+    animation: none;
+  }
+}

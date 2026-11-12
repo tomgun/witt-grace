@@ -29,7 +29,7 @@ import type { ViewState, Zone, Zones } from './view.ts';
 
 export type { ViewState, Zone, Zones } from './view.ts';
 
-/** The prototype's eight themes in its menu order (UI_INVENTORY S-00), then the owner's additions of 2026-11-09. */
+/** The prototype's eight themes in its menu order (UI_INVENTORY S-00), then the owner's additions of 2026-11-09 and Lehto (2026-11-12). */
 export const APPEARANCES = [
   'light',
   'dark',
@@ -42,6 +42,7 @@ export const APPEARANCES = [
   'terminal',
   'ascii',
   'comic',
+  'grove',
 ] as const;
 export type Appearance = (typeof APPEARANCES)[number];
 /** Skins kept per browser; the base theme (light/dark/paper) is document data (`project.theme`). */
@@ -54,6 +55,7 @@ export const SPECIAL_APPEARANCES = [
   'terminal',
   'ascii',
   'comic',
+  'grove',
 ] as const;
 export type SpecialAppearance = (typeof SPECIAL_APPEARANCES)[number];
 export type LeftTab = 'tree' | 'repeat';
