@@ -72,7 +72,8 @@ src/app/             the UI; the only code that touches the DOM
   *Dialog.tsx        Assessment, ReviewLens, Vote, People, Help, Examples, Library, VisualExport, Links, Replace,
                      ImportReport, AiDraft, AiReview, AiResults
   styles.css         the prototype's stylesheet (eight themes, 390 px layout), kept so the same classes render the same
-  themes-added.css   the owner's added themes (Terminaali, ASCII, Sarjakuva) and the bundled Comic Neue font (fonts/, OFL)
+  themes-added.css   the owner's added themes (Terminaali, ASCII, Sarjakuva, Lehto) and the bundled Comic Neue font (fonts/, OFL)
+  Grove.tsx, grove.ts  the Lehto theme's artwork (crown, animals, weather) and its pure id-seeded picks; CSS-only motion
 locales/messages.psv one table, nine languages (fi first); npm run i18n regenerates src/lib/i18n
 public/examples/     the five synthetic example documents, fetched only when chosen
 tests/unit           pure and parity · tests/golden fixtures from the prototype · tests/e2e Playwright

@@ -48,6 +48,8 @@ import {
   viewedAssessorId,
 } from './derive.ts';
 import { asciiEdgeParts } from './AsciiEdge.tsx';
+import { GroveAmbient, GroveCreatures, GroveCrown } from './Grove.tsx';
+import { groveCalm, pickCreatures } from './grove.ts';
 import { dropRestoredGhosts } from './fade.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
@@ -401,6 +403,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       ? clamp(contribution.magnitude / 5, 0, 1)
       : null;
   };
+  const groveEdges = new Map<string, string>();
   const edges = nodes.flatMap((child) => {
     if (!child.parentId || !ids.has(child.parentId)) return [];
     const parent = byId.get(child.parentId);
@@ -457,6 +460,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       from: sizeOf(parent.id),
       to: sizeOf(child.id),
     });
+    groveEdges.set(child.id, d);
     const importanceDelta =
       effect && frame.importance.importantIds.has(child.id) ? String(effect.delta) : undefined;
     if (state.appearance === 'ascii')
@@ -857,6 +861,9 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     );
   };
 
+  const grove = state.appearance === 'grove';
+  const rootCard = grove ? nodes.find((n) => !n.parentId) : undefined;
+  const rootAt = rootCard ? visualPosition(rootCard) : null;
   const orientationName = t(ORIENTATION_KEYS[view.orientation]);
   const toggleOrientation = () => {
     const order: Orientation[] = ['horizontal', 'vertical', 'four-way'];
@@ -864,7 +871,12 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     store.requestFit();
   };
   return (
-    <section className="canvas-area" aria-label={t('tree')} data-testid="canvas">
+    <section
+      className={`canvas-area${grove && groveCalm(nodes.length) ? ' grove-calm' : ''}`}
+      aria-label={t('tree')}
+      data-testid="canvas"
+    >
+      {grove ? <GroveAmbient /> : null}
       <div className="canvas-quick-controls" aria-label={t('viewSettingsButton')}>
         <button
           type="button"
@@ -1023,10 +1035,20 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
                 <path d="M0 0 L7 3 L0 6 Z" className="secondary-arrow-oppose" />
               </marker>
             </defs>
+            {rootAt && rootCard ? (
+              <GroveCrown
+                x={view.orientation === 'vertical' ? (minX + maxX) / 2 : rootAt.x + sizeOf(rootCard.id).w / 2}
+                y={rootAt.y + sizeOf(rootCard.id).h / 2}
+                spread={(maxX - minX) / 2}
+              />
+            ) : null}
             <g id="edgePaths">
               {edges}
               {linkEdges}
             </g>
+            {grove ? (
+              <GroveCreatures creatures={pickCreatures([...groveEdges.keys()])} edges={groveEdges} />
+            ) : null}
           </svg>
           <div
             id="nodesLayer"
