@@ -1,9 +1,12 @@
-// The `witt-ai-draft-v2` format: an external AI drafts a whole new document, including its own credence and
-// influence opinions, and the person imports it after a preview. Ported from the prototype's `src/ai-draft-v2.js`;
-// the task text, the schema, the error messages and the resulting document are pinned byte-for-byte by
-// tests/unit/ai-draft.test.ts. Nothing here contacts a model: the text is copied or downloaded by the person.
+// The AI draft formats: an external AI drafts a whole new document, including its own credence and influence
+// opinions, and the person imports it after a preview. `witt-ai-draft-v2` is ported from the prototype's
+// `src/ai-draft-v2.js` and its parsing and documents stay byte-for-byte the prototype's. `witt-ai-draft-v3` (owner
+// request 2026-11-12, S-15) adds the people of a source conversation (`participants`) and who said what (`authorId`):
+// they become human profiles that authored those nodes and comments, never assessors. The task text asks for v3; both
+// open. Pinned by tests/unit/ai-draft.test.ts. Nothing here contacts a model: the text is copied or downloaded.
 import { createBlankProject } from '../project.ts';
 import { ParseError, parseProject } from '../parse.ts';
+import { sameName } from '../model.ts';
 import type { Mode, Node, Project, User } from '../model.ts';
 import type { JsonSchema } from './jsonSchema.ts';
 import {
@@ -17,7 +20,13 @@ import {
 } from './engine.ts';
 import type { Clock } from './engine.ts';
 
-export const DRAFT_FORMAT = 'witt-ai-draft-v2' as const;
+/** The prototype's format, still opened. */
+export const DRAFT_FORMAT_V2 = 'witt-ai-draft-v2' as const;
+/** What the task text asks for: v2 with the conversation's participants and authors. */
+export const DRAFT_FORMAT = 'witt-ai-draft-v3' as const;
+export type DraftFormat = typeof DRAFT_FORMAT_V2 | typeof DRAFT_FORMAT;
+/** The most people a draft names (a live session seats 20; a chat may have had more). */
+export const MAX_DRAFT_PARTICIPANTS = 50;
 /** The prototype's order (it differs from model.SEMANTIC_TYPES); the schema and the task text depend on it. */
 export const DRAFT_SEMANTIC_TYPES = [
   'unspecified',
@@ -36,6 +45,13 @@ export interface AiDraftRoot {
   title: string;
   details: string;
   credence?: number;
+  /** v3: the participant who raised the question. */
+  authorId?: string;
+}
+/** v3: a person of the source conversation, by the name they used there. */
+export interface AiDraftParticipant {
+  id: string;
+  name: string;
 }
 export interface AiDraftClaim {
   id: string;
@@ -46,7 +62,10 @@ export interface AiDraftClaim {
   semanticType: DraftSemanticType;
   credence?: number;
   influence?: number;
+  /** The AI's own note on the claim, whoever made the claim. */
   comment?: string;
+  /** v3: the participant who made the point; absent: the AI's own. */
+  authorId?: string;
 }
 export interface AiDraftSharedReason {
   id: string;
@@ -67,13 +86,19 @@ export interface AiDraftLink {
 export interface AiDraftComment {
   nodeId: string;
   body: string;
+  /** v3: the participant who said it; absent: the AI's comment. */
+  authorId?: string;
 }
-/** A validated, normalized draft: every array present, `details` always a string, `semanticType` defaulted to fact. */
+/**
+ * A validated, normalized draft: every array present, `details` always a string, `semanticType` defaulted to fact.
+ * `participants` is present for v3 only, so a v2 draft normalizes exactly as the prototype's.
+ */
 export interface AiDraft {
-  format: typeof DRAFT_FORMAT;
+  format: DraftFormat;
   title: string;
   mode: Mode;
   assessor: string;
+  participants?: AiDraftParticipant[];
   root: AiDraftRoot;
   claims: AiDraftClaim[];
   sharedReasons: AiDraftSharedReason[];
@@ -115,15 +140,15 @@ function influence(n: unknown): number {
   return n;
 }
 
-/** The response schema, verbatim from the prototype (also what the "download separate JSON schema" button writes). */
-export const DRAFT_SCHEMA: JsonSchema = {
+/** The v2 response schema, verbatim from the prototype; the import preflight checks v2 files against it. */
+export const DRAFT_SCHEMA_V2: JsonSchema = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
   title: 'WITT AI complete assessed draft',
   type: 'object',
   additionalProperties: false,
   required: ['format', 'title', 'mode', 'assessor', 'root', 'claims'],
   properties: {
-    format: { const: DRAFT_FORMAT },
+    format: { const: DRAFT_FORMAT_V2 },
     title: { type: 'string', minLength: 1, maxLength: 200 },
     mode: { enum: ['argument', 'decision'] },
     assessor: { type: 'string', minLength: 1, maxLength: 70 },
@@ -204,15 +229,80 @@ export const DRAFT_SCHEMA: JsonSchema = {
   },
 };
 
-/** Parse an untrusted draft (JSON text or a parsed value). Throws ParseError with the prototype's messages. */
+type SchemaNode = Record<string, unknown>;
+const withAuthor = (def: unknown): SchemaNode => {
+  const d = def as SchemaNode;
+  return {
+    ...d,
+    properties: { ...(d.properties as SchemaNode), authorId: { $ref: '#/$defs/id' } },
+  };
+};
+/**
+ * The v3 response schema (what the task text embeds and the "download separate JSON schema" button writes): v2 with
+ * `participants` and an optional `authorId` on the root, claims and comments.
+ */
+export const DRAFT_SCHEMA: JsonSchema = (() => {
+  const v2 = DRAFT_SCHEMA_V2 as SchemaNode;
+  const properties = v2.properties as SchemaNode;
+  const defs = v2.$defs as SchemaNode;
+  return {
+    ...v2,
+    title: 'WITT AI complete assessed draft with conversation participants',
+    properties: {
+      format: { const: DRAFT_FORMAT },
+      title: properties.title,
+      mode: properties.mode,
+      assessor: properties.assessor,
+      participants: {
+        type: 'array',
+        maxItems: MAX_DRAFT_PARTICIPANTS,
+        items: { $ref: '#/$defs/participant' },
+      },
+      root: properties.root,
+      claims: properties.claims,
+      sharedReasons: properties.sharedReasons,
+      sharedAttachments: properties.sharedAttachments,
+      links: properties.links,
+      comments: properties.comments,
+    },
+    $defs: {
+      id: defs.id,
+      title: defs.title,
+      participant: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'name'],
+        properties: {
+          id: { $ref: '#/$defs/id' },
+          name: { type: 'string', minLength: 1, maxLength: 70 },
+        },
+      },
+      root: withAuthor(defs.root),
+      claim: withAuthor(defs.claim),
+      sharedReason: defs.sharedReason,
+      attachment: defs.attachment,
+      link: defs.link,
+      comment: withAuthor(defs.comment),
+    },
+  } as JsonSchema;
+})();
+
+/**
+ * Parse an untrusted draft (JSON text or a parsed value), v2 or v3 by `format`. Throws ParseError with the
+ * prototype's messages; v3's own refusals name the participant or the dangling author.
+ */
 export function parseAiDraft(input: unknown): AiDraft {
+  const value: unknown = typeof input === 'string' ? JSON.parse(input) : input;
+  const v3 = plain(value) && value.format === DRAFT_FORMAT;
+  const authored = (keys: string[]) => (v3 ? [...keys, 'authorId'] : keys);
   const raw = fields(
-    typeof input === 'string' ? JSON.parse(input) : input,
+    value,
     [
       'format',
       'title',
       'mode',
       'assessor',
+      ...(v3 ? ['participants'] : []),
       'root',
       'claims',
       'sharedReasons',
@@ -223,12 +313,30 @@ export function parseAiDraft(input: unknown): AiDraft {
     ['format', 'title', 'mode', 'assessor', 'root', 'claims'],
     'draft'
   );
-  if (raw.format !== DRAFT_FORMAT) refuse('Not a WITT AI draft v2');
+  if (raw.format !== DRAFT_FORMAT_V2 && raw.format !== DRAFT_FORMAT) refuse('Not a WITT AI draft v2');
   if (raw.mode !== 'argument' && raw.mode !== 'decision') refuse('Invalid mode');
   const mode = raw.mode as Mode;
   const assessor = title(raw.assessor, 'assessor', 70);
   const projectTitle = title(raw.title, 'project title');
-  const rawRoot = fields(raw.root, ['id', 'title', 'details', 'credence'], ['id', 'title'], 'root');
+  const participants: AiDraftParticipant[] = [];
+  if (v3 && raw.participants !== undefined) {
+    if (!Array.isArray(raw.participants) || raw.participants.length > MAX_DRAFT_PARTICIPANTS)
+      refuse('Too many participants');
+    (raw.participants as unknown[]).forEach((item, i) => {
+      const l = 'participant ' + (i + 1);
+      const r = fields(item, ['id', 'name'], ['id', 'name'], l);
+      if (!id(r.id) || participants.some((p) => p.id === r.id)) refuse(l + ': invalid or duplicate ID');
+      const name = title(r.name, l + ' name', 70);
+      if (participants.some((p) => sameName(p.name, name))) refuse(l + ': duplicate name');
+      participants.push({ id: r.id as string, name });
+    });
+  }
+  const author = (x: unknown, l: string): { authorId?: string } => {
+    if (x === undefined) return {};
+    if (!participants.some((p) => p.id === x)) refuse(l + ': unknown author');
+    return { authorId: x as string };
+  };
+  const rawRoot = fields(raw.root, authored(['id', 'title', 'details', 'credence']), ['id', 'title'], 'root');
   if (!id(rawRoot.id)) refuse('Invalid root id');
   if (mode === 'decision' && rawRoot.credence !== undefined)
     refuse('Decision question cannot have a truth estimate');
@@ -237,6 +345,7 @@ export function parseAiDraft(input: unknown): AiDraft {
     title: title(rawRoot.title, 'root title'),
     details: details(rawRoot.details, 'root'),
     ...(rawRoot.credence === undefined ? {} : { credence: probability(rawRoot.credence) }),
+    ...author(rawRoot.authorId, 'root'),
   };
   if (!Array.isArray(raw.claims) || raw.claims.length > 200) refuse('Too many claims');
   const seen = new Set<string>([root.id]);
@@ -244,7 +353,17 @@ export function parseAiDraft(input: unknown): AiDraft {
     const l = 'claim ' + (i + 1);
     const n = fields(
       item,
-      ['id', 'parentId', 'relation', 'title', 'details', 'semanticType', 'credence', 'influence', 'comment'],
+      authored([
+        'id',
+        'parentId',
+        'relation',
+        'title',
+        'details',
+        'semanticType',
+        'credence',
+        'influence',
+        'comment',
+      ]),
       ['id', 'parentId', 'relation', 'title'],
       l
     );
@@ -271,6 +390,7 @@ export function parseAiDraft(input: unknown): AiDraft {
       ...(n.credence === undefined ? {} : { credence: probability(n.credence) }),
       ...(n.influence === undefined ? {} : { influence: influence(n.influence) }),
       ...(n.comment === undefined ? {} : { comment: title(n.comment, l + ' comment', 3000) }),
+      ...author(n.authorId, l),
     };
   });
   const arr = (v: unknown, limit: number, name: string): unknown[] => {
@@ -320,15 +440,20 @@ export function parseAiDraft(input: unknown): AiDraft {
     };
   });
   const comments: AiDraftComment[] = arr(raw.comments, 300, 'comments').map((item, i) => {
-    const c = fields(item, ['nodeId', 'body'], ['nodeId', 'body'], 'comment ' + i);
+    const c = fields(item, authored(['nodeId', 'body']), ['nodeId', 'body'], 'comment ' + i);
     if (!id(c.nodeId)) refuse('Invalid comment target');
-    return { nodeId: c.nodeId as string, body: title(c.body, 'comment body', 3000) };
+    return {
+      nodeId: c.nodeId as string,
+      body: title(c.body, 'comment body', 3000),
+      ...author(c.authorId, 'comment ' + i),
+    };
   });
   return {
-    format: DRAFT_FORMAT,
+    format: v3 ? DRAFT_FORMAT : DRAFT_FORMAT_V2,
     title: projectTitle,
     mode,
     assessor,
+    ...(v3 ? { participants } : {}),
     root,
     claims,
     sharedReasons,
@@ -345,12 +470,19 @@ export interface DraftImportOptions extends Clock {
   includeComments?: boolean;
   /** Shared-reason masters and their attachments (default true; forced off without ratings). */
   includeShared?: boolean;
+  /**
+   * v3: the participant who is the person importing. Their points go to the document's own profile, which takes
+   * their name, instead of a profile of its own; absent: everyone gets a new profile and the importer stays "Minä".
+   */
+  selfParticipantId?: string;
 }
 
 /**
  * Build the document a draft describes: a fresh project owned by "Minä" with the AI as a second, `profileKind: 'ai'`
- * profile that authored every node and holds every imported rating. Ids come from `newId` in the prototype's order
- * (owner, root, project, AI profile, then each node, vote, review, comment, shared reason, attachment, link).
+ * profile that holds every imported rating and authored every node no participant made. Each v3 participant becomes a
+ * human profile (or the owner's, `selfParticipantId`) that authored their nodes and comments and holds no rating:
+ * what someone said in a chat is not their assessment. Ids come from `newId` in the prototype's order (owner, root,
+ * project, AI profile, then the participants, each node, vote, review, comment, shared reason, attachment, link).
  */
 export function draftToProject(input: unknown, options: DraftImportOptions): Project {
   const draft = parseAiDraft(input);
@@ -372,11 +504,33 @@ export function draftToProject(input: unknown, options: DraftImportOptions): Pro
     profileKind: 'ai',
   };
   p.users.push(profile);
+  const owner = p.users[0] as User;
+  const people = new Map<string, User>();
+  const self = draft.participants?.find((x) => x.id === options.selfParticipantId);
+  if (options.selfParticipantId !== undefined && !self)
+    throw new Error('Unknown participant for the importer');
+  for (const person of draft.participants ?? []) {
+    if (person === self) {
+      owner.name = person.name;
+      people.set(person.id, owner);
+      continue;
+    }
+    if (p.users.some((u) => sameName(u.name, person.name)))
+      throw new Error('Participant name already in use: ' + person.name);
+    const user: User = { id: newId(), name: person.name, role: 'editor', shares: 1, profileKind: 'human' };
+    p.users.push(user);
+    people.set(person.id, user);
+  }
+  if (self && p.users.some((u) => u !== owner && sameName(u.name, owner.name)))
+    throw new Error('Participant name already in use: ' + owner.name);
+  /** Who made a point: the participant's profile, or the AI's when the draft names nobody. */
+  const by = (authorId: string | undefined): User =>
+    authorId === undefined ? profile : (people.get(authorId) as User);
   const main = p.nodes[0] as Node;
   main.title = draft.root.title;
   main.details = draft.root.details;
   main.confidence = 50;
-  main.createdBy = profile.id;
+  main.createdBy = by(draft.root.authorId).id;
   if (withRatings && draft.root.credence !== undefined)
     upsertVote(p, main.id, profile.id, draft.root.credence, clock);
   const map = new Map<string, string>([[draft.root.id, main.id]]);
@@ -390,7 +544,7 @@ export function draftToProject(input: unknown, options: DraftImportOptions): Pro
         remainder.push(c);
         continue;
       }
-      const node = addChild(p, parentId, c.relation, profile.id, newId);
+      const node = addChild(p, parentId, c.relation, by(c.authorId).id, newId);
       node.title = c.title;
       node.details = c.details;
       node.semanticType = c.semanticType;
@@ -428,7 +582,8 @@ export function draftToProject(input: unknown, options: DraftImportOptions): Pro
   for (const c of withComments ? draft.comments : []) {
     const nodeId = map.get(c.nodeId);
     if (nodeId === undefined) throw new Error('Unknown comment target');
-    addComment(p, nodeId, c.body, profile.name, profile.id, clock);
+    const author = by(c.authorId);
+    addComment(p, nodeId, c.body, author.name, author.id, clock);
   }
   return parseProject(p);
 }
@@ -444,11 +599,26 @@ export interface DraftSummary {
   comments: number;
   credenceRatings: number;
   influenceRatings: number;
-  /** The first 30 claims as the dialog lists them; `more` is what remains. */
-  items: { title: string; relation: DraftRelation; credence: number | null; influence: number | null }[];
+  /** v3: the conversation's people in the draft's order, with how many nodes and comments each is named for. */
+  participants: { id: string; name: string; points: number }[];
+  /** The first 30 claims as the dialog lists them, `author` the participant's name; `more` is what remains. */
+  items: {
+    title: string;
+    relation: DraftRelation;
+    credence: number | null;
+    influence: number | null;
+    author: string | null;
+  }[];
   more: number;
 }
 export function draftSummary(draft: AiDraft): DraftSummary {
+  const people = draft.participants ?? [];
+  const nameOf = (authorId: string | undefined) => people.find((x) => x.id === authorId)?.name ?? null;
+  const authors = [
+    draft.root.authorId,
+    ...draft.claims.map((c) => c.authorId),
+    ...draft.comments.map((c) => c.authorId),
+  ];
   return {
     title: draft.title,
     mode: draft.mode,
@@ -461,19 +631,21 @@ export function draftSummary(draft: AiDraft): DraftSummary {
       draft.claims.filter((c) => c.credence !== undefined).length +
       (draft.root.credence !== undefined ? 1 : 0),
     influenceRatings: draft.claims.filter((c) => c.influence !== undefined).length,
+    participants: people.map((x) => ({ ...x, points: authors.filter((a) => a === x.id).length })),
     items: draft.claims.slice(0, 30).map((c) => ({
       title: c.title,
       relation: c.relation,
       credence: c.credence ?? null,
       influence: c.influence ?? null,
+      author: nameOf(c.authorId),
     })),
     more: Math.max(0, draft.claims.length - 30),
   };
 }
 
-/** The structural example embedded in the task text, verbatim from the prototype. */
-export const DRAFT_EXAMPLE = {
-  format: DRAFT_FORMAT,
+/** The prototype's structural example (v2). */
+export const DRAFT_EXAMPLE_V2 = {
+  format: DRAFT_FORMAT_V2,
   title: 'Saturday plans',
   mode: 'decision',
   assessor: 'Example AI',
@@ -497,6 +669,27 @@ export const DRAFT_EXAMPLE = {
   links: [],
   comments: [],
 };
+/** The structural example embedded in the task text: the prototype's, with two people of a conversation. */
+export const DRAFT_EXAMPLE = {
+  format: DRAFT_FORMAT,
+  title: DRAFT_EXAMPLE_V2.title,
+  mode: DRAFT_EXAMPLE_V2.mode,
+  assessor: DRAFT_EXAMPLE_V2.assessor,
+  participants: [
+    { id: 'p1', name: 'Alex' },
+    { id: 'p2', name: 'Sam' },
+  ],
+  root: { ...DRAFT_EXAMPLE_V2.root, authorId: 'p1' },
+  claims: [
+    { ...DRAFT_EXAMPLE_V2.claims[0], authorId: 'p1' },
+    { ...DRAFT_EXAMPLE_V2.claims[1], authorId: 'p1' },
+    { ...DRAFT_EXAMPLE_V2.claims[2], authorId: 'p2' },
+  ],
+  sharedReasons: DRAFT_EXAMPLE_V2.sharedReasons,
+  sharedAttachments: DRAFT_EXAMPLE_V2.sharedAttachments,
+  links: [],
+  comments: [{ nodeId: 'clean', body: 'The flat really needs it before Monday', authorId: 'p2' }],
+};
 
 export interface DraftPromptInput {
   mode?: Mode;
@@ -506,7 +699,10 @@ export interface DraftPromptInput {
   language?: string;
 }
 
-/** The AI task text the person copies or downloads (`witt-ai-uusi-puu-tehtava.txt`), byte-identical to the prototype. */
+/**
+ * The AI task text the person copies or downloads (`witt-ai-uusi-puu-tehtava.txt`): the prototype's, asking for v3,
+ * with the paragraph on a conversation's participants and the v3 example and schema (S-15, owner 2026-11-12).
+ */
 export function buildDraftPrompt({
   mode = 'argument',
   topic = '',
@@ -527,6 +723,7 @@ export function buildDraftPrompt({
       '. The user may add extra subject instructions in the chat; follow them without violating this format.',
     'Use two rating axes only: a factual/predicted premise credence 0..100 percent (subjective probability it is true or occurs) and SIGNED impact -5..+5 for its immediate relation, assessed as YOUR AI opinion.',
     'Do not rate decision alternatives, subjective values, mandatory conditions or prerequisites for factual truth. Do not create human ratings, human votes, or ballot preferences.',
+    "If the source material is a conversation (for example a chat export or a meeting transcript), list its speakers in participants, each with a short unique ASCII id and the display name exactly as it appears in the conversation, and set authorId on the root, on each claim and on each comment to the participant who raised that point or said it. Leave authorId out for points you add yourself. Never invent participants, merge two people or attribute a point to someone who did not make it. Authorship is not an assessment: credence and impact stay YOUR AI opinion, never a participant's rating. Without a conversation, omit participants and authorId.",
     'Represent decision options with relation:"option" directly under a decision root. Give every actual claim a real claim node, with support, oppose or neutral relationship. Branches should be nuanced with counterarguments and non-fabricated uncertainty.',
     'For repeated truly identical shared reasons, optionally propose sharedReasons with a single deliberately locked credence and signed influence and sharedAttachments to concrete options or claims. These master values are imported as common structural templates only AFTER explicit user acceptance. If conditional probabilities differ, create separate ordinary claims instead.',
     'You may use additional links with link influence rated as your AI opinion. Cross-links also contribute to target scores; avoid unintended overlapping argument paths. Never invent citations, facts or evidence. Distinguish unknowns.',

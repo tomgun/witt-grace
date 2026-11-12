@@ -286,6 +286,9 @@ export const assessmentFields = (node: Node | undefined | null): { credence: boo
   impact: node?.kind === 'claim' && !!node.parentId && !isGate(node) && !isUnrated(node),
 });
 export const isAiProfile = (user: User | undefined | null): boolean => user?.profileKind === 'ai';
+/** Names compare as people read them: surrounding space, case and Unicode composition do not count. */
+export const sameName = (a: string, b: string): boolean =>
+  a.trim().normalize('NFC').toLocaleLowerCase() === b.trim().normalize('NFC').toLocaleLowerCase();
 /** Owner 2026-11-10: a signed influence is −5…+5 in 0.1 steps (the prototype's 0.5 steps are a subset); the UI moves in
  * 0.5 steps unless the relation asks for the fine scale. */
 export const INFLUENCE_STEP = 0.1;

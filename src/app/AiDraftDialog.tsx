@@ -1,7 +1,8 @@
 // "Luo uusi puu kielimallilla" (UI_INVENTORY S-11.12/S-11.13, inv-ai-contrib §A): the task text is copied or
 // downloaded, never sent; the AI's reply is pasted or opened, preflighted, previewed with three include toggles and
 // installed only after the replacement dialog. A draft with ratings then opens in that AI's perspective, as in the
-// prototype. File → Avaa JSON hands a draft file here through `stageDraftFromFile`.
+// prototype. A v3 draft made from a conversation lists its people, and the importer may say which of them they are
+// (owner 2026-11-12, S-15). File → Avaa JSON hands a draft file here through `stageDraftFromFile`.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DRAFT_SCHEMA,
@@ -54,7 +55,7 @@ function stageDraft(parsed: unknown, sourceName: string): Staged | null {
   }
 }
 
-/** File → Avaa JSON with a `witt-ai-draft-v2` file: open straight into the preview (the preflight already passed). */
+/** File → Avaa JSON with a `witt-ai-draft-v2`/`-v3` file: open straight into the preview (the preflight already passed). */
 export function stageDraftFromFile(parsed: unknown, sourceName: string): void {
   const staged = stageDraft(parsed, sourceName);
   if (!staged) return;
@@ -70,7 +71,11 @@ export function draftPreviewLines(draft: AiDraft): string {
     `AI: ${s.assessor}`,
     `${s.claims} solmua · ${s.sharedReasons} yhteisperustetta · ${s.links} lisäyhteyttä`,
     `${s.credenceRatings} uskottavuusarviota · ${s.influenceRatings} vaikutusarviota`,
-    ...s.items.map((n) => `• ${n.title} (${n.relation}) · ${n.credence ?? '–'}% · ${n.influence ?? '–'}/5`),
+    ...s.items.map(
+      (n) =>
+        `• ${n.title} (${n.relation}) · ${n.credence ?? '–'}% · ${n.influence ?? '–'}/5` +
+        (n.author === null ? '' : ` · ${n.author}`)
+    ),
     s.more ? `… ${s.more} lisää` : '',
   ]
     .filter(Boolean)
@@ -93,6 +98,8 @@ export function AiDraftDialog() {
   const [includeRatings, setIncludeRatings] = useState(true);
   const [includeComments, setIncludeComments] = useState(true);
   const [includeShared, setIncludeShared] = useState(true);
+  /** The participant the importer is, '' for none of them. */
+  const [selfParticipant, setSelfParticipant] = useState('');
   const [previewError, setPreviewError] = useState('');
   const previewDetails = useRef<HTMLDetailsElement>(null);
   const previewArea = useRef<HTMLTextAreaElement>(null);
@@ -129,6 +136,7 @@ export function AiDraftDialog() {
     setIncludeRatings(true);
     setIncludeComments(true);
     setIncludeShared(true);
+    setSelfParticipant('');
     setPreviewError('');
     setStaged(next);
   };
@@ -150,6 +158,7 @@ export function AiDraftDialog() {
         includeRatings,
         includeComments,
         includeShared,
+        ...(selfParticipant ? { selfParticipantId: selfParticipant } : {}),
         now: nowIso(),
         newId,
       });
@@ -174,6 +183,7 @@ export function AiDraftDialog() {
   };
 
   if (staged) {
+    const people = staged.draft.participants ?? [];
     return (
       <Modal
         open
@@ -186,6 +196,27 @@ export function AiDraftDialog() {
         <div id="aiDraftPreview" className="proposal-preview-lines">
           {previewError || draftPreviewLines(staged.draft)}
         </div>
+        {people.length ? (
+          <div id="draftParticipants" className="proposal-options">
+            <p>
+              {t('draftParticipants', { count: people.length, names: people.map((x) => x.name).join(', ') })}
+            </p>
+            <label htmlFor="draftSelfParticipant">{t('draftSelfParticipant')}</label>
+            <select
+              id="draftSelfParticipant"
+              value={selfParticipant}
+              onChange={(e) => setSelfParticipant(e.target.value)}
+            >
+              <option value="">{t('draftSelfNone')}</option>
+              {people.map((x) => (
+                <option key={x.id} value={x.id}>
+                  {x.name}
+                </option>
+              ))}
+            </select>
+            <p className="inspector-note">{t('draftParticipantsNote')}</p>
+          </div>
+        ) : null}
         <div className="proposal-options">
           <label>
             <input
@@ -334,7 +365,7 @@ export function AiDraftDialog() {
               id="btnAIDownloadSchema"
               className="btn quiet"
               onClick={() =>
-                downloadText('witt-ai-draft-v2.schema.json', JSON.stringify(DRAFT_SCHEMA, null, 2) + '\n')
+                downloadText('witt-ai-draft-v3.schema.json', JSON.stringify(DRAFT_SCHEMA, null, 2) + '\n')
               }
             >
               {t('aiTaskDownloadSchema')}
@@ -357,7 +388,7 @@ export function AiDraftDialog() {
           <textarea
             id="aiDraftPaste"
             rows={3}
-            placeholder='{ "format": "witt-ai-draft-v2", ... }'
+            placeholder='{ "format": "witt-ai-draft-v3", ... }'
             value={paste}
             onChange={(e) => setPaste(e.target.value)}
           />

@@ -1,4 +1,8 @@
 /**
+ * must: the AI task text asks for `witt-ai-draft-v3`: the prototype's text with the format name, one paragraph on a
+ *       conversation's participants and the v3 example and schema, nothing else changed (owner 2026-11-12, S-15);
+ *       a v3 draft's participants become human profiles that authored their nodes and comments and hold no rating,
+ *       the importer may be one of them, and dangling or duplicate participants are refused
  * must: the `witt-ai-draft-v2` port reproduces the frozen prototype's `src/ai-draft-v2.js` exactly — the AI task text
  *       byte for byte, the schema and example objects, every accepted draft's normalized shape, every refusal message,
  *       and the document `toProject` builds (same ids with the same counting id source, same clock) for every draft
@@ -6,7 +10,8 @@
  * test: tests/unit/ai-draft.test.ts (the prototype module is loaded as the oracle)
  * red-against: a prompt paragraph reworded, a schema key reordered, `semanticType` left undefined instead of 'fact',
  *              ratings imported when "Tuo arvioinnit" is off, locked shared reasons imported without ratings, an id
- *              drawn in a different order, the root authored by "Minä" instead of the AI profile
+ *              drawn in a different order, the root authored by "Minä" instead of the AI profile; a participant
+ *              given the AI's ratings, a participant's comment kept under the AI's name, two "Maija" profiles
  */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -14,8 +19,12 @@ import path from 'node:path';
 import test from 'node:test';
 import {
   DRAFT_EXAMPLE,
+  DRAFT_EXAMPLE_V2,
   DRAFT_FORMAT,
+  DRAFT_FORMAT_V2,
   DRAFT_SCHEMA,
+  DRAFT_SCHEMA_V2,
+  evaluate,
   buildDraftPrompt,
   draftSummary,
   draftToProject,
@@ -27,7 +36,27 @@ const sample = () => clone(draftFiles()[0]!.raw);
 type Mutation = [label: string, mutate: (d: Record<string, unknown>) => unknown];
 const claims = (d: Record<string, unknown>) => d.claims as Record<string, unknown>[];
 
-test('buildDraftPrompt is byte-identical to the prototype task for every mode, language and input shape', () => {
+/** The one paragraph v3 adds to the prototype's task, literally. */
+const PARTICIPANTS_PARAGRAPH =
+  "If the source material is a conversation (for example a chat export or a meeting transcript), list its speakers in participants, each with a short unique ASCII id and the display name exactly as it appears in the conversation, and set authorId on the root, on each claim and on each comment to the participant who raised that point or said it. Leave authorId out for points you add yourself. Never invent participants, merge two people or attribute a point to someone who did not make it. Authorship is not an assessment: credence and impact stay YOUR AI opinion, never a participant's rating. Without a conversation, omit participants and authorId.";
+const block = (value: unknown) => '```json\n' + JSON.stringify(value, null, 2) + '\n```';
+/** The prototype's task turned into v3: the format name, the paragraph, the example and the schema; nothing else. */
+function asV3(task: string): string {
+  const parts = [
+    [block(proto.draft.EXAMPLE), block(DRAFT_EXAMPLE)],
+    [block(proto.draft.schema), block(DRAFT_SCHEMA)],
+    ['in format witt-ai-draft-v2.', 'in format witt-ai-draft-v3.'],
+    ['\n\nRepresent decision options', '\n\n' + PARTICIPANTS_PARAGRAPH + '\n\nRepresent decision options'],
+  ] as const;
+  let out = task;
+  for (const [from, to] of parts) {
+    assert.equal(out.split(from).length, 2, 'exactly one ' + from.slice(0, 40));
+    out = out.replace(from, () => to);
+  }
+  return out;
+}
+
+test('buildDraftPrompt is the prototype task asking for v3, for every mode, language and input shape', () => {
   const inputs = [
     {},
     { mode: 'decision' as const },
@@ -36,8 +65,9 @@ test('buildDraftPrompt is byte-identical to the prototype task for every mode, l
     { mode: 'decision' as const, topic: 'x'.repeat(6000), context: 'y'.repeat(60000), language: 'zh-Hans' },
     { topic: '', context: '', language: 'ko' },
   ];
-  for (const input of inputs) assert.equal(buildDraftPrompt(input), proto.draft.buildTask(input));
-  assert.equal(buildDraftPrompt(), proto.draft.buildTask());
+  for (const input of inputs) assert.equal(buildDraftPrompt(input), asV3(proto.draft.buildTask(input)));
+  assert.equal(buildDraftPrompt(), asV3(proto.draft.buildTask()));
+  assert.equal(buildDraftPrompt().split('witt-ai-draft-v2').length, 1, 'the task never asks for v2');
   sameError(
     () => buildDraftPrompt({ mode: 'vote' as 'argument' }),
     () => proto.draft.buildTask({ mode: 'vote' }),
@@ -46,44 +76,179 @@ test('buildDraftPrompt is byte-identical to the prototype task for every mode, l
   assert.ok(buildDraftPrompt({ language: 'de' }).includes('Return the document in language de.'));
 });
 
-test("the owner's pasted task fixture is the decision prompt for its topic and material, in Finnish", () => {
+test("the owner's pasted task fixture is the prototype's decision prompt for its topic and material, in Finnish", () => {
   const fixture = readFileSync(
     path.join(process.cwd(), 'tests', 'fixtures', 'ai-task-decision-fi.txt'),
     'utf8'
   );
-  const prompt = buildDraftPrompt({
-    mode: 'decision',
+  const input = {
+    mode: 'decision' as const,
     topic: 'Kannattaako ostoskeskuksen asiakkaille tarjota 3 tunnin ilmainen pysäköinti?',
     context:
       'Tämä on erityisesti Espoon Isossa Omenassa ja Lippulaivassa ja Ainoassa kismittänyt espoolaisia.',
     language: 'fi',
-  });
+  };
+  const prompt = proto.draft.buildTask(input) as string;
   // The owner's paste abbreviates the schema block with one placeholder line; everything else is the exact task.
-  const schemaBlock = '```json\n' + JSON.stringify(DRAFT_SCHEMA, null, 2) + '\n```';
+  const schemaBlock = block(DRAFT_SCHEMA_V2);
   const placeholder =
     "(the witt-ai-draft-v2 schema follows here in the prototype's output; see witt-grace-gpt-proto/src/ai-draft-v2.js)";
   assert.ok(prompt.includes(schemaBlock));
   assert.equal(fixture, prompt.replace(schemaBlock, placeholder) + '\n');
+  assert.equal(buildDraftPrompt(input), asV3(prompt));
+});
+
+test('the v2 schema and example equal the prototype objects and the shipped schema file, key order included', () => {
+  assert.equal(DRAFT_FORMAT_V2, proto.draft.FORMAT);
+  assert.equal(JSON.stringify(DRAFT_SCHEMA_V2, null, 2), JSON.stringify(proto.draft.schema, null, 2));
   assert.equal(
-    prompt,
-    proto.draft.buildTask({
-      mode: 'decision',
-      topic: 'Kannattaako ostoskeskuksen asiakkaille tarjota 3 tunnin ilmainen pysäköinti?',
-      context:
-        'Tämä on erityisesti Espoon Isossa Omenassa ja Lippulaivassa ja Ainoassa kismittänyt espoolaisia.',
-      language: 'fi',
-    })
+    JSON.stringify(DRAFT_SCHEMA_V2),
+    JSON.stringify(readJson(path.join(protoDir, 'schemas', 'ai-draft.v2.schema.json')))
+  );
+  assert.equal(JSON.stringify(DRAFT_EXAMPLE_V2, null, 2), JSON.stringify(proto.draft.EXAMPLE, null, 2));
+});
+
+test('the v3 schema is the v2 schema with participants and an optional authorId, nothing else', () => {
+  type S = Record<string, Record<string, Record<string, unknown>>>;
+  const v3 = DRAFT_SCHEMA as unknown as S;
+  const v2 = DRAFT_SCHEMA_V2 as unknown as S;
+  assert.equal(DRAFT_FORMAT, 'witt-ai-draft-v3');
+  assert.deepEqual(v3.properties!.format, { const: 'witt-ai-draft-v3' });
+  assert.deepEqual(Object.keys(v3.properties!), [
+    'format',
+    'title',
+    'mode',
+    'assessor',
+    'participants',
+    'root',
+    'claims',
+    'sharedReasons',
+    'sharedAttachments',
+    'links',
+    'comments',
+  ]);
+  assert.deepEqual(v3.properties!.participants, {
+    type: 'array',
+    maxItems: 50,
+    items: { $ref: '#/$defs/participant' },
+  });
+  assert.deepEqual(v3.$defs!.participant, {
+    type: 'object',
+    additionalProperties: false,
+    required: ['id', 'name'],
+    properties: { id: { $ref: '#/$defs/id' }, name: { type: 'string', minLength: 1, maxLength: 70 } },
+  });
+  for (const def of ['root', 'claim', 'comment']) {
+    const { authorId, ...rest } = v3.$defs![def]!.properties as Record<string, unknown>;
+    assert.deepEqual(authorId, { $ref: '#/$defs/id' }, def);
+    assert.deepEqual({ ...v3.$defs![def], properties: rest }, v2.$defs![def], def);
+  }
+  const without = (o: Record<string, unknown>, ...keys: string[]) =>
+    Object.fromEntries(Object.entries(o).filter(([k]) => !keys.includes(k)));
+  assert.deepEqual(without(v3.properties!, 'participants', 'format'), without(v2.properties!, 'format'));
+  assert.deepEqual(v3.required, v2.required, 'participants stay optional');
+  assert.deepEqual(parseAiDraft(DRAFT_EXAMPLE).participants, [
+    { id: 'p1', name: 'Alex' },
+    { id: 'p2', name: 'Sam' },
+  ]);
+});
+
+const conversation = () => ({
+  format: 'witt-ai-draft-v3',
+  title: 'Toimiston muutto',
+  mode: 'decision',
+  assessor: 'Malli',
+  participants: [
+    { id: 'aino', name: 'Aino' },
+    { id: 'pekka', name: 'Pekka' },
+  ],
+  root: { id: 'root', title: 'Muutetaanko keskustaan?', authorId: 'aino' },
+  claims: [
+    { id: 'move', parentId: 'root', relation: 'option', title: 'Muutetaan', authorId: 'aino' },
+    {
+      id: 'commute',
+      parentId: 'move',
+      relation: 'support',
+      title: 'Työmatkat lyhenevät',
+      credence: 80,
+      influence: 3,
+      comment: 'Koskee useimpia',
+      authorId: 'pekka',
+    },
+    { id: 'rent', parentId: 'move', relation: 'oppose', title: 'Vuokra nousee', credence: 90, influence: -2 },
+  ],
+  comments: [{ nodeId: 'rent', body: 'Tarkistan hinnat', authorId: 'aino' }],
+});
+
+test('a v3 draft: participants author their nodes and comments as human profiles and hold no rating', () => {
+  const p = draftToProject(conversation(), clock('d'));
+  assert.deepEqual(
+    p.users.map((u) => [u.id, u.name, u.profileKind ?? null]),
+    [
+      ['d-0001', 'Minä', null],
+      ['d-0004', 'AI · Malli', 'ai'],
+      ['d-0005', 'Aino', 'human'],
+      ['d-0006', 'Pekka', 'human'],
+    ]
+  );
+  const by = (title: string) => p.nodes.find((n) => n.title === title)?.createdBy;
+  assert.equal(by('Muutetaanko keskustaan?'), 'd-0005');
+  assert.equal(by('Muutetaan'), 'd-0005');
+  assert.equal(by('Työmatkat lyhenevät'), 'd-0006');
+  assert.equal(by('Vuokra nousee'), 'd-0004', 'no author: the AI made the point');
+  assert.deepEqual(
+    (p.comments ?? []).map((c) => [c.body, c.authorName, c.authorId]),
+    [
+      ['Koskee useimpia', 'AI · Malli', 'd-0004'],
+      ['Tarkistan hinnat', 'Aino', 'd-0005'],
+    ]
+  );
+  const raters = new Set([...p.votes.map((v) => v.userId), ...p.edgeAssessments.map((r) => r.userId)]);
+  assert.deepEqual([...raters], ['d-0004'], 'every rating is the AI viewpoint');
+  const scores = evaluate(p);
+  assert.ok(scores, 'the document evaluates');
+});
+
+test('a v3 draft: the importer may be one of the participants and keeps the owner profile', () => {
+  const p = draftToProject(conversation(), { ...clock('d'), selfParticipantId: 'aino' });
+  assert.deepEqual(
+    p.users.map((u) => [u.id, u.name, u.role]),
+    [
+      ['d-0001', 'Aino', 'owner'],
+      ['d-0004', 'AI · Malli', 'editor'],
+      ['d-0005', 'Pekka', 'editor'],
+    ]
+  );
+  assert.equal(p.nodes.find((n) => n.title === 'Muutetaan')?.createdBy, 'd-0001');
+  assert.equal((p.comments ?? []).find((c) => c.body === 'Tarkistan hinnat')?.authorName, 'Aino');
+  assert.throws(
+    () => draftToProject(conversation(), { ...clock('d'), selfParticipantId: 'nobody' }),
+    /Unknown participant/
   );
 });
 
-test('DRAFT_SCHEMA and DRAFT_EXAMPLE equal the prototype objects and the shipped schema file, key order included', () => {
-  assert.equal(DRAFT_FORMAT, proto.draft.FORMAT);
-  assert.equal(JSON.stringify(DRAFT_SCHEMA, null, 2), JSON.stringify(proto.draft.schema, null, 2));
-  assert.equal(
-    JSON.stringify(DRAFT_SCHEMA),
-    JSON.stringify(readJson(path.join(protoDir, 'schemas', 'ai-draft.v2.schema.json')))
+test('a v3 draft refuses dangling authors, duplicate people and names the document already has', () => {
+  const refused = (mutate: (d: ReturnType<typeof conversation>) => void, message: RegExp) => {
+    const d = conversation();
+    mutate(d);
+    assert.throws(() => draftToProject(d, clock('d')), message);
+  };
+  refused((d) => ((d.claims[1] as { authorId?: string }).authorId = 'ghost'), /claim 2: unknown author/);
+  refused((d) => (d.comments[0]!.authorId = 'ghost'), /comment 0: unknown author/);
+  refused((d) => (d.root.authorId = 'ghost'), /root: unknown author/);
+  refused((d) => d.participants.push({ id: 'aino2', name: ' AINO ' }), /participant 3: duplicate name/);
+  refused(
+    (d) => d.participants.push({ id: 'aino', name: 'Toinen' }),
+    /participant 3: invalid or duplicate ID/
   );
-  assert.equal(JSON.stringify(DRAFT_EXAMPLE, null, 2), JSON.stringify(proto.draft.EXAMPLE, null, 2));
+  refused((d) => d.participants.push({ id: 'me', name: 'minä' }), /already in use: minä/);
+  refused((d) => d.participants.push({ id: 'ai', name: 'AI · Malli' }), /already in use/);
+  refused(
+    (d) => (d.participants = Array.from({ length: 51 }, (_, i) => ({ id: `p${i}`, name: `P${i}` }))),
+    /Too many participants/
+  );
+  const v2 = { ...conversation(), format: 'witt-ai-draft-v2' } as Record<string, unknown>;
+  assert.throws(() => parseAiDraft(v2), /draft: unexpected participants/, 'v2 stays the prototype shape');
 });
 
 test('parseAiDraft normalizes every shipped draft exactly as the prototype validate', () => {
@@ -95,7 +260,7 @@ test('parseAiDraft normalizes every shipped draft exactly as the prototype valid
       `${name} text`
     );
   }
-  assert.deepEqual(parseAiDraft(DRAFT_EXAMPLE), proto.draft.validate(proto.draft.EXAMPLE));
+  assert.deepEqual(parseAiDraft(DRAFT_EXAMPLE_V2), proto.draft.validate(proto.draft.EXAMPLE));
   const parsed = parseAiDraft(sample());
   assert.equal(parsed.claims[0]!.semanticType, 'fact');
   assert.equal(parsed.claims[0]!.details, '');
@@ -343,9 +508,22 @@ test('draftSummary counts what the preview dialog lists', () => {
       comments: 1,
       credenceRatings: 3,
       influenceRatings: 3,
+      participants: [],
       items: [
-        { title: 'Uimahalliin lasten kanssa', relation: 'option', credence: null, influence: null },
-        { title: 'Voimme saada perheen yhteistä aikaa', relation: 'support', credence: 70, influence: 4 },
+        {
+          title: 'Uimahalliin lasten kanssa',
+          relation: 'option',
+          credence: null,
+          influence: null,
+          author: null,
+        },
+        {
+          title: 'Voimme saada perheen yhteistä aikaa',
+          relation: 'support',
+          credence: 70,
+          influence: 4,
+          author: null,
+        },
       ],
       more: 0,
     }
@@ -360,4 +538,13 @@ test('draftSummary counts what the preview dialog lists', () => {
   big.sharedAttachments = [];
   assert.equal(draftSummary(parseAiDraft(big)).items.length, 30);
   assert.equal(draftSummary(parseAiDraft(big)).more, 5);
+  const talk = draftSummary(parseAiDraft(conversation()));
+  assert.deepEqual(talk.participants, [
+    { id: 'aino', name: 'Aino', points: 3 },
+    { id: 'pekka', name: 'Pekka', points: 1 },
+  ]);
+  assert.deepEqual(
+    talk.items.map((i) => i.author),
+    ['Aino', 'Pekka', null]
+  );
 });
