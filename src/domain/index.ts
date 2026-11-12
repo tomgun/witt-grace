@@ -95,8 +95,12 @@ export type {
 // AI drafts, change proposals and the import preflight (src/domain/ai/): no network, ids and clock passed in.
 export {
   DRAFT_FORMAT,
+  DRAFT_FORMAT_V2,
   DRAFT_SCHEMA,
+  DRAFT_SCHEMA_V2,
   DRAFT_EXAMPLE,
+  DRAFT_EXAMPLE_V2,
+  MAX_DRAFT_PARTICIPANTS,
   parseAiDraft,
   draftToProject,
   draftSummary,
@@ -110,6 +114,8 @@ export type {
   AiDraftAttachment,
   AiDraftLink,
   AiDraftComment,
+  AiDraftParticipant,
+  DraftFormat,
   DraftImportOptions,
   DraftPromptInput,
   DraftSummary,

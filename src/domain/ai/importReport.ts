@@ -7,7 +7,14 @@ import { SCHEMA_VERSION } from '../model.ts';
 import { parseProject } from '../parse.ts';
 import type { JsonSchema } from './jsonSchema.ts';
 import { PROJECT_SCHEMA } from './projectSchema.ts';
-import { DRAFT_SCHEMA, draftToProject, parseAiDraft } from './draft.ts';
+import {
+  DRAFT_FORMAT,
+  DRAFT_FORMAT_V2,
+  DRAFT_SCHEMA,
+  DRAFT_SCHEMA_V2,
+  draftToProject,
+  parseAiDraft,
+} from './draft.ts';
 import { STARTER_SCHEMA, parseStarter, starterToProject } from './starter.ts';
 import {
   CONTRIBUTION_BUNDLE_FORMAT,
@@ -67,7 +74,7 @@ const issue = (
 
 export function importFormatOf(raw: unknown): ImportFormat {
   if (!isObject(raw)) return 'unknown';
-  if (raw.format === 'witt-ai-draft-v2') return 'draft';
+  if (raw.format === DRAFT_FORMAT_V2 || raw.format === DRAFT_FORMAT) return 'draft';
   if (raw.format === 'witt-contribution-v2' || raw.format === CONTRIBUTION_BUNDLE_FORMAT)
     return 'contribution';
   if (raw.format === 'witt-ai-starter-v1') return 'starter';
@@ -664,7 +671,7 @@ export function inspectImport(input: unknown, opts: InspectOptions = {}): Import
     };
   let schema: JsonSchema | null = null;
   if (format === 'project') schema = PROJECT_SCHEMA;
-  if (format === 'draft') schema = DRAFT_SCHEMA;
+  if (format === 'draft') schema = parsed.format === DRAFT_FORMAT_V2 ? DRAFT_SCHEMA_V2 : DRAFT_SCHEMA;
   if (format === 'contribution')
     schema = parsed.format === CONTRIBUTION_BUNDLE_FORMAT ? CONTRIBUTION_BUNDLE_SCHEMA : CONTRIBUTION_SCHEMA;
   if (format === 'starter') schema = STARTER_SCHEMA;

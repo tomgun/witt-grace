@@ -35,7 +35,7 @@ src/domain/          pure decisions; imports only other domain modules (ESLint +
   table.ts           table rows in tree order and per-node assessment details (port of table-model.js)
   commands.ts        43 serializable Command types applied by applyCommand(project, command, { now, actorId })
   serialize.ts       .witt.json file form (byte-identical to the prototype), compact storage form, export filename
-  ai/draft.ts        witt-ai-draft-v2: task text, schema, parseAiDraft, preview summary, draftToProject
+  ai/draft.ts        witt-ai-draft-v2/v3: task text, schema, parseAiDraft, preview summary, draftToProject
   ai/contribution.ts witt-contribution-v2 and witt-contribution-bundle-v1: request, prompt, parse, preview, apply, export
   ai/importReport.ts the import preflight: format detection, schema walk, graph checks, report text
   ai/starter.ts      legacy witt-ai-starter-v1 (unrated claim tree) → project

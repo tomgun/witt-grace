@@ -6,11 +6,13 @@
  *       AI results dialog lists that AI's own counts and option ranking and shows its perspective in the tree again;
  *       an invalid pasted proposal opens the import report instead of importing; File → Avaa JSON routes a project
  *       file through the replace flow and an AI draft file to the draft preview (UI_INVENTORY S-11.12, S-11.13,
- *       S-11.20, S-11.24, S-11.25, S-13; inv-ai-contrib §0, §A, §B, §D)
+ *       S-11.20, S-11.24, S-11.25, S-13; inv-ai-contrib §0, §A, §B, §D); the task asks for v3, and a v3 draft from a
+ *       conversation lists its people, names authors in the preview, and the importer picked becomes the owner
+ *       profile with the others as profiles of their own (S-15, owner 2026-11-12)
  * test: tests/e2e/ai-walk.spec.ts (desktop)
  * red-against: a task sent anywhere instead of copied, an AI rating counted as a human review, a draft opened
  *              without the replacement dialog, an invalid proposal merged or silently ignored, Avaa JSON accepting a
- *              draft as a project or refusing it outright
+ *              draft as a project or refusing it outright, a conversation's people dropped or the importer left "Minä"
  */
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
@@ -182,4 +184,53 @@ test('AI draft, AI results, proposal report and File → Avaa JSON routing', asy
   );
   await expect(page.getByTestId('node-count')).toHaveText('6');
   await expect(page.locator('#btnAIResults')).toHaveCount(0);
+});
+
+const CONVERSATION = JSON.stringify({
+  format: 'witt-ai-draft-v3',
+  title: 'Toimiston muutto',
+  mode: 'decision',
+  assessor: 'Malli',
+  participants: [
+    { id: 'aino', name: 'Aino' },
+    { id: 'pekka', name: 'Pekka' },
+  ],
+  root: { id: 'root', title: 'Muutetaanko keskustaan?', authorId: 'aino' },
+  claims: [
+    { id: 'move', parentId: 'root', relation: 'option', title: 'Muutetaan', authorId: 'aino' },
+    {
+      id: 'commute',
+      parentId: 'move',
+      relation: 'support',
+      title: 'Työmatkat lyhenevät',
+      credence: 80,
+      influence: 3,
+      authorId: 'pekka',
+    },
+  ],
+});
+
+test('an AI draft from a conversation lists its people, asks which one I am and makes them profiles (owner 2026-11-12)', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the desktop walk covers the flow');
+  await startBlank(page, 'argument');
+  await fromFileMenu(page, '#btnNew');
+  await page.locator('#btnAIDraft').click();
+  await expect(page.locator('#aiPromptPreview')).toHaveValue(/witt-ai-draft-v3/);
+  await page.locator('#btnAIToImport').click();
+  await page.locator('#aiDraftPaste').fill(CONVERSATION);
+  await page.locator('#btnAIShowPreview').click();
+  await expect(page.locator('#aiDraftPreviewDialog')).toBeVisible();
+  await expect(page.locator('#draftParticipants')).toContainText('Keskustelun osallistujat (2): Aino, Pekka');
+  const lines = (await page.locator('#aiDraftPreview').innerText()).split('\n');
+  expect(lines).toContain('• Työmatkat lyhenevät (support) · 80% · 3/5 · Pekka');
+  await page.locator('#draftSelfParticipant').selectOption({ label: 'Aino' });
+  await page.locator('#btnDraftApply').click();
+  await confirmReplace(page);
+  await expect(page.getByTestId('project-title')).toHaveValue('Toimiston muutto');
+  const actor = page.getByTestId('actor-select');
+  await expect(actor.locator('option:checked')).toHaveText('Aino');
+  await expect(actor.locator('option', { hasText: 'Pekka' })).toHaveCount(1);
+  await expect(actor.locator('option', { hasText: 'Minä' })).toHaveCount(0);
 });

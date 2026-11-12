@@ -19,7 +19,13 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { applyCommand, createBlankProject, encodeInvite, parseInvite } from '../../src/domain/index.ts';
+import {
+  applyCommand,
+  createBlankProject,
+  encodeInvite,
+  parseInvite,
+  sameName,
+} from '../../src/domain/index.ts';
 import type { Command, CommandContext, Project } from '../../src/domain/index.ts';
 import { LoopbackHub } from '../../src/lib/p2p/network.ts';
 import type { ConnectNetwork, PeerNetwork } from '../../src/lib/p2p/network.ts';
@@ -345,6 +351,34 @@ test('a new password keeps the link: the old password is refused, the new one ad
   const fresh = await join(hub, parsed.invite, 'N', { password: 'Uusi sana tuolla noin' });
   assert.equal(fresh.session.status().phase, 'confirm');
   assert.equal(fresh.session.status().selfName, 'Kalle');
+});
+
+test('joining under the name of a person already in the document continues their profile (owner 2026-11-12)', async () => {
+  const { hub, host, session, invite } = await setup();
+  const ctx = { now: '2026-11-11T11:00:00.000Z', actorId: 'u-host' };
+  const people: Command[] = [
+    { type: 'user.add', id: 'u-maija', name: 'Maija', shares: 1, role: 'editor' },
+    { type: 'node.add', id: 'n-early', parentId: 'n-root', relation: 'support', title: 'Keskustelusta' },
+  ];
+  for (const command of people) session.localApplied(command, ctx, host.apply(command, ctx));
+  const m = await join(hub, invite, 'M', ' maija ');
+  assert.equal(m.session.status().phase, 'confirm');
+  assert.equal(m.session.status().selfName, 'Maija');
+  m.session.accept();
+  await settle(hub);
+  assert.equal(m.session.status().selfUserId, 'u-maija');
+  assert.equal(host.project.users.filter((u) => sameName(u.name, 'Maija')).length, 1, 'no second Maija');
+  m.session.propose({
+    type: 'node.add',
+    id: 'n-live',
+    parentId: 'n-root',
+    relation: 'oppose',
+    title: 'Livenä',
+  });
+  await settle(hub);
+  assert.equal(host.project.nodes.find((n) => n.id === 'n-live')?.createdBy, 'u-maija');
+  const again = await join(hub, invite, 'M2', 'Maija');
+  assert.equal(again.session.status().ended, 'refused-name-taken', 'one browser at a time for the person');
 });
 
 test('a second person with a name in use is refused by name; the host cannot invite a name in use', async () => {

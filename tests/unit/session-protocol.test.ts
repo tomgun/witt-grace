@@ -6,14 +6,18 @@
  *       wrong tries up to a lock); a new password keeps the link and the admitted seats but not the old password;
  *       a new link for a person revokes the old link and seat; seats and rate are limited;
  *       one name never stands for two people in a session: a general join, a host's new invite or a participant's
- *       rename to a name in the document, a live seat or a live invite is refused (WG-030, P2P-02, P2P-03)
+ *       rename to a name in a live seat or a live invite is refused, and so is a host's new invite or a rename to a
+ *       name in the document; a general join under the name of a document profile (not the host, not an AI, not in
+ *       the session, no live link, not removed) continues that profile (WG-030, P2P-02, P2P-03, owner 2026-11-12)
  * test: tests/unit/session-protocol.test.ts
  * red-against: authorization reading the claimed actor instead of the seat; a comment keeping a forged authorName;
  *              a personal invite taken by a second browser; an unknown token treated as the general one; a missing
  *              password counted as a wrong try; a locked invite opened by the right password; a revoked seat
  *              coming back; the hello's name winning over the host's; a password change that leaves the old proof
  *              working, keeps the lock, or reaches a personal or revoked invite; a second "Maija" admitted as "Maija (2)";
- *              names compared case-sensitively; a removed seat or a revoked invite keeping its name forever
+ *              names compared case-sensitively; a removed seat or a revoked invite keeping its name forever;
+ *              a general join with a document name getting a fresh profile, or taking the host's, an AI's, a seated
+ *              person's or a removed person's profile
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -31,6 +35,7 @@ import {
   createHostState,
   issueInvite,
   nameInUse,
+  seatProfileCommand,
   setInvitePassword,
   unlockInvite,
   MAX_PASSWORD_FAILURES,
@@ -365,33 +370,87 @@ const VERIFIER = 'a'.repeat(64);
 const WRONG = 'b'.repeat(64);
 const host = (): HostState => createHostState('s', GEN);
 
-test('the general link admits under a name nobody in the session has; the hello cannot pick an existing profile', () => {
+test('the general link admits under a name nobody in the session has; the hello cannot pick the host or an AI', () => {
   const project = withGuest();
   const reason = (r: { ok: boolean }) => (r as { reason?: string }).reason;
-  assert.equal(reason(admit(host(), project, hello({ name: ' vieras ' }), 'peer-a', fresh(0))), 'name-taken');
-  assert.equal(reason(admit(host(), project, hello({ name: 'ISÄNTÄ' }), 'peer-a', fresh(0))), 'name-taken');
-  const result = admit(host(), project, hello({ name: ' Maija ' }), 'peer-a', fresh(0));
+  assert.equal(
+    reason(admit(host(), project, hello({ name: 'ISÄNTÄ' }), 'peer-a', fresh(0), 'u-host')),
+    'name-taken'
+  );
+  const result = admit(host(), project, hello({ name: ' Maija ' }), 'peer-a', fresh(0), 'u-host');
   assert.ok(result.ok);
   assert.equal(result.seat.name, 'Maija');
   assert.equal(
-    reason(admit(result.state, project, hello({ name: 'maija' }), 'peer-b', fresh(1))),
+    reason(admit(result.state, project, hello({ name: 'maija' }), 'peer-b', fresh(1), 'u-host')),
     'name-taken',
     'a seat not yet in the document holds its name'
   );
   assert.equal(result.seat.userId, 'u-new-0');
   assert.equal(result.seat.personal, false);
   assert.equal(result.seat.joined, false);
-  assert.equal(admit(host(), project, hello(), 'peer-a', fresh(0)).ok, false);
-  assert.equal((admit(host(), project, hello(), 'peer-a', fresh(0)) as { reason: string }).reason, 'name');
+  assert.equal(admit(host(), project, hello(), 'peer-a', fresh(0), 'u-host').ok, false);
+  assert.equal(
+    (admit(host(), project, hello(), 'peer-a', fresh(0), 'u-host') as { reason: string }).reason,
+    'name'
+  );
   const closed = { ...host(), generalOpen: false };
   assert.equal(
-    (admit(closed, project, hello({ name: 'A' }), 'p', fresh(0)) as { reason: string }).reason,
+    (admit(closed, project, hello({ name: 'A' }), 'p', fresh(0), 'u-host') as { reason: string }).reason,
     'closed'
   );
   assert.equal(
-    (admit(host(), project, { ...hello({ name: 'A' }), protocol: 2 }, 'p', fresh(0)) as { reason: string })
-      .reason,
+    (
+      admit(host(), project, { ...hello({ name: 'A' }), protocol: 2 }, 'p', fresh(0), 'u-host') as {
+        reason: string;
+      }
+    ).reason,
     'version'
+  );
+});
+
+test('a general join under the name of a document profile continues that profile (owner request 2026-11-12)', () => {
+  const project = applyCommand(
+    withGuest(),
+    { type: 'user.add', id: 'u-ai', name: 'AI · Malli', shares: 1, role: 'editor', profileKind: 'ai' },
+    { now: NOW, actorId: 'u-host' }
+  );
+  const reason = (r: { ok: boolean }) => (r as { reason?: string }).reason;
+  const result = admit(host(), project, hello({ name: ' vieras ' }), 'peer-a', fresh(0), 'u-host');
+  assert.ok(result.ok);
+  assert.equal(result.seat.userId, 'u-guest', 'the profile from the document, not a fresh id');
+  assert.equal(result.seat.name, 'Vieras', 'the name as the document has it');
+  assert.equal(result.seat.joined, false);
+  assert.equal(seatProfileCommand(project, result.seat), null, 'no second profile is added');
+  assert.equal(
+    reason(admit(result.state, project, hello({ name: 'Vieras' }), 'peer-b', fresh(1), 'u-host')),
+    'name-taken',
+    'a second browser cannot take the same person while the first is in'
+  );
+  assert.equal(
+    reason(admit(host(), project, hello({ name: 'isäntä' }), 'p', fresh(0), 'u-host')),
+    'name-taken'
+  );
+  assert.equal(
+    reason(admit(host(), project, hello({ name: 'AI · Malli' }), 'p', fresh(0), 'u-host')),
+    'name-taken'
+  );
+  const invited = issueInvite(host(), {
+    token: T1,
+    userId: 'u-guest',
+    name: 'Vieras',
+    mode: 'personal',
+    verifier: null,
+  }).state;
+  assert.equal(
+    reason(admit(invited, project, hello({ name: 'Vieras' }), 'p', fresh(1), 'u-host')),
+    'name-taken',
+    'a person with a live personal link uses that link'
+  );
+  const removed = { ...result.state, seats: result.state.seats.map((s) => ({ ...s, removed: true })) };
+  assert.equal(
+    reason(admit(removed, project, hello({ name: 'Vieras' }), 'p', fresh(1), 'u-host')),
+    'removed',
+    'a person the host removed cannot come back by typing the name'
   );
 });
 
@@ -404,7 +463,14 @@ test('a personal token opens only its own door: dropping it does not make a gene
     name: 'Vieras',
     verifier: null,
   });
-  const other = admit(issued.state, project, hello({ token: T1, name: 'Joku' }), 'peer-x', fresh(0));
+  const other = admit(
+    issued.state,
+    project,
+    hello({ token: T1, name: 'Joku' }),
+    'peer-x',
+    fresh(0),
+    'u-host'
+  );
   assert.equal(other.ok, false);
   assert.equal((other as { reason: string }).reason, 'closed', 'an unknown token is never the general one');
 });
@@ -418,15 +484,22 @@ test('a personal invite: the first browser takes the seat, keeps the host’s na
     name: 'Vieras',
     verifier: null,
   }).state;
-  const first = admit(state, project, hello({ token: T3, name: 'Joku muu' }), 'peer-a', fresh(1));
+  const first = admit(state, project, hello({ token: T3, name: 'Joku muu' }), 'peer-a', fresh(1), 'u-host');
   assert.ok(first.ok);
   assert.equal(first.seat.name, 'Vieras');
   assert.equal(first.seat.userId, 'u-guest');
   assert.equal(first.seat.personal, true);
   assert.equal(first.seat.joined, true, 'an existing profile is already in the document');
-  const second = admit(first.state, project, hello({ token: T3 }), 'peer-b', fresh(2));
+  const second = admit(first.state, project, hello({ token: T3 }), 'peer-b', fresh(2), 'u-host');
   assert.equal((second as { reason: string }).reason, 'invite-used');
-  const back = admit(first.state, project, hello({ token: T3, seat: first.seat.seat }), 'peer-c', fresh(2));
+  const back = admit(
+    first.state,
+    project,
+    hello({ token: T3, seat: first.seat.seat }),
+    'peer-c',
+    fresh(2),
+    'u-host'
+  );
   assert.ok(back.ok);
   assert.equal(back.rejoined, true);
   assert.equal(back.seat.userId, 'u-guest');
@@ -434,7 +507,8 @@ test('a personal invite: the first browser takes the seat, keeps the host’s na
   assert.equal(back.state.seats[0]?.peerId, 'peer-c');
   const removed = { ...back.state, seats: back.state.seats.map((s) => ({ ...s, removed: true })) };
   assert.equal(
-    (admit(removed, project, hello({ seat: first.seat.seat }), 'p', fresh(2)) as { reason: string }).reason,
+    (admit(removed, project, hello({ seat: first.seat.seat }), 'p', fresh(2), 'u-host') as { reason: string })
+      .reason,
     'removed'
   );
 });
@@ -448,29 +522,38 @@ test('a password invite counts wrong tries up to a lock, admits any browser with
     name: 'Kalle',
     verifier: VERIFIER,
   }).state;
-  const none = admit(state, project, hello({ token: T3 }), 'p0', fresh(0));
+  const none = admit(state, project, hello({ token: T3 }), 'p0', fresh(0), 'u-host');
   assert.equal((none as { reason: string }).reason, 'password');
   assert.equal(none.state.invites[0]?.failures, 0, 'asking without a password is not a wrong try');
   for (let i = 1; i < MAX_PASSWORD_FAILURES; i++) {
-    const wrong = admit(state, project, hello({ token: T3, proof: WRONG }), `p${i}`, fresh(0));
+    const wrong = admit(state, project, hello({ token: T3, proof: WRONG }), `p${i}`, fresh(0), 'u-host');
     assert.equal((wrong as { reason: string }).reason, 'password');
     state = wrong.state;
   }
-  const ok = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'phone', fresh(1));
+  const ok = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'phone', fresh(1), 'u-host');
   assert.ok(ok.ok);
   assert.equal(ok.seat.name, 'Kalle');
   assert.equal(ok.state.invites[0]?.failures, 0, 'a success clears the count');
-  const laptop = admit(ok.state, project, hello({ token: T3, proof: VERIFIER }), 'laptop', fresh(2));
+  const laptop = admit(
+    ok.state,
+    project,
+    hello({ token: T3, proof: VERIFIER }),
+    'laptop',
+    fresh(2),
+    'u-host'
+  );
   assert.ok(laptop.ok);
   assert.equal(laptop.replaced, 'phone', 'the other browser is dropped');
   assert.equal(laptop.seat.seat, ok.seat.seat, 'same person, same seat');
   assert.equal(laptop.state.seats.length, 1);
   state = laptop.state;
   for (let i = 0; i < MAX_PASSWORD_FAILURES; i++)
-    state = admit(state, project, hello({ token: T3, proof: WRONG }), 'x', fresh(0)).state;
-  const locked = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0));
+    state = admit(state, project, hello({ token: T3, proof: WRONG }), 'x', fresh(0), 'u-host').state;
+  const locked = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0), 'u-host');
   assert.equal((locked as { reason: string }).reason, 'locked', 'locked even for the right password');
-  assert.ok(admit(unlockInvite(state, T3), project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0)).ok);
+  assert.ok(
+    admit(unlockInvite(state, T3), project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0), 'u-host').ok
+  );
 });
 
 test('a new password keeps the token and the admitted seat, clears the lock and retires the old password', () => {
@@ -482,18 +565,18 @@ test('a new password keeps the token and the admitted seat, clears the lock and 
     name: 'Kalle',
     verifier: VERIFIER,
   }).state;
-  const phone = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'phone', fresh(1));
+  const phone = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'phone', fresh(1), 'u-host');
   assert.ok(phone.ok);
   state = phone.state;
   for (let i = 0; i < MAX_PASSWORD_FAILURES; i++)
-    state = admit(state, project, hello({ token: T3, proof: WRONG }), 'x', fresh(0)).state;
+    state = admit(state, project, hello({ token: T3, proof: WRONG }), 'x', fresh(0), 'u-host').state;
   state = setInvitePassword(state, T3, WRONG);
   assert.equal(state.invites[0]?.token, T3, 'same token: the link does not change');
   assert.equal(state.invites[0]?.failures, 0);
   assert.equal(state.seats[0]?.removed, false, 'the phone keeps its seat');
-  const old = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0));
+  const old = admit(state, project, hello({ token: T3, proof: VERIFIER }), 'y', fresh(0), 'u-host');
   assert.equal((old as { reason: string }).reason, 'password', 'the old password stops working');
-  assert.ok(admit(state, project, hello({ token: T3, proof: WRONG }), 'y', fresh(0)).ok);
+  assert.ok(admit(state, project, hello({ token: T3, proof: WRONG }), 'y', fresh(0), 'u-host').ok);
   const personal = issueInvite(host(), {
     token: T3,
     mode: 'personal',
@@ -513,7 +596,7 @@ test('a new link for a person revokes the old link and seat; the person keeps th
     name: 'Vieras',
     verifier: null,
   });
-  const joined = admit(first.state, project, hello({ token: T3 }), 'old-phone', fresh(1));
+  const joined = admit(first.state, project, hello({ token: T3 }), 'old-phone', fresh(1), 'u-host');
   assert.ok(joined.ok);
   const again = issueInvite(joined.state, {
     token: T2,
@@ -527,18 +610,18 @@ test('a new link for a person revokes the old link and seat; the person keeps th
     ['old-phone']
   );
   assert.equal(
-    (admit(again.state, project, hello({ token: T3 }), 'z', fresh(0)) as { reason: string }).reason,
+    (admit(again.state, project, hello({ token: T3 }), 'z', fresh(0), 'u-host') as { reason: string }).reason,
     'revoked'
   );
   assert.equal(
     (
-      admit(again.state, project, hello({ token: T3, seat: joined.seat.seat }), 'z', fresh(0)) as {
+      admit(again.state, project, hello({ token: T3, seat: joined.seat.seat }), 'z', fresh(0), 'u-host') as {
         reason: string;
       }
     ).reason,
     'revoked'
   );
-  const fresh2 = admit(again.state, project, hello({ token: T2 }), 'new-phone', fresh(0));
+  const fresh2 = admit(again.state, project, hello({ token: T2 }), 'new-phone', fresh(0), 'u-host');
   assert.ok(fresh2.ok);
   assert.equal(fresh2.seat.userId, 'u-guest');
 });
@@ -547,16 +630,24 @@ test('seats are capped and proposals are rate-limited', () => {
   const project = base();
   let state = host();
   for (let i = 0; i < MAX_SEATS; i++) {
-    const r = admit(state, project, hello({ name: `P${i}` }), `peer-${i}`, {
-      userId: `u${i}`,
-      seat: `${String(i).padStart(2, '0')}${T1.slice(2)}`,
-      nowMs: 0,
-    });
+    const r = admit(
+      state,
+      project,
+      hello({ name: `P${i}` }),
+      `peer-${i}`,
+      {
+        userId: `u${i}`,
+        seat: `${String(i).padStart(2, '0')}${T1.slice(2)}`,
+        nowMs: 0,
+      },
+      'u-host'
+    );
     assert.ok(r.ok);
     state = r.state;
   }
   assert.equal(
-    (admit(state, project, hello({ name: 'Liikaa' }), 'peer-x', fresh(0)) as { reason: string }).reason,
+    (admit(state, project, hello({ name: 'Liikaa' }), 'peer-x', fresh(0), 'u-host') as { reason: string })
+      .reason,
     'full'
   );
   let seat = state.seats[0] as Seat;
@@ -594,7 +685,7 @@ test('a name in use: profiles, live seats and live invites, compared as people r
   assert.equal(nameInUse(revoked, project, 'Kalle'), true, 'the new invite holds it');
   const gone = { ...revoked, invites: revoked.invites.filter((i) => i.token !== T2) };
   assert.equal(nameInUse(gone, project, 'Kalle'), false, 'a revoked invite frees the name');
-  const seated = admit(host(), project, hello({ name: 'Väinö' }), 'peer-a', fresh(0));
+  const seated = admit(host(), project, hello({ name: 'Väinö' }), 'peer-a', fresh(0), 'u-host');
   assert.ok(seated.ok);
   assert.equal(
     nameInUse(seated.state, project, 'va\u0308ino\u0308'),

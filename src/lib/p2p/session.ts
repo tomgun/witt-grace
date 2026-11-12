@@ -285,11 +285,18 @@ export async function startHost(options: {
       }
       case 'hello': {
         const project = port.current();
-        const result = admit(state, project, message, peerId, {
-          userId: clock.newId(),
-          seat: randomToken(),
-          nowMs: clock.nowMs(),
-        });
+        const result = admit(
+          state,
+          project,
+          message,
+          peerId,
+          {
+            userId: clock.newId(),
+            seat: randomToken(),
+            nowMs: clock.nowMs(),
+          },
+          hostUserId
+        );
         state = result.state;
         keep();
         if (!result.ok) {

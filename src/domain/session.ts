@@ -3,7 +3,7 @@
 // bookkeeping of seats, invites and rates. No clock, no randomness, no crypto: tokens, ids and `nowMs` come in as
 // arguments; signatures are checked in src/lib/p2p. The host orders every change; peers replay its commits through the
 // same `applyCommand`, so the documents stay identical (the digest proves it).
-import { SCHEMA_VERSION } from './model.ts';
+import { SCHEMA_VERSION, isAiProfile, sameName } from './model.ts';
 import type { Project } from './model.ts';
 import type { Command, CommandType } from './commands.ts';
 
@@ -621,9 +621,6 @@ export const createHostState = (sessionId: string, generalToken: string): HostSt
   invites: [],
 });
 
-/** Names compare as people read them: surrounding space, case and Unicode composition do not count. */
-export const sameName = (a: string, b: string): boolean =>
-  a.trim().normalize('NFC').toLocaleLowerCase() === b.trim().normalize('NFC').toLocaleLowerCase();
 /**
  * Is the name someone else's in this session: a profile in the document, a seat not removed, or the person a live
  * invite names? `except` is the person the name is for (renaming themself). One name never stands for two people.
@@ -662,17 +659,44 @@ export type Admission =
     }
   | { ok: false; reason: RefuseReason; state: HostState };
 /**
+ * The profile a general join under `name` continues (owner request 2026-11-12): a person in the document under that
+ * name, e.g. from an AI draft made of a chat, who is not the host, not an AI viewpoint, not in the session right now,
+ * not holding a live personal link and not removed by the host. `none`: no profile has the name.
+ */
+export function profileForGeneralJoin(
+  state: HostState,
+  project: Project,
+  name: string,
+  hostUserId: string
+):
+  | { kind: 'none' }
+  | { kind: 'continue'; userId: string; name: string }
+  | { kind: 'refused'; reason: RefuseReason } {
+  const profile = project.users.find((u) => sameName(u.name, name));
+  if (!profile) return { kind: 'none' };
+  if (profile.id === hostUserId || isAiProfile(profile)) return { kind: 'refused', reason: 'name-taken' };
+  const seats = state.seats.filter((s) => s.userId === profile.id);
+  if (seats.some((s) => s.removed && !s.revoked)) return { kind: 'refused', reason: 'removed' };
+  if (seats.some((s) => !s.removed)) return { kind: 'refused', reason: 'name-taken' };
+  if (state.invites.some((i) => i.userId === profile.id && !i.revoked))
+    return { kind: 'refused', reason: 'name-taken' };
+  return { kind: 'continue', userId: profile.id, name: profile.name };
+}
+
+/**
  * A hello from `peerId`. A known seat token comes back as its person. Otherwise the link's token decides: the
- * general token admits a new person under a name nobody else in the session has (`name-taken` otherwise); a personal
- * token is claimed by the first browser; a password token admits any browser whose proof matches (counting wrong
- * tries up to a lock) and takes the person's seat over from another browser. Ids and tokens come in.
+ * general token admits a new person under a name nobody else in the session has, or continues the document profile
+ * with that name when `profileForGeneralJoin` allows (`name-taken` otherwise); a personal token is claimed by the
+ * first browser; a password token admits any browser whose proof matches (counting wrong tries up to a lock) and
+ * takes the person's seat over from another browser. Ids and tokens come in.
  */
 export function admit(
   state: HostState,
   project: Project,
   hello: Extract<ToHost, { t: 'hello' }>,
   peerId: string,
-  fresh: { userId: string; seat: string; nowMs: number }
+  fresh: { userId: string; seat: string; nowMs: number },
+  hostUserId: string
 ): Admission {
   const refuse = (reason: RefuseReason, next = state): Admission => ({ ok: false, reason, state: next });
   if (hello.protocol !== COLLAB_PROTOCOL || hello.schemaVersion !== SCHEMA_VERSION) return refuse('version');
@@ -700,10 +724,12 @@ export function admit(
     if (active >= MAX_SEATS) return refuse('full');
     const wanted = hello.name?.trim();
     if (!wanted) return refuse('name');
-    if (nameInUse(state, project, wanted)) return refuse('name-taken');
+    const profile = profileForGeneralJoin(state, project, wanted, hostUserId);
+    if (profile.kind === 'refused') return refuse(profile.reason);
+    if (profile.kind === 'none' && nameInUse(state, project, wanted)) return refuse('name-taken');
     const seat: Seat = {
-      userId: fresh.userId,
-      name: wanted.slice(0, 110),
+      userId: profile.kind === 'continue' ? profile.userId : fresh.userId,
+      name: profile.kind === 'continue' ? profile.name : wanted.slice(0, 110),
       personal: false,
       seat: fresh.seat,
       peerId,
