@@ -42,7 +42,7 @@ Examples pinned by existing tests:
 | 20% / +5 premise | 55 | +10 |
 | Premise at 50 with a 100%/+5 supporting grandchild, then +5 to root | 68.75 | +37.5 |
 
-### `evidence-v4-reasons` (owner decision 2026-11-09, the default for new documents)
+### `evidence-v4-reasons` (owner decision 2026-11-09; the default for new documents until 2026-11-18)
 
 One rule differs from `evidence-v3-links`: a claim that has reasons (a primary child that is not an option, group, gate or value, or a secondary link from such a claim) takes its result from them alone. Its base is the neutral 50 as soon as one of those relations scores; with none of them scored it has no result (`—`, incomplete), never its own credence. The claim's own credence is then a felt sense: it is saved and shown for comparison but never enters a score. Leaves, options (50), locked shared reasons and every other formula above are unchanged. The version is stored per document in `settings.scoring` and switched in Arviointi → Laskentatapa; the prototype's files stay `evidence-v3-links`, which the golden fixtures pin.
 
@@ -78,6 +78,52 @@ A reason at net 0 — a claim whose reasons cancel out, or a leaf at 50 % creden
 ### `chain-logodds-v1` (owner request 2026-11-10, selectable, experimental)
 
 Reasons decide and pass their net result (strength as in `signed-reasons-v1`), combined as log-odds with a steeper constant: `k = ln(0.975 / 0.025) / 5`, so one fully credible ±5 reason alone takes a claim from the neutral base to I = 97.5 (net ±95). A chain of strong, credible links therefore keeps nearly its full weight however deep it is (five +5 / 100 % links: +93.8, where v4 gives +33.4 and `signed-reasons-v1` +3.1); a weaker link damps it in proportion and a contested claim (its reasons cancel) passes nothing. No clamp, so the ±100 notes are not shown.
+
+### `anchored-reasons-v1` (owner decisions 2026-11-18, the default for new documents; “Laskenta koko puusta”)
+
+The rating a group gives a claim also stands for the reasons nobody wrote down, so it is neither dropped when the claim gets reasons (the `evidence-v4-reasons` rule, under which adding support under a rated leaf lowered its weight) nor summed with them without limit (`evidence-v3-links`). It is the anchor, and it weighs as much as one fully credible ±2 reason. With `P` and `N` the sums of `|w| · strength` over the scored supporting and opposing relations (primary and secondary):
+
+```text
+rated claim (pooled or personal credence τ, or the locked shared value):
+        I = 100 · (2·τ/100 + P) / (2 + P + N)              a credence, shown as 0–100 %; passes strength = I / 100
+unrated claim with at least one scored relation:
+        I = 100 · (1 + P) / (2 + P + N)                    neutral start; S = 100 · (P − N) / (2 + P + N) is the net of its reasons
+                                                           passes strength = max(0, (I − 50) / 50): the net, cut at 0
+option, argument-mode thesis with reasons:
+        I = 100 · (2.5 + P) / (5 + P + N)                  neutral prior worth one fully credible ±5 reason; S = 2I − 100
+```
+
+- A leaf's `I` is its rated credence; an unrated leaf has no result (—). A claim nobody rated whose relations are all missing has no result either; nothing missing is ever 0.
+- An unrated claim never turns against its parent: when its reasons speak against it (net ≤ 0) it shows that net and passes nothing, because the influence was rated for the claim being true, not for its opposite (the `signed-reasons-v1` principle). A rated claim at a low credence likewise passes a small positive share.
+- The thesis' own root vote is not used once it has reasons (as in v4). An influence of 0 settles a primary relation as in v4. `equal` / `shares` / `median` / `structural`, abstentions, gates, values, unrated notes and stale fingerprints are unchanged.
+- Incomplete: a claim with reasons that nobody rated is derived, not incomplete; a claim some but not all expected reviewers rated is scored from those ratings and incomplete.
+- Nothing is clamped, so the ±100 notes are not shown. Splitting a reason into parts changes nothing (the sums are linear); the same reason written twice under one node counts twice, which is the tree author's responsibility, not the formula's (owner 2026-11-18).
+- Display (S-15): a rated claim's result is a credence and is shown as a percentage; an unrated claim, an option and the thesis show the signed balance.
+
+| Tree | Result |
+| --- | --- |
+| Option ← one, two, three, ten 100 % / +5 reasons | +50, +66.7, +75, +90.9 |
+| Option ← C rated 90 % at +4 | +41.9 |
+| … and under C a 100 % / +1 reason; a 100 % / −1 reason; a 0 % / +5 reason; a 100 % / 0 reason | +42.7; +32.4; +41.9; +41.9 (v4: +22.0 for the first) |
+| Option ← C 90 % / +5; C ← A 100 % / −5; A ← B 100 % / −5; B ← D 100 % / −5 | +47.4, +20.5, +34.4, +26.8 |
+| Option ← unrated C at +5; C ← one 100 % / +1 reason | C +33.3, option +25.0 |
+| … C ← one 0 % / +5 reason; only a 100 % / −3 objection; +4 and −4; +4 and −2 | C 0.0 / −60.0 / 0.0 / +25.0; option 0.0 / 0.0 / 0.0 / +20.0 |
+| Option ← C ← D ← L, all +5, C and D unrated; L at 100 %, 50 %, 0 % | +39.1, +36.8, 0.0 |
+| One reason, reviewer A 100 % / +5 and B 50 % / +3 (`equal`) | pooled +37.5; A's view +50.0; B's +23.1 |
+
+Measured character (scratch study of 2026-11-18, not a contract): when every intermediate claim is rated, a leaf three levels down moves the target by well under a point, as in every earlier version, because the ratings carry the information; depth acts fully only through unrated claims. Input noise is not amplified (no relation passes more than its own change).
+
+### `direct-reasons-v1` (owner decisions 2026-11-18, selectable; “Laskenta suorista perusteluista”)
+
+The formulas of `anchored-reasons-v1` with one difference: a rated claim passes exactly its rated credence upward (`I` = the rating), because the rating is taken to cover everything below it. Its reasons are still evaluated and listed, and what the formula gives from the values its children pass is kept beside it as `derived` (shown as *Perusteluista laskettuna*, in parentheses on the card). Unrated claims, options and the thesis are computed from their direct relations as above. Meant for a round in which people rate the tree from the leaves toward the root with the subtree in view.
+
+| Tree | Result |
+| --- | --- |
+| Option ← C 80 % / +5 ← D 80 % / +5 ← L at +5, L at 100 % or 0 % | option +44.4 in both; C `derived` 93.3 in both; D `derived` 94.3 / 80.0 |
+| The same with C unrated | C +66.7, option +40.0 |
+| The same tree, all rated, under `anchored-reasons-v1`, L at 100 % / 0 % | +48.5 / +48.3 |
+
+Δ under both versions uses the same formula (three 100 % / +5 reasons under an option: local Δ of each 4.17 internal points). Under `direct-reasons-v1` a reason below a rated claim is measured against that claim's `derived` and its effect on the target is 0.
 
 ### Marginal effect Δ (“Korosta painavimmat”)
 
@@ -131,7 +177,7 @@ The old `heuristic-v1` formula and v5/v6 scoring docs are **historical**, not a 
 
 - Native file format v8 is validated with `src/import-validation.js`, generated `src/project-import-schema.js` from `schemas/project.v8.schema.json`, and core domain validation. Invalid/cyclic/orphan/foreign-version imports must not partially mutate the active document.
 - Saved project includes human/AI profiles, node/link identities, contextual reviews, comments, ballot history, shared reasons and settings, where applicable. View-only preferences and local theme do **not** rewrite project content.
-- Changes to the numerical formula, missingness, weighting, context linking, eligibility, voting, serialization or AI isolation require a **new reviewed contract and golden tests**; scoring semantic changes need a new version identifier, not a silent reuse of `evidence-v3-links`.
+- Changes to the numerical formula, missingness, weighting, context linking, eligibility, voting, serialization or AI isolation require a **new reviewed contract and golden tests**; scoring semantic changes need a new version identifier, not a silent reuse of `evidence-v3-links`. A document whose `settings.scoring` this build does not know is refused by name (“Tiedosto käyttää laskentatapaa ‘…’, jota tämä WITT-versio ei tunne…”) and never scored with a guessed formula; an older build and the prototype refuse a newer method's file with “Virheelliset laskenta-asetukset”, and the import preflight accepts exactly the versions the engine can score.
 - In a multi-user future, every accepted command must pass authorization and be replayable deterministically through the same domain functions.
 
 ## Explicit non-goals / future method decisions

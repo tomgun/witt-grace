@@ -84,7 +84,7 @@ const withGuest = (): Project => {
 const SEAT = { userId: 'u-guest', name: 'Vieras', personal: false };
 const GEN = 'GGGGGGGGGGGGGGGGGGGGGG';
 const hello = (extra: Record<string, unknown> = {}) =>
-  ({ t: 'hello', protocol: 1, schemaVersion: SCHEMA_VERSION, token: GEN, ...extra }) as {
+  ({ t: 'hello', protocol: 2, schemaVersion: SCHEMA_VERSION, token: GEN, ...extra }) as {
     t: 'hello';
     protocol: number;
     schemaVersion: number;
@@ -118,7 +118,7 @@ test('parseToHost accepts the five shapes and refuses the rest by name', () => {
   });
   assert.deepEqual(parseToHost(JSON.stringify(hello({ name: 'Maija', extra: 'dropped' }))), {
     ok: true,
-    message: { t: 'hello', protocol: 1, schemaVersion: SCHEMA_VERSION, token: GEN, name: 'Maija' },
+    message: { t: 'hello', protocol: 2, schemaVersion: SCHEMA_VERSION, token: GEN, name: 'Maija' },
   });
   assert.deepEqual(parseToHost(JSON.stringify(hello({ token: undefined }))), {
     ok: false,
@@ -400,7 +400,7 @@ test('the general link admits under a name nobody in the session has; the hello 
   );
   assert.equal(
     (
-      admit(host(), project, { ...hello({ name: 'A' }), protocol: 2 }, 'p', fresh(0), 'u-host') as {
+      admit(host(), project, { ...hello({ name: 'A' }), protocol: 1 }, 'p', fresh(0), 'u-host') as {
         reason: string;
       }
     ).reason,

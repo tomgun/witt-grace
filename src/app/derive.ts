@@ -13,7 +13,7 @@ import {
   marginalTargetEffects,
   personalCredence,
   personalInfluence,
-  SCORING_V3,
+  SCORING_RULES,
   sharedReason,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
@@ -43,11 +43,24 @@ export const derivedResult = (node: Node, result: NodeScore | undefined | null):
   result?.score !== null &&
   result?.score !== undefined &&
   (result.contributions ?? []).some((item) => !item.missing);
-/** Balance text plus the ` †` marker for an incomplete result; `—` for leaves, values, gates and groups. */
-export const resultText = (node: Node, result: NodeScore | undefined | null, digits = 1): string =>
-  derivedResult(node, result)
-    ? balanceText(result!.score, digits) + (result!.incomplete ? ' †' : '')
-    : EM_DASH;
+/** A computed credence as a percentage (anchored versions: a rated claim's result is a credence, 0–100 %). */
+export const credencePercentText = (internal: number | null | undefined, digits = 1): string =>
+  internal == null ? EM_DASH : `${internal.toFixed(digits)} %`;
+/** One internal value of a node in the form its result has: a percentage for a credence, else a signed balance. */
+export const valueText = (
+  result: NodeScore | undefined | null,
+  internal: number | null | undefined,
+  digits = 1
+): string => (result?.credence ? credencePercentText(internal, digits) : balanceText(internal, digits));
+/** Result text plus the ` †` marker for an incomplete result; `—` for leaves, values, gates and groups. A rated
+ * claim under the anchored versions reads as a credence percentage; under direct-reasons-v1 it is what its reasons
+ * give, in parentheses because the rating, not this figure, is what passes upward. */
+export const resultText = (node: Node, result: NodeScore | undefined | null, digits = 1): string => {
+  if (!derivedResult(node, result)) return EM_DASH;
+  const mark = result!.incomplete ? ' †' : '';
+  if (result!.derived !== undefined) return `(${credencePercentText(result!.derived, digits)})${mark}`;
+  return valueText(result, result!.score, digits) + mark;
+};
 
 export interface DeriveContext {
   project: Project;
@@ -117,10 +130,8 @@ export function relationLabel(ctx: DeriveContext, t: Translator, node: Node): st
     });
   return t(key);
 }
-/** Under evidence-v4-reasons a claim with reasons takes its result from them; its own credence is then only a felt
- * sense, saved for comparison but never scored (owner decision 2026-11-09). */
-export function credenceIsFeeling(project: Project, node: Node): boolean {
-  if (project.settings.scoring === SCORING_V3 || node.kind !== 'claim' || node.sharedReasonId) return false;
+/** True when the claim has a reason that can score into it (a primary reason or a secondary link from a claim). */
+export function hasScoringReasons(project: Project, node: Node): boolean {
   const reason = (n: Node | undefined) => !!n && n.kind === 'claim' && !isGate(n) && !isValue(n);
   return (
     project.nodes.some(
@@ -130,6 +141,20 @@ export function credenceIsFeeling(project: Project, node: Node): boolean {
       (l) => l.targetId === node.id && reason(project.nodes.find((n) => n.id === l.sourceId))
     )
   );
+}
+/** Under the versions where a claim with reasons starts neutral, its own credence is only a felt sense, saved for
+ * comparison but never scored (owner decision 2026-11-09). Under the prototype's and the anchored versions it counts. */
+export function credenceIsFeeling(project: Project, node: Node): boolean {
+  if (SCORING_RULES[project.settings.scoring].claimBase !== 'neutral') return false;
+  if (node.kind !== 'claim' || node.sharedReasonId) return false;
+  return hasScoringReasons(project, node);
+}
+/** The note under the credence slider of a claim with reasons when the rating counts in a way worth saying. */
+export function credenceNoteKey(project: Project, node: Node): MessageKey | null {
+  const rule = SCORING_RULES[project.settings.scoring];
+  if (rule.claimBase !== 'anchored' || node.kind !== 'claim' || node.parentId === null) return null;
+  if (!hasScoringReasons(project, node)) return null;
+  return rule.direct ? 'ownCredenceDirectNote' : 'ownCredenceAnchorNote';
 }
 
 /** A reason's own type name; it joins the direction tag (`relationLabel`). */
@@ -290,7 +315,8 @@ export function cardChips(
   const commentCount = project.comments.filter((c) => c.nodeId === node.id).length;
   if (l.index)
     chips.push({
-      label: t('indexChip'),
+      // A rated claim's result under the anchored versions is a credence, not a net balance.
+      label: t(score?.credence && derivedResult(node, score) ? 'computedCredenceChip' : 'indexChip'),
       value: ctx.lens.filtered && view.indexMode === 'shared' ? EM_DASH : resultText(node, score, 0),
       cls: 'meta-index',
       title: view.indexMode === 'personal' ? t('personalIndexExplain') : t('indexHint'),

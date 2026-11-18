@@ -20,16 +20,27 @@ export const SCORING_SIGNED = 'signed-reasons-v1' as const;
  * ±95 (I = 97.5), so a chain of strong, credible links keeps nearly its full weight however deep it is, while a weak or
  * contested link still damps it. */
 export const SCORING_CHAIN = 'chain-logodds-v1' as const;
+/** Owner decisions 2026-11-18: the rating of a claim is the anchor its reasons move. A rated claim's result is a
+ * credence, I = 100·(2τ + P)/(2 + P + N): the rating weighs as much as one fully credible ±2 reason. An unrated claim
+ * with reasons starts neutral with the same weight and its result is the net of its reasons, which it passes upward cut
+ * at 0. Options and the thesis weigh pro and con around a neutral prior worth one fully credible ±5 reason,
+ * I = 100·(2.5 + P)/(5 + P + N), so nothing reaches a cap. */
+export const SCORING_ANCHORED = 'anchored-reasons-v1' as const;
+/** Owner decisions 2026-11-18: as anchored-reasons-v1, but a rated claim passes exactly its rated credence upward
+ * (the rating already covers what is below it); what the tree formula would give is kept beside it as `derived`. */
+export const SCORING_DIRECT = 'direct-reasons-v1' as const;
 export const SCORING_VERSIONS = [
   SCORING_V3,
   SCORING_V4,
   SCORING_LOGODDS,
   SCORING_SIGNED,
   SCORING_CHAIN,
+  SCORING_ANCHORED,
+  SCORING_DIRECT,
 ] as const;
 export type ScoringVersion = (typeof SCORING_VERSIONS)[number];
-/** The version a new document gets. */
-export const SCORING_VERSION: ScoringVersion = SCORING_V4;
+/** The version a new document gets (owner 2026-11-18; evidence-v4-reasons from 2026-11-09 until then). */
+export const SCORING_VERSION: ScoringVersion = SCORING_ANCHORED;
 
 export const MODES = ['argument', 'decision'] as const;
 export const THEMES = ['light', 'dark', 'paper'] as const;
@@ -244,9 +255,6 @@ export const argumentBalance = (internal: number | null): number | null =>
 export const evidenceFactor = (score: number): number => clamp(score / 100, 0, 1);
 /** signed-reasons-v1: the strength is the reason's net balance, cut at 0. */
 export const netFactor = (score: number): number => clamp((score - 50) / 50, 0, 1);
-/** The strength a reason passes to its parent under a scoring version. */
-export const strengthFor = (scoring: ScoringVersion) =>
-  scoring === SCORING_SIGNED || scoring === SCORING_CHAIN ? netFactor : evidenceFactor;
 export const evidenceScore = (base: number, positive: number, negative: number): number =>
   clamp(base + 5 * (positive - negative), 0, 100);
 const LOGODDS_K = Math.log(3) / 5;
@@ -264,12 +272,82 @@ const logOddsWith =
   };
 export const logOddsScore = logOddsWith(LOGODDS_K);
 export const chainScore = logOddsWith(CHAIN_K);
-/** The score formula of a scoring version. */
-export const scoreFor = (scoring: ScoringVersion) =>
-  scoring === SCORING_LOGODDS ? logOddsScore : scoring === SCORING_CHAIN ? chainScore : evidenceScore;
-/** The versions that combine as log-odds: no ±100 cap, so the cap notes are not shown. */
-export const isLogOdds = (scoring: ScoringVersion): boolean =>
-  scoring === SCORING_LOGODDS || scoring === SCORING_CHAIN;
+/** anchored-reasons-v1: the base weighs as a reason of this size; a target (option, thesis) is harder to move. */
+const ANCHOR_MASS_CLAIM = 2;
+const ANCHOR_MASS_TARGET = 5;
+const anchoredScore = (base: number, positive: number, negative: number, target: boolean): number => {
+  const mass = target ? ANCHOR_MASS_TARGET : ANCHOR_MASS_CLAIM;
+  return (100 * ((mass * base) / 100 + positive)) / (mass + positive + negative);
+};
+/** Where a claim's base comes from: `own` = its credence, reasons move it (the prototype); `neutral` = a claim with
+ * reasons starts from 50 and its own credence is a felt sense; `anchored` = the credence is the anchor, and an
+ * unrated claim with reasons shows and passes the net of its reasons. */
+export type ClaimBase = 'own' | 'neutral' | 'anchored';
+export interface ScoringRule {
+  claimBase: ClaimBase;
+  /** The share of its influence a reason passes upward; `net` marks an unrated claim whose score is a net of reasons. */
+  strength: (score: number, net: boolean) => number;
+  /** `target`: the node is an option or the argument-mode thesis. */
+  combine: (base: number, positive: number, negative: number, target: boolean) => number;
+  /** The combination clamps at 0 and 100, so the ±100 notes apply. */
+  capped: boolean;
+  /** A rated claim passes its rated credence upward unchanged. */
+  direct: boolean;
+}
+const anchoredStrength = (score: number, net: boolean): number =>
+  net ? netFactor(score) : evidenceFactor(score);
+/** Every version-dependent rule in one place: a new version is one row, and a missing row does not compile. */
+export const SCORING_RULES: Record<ScoringVersion, ScoringRule> = {
+  [SCORING_V3]: {
+    claimBase: 'own',
+    strength: evidenceFactor,
+    combine: evidenceScore,
+    capped: true,
+    direct: false,
+  },
+  [SCORING_V4]: {
+    claimBase: 'neutral',
+    strength: evidenceFactor,
+    combine: evidenceScore,
+    capped: true,
+    direct: false,
+  },
+  [SCORING_LOGODDS]: {
+    claimBase: 'neutral',
+    strength: evidenceFactor,
+    combine: logOddsScore,
+    capped: false,
+    direct: false,
+  },
+  [SCORING_SIGNED]: {
+    claimBase: 'neutral',
+    strength: netFactor,
+    combine: evidenceScore,
+    capped: true,
+    direct: false,
+  },
+  [SCORING_CHAIN]: {
+    claimBase: 'neutral',
+    strength: netFactor,
+    combine: chainScore,
+    capped: false,
+    direct: false,
+  },
+  [SCORING_ANCHORED]: {
+    claimBase: 'anchored',
+    strength: anchoredStrength,
+    combine: anchoredScore,
+    capped: false,
+    direct: false,
+  },
+  [SCORING_DIRECT]: {
+    claimBase: 'anchored',
+    strength: anchoredStrength,
+    combine: anchoredScore,
+    capped: false,
+    direct: true,
+  },
+};
 
 export const isGate = (n: Node | undefined | null): boolean =>
   n?.semanticType === 'constraint' || n?.semanticType === 'prerequisite';

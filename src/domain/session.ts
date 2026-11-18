@@ -7,7 +7,9 @@ import { SCHEMA_VERSION, isAiProfile, sameName } from './model.ts';
 import type { Project } from './model.ts';
 import type { Command, CommandType } from './commands.ts';
 
-export const COLLAB_PROTOCOL = 1;
+/** 2 since 2026-11-18: a session may carry a document scored with a calculation method that a protocol-1 build
+ * cannot parse, so such a build is told "different version" at the door instead of failing on the first snapshot. */
+export const COLLAB_PROTOCOL = 2;
 /** Largest message a participant may send to the host; snapshots travel only host → participant. */
 export const MAX_PEER_MESSAGE = 64 * 1024;
 export const MAX_SNAPSHOT_MESSAGE = 5 * 1024 * 1024;
@@ -92,7 +94,7 @@ export function fromBase64url(text: string): Uint8Array<ArrayBuffer> | null {
 
 /**
  * The URL fragment (after `#`), which browsers never send to a web server:
- * `join=1.<n | r~relays>.<secret>.<hostKey>.<g|p|k><token>`; relays are space-separated URLs in base64url. A general
+ * `join=2.<n | r~relays>.<secret>.<hostKey>.<g|p|k><token>`; relays are space-separated URLs in base64url. A general
  * link has its own token, so dropping a personal token from a link never opens the general door.
  */
 export function encodeInvite(invite: Invite): string {

@@ -1,9 +1,9 @@
 /**
  * must: a neutral reason added from the left panel starts as an unrated note: dotted card with "Ei arvioida", greyed
- *       sliders, no effect on the thesis (+20.0 without †); unchecking it brings the sliders back; "Jätän tämän
+ *       sliders, no effect on the thesis (+28.6 without †: one 100 % / +2 reason under the default method); unchecking it brings the sliders back; "Jätän tämän
  *       arvioimatta" hides the person's sliders, keeps the thesis complete, dims the branch below in their view
  *       and leaves it out; clearing it brings the sliders back; "Tarkka asteikko (0,1)" turns the influence slider to
- *       0.1 steps and a +0.3 rating moves the thesis to +23.0 (owner decisions 2026-11-10, S-15)
+ *       0.1 steps and a +0.3 rating moves the thesis to +31.5 (owner decisions 2026-11-10, S-15)
  * test: tests/e2e/unrated-walk.spec.ts (desktop)
  * red-against: a new neutral reason that makes the thesis incomplete, an "En arvioi" person still expected, the
  *              fine scale rounding to 0.5
@@ -26,7 +26,7 @@ test('an unrated note, a "no effect" review and the fine scale', async ({ page }
   await expect(page.getByTestId('unrated-note')).toBeVisible();
   await expect(page.getByTestId('review-credence')).toHaveCount(0);
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+20\.0Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+28\.6Perustelu/);
 
   await note.locator('.node-title').click();
   await page.getByTestId('node-unrated').uncheck();
@@ -41,7 +41,7 @@ test('an unrated note, a "no effect" review and the fine scale', async ({ page }
   await expect(child).toHaveClass(/under-unrated/);
   await expect(page.getByTestId('abstain-branch')).toBeVisible();
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+20\.0Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+28\.6Perustelu/);
   await page.locator('[data-testid^="outline-"]', { hasText: 'Muutti pois 2019' }).click();
   await page.locator('#viewport').focus();
   await page.keyboard.press('Delete');
@@ -57,5 +57,5 @@ test('an unrated note, a "no effect" review and the fine scale', async ({ page }
   await influence.blur();
   await expect(page.locator('#inspector')).toContainText('+0.3 / 5');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+23\.0Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+31\.5Perustelu/);
 });

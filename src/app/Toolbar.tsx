@@ -1,15 +1,7 @@
 // The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
 import type { ReactNode } from 'react';
-import {
-  childrenOf,
-  isAiProfile,
-  SCORING_CHAIN,
-  SCORING_LOGODDS,
-  SCORING_SIGNED,
-  SCORING_V3,
-  SCORING_V4,
-} from '../domain/index.ts';
+import { childrenOf, isAiProfile } from '../domain/index.ts';
 import type { Mode, ScoringVersion } from '../domain/index.ts';
 import {
   ADD_LOCAL_USER,
@@ -27,7 +19,9 @@ import {
   toggleFocus,
   toggleViewDock,
 } from './actions.ts';
+import type { MessageKey } from '../lib/i18n/i18n.ts';
 import { viewedAssessorId } from './derive.ts';
+import { SCORING_CURRENT, SCORING_EARLIER, SCORING_TEXT } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
@@ -407,6 +401,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
               id="scoringSelect"
               data-testid="scoring-select"
               aria-label={t('scoringLabel')}
+              aria-describedby={SCORING_TEXT[project.settings.scoring].note ? 'scoringNote' : undefined}
               title={t('scoringHint')}
               value={project.settings.scoring}
               disabled={!editable}
@@ -414,22 +409,24 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
                 store.dispatch({ type: 'project.setScoring', scoring: e.target.value as ScoringVersion })
               }
             >
-              {[SCORING_V4, SCORING_LOGODDS, SCORING_SIGNED, SCORING_CHAIN, SCORING_V3].map((v) => (
+              {SCORING_CURRENT.map((v) => (
                 <option key={v} value={v}>
-                  {t(
-                    v === SCORING_V4
-                      ? 'scoringReasons'
-                      : v === SCORING_LOGODDS
-                        ? 'scoringLogOdds'
-                        : v === SCORING_SIGNED
-                          ? 'scoringSigned'
-                          : v === SCORING_CHAIN
-                            ? 'scoringChain'
-                            : 'scoringPrototype'
-                  )}
+                  {t(SCORING_TEXT[v].label)}
                 </option>
               ))}
+              <optgroup id="scoringOldGroup" label={t('scoringOldGroup')}>
+                {SCORING_EARLIER.map((v) => (
+                  <option key={v} value={v}>
+                    {t(SCORING_TEXT[v].label)}
+                  </option>
+                ))}
+              </optgroup>
             </select>
+            {SCORING_TEXT[project.settings.scoring].note ? (
+              <p id="scoringNote" className="inspector-note" data-testid="scoring-note">
+                {t(SCORING_TEXT[project.settings.scoring].note as MessageKey)}
+              </p>
+            ) : null}
           </Menu>
           <Menu id="viewMenu" label={t('toolbarViewGroup')}>
             <Item id="btnViewPanelMenu" onClick={showViewDock} kbd="Alt+V">

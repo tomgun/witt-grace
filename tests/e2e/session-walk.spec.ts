@@ -44,7 +44,7 @@ test('two people edit one document, a personal invite joins by the host’s name
   await host.locator('#btnCollabStart').click();
   const general = (await host.locator('#collabLink').textContent()) ?? '';
   expect(general).toMatch(
-    /#join=1\.r~[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{22}\.g[A-Za-z0-9_-]{22}$/
+    /#join=2\.r~[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{22}\.g[A-Za-z0-9_-]{22}$/
   );
   await expect(host.locator('#collabChip')).toHaveText(/Yhteistyössä · 1/);
 
@@ -174,7 +174,7 @@ test('a password invite asks the password; the host reloads and the collaboratio
 test('a broken invite link says so and leaves WITT usable', async ({ browser }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'the desktop walk covers the flow');
   const page = await newPage(browser);
-  await page.goto('/#join=1.n.tooShort.alsoShort');
+  await page.goto('/#join=2.n.tooShort.alsoShort');
   await expect(page.locator('#joinDialog')).toContainText('Kutsulinkki on viallinen');
   await page.getByRole('button', { name: 'Avaa WITT ilman kutsua' }).click();
   await expect(page.locator('#joinDialog')).toHaveCount(0);

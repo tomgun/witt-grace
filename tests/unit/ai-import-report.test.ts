@@ -3,10 +3,12 @@
  *       classification, every issue (code, JSON path, Finnish message and fix, syntax line and column), the issue
  *       order and caps, the stale-proposal checks against the open document, and the copyable report text — for every
  *       example, draft, proposal, starter, library backup and malformed input the prototype's own tests use
+ *       ; a document saved with any scoring version this build can score passes the preflight (File → Open)
  * test: tests/unit/ai-import-report.test.ts (the prototype module is the oracle)
  * red-against: a schema key reordered (issue order changes), a graph check skipped so the parser's Finnish refusal
  *              replaces the precise path, a stale proposal passing because the fingerprint was taken over the raw
- *              document, a draft reported valid although `toProject` would refuse it, the input mutated by the walk
+ *              document, a draft reported valid although `toProject` would refuse it, the input mutated by the walk,
+ *              the schema's scoring enum left at the two versions of 2026-11-09 so a log-odds document cannot be reopened
  */
 import assert from 'node:assert/strict';
 import path from 'node:path';
@@ -19,6 +21,8 @@ import {
   importReportText,
   inspectImport,
   projectFingerprint,
+  SCORING_VERSIONS,
+  serializeProjectFile,
 } from '../../src/domain/index.ts';
 import type { ImportReport, InspectOptions, Project } from '../../src/domain/index.ts';
 import {
@@ -443,4 +447,13 @@ test('the walk never mutates the input or the open document, and the report text
       'JSON on tarkistettu skeeman ja nykyisen WITT-tietomallin perusteella.',
     ].join('\n')
   );
+});
+
+test('every scoring version round-trips through the import preflight', () => {
+  for (const scoring of SCORING_VERSIONS) {
+    const project = createBlankProject({ projectId: 'p', rootId: 'T', userId: 'u1', now: FIXED, scoring });
+    const report = inspectImport(serializeProjectFile(project));
+    assert.equal(report.ok, true, `${scoring}: ${JSON.stringify(report.issues)}`);
+    assert.equal(report.format, 'project');
+  }
 });

@@ -1,6 +1,7 @@
 // The WITT project v8 JSON Schema, verbatim from the frozen prototype (witt-grace-gpt-proto/schemas/project.v8.schema.json).
 // Used only as the import preflight (importReport.ts); parseProject remains the authority. Key order is the prototype's:
 // the preflight walks `properties` in declaration order and the issue order is pinned by the parity tests.
+import { SCORING_VERSIONS } from '../model.ts';
 import type { JsonSchema } from './jsonSchema.ts';
 
 export const PROJECT_SCHEMA: JsonSchema = {
@@ -58,8 +59,9 @@ export const PROJECT_SCHEMA: JsonSchema = {
           maxLength: 32,
         },
         scoring: {
-          // evidence-v4-reasons added after the prototype (owner 2026-11-09).
-          enum: ['evidence-v3-links', 'evidence-v4-reasons'],
+          // Every version this build can score (the prototype's file lists only evidence-v3-links): a document
+          // saved with any selectable method must pass the preflight that File → Open runs.
+          enum: [...SCORING_VERSIONS],
         },
         showAuthors: {
           type: 'boolean',

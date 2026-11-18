@@ -138,6 +138,17 @@ export function parseProject(input: unknown): Project {
   if (!includes(MODES, raw.mode) || !includes(THEMES, raw.theme)) refuse('Virheellinen tila tai teema');
   const mode = raw.mode as Project['mode'];
   const settings = raw.settings;
+  // A calculation method this build does not know is named, so the person knows to update or to ask for the file
+  // saved with another method (a newer build's document, never scored with a guessed formula).
+  if (
+    isPlain(settings) &&
+    typeof settings.scoring === 'string' &&
+    !includes(SCORING_VERSIONS, settings.scoring)
+  )
+    refuse(
+      `Tiedosto käyttää laskentatapaa "${settings.scoring.slice(0, 60)}", jota tämä WITT-versio ei tunne. ` +
+        'Päivitä sivu tai pyydä tiedosto tallennettuna toisella laskentatavalla.'
+    );
   if (
     !isPlain(settings) ||
     !includes(VOTE_WEIGHTINGS, settings.voteWeighting) ||

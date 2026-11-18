@@ -58,7 +58,7 @@ test('a general nostr link and a personal relay link round-trip exactly', () => 
     hostKey: KEY,
     access: { kind: 'general', token: TOKEN },
   });
-  assert.equal(general, `join=1.n.${SECRET}.${KEY}.g${TOKEN}`);
+  assert.equal(general, `join=2.n.${SECRET}.${KEY}.g${TOKEN}`);
   assert.deepEqual(parseInvite('#' + general), {
     ok: true,
     invite: {
@@ -91,21 +91,23 @@ test('a general nostr link and a personal relay link round-trip exactly', () => 
 
 test('malformed, foreign and future links are refused with a reason; a link always names its door', () => {
   assert.deepEqual(parseInvite('#view=1'), { ok: false, reason: 'not-invite' });
-  assert.deepEqual(parseInvite(`#join=2.n.${SECRET}.${KEY}.g${TOKEN}`), { ok: false, reason: 'version' });
-  assert.deepEqual(parseInvite(`#join=1.n.${SECRET.slice(1)}.${KEY}.g${TOKEN}`), {
+  // A link from before the calculation methods of 2026-11-18 (protocol 1) and one from a later build.
+  assert.deepEqual(parseInvite(`#join=1.n.${SECRET}.${KEY}.g${TOKEN}`), { ok: false, reason: 'version' });
+  assert.deepEqual(parseInvite(`#join=3.n.${SECRET}.${KEY}.g${TOKEN}`), { ok: false, reason: 'version' });
+  assert.deepEqual(parseInvite(`#join=2.n.${SECRET.slice(1)}.${KEY}.g${TOKEN}`), {
     ok: false,
     reason: 'malformed',
   });
-  assert.deepEqual(parseInvite(`#join=1.n.${SECRET}.${KEY}`), { ok: false, reason: 'malformed' });
-  assert.deepEqual(parseInvite(`#join=1.n.${SECRET}.${KEY}.${TOKEN}`), { ok: false, reason: 'malformed' });
-  assert.deepEqual(parseInvite(`#join=1.n.${SECRET}.${KEY}.x${TOKEN}`), { ok: false, reason: 'malformed' });
-  assert.deepEqual(parseInvite(`#join=1.x.${SECRET}.${KEY}.g${TOKEN}`), { ok: false, reason: 'malformed' });
-  assert.deepEqual(parseInvite(`#join=1.n.${SECRET}.${KEY}.g${TOKEN}.p${TOKEN}`), {
+  assert.deepEqual(parseInvite(`#join=2.n.${SECRET}.${KEY}`), { ok: false, reason: 'malformed' });
+  assert.deepEqual(parseInvite(`#join=2.n.${SECRET}.${KEY}.${TOKEN}`), { ok: false, reason: 'malformed' });
+  assert.deepEqual(parseInvite(`#join=2.n.${SECRET}.${KEY}.x${TOKEN}`), { ok: false, reason: 'malformed' });
+  assert.deepEqual(parseInvite(`#join=2.x.${SECRET}.${KEY}.g${TOKEN}`), { ok: false, reason: 'malformed' });
+  assert.deepEqual(parseInvite(`#join=2.n.${SECRET}.${KEY}.g${TOKEN}.p${TOKEN}`), {
     ok: false,
     reason: 'malformed',
   });
   const plain = base64url(new TextEncoder().encode('ws://evil.example:8787'));
-  assert.deepEqual(parseInvite(`#join=1.r~${plain}.${SECRET}.${KEY}.g${TOKEN}`), {
+  assert.deepEqual(parseInvite(`#join=2.r~${plain}.${SECRET}.${KEY}.g${TOKEN}`), {
     ok: false,
     reason: 'relay',
   });

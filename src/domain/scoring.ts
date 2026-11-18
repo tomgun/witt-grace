@@ -1,19 +1,18 @@
-// evidence-v3-links: the recursive explanatory balance per viewpoint. Pure; reproduces the prototype engine exactly
-// (tests/golden). evidence-v4-reasons (owner 2026-11-09) differs in one rule: a claim with reasons starts neutral (50)
-// and its own credence is not used; with none of them assessed yet it has no result. logodds-reasons-v1 keeps that rule
-// and combines the reasons on the log-odds scale instead of the capped sum (`scoreFor` in model.ts). Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
+// The recursive explanatory balance per viewpoint. Pure; evidence-v3-links reproduces the prototype engine exactly
+// (tests/golden). What differs between scoring versions is one row of `SCORING_RULES` (model.ts): where a claim's base
+// comes from, what strength a reason passes upward and how contributions combine; `settle` below applies the row.
+// Missing, stale and excluded reviews stay null and mark the result incomplete; they are never zero.
 import {
   argumentBalance,
-  strengthFor,
-  scoreFor,
-  SCORING_V3,
+  assertNever,
+  SCORING_RULES,
   indexAssessable,
   isAiProfile,
   outOfScore,
   relationFingerprint,
   signedLinkImpact,
 } from './model.ts';
-import type { AssessmentWeighting, Node, Project, SubjectType, User } from './model.ts';
+import type { AssessmentWeighting, Node, Project, ScoringRule, SubjectType, User } from './model.ts';
 import { childrenIndex, incomingIndex, nodeById, secondaryOverlapWarning, sharedReason } from './graph.ts';
 import { abstentionExcusals, isExcused } from './reviews.ts';
 
@@ -44,6 +43,12 @@ export interface NodeScore {
   negative: number;
   contributions: Contribution[];
   incomplete: boolean;
+  /** Anchored versions, a rated claim: the score is a credence (0–100 %), not a balance. */
+  credence?: true;
+  /** Nobody rated this claim: the score is the net of its reasons (anchored versions), not a credence. */
+  net?: true;
+  /** direct-reasons-v1, a rated claim with scored reasons: what the tree formula gives; `score` is the rating. */
+  derived?: number;
   /** Human reviews that entered the base (collective viewpoint only). */
   votesCount?: number;
   totalPower?: number;
@@ -168,14 +173,76 @@ function hasReasons(
     return !!source && !outOfScore(source);
   });
 }
-/** evidence-v4-reasons and logodds-reasons-v1: the base of a claim with reasons is neutral once one of them scores, else there is no result. */
-const reasonsBase = (contributions: Contribution[]): number | null =>
-  contributions.some((c) => !c.missing) ? 50 : null;
+const isThesis = (project: Project, node: Node): boolean =>
+  project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
+/** An option or the argument-mode thesis: the node the balance is read from. */
+const isTarget = (project: Project, node: Node): boolean => node.kind === 'option' || isThesis(project, node);
+/** What a scored node passes to its parent as the strength of its relation. */
+const passes = (rule: ScoringRule, result: NodeScore): number =>
+  rule.strength(result.score as number, result.net === true);
+
+interface Settled {
+  base: number | null;
+  score: number | null;
+  credence?: true;
+  net?: true;
+  derived?: number;
+}
+/**
+ * The one place a scoring version decides a node's base and result from what the visitor gathered.
+ * `own` is the base before any reason acts: 50 for an option or an unassessed thesis, the locked shared value, the
+ * (pooled or personal) credence, or null. `claimWithReasons`: a claim without a locked value that has a relation
+ * which can score into it.
+ */
+function settle(
+  rule: ScoringRule,
+  input: {
+    target: boolean;
+    thesis: boolean;
+    claimWithReasons: boolean;
+    own: number | null;
+    contributions: Contribution[];
+    positive: number;
+    negative: number;
+  }
+): Settled {
+  const { target, thesis, claimWithReasons, own, contributions, positive, negative } = input;
+  const scored = contributions.some((c) => !c.missing);
+  let base: number | null;
+  let net = false;
+  let credence = false;
+  switch (rule.claimBase) {
+    case 'own':
+      base = own;
+      break;
+    case 'neutral':
+      // A claim with reasons is neutral once one of them scores, else it has no result.
+      base = claimWithReasons ? (scored ? 50 : null) : own;
+      break;
+    case 'anchored':
+      if (thesis && claimWithReasons) base = scored ? 50 : null;
+      else if (own !== null) {
+        base = own;
+        credence = !target;
+      } else {
+        // Nobody rated it: it starts neutral and is the net of its reasons.
+        base = claimWithReasons && scored ? 50 : null;
+        net = base !== null;
+      }
+      break;
+    default:
+      return assertNever(rule.claimBase);
+  }
+  if (base === null) return { base, score: null };
+  const combined = rule.combine(base, positive, negative, target);
+  // direct: a rated claim passes its rating; the tree value is kept beside it.
+  if (rule.direct && credence && scored) return { base, score: base, credence: true, derived: combined };
+  if (net) return { base, score: combined, net: true };
+  return credence ? { base, score: combined, credence: true } : { base, score: combined };
+}
 
 export function evaluate(project: Project): Scores {
-  const reasonsDecide = project.settings.scoring !== SCORING_V3;
-  const combine = scoreFor(project.settings.scoring);
-  const strength = strengthFor(project.settings.scoring);
+  const rule = SCORING_RULES[project.settings.scoring];
   const mode = assessmentWeighting(project);
   const human = new Map<string, User>(project.users.filter((u) => !isAiProfile(u)).map((u) => [u.id, u]));
   const expectedHumanReviews = [...human.values()].filter(
@@ -237,10 +304,18 @@ export function evaluate(project: Project): Scores {
     const shared = node.sharedReasonId ? sharedReason(project, node.sharedReasonId) : null;
     // In argument mode the thesis is a RESULT of its reasons: an unassessed thesis starts neutral (50), never from a
     // synthetic review. A deliberately entered root vote is respected.
-    const thesis = project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
-    const fromReasons =
-      reasonsDecide && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
-    let baseValue =
+    const thesis = isThesis(project, node);
+    const claimWithReasons =
+      rule.claimBase !== 'own' &&
+      node.kind === 'claim' &&
+      !shared &&
+      hasReasons(node, children, incoming, project);
+    // The own credence is not what the result rests on: a claim with reasons (neutral versions), the thesis with
+    // reasons (anchored versions).
+    const fromReasons = claimWithReasons && (rule.claimBase === 'neutral' || thesis);
+    // anchored: a claim with reasons that nobody rated is derived from them; that is not a missing review.
+    const unratedDerived = claimWithReasons && rule.claimBase === 'anchored' && info.count === 0;
+    const own =
       node.kind === 'option'
         ? 50
         : shared
@@ -259,6 +334,7 @@ export function evaluate(project: Project): Scores {
       !shared &&
       node.kind !== 'option' &&
       !fromReasons &&
+      !unratedDerived &&
       (thesis ? info.count > 0 && info.count < expectedAt(node.id) : info.count < expectedAt(node.id));
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
@@ -284,7 +360,7 @@ export function evaluate(project: Project): Scores {
         }
       }
       // Owner 2026-11-10: a deliberate "no effect" (influence 0) needs no credence under the reasons-decide versions.
-      const settled = reasonsDecide && signed === 0;
+      const settled = rule.claimBase !== 'own' && signed === 0;
       const missing = signed === null || (result.score === null && !settled);
       if (mode !== 'structural') incomplete ||= missing || (!settled && Boolean(result.incomplete));
       if (missing || signed === null) {
@@ -300,7 +376,7 @@ export function evaluate(project: Project): Scores {
         });
         continue;
       }
-      const magnitude = settled ? 0 : Math.abs(signed) * strength(result.score as number);
+      const magnitude = settled ? 0 : Math.abs(signed) * passes(rule, result);
       if (signed > 0) positive += magnitude;
       if (signed < 0) negative += magnitude;
       contributions.push({
@@ -344,7 +420,7 @@ export function evaluate(project: Project): Scores {
         });
         continue;
       }
-      const magnitude = Math.abs(signed) * strength(result.score);
+      const magnitude = Math.abs(signed) * passes(rule, result);
       if (signed > 0) positive += magnitude;
       if (signed < 0) negative += magnitude;
       contributions.push({
@@ -359,20 +435,28 @@ export function evaluate(project: Project): Scores {
         overlapWarning: secondaryOverlapWarning(project, link),
       });
     }
-    if (fromReasons) {
-      baseValue = reasonsBase(contributions);
-      if (baseValue === null) incomplete = true;
-    }
-    const score = baseValue === null ? null : combine(baseValue, positive, negative);
+    const settled = settle(rule, {
+      target: isTarget(project, node),
+      thesis,
+      claimWithReasons,
+      own,
+      contributions,
+      positive,
+      negative,
+    });
+    if ((fromReasons || unratedDerived) && settled.base === null) incomplete = true;
     const result: NodeScore = {
-      score,
-      balance: argumentBalance(score),
-      base: baseValue,
-      delta: score === null || baseValue === null ? null : score - baseValue,
+      score: settled.score,
+      balance: argumentBalance(settled.score),
+      base: settled.base,
+      delta: settled.score === null || settled.base === null ? null : settled.score - settled.base,
       positive,
       negative,
       contributions,
       incomplete,
+      ...(settled.credence ? { credence: true as const } : {}),
+      ...(settled.net ? { net: true as const } : {}),
+      ...(settled.derived !== undefined ? { derived: settled.derived } : {}),
       votesCount: info.count,
       totalPower: info.totalPower,
     };
@@ -397,9 +481,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
       .filter((v) => v.userId === userId && !isExcused(project, v.nodeId, userId))
       .map((v) => [v.nodeId, v.confidence])
   );
-  const reasonsDecide = project.settings.scoring !== SCORING_V3;
-  const combine = scoreFor(project.settings.scoring);
-  const strength = strengthFor(project.settings.scoring);
+  const rule = SCORING_RULES[project.settings.scoring];
   const ownEdges = new Map(
     (project.edgeAssessments ?? [])
       .filter(
@@ -420,15 +502,28 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
       return result;
     }
     const shared = node.sharedReasonId ? sharedReason(project, node.sharedReasonId) : null;
-    const thesis = project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
-    const own = ownVotes.get(node.id);
-    const fromReasons =
-      reasonsDecide && node.kind === 'claim' && !shared && hasReasons(node, children, incoming, project);
-    let base =
-      node.kind === 'option' ? 50 : shared ? shared.confidence : own !== undefined ? own : thesis ? 50 : null;
+    const thesis = isThesis(project, node);
+    const vote = ownVotes.get(node.id);
+    const claimWithReasons =
+      rule.claimBase !== 'own' &&
+      node.kind === 'claim' &&
+      !shared &&
+      hasReasons(node, children, incoming, project);
+    const fromReasons = claimWithReasons && (rule.claimBase === 'neutral' || thesis);
+    const unratedDerived = claimWithReasons && rule.claimBase === 'anchored' && vote === undefined;
+    const own =
+      node.kind === 'option'
+        ? 50
+        : shared
+          ? shared.confidence
+          : vote !== undefined
+            ? vote
+            : thesis
+              ? 50
+              : null;
     let positive = 0;
     let negative = 0;
-    let incomplete = base === null && !fromReasons;
+    let incomplete = own === null && !fromReasons && !unratedDerived;
     const contributions: Contribution[] = [];
     for (const child of children.get(node.id) ?? []) {
       if (child.relation === 'option' || child.relation === 'group' || outOfScore(child)) continue;
@@ -439,7 +534,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
       const edge = ownEdges.get('primary:' + child.id);
       const fingerprint = relationFingerprint(child, node, child.relation);
       const current = inherited || (!!edge && edge.fingerprint === fingerprint);
-      const settled = reasonsDecide && !inherited && current && edge?.influence === 0;
+      const settled = rule.claimBase !== 'own' && !inherited && current && edge?.influence === 0;
       if (!current || (result.score === null && !settled)) {
         incomplete = true;
         contributions.push({
@@ -455,7 +550,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         continue;
       }
       const impact = inherited ? inherited.influence : (edge as { influence: number }).influence;
-      const magnitude = settled ? 0 : Math.abs(impact) * strength(result.score as number);
+      const magnitude = settled ? 0 : Math.abs(impact) * passes(rule, result);
       if (impact >= 0) positive += magnitude;
       else negative += magnitude;
       if (!settled && result.incomplete) incomplete = true;
@@ -492,7 +587,7 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         continue;
       }
       const impact = edge.influence;
-      const magnitude = Math.abs(impact) * strength(result.score);
+      const magnitude = Math.abs(impact) * passes(rule, result);
       if (impact > 0) positive += magnitude;
       if (impact < 0) negative += magnitude;
       incomplete ||= Boolean(result.incomplete);
@@ -508,20 +603,28 @@ export function evaluateAssessor(project: Project, userId: string): Scores {
         overlapWarning: secondaryOverlapWarning(project, link),
       });
     }
-    if (fromReasons) {
-      base = reasonsBase(contributions);
-      if (base === null) incomplete = true;
-    }
-    const score = base === null ? null : combine(base, positive, negative);
+    const settled = settle(rule, {
+      target: isTarget(project, node),
+      thesis,
+      claimWithReasons,
+      own,
+      contributions,
+      positive,
+      negative,
+    });
+    if ((fromReasons || unratedDerived) && settled.base === null) incomplete = true;
     const answer: NodeScore = {
-      score,
-      balance: argumentBalance(score),
-      base,
-      delta: score === null || base === null ? null : score - base,
+      score: settled.score,
+      balance: argumentBalance(settled.score),
+      base: settled.base,
+      delta: settled.score === null || settled.base === null ? null : settled.score - settled.base,
       positive,
       negative,
       contributions,
       incomplete,
+      ...(settled.credence ? { credence: true as const } : {}),
+      ...(settled.net ? { net: true as const } : {}),
+      ...(settled.derived !== undefined ? { derived: settled.derived } : {}),
     };
     memo.set(node.id, answer);
     visiting.delete(node.id);
@@ -542,7 +645,7 @@ export interface MarginalEffect {
 }
 /** Leave-one-relation-out change in the parent's internal score: a local counterfactual, not a decomposition. */
 export function marginalIndexEffects(project: Project, evaluated: Scores): Map<string, MarginalEffect> {
-  const combine = scoreFor(project.settings.scoring);
+  const rule = SCORING_RULES[project.settings.scoring];
   const effects = new Map<string, MarginalEffect>();
   for (const parent of project.nodes) {
     if (!indexAssessable(parent)) continue;
@@ -556,15 +659,17 @@ export function marginalIndexEffects(project: Project, evaluated: Scores): Map<s
       if (!Number.isFinite(signed) || signed === 0) continue;
       const positive = Math.max(0, result.positive - (signed > 0 ? child.magnitude : 0));
       const negative = Math.max(0, result.negative - (signed < 0 ? child.magnitude : 0));
-      const withoutScore = combine(result.base, positive, negative);
-      const raw = result.score - withoutScore;
+      const withoutScore = rule.combine(result.base, positive, negative, isTarget(project, parent));
+      // direct: under a rated claim the reason is measured against what the tree formula gives, not the rating.
+      const currentScore = result.derived ?? result.score;
+      const raw = currentScore - withoutScore;
       const delta = Math.abs(raw) < 1e-9 ? 0 : raw;
       effects.set(child.id, {
         childId: child.id,
         parentId: parent.id,
         delta,
         magnitude: Math.abs(delta),
-        currentScore: result.score,
+        currentScore,
         withoutScore,
         provisional: Boolean(result.incomplete),
       });
@@ -587,8 +692,7 @@ export function marginalTargetEffects(
   evaluated: Scores,
   localEffects: Map<string, MarginalEffect> = marginalIndexEffects(project, evaluated)
 ): Map<string, TargetEffect> {
-  const combine = scoreFor(project.settings.scoring);
-  const strength = strengthFor(project.settings.scoring);
+  const rule = SCORING_RULES[project.settings.scoring];
   const result = new Map<string, TargetEffect>();
   const byId = new Map(project.nodes.map((n) => [n.id, n]));
   for (const effect of localEffects.values()) {
@@ -609,6 +713,10 @@ export function marginalTargetEffects(
         break;
       }
       if (changedNode.parentId === null || changedNode.relation === 'option') break;
+      const changedResult = evaluated.get(changedNode.id);
+      // direct: a rated claim passes its rating whatever happens below it, so nothing changes above.
+      if (changedResult?.derived !== undefined && changedResult.score !== null)
+        afterScore = changedResult.score;
       if (outOfScore(changedNode)) {
         valid = false;
         break;
@@ -638,11 +746,11 @@ export function marginalTargetEffects(
         valid = false;
         break;
       }
-      const afterMagnitude = Math.abs(signed) * strength(afterScore);
+      const afterMagnitude = Math.abs(signed) * rule.strength(afterScore, changedResult?.net === true);
       const change = afterMagnitude - contribution.magnitude;
       const positive = Math.max(0, parentResult.positive + (signed > 0 ? change : 0));
       const negative = Math.max(0, parentResult.negative + (signed < 0 ? change : 0));
-      afterScore = combine(parentResult.base, positive, negative);
+      afterScore = rule.combine(parentResult.base, positive, negative, isTarget(project, parent as Node));
       provisional ||= Boolean(parentResult.incomplete);
       currentId = (parent as Node).id;
     }

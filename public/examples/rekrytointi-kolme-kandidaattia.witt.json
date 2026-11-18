@@ -8,7 +8,7 @@
     "voteWeighting": "equal",
     "assessmentWeighting": "equal",
     "shareSnapshotDate": null,
-    "scoring": "evidence-v4-reasons",
+    "scoring": "anchored-reasons-v1",
     "showAuthors": true
   },
   "users": [

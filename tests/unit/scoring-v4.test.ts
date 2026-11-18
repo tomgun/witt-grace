@@ -3,7 +3,8 @@
  *       (own 80 % with one 100 %/−3.83 reason gives −38.3, not +21.7 as under evidence-v3-links); with none of its
  *       reasons assessed it has no result; a leaf keeps its own credence; the same holds for one assessor's
  *       viewpoint; `project.setScoring` switches the version both ways and refuses an unknown one; a new app
- *       document gets v4 while the prototype's documents stay v3; logodds-reasons-v1 keeps the v4 rule and combines
+ *       document got v4 from 2026-11-09 until the default of 2026-11-18 (tests/unit/scoring-anchored.test.ts)
+ *       while the prototype's documents stay v3; logodds-reasons-v1 keeps the v4 rule and combines
  *       reasons as odds (+50, +80, +93, never capped) with Δ on the same formula (owner decisions 2026-11-09);
  *       signed-reasons-v1 passes a reason's net upward: a leaf at 50 % or a claim at net 0 adds nothing, a leaf at
  *       75 % passes half, a refuted reason adds nothing and never turns against its parent (owner 2026-11-10)

@@ -4,6 +4,8 @@
  *       and show criteria and candidates under their own type names (owner 2026-11-09, UI_INVENTORY S-15); the
  *       scoring comparison example is what scripts/build-scoring-example.ts builds, and its four options read
  *       +27.6/+100/+30/+0.1 under v4, +29.5/+82.9/+31.8/+0.2 under log-odds and +38.8/+100/+30/−20.1 under v3;
+ *       under the default of 2026-11-18, anchored-reasons-v1, +29.7/+50.9/+25/−7.2 (no option at the cap) and under
+ *       direct-reasons-v1 +30.4/+50.9/+25/−11.9; the generated examples carry the default version;
  *       the deep debate example reaches 14 and 11 levels under two options and its nets are pinned the same way
  *       (owner 2026-11-10)
  * test: tests/unit/examples.test.ts
@@ -17,7 +19,9 @@ import test from 'node:test';
 import {
   evaluate,
   parseProject,
+  SCORING_ANCHORED,
   SCORING_CHAIN,
+  SCORING_DIRECT,
   SCORING_LOGODDS,
   SCORING_SIGNED,
   SCORING_V3,
@@ -66,6 +70,9 @@ test('the scoring comparison examples are the generator output and its options d
   assert.deepEqual(nets(SCORING_SIGNED), [18.1, 100, 30, 4]);
   assert.deepEqual(nets(SCORING_CHAIN), [66.7, 99.9, 80, 14.6]);
   assert.deepEqual(nets(SCORING_V3), [38.8, 100, 30, -20.1]);
+  assert.deepEqual(nets(SCORING_ANCHORED), [29.7, 50.9, 25, -7.2]);
+  assert.deepEqual(nets(SCORING_DIRECT), [30.4, 50.9, 25, -11.9]);
+  assert.equal(project.settings.scoring, SCORING_ANCHORED);
 });
 
 test('the deep debate example is the generator output, 14 and 11 levels deep, and its nets per method are pinned', () => {
@@ -99,4 +106,6 @@ test('the deep debate example is the generator output, 14 and 11 levels deep, an
   assert.deepEqual(nets(SCORING_SIGNED), [0, 0, 22, -10]);
   assert.deepEqual(nets(SCORING_CHAIN), [0, 0, 66.7, -35.1]);
   assert.deepEqual(nets(SCORING_V3), [-3.9, 4.1, 16, -10]);
+  assert.deepEqual(nets(SCORING_ANCHORED), [4.7, 3.8, 14, -11.4]);
+  assert.deepEqual(nets(SCORING_DIRECT), [-9.5, 4.3, 14, -11.4]);
 });

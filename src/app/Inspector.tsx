@@ -27,11 +27,7 @@ import {
   summarizeInfluenceReviews,
   truthAssessable,
   TYPE_LABEL_MAX,
-  SCORING_CHAIN,
-  SCORING_LOGODDS,
-  isLogOdds,
-  SCORING_SIGNED,
-  SCORING_V3,
+  SCORING_RULES,
 } from '../domain/index.ts';
 import type { InfluenceSummary, Node, NodeScore, SemanticType, Stance } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
@@ -47,7 +43,10 @@ import {
   balanceDeltaText,
   balanceText,
   credenceIsFeeling,
+  credenceNoteKey,
+  credencePercentText,
   derivedResult,
+  valueText,
   displayedPrimaryRelation,
   importanceHint,
   importanceText,
@@ -59,6 +58,7 @@ import {
   signed,
   viewedAssessorId,
 } from './derive.ts';
+import { SCORING_TEXT } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import { LAYER_PRESETS } from './view.ts';
@@ -934,6 +934,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
     effective && effective.base !== null && effective.score !== null
       ? effective.base + 5 * ((effective.positive || 0) - (effective.negative || 0))
       : null;
+  const credenceNote = credenceNoteKey(project, node);
   const inspectedClaim = inspected ? personalCredence(project, node.id, inspected.id) : null;
   const inspectedImpact =
     inspected && node.parentId && node.relation !== 'option' && node.relation !== 'group'
@@ -1049,6 +1050,10 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           />
           {credenceIsFeeling(project, node) ? (
             <p className="inspector-note">{t('ownCredenceFeelingNote')}</p>
+          ) : credenceNote ? (
+            <p className="inspector-note" data-testid="credence-note">
+              {t(credenceNote)}
+            </p>
           ) : !ownVote && !excused ? (
             <p className="inline-warning">{t('profileUnsetHint')}</p>
           ) : null}
@@ -1125,7 +1130,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
         <div className="score-hero" data-testid="score-section">
           <div className="score-value" data-testid="score-balance">
             {resultText(node, effective)}
-            <small>{t('indexScoreCaption')}</small>
+            <small>{t(effective?.credence ? 'credenceScoreCaption' : 'indexScoreCaption')}</small>
           </div>
           <p className="score-index-compare">
             {t(view.indexMode === 'personal' ? 'indexOtherShared' : 'indexOtherPersonal', {
@@ -1139,45 +1144,67 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
                 ? EM_DASH
                 : node.kind === 'option'
                   ? '0'
-                  : `${effective.base.toFixed(1)} %`}
+                  : effective.net
+                    ? t('baseUnratedDerived')
+                    : `${effective.base.toFixed(1)} %`}
             </strong>
           </div>
+          {effective?.derived !== undefined ? (
+            <div className="score-line" data-testid="score-derived">
+              <span>{t('derivedFromReasons')}</span>
+              <strong>{credencePercentText(effective.derived)}</strong>
+            </div>
+          ) : null}
+          {effective?.net && effective.score !== null ? (
+            <p className="inspector-note" data-testid="net-note">
+              {effective.score > 50
+                ? t('netPassesUp', { share: Math.round(2 * effective.score - 100) })
+                : t('netPassesNothing')}
+            </p>
+          ) : null}
           {node.kind === 'option' ? <p className="score-index-compare">{t('optionIndexNotTruth')}</p> : null}
           <div className="score-line">
             <span>{t('childInfluence')}</span>
-            <strong>{effective?.delta == null ? EM_DASH : `${balanceDeltaText(effective.delta)} p`}</strong>
+            <strong>
+              {effective?.delta == null || effective.derived !== undefined
+                ? EM_DASH
+                : effective.credence
+                  ? `${signed(Number(effective.delta.toFixed(1)))} %`
+                  : `${balanceDeltaText(effective.delta)} p`}
+            </strong>
           </div>
           <div className="score-explain">
             {t(view.indexMode === 'personal' ? 'personalIndexExplain' : 'heuristicExplain')}
           </div>
-          {!isLogOdds(project.settings.scoring) && beforeClamp !== null && beforeClamp > 100 + 1e-9 ? (
+          {SCORING_RULES[project.settings.scoring].capped &&
+          beforeClamp !== null &&
+          beforeClamp > 100 + 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedHigh')}</p>
           ) : null}
-          {!isLogOdds(project.settings.scoring) && beforeClamp !== null && beforeClamp < 0 - 1e-9 ? (
+          {SCORING_RULES[project.settings.scoring].capped &&
+          beforeClamp !== null &&
+          beforeClamp < 0 - 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedLow')}</p>
           ) : null}
           <details className="score-help">
             <summary>{t('indexQuestion')}</summary>
-            <p>
-              {t(
-                project.settings.scoring === SCORING_V3
-                  ? 'indexExplain'
-                  : project.settings.scoring === SCORING_LOGODDS
-                    ? 'indexExplainLogOdds'
-                    : project.settings.scoring === SCORING_CHAIN
-                      ? 'indexExplainChain'
-                      : project.settings.scoring === SCORING_SIGNED
-                        ? 'indexExplainSigned'
-                        : 'indexExplainReasons'
-              )}
-            </p>
+            <p>{t(SCORING_TEXT[project.settings.scoring].explain)}</p>
             {effective && derivedResult(node, effective) ? (
               <p>
-                {t('indexHere', {
-                  base: balanceText(effective.base),
-                  delta: balanceDeltaText(effective.delta),
-                  score: balanceText(effective.score),
-                })}
+                {effective.derived !== undefined
+                  ? t('indexHereDirect', {
+                      score: credencePercentText(effective.score),
+                      derived: credencePercentText(effective.derived),
+                    })
+                  : t('indexHere', {
+                      base: effective.net
+                        ? balanceText(effective.base)
+                        : valueText(effective, effective.base),
+                      delta: effective.credence
+                        ? `${signed(Number((effective.delta ?? 0).toFixed(1)))} %`
+                        : balanceDeltaText(effective.delta),
+                      score: valueText(effective, effective.score),
+                    })}
               </p>
             ) : null}
           </details>

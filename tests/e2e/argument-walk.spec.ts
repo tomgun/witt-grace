@@ -8,12 +8,15 @@
  *       fading copy stays a second), a subtree asks first, and undo restores it; the added Terminaali, ASCII,
  *       Sarjakuva and Lehto themes apply and persist, and ASCII draws the edges as characters; an unassessed slider reads "—" and
  *       saving one axis saves the other as shown in one undo step; the dock has seven layers and no drag-from-text
- *       option; a new document lets reasons decide (the credence of a claim with reasons is a felt sense) and the
- *       Arviointi menu switches the calculation method (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
+ *       option; a new document uses Laskenta koko puusta (a claim's rating counts and its result reads as a
+ *       percentage; an unrated claim reads the net of its reasons), the earlier methods sit under Vanhat, and the
+ *       Arviointi menu switches the calculation method (under the earlier ones the credence of a claim with reasons
+ *       is a felt sense) (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
  *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo, the
- *              document's starting value shown as if assessed, a one-axis save leaving the pair half missing
+ *              document's starting value shown as if assessed, a one-axis save leaving the pair half missing, a
+ *              rated claim's credence shown on the −100…+100 scale, a new method falling through to another's label
  */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
@@ -97,7 +100,7 @@ test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports
     .then((chunks) => Buffer.concat(chunks).toString('utf8'));
   const parsed = JSON.parse(text) as { schemaVersion: number; settings: { scoring: string } };
   expect(parsed.schemaVersion).toBe(8);
-  expect(parsed.settings.scoring).toBe('evidence-v4-reasons');
+  expect(parsed.settings.scoring).toBe('anchored-reasons-v1');
 });
 
 test('switching to decision mode offers options; Yövärit (bitberg) theme applies', async ({ page }) => {
@@ -233,28 +236,79 @@ test('the view dock has no separate credence or impact layer and no drag-from-te
   await expect(page.locator('#dragFromText')).toHaveCount(0);
 });
 
-test('a new document lets reasons decide; the calculation method switches in the Arviointi menu', async ({
+test('a new document computes from the whole tree; the calculation method switches in the Arviointi menu', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'the menus are desktop controls');
   await page.locator('#btnWorkflowEvaluate').click();
   await addReason(page, '+', 'Kokemus riittää');
-  await addReason(page, '-', 'Vain vuosi alalta');
-  await page.locator('.node-title', { hasText: 'Kokemus riittää' }).click();
-  await expect(page.locator('label[for="nodeConfidence"]')).toContainText(
-    'Oma tuntuma (ei vaikuta laskentaan)'
+  await addReason(page, '+', 'Viisi vuotta alalla');
+  await review(page, '100', '1');
+  const claim = page.locator('.node-title', { hasText: 'Kokemus riittää' });
+  const claimCard = page.locator('#nodesLayer .node', { hasText: 'Kokemus riittää' });
+  // Nobody has rated the claim: it reads the net of its one reason, on the plus side, and says what it passes up.
+  await claim.click();
+  await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma uskottavuusarvio');
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+33\.3Perustelutulos/);
+  await expect(page.getByTestId('net-note')).toHaveText(
+    'Kukaan ei ole arvioinut tämän väitteen uskottavuutta, joten luku on sen perustelujen nettotulos. Väite välittää ylöspäin 33 % merkittävyydestään.'
   );
-  await page.locator('#assessmentMenu summary').click();
-  await expect(page.getByTestId('scoring-select')).toHaveValue('evidence-v4-reasons');
+  await expect(page.locator('#inspector')).toContainText('Ei arvioitu – lasketaan perusteluista');
+  // Rated 90 % at +4: the result is a credence, shown as a percentage, and the rating is said to count.
+  await review(page, '90', '4');
+  await expect(page.getByTestId('credence-note')).toHaveText(
+    'Arviosi on lähtötaso, jota tämän väitteen perustelut siirtävät.'
+  );
+  await expect(page.getByTestId('score-balance')).toContainText(/^93\.3 %Laskettu uskottavuus 0–100 %/);
+  await expect(claimCard.locator('.meta-index .meta-value')).toHaveText('93 %');
+  await selectRoot(page);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+42\.7Perustelutulos/);
+
+  const openAssessMenu = async () => {
+    if (!(await page.locator('#assessmentMenu[open]').count()))
+      await page.locator('#assessmentMenu summary').click();
+  };
+  const outlineClaim = page.locator('[data-testid^="outline-"]', { hasText: 'Kokemus riittää' });
+  await openAssessMenu();
+  const select = page.getByTestId('scoring-select');
+  await expect(select).toHaveValue('anchored-reasons-v1');
   await expect(page.locator('#scoringSelect option')).toHaveText([
-    'Perustelut ratkaisevat (oletus)',
+    'Laskenta koko puusta (oletus)',
+    'Laskenta suorista perusteluista',
+    'Perustelut ratkaisevat',
     'Log-odds: näyttö kertyy kertoimina',
     'Nettotulos välittyy (kokeellinen)',
     'Vahva ketju välittyy (log-odds, kokeellinen)',
     'Oma arvio + perustelut (prototyyppi)',
   ]);
-  await page.getByTestId('scoring-select').selectOption('logodds-reasons-v1');
+  await expect(page.locator('#scoringOldGroup')).toHaveAttribute('label', 'Vanhat');
+  await expect(page.locator('#scoringOldGroup option')).toHaveCount(5);
+  await expect(page.getByTestId('scoring-note')).toHaveText(
+    'Väitteen oma arvio on lähtötaso, jota sen perustelut siirtävät. Muutos syvällä puussa näkyy ylös asti.'
+  );
+  // Direct: the rated claim passes its 90 %; what its reason gives stays beside it, in parentheses on the card.
+  await select.selectOption('direct-reasons-v1');
+  await expect(page.getByTestId('scoring-note')).toHaveText(
+    'Arvioitu väite välittää oman arvionsa sellaisenaan. Perusteluista lasketaan vain arvioimattomat väitteet, vaihtoehdot ja pääväite.'
+  );
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+41\.9Perustelutulos/);
+  await expect(claimCard.locator('.meta-index .meta-value')).toHaveText('(93 %)');
+  await expect(claimCard.locator('.meta-index')).toContainText('laskettu');
+  await outlineClaim.click();
+  await expect(page.getByTestId('score-derived')).toHaveText('Perusteluista laskettuna93.3 %');
+  await expect(page.getByTestId('credence-note')).toHaveText(
+    'Tässä laskentatavassa arviosi on väitteen tulos sellaisenaan. Perustelut näkyvät erittelyssä, mutta eivät muuta tulosta.'
+  );
+  // The earlier methods keep their wording and their balance scale.
+  await openAssessMenu();
+  await select.selectOption('evidence-v4-reasons');
+  await expect(page.getByTestId('scoring-note')).toHaveCount(0);
+  await expect(page.locator('label[for="nodeConfidence"]')).toContainText(
+    'Oma tuntuma (ei vaikuta laskentaan)'
+  );
+  await expect(claimCard.locator('.meta-index .meta-value')).toHaveText('+10');
+  await select.selectOption('logodds-reasons-v1');
   await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma tuntuma');
-  await page.getByTestId('scoring-select').selectOption('evidence-v3-links');
+  await select.selectOption('evidence-v3-links');
   await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma uskottavuusarvio');
 });
