@@ -18,6 +18,7 @@ import {
   SCORING_V4,
   SCORING_VERSION,
   serializeProjectFile,
+  subtreeFingerprint,
 } from '../src/domain/index.ts';
 import type { Command, Project } from '../src/domain/index.ts';
 
@@ -416,6 +417,13 @@ const DEEP: [string, string, Reason[]][] = [
   ],
 ];
 
+/** The generators rate a claim before adding its reasons; the finished example reads as rated with the whole tree
+ * in view, so no rating opens marked "reasons changed since". */
+export const ratedAsBuilt = (p: Project): Project => ({
+  ...p,
+  votes: p.votes.map((vote) => ({ ...vote, subtree: subtreeFingerprint(p, vote.nodeId) })),
+});
+
 export function deepExample(): Project {
   counter = 0;
   let p = createBlankProject({
@@ -436,7 +444,7 @@ export function deepExample(): Project {
     p = run(p, { type: 'node.add', id: oid, parentId: 'root', relation: 'option', title });
     p = addReasons(p, oid, reasons, false);
   }
-  return run(p, { type: 'layout.auto' });
+  return ratedAsBuilt(run(p, { type: 'layout.auto' }));
 }
 
 export function scoringExample(): Project {
@@ -459,7 +467,7 @@ export function scoringExample(): Project {
     p = run(p, { type: 'node.add', id: oid, parentId: 'root', relation: 'option', title });
     p = addReasons(p, oid, reasons, fine);
   }
-  return run(p, { type: 'layout.auto' });
+  return ratedAsBuilt(run(p, { type: 'layout.auto' }));
 }
 
 function table(project: Project, options: [string, string, ...unknown[]][]): void {

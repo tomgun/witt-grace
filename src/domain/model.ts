@@ -141,6 +141,8 @@ export interface Vote {
   userId: string;
   confidence: number;
   updatedAt: string;
+  /** What lay below the claim when the rating was given (`subtreeFingerprint`); absent on older ratings. */
+  subtree?: string;
 }
 export interface EdgeAssessment {
   id: string;

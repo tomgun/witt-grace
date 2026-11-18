@@ -974,378 +974,432 @@
       "nodeId": "r-001",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1ijeavw4d1p"
     },
     {
       "id": "v-005",
       "nodeId": "r-004",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1hoo8m044nn"
     },
     {
       "id": "v-008",
       "nodeId": "r-007",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "21lo9fnchhg"
     },
     {
       "id": "v-011",
       "nodeId": "r-010",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1a5qehurkw7"
     },
     {
       "id": "v-014",
       "nodeId": "r-013",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "2gwasadvoh"
     },
     {
       "id": "v-017",
       "nodeId": "r-016",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "2cdlg5brw92"
     },
     {
       "id": "v-020",
       "nodeId": "r-019",
       "userId": "u-arvioija",
       "confidence": 50,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1t7bxrtu9m"
     },
     {
       "id": "v-023",
       "nodeId": "r-022",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "kuesvgs55l"
     },
     {
       "id": "v-026",
       "nodeId": "r-025",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "t0jadvvtyd"
     },
     {
       "id": "v-029",
       "nodeId": "r-028",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "2bk6hfduxa3"
     },
     {
       "id": "v-032",
       "nodeId": "r-031",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1akkz2y09i5"
     },
     {
       "id": "v-035",
       "nodeId": "r-034",
       "userId": "u-arvioija",
       "confidence": 40,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "ojxj8bwejc"
     },
     {
       "id": "v-038",
       "nodeId": "r-037",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "5hissm0t9q"
     },
     {
       "id": "v-041",
       "nodeId": "r-040",
       "userId": "u-arvioija",
       "confidence": 50,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-044",
       "nodeId": "r-043",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-047",
       "nodeId": "r-046",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-050",
       "nodeId": "r-049",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-053",
       "nodeId": "r-052",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-056",
       "nodeId": "r-055",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-059",
       "nodeId": "r-058",
       "userId": "u-arvioija",
       "confidence": 50,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-062",
       "nodeId": "r-061",
       "userId": "u-arvioija",
       "confidence": 90,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "13teq8enfnr"
     },
     {
       "id": "v-065",
       "nodeId": "r-064",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1jgh58nv0xm"
     },
     {
       "id": "v-068",
       "nodeId": "r-067",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-071",
       "nodeId": "r-070",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "7ioxa8th11"
     },
     {
       "id": "v-074",
       "nodeId": "r-073",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "r9wcxq5efz"
     },
     {
       "id": "v-077",
       "nodeId": "r-076",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "18smllj7op2"
     },
     {
       "id": "v-080",
       "nodeId": "r-079",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-083",
       "nodeId": "r-082",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-086",
       "nodeId": "r-085",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "g1hpv27owf"
     },
     {
       "id": "v-089",
       "nodeId": "r-088",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-092",
       "nodeId": "r-091",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "4z3h5cw7ed"
     },
     {
       "id": "v-095",
       "nodeId": "r-094",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "2395bw1721d"
     },
     {
       "id": "v-098",
       "nodeId": "r-097",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "t8p3w5ih9m"
     },
     {
       "id": "v-101",
       "nodeId": "r-100",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1mdj5yvqe4b"
     },
     {
       "id": "v-104",
       "nodeId": "r-103",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1qsxztnwkmv"
     },
     {
       "id": "v-107",
       "nodeId": "r-106",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1hrygbdy2an"
     },
     {
       "id": "v-110",
       "nodeId": "r-109",
       "userId": "u-arvioija",
       "confidence": 90,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "19fphp5p6wo"
     },
     {
       "id": "v-113",
       "nodeId": "r-112",
       "userId": "u-arvioija",
       "confidence": 40,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "qytmlnj3lk"
     },
     {
       "id": "v-116",
       "nodeId": "r-115",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "23es1n4pw7x"
     },
     {
       "id": "v-119",
       "nodeId": "r-118",
       "userId": "u-arvioija",
       "confidence": 40,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "sbtk4o0jaa"
     },
     {
       "id": "v-122",
       "nodeId": "r-121",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-125",
       "nodeId": "r-124",
       "userId": "u-arvioija",
       "confidence": 50,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-128",
       "nodeId": "r-127",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-131",
       "nodeId": "r-130",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-134",
       "nodeId": "r-133",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "vteutgpsvp"
     },
     {
       "id": "v-137",
       "nodeId": "r-136",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "jf181z6x60"
     },
     {
       "id": "v-140",
       "nodeId": "r-139",
       "userId": "u-arvioija",
       "confidence": 90,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-143",
       "nodeId": "r-142",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "1spdnrmfc3r"
     },
     {
       "id": "v-146",
       "nodeId": "r-145",
       "userId": "u-arvioija",
       "confidence": 60,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "2fssu01mikn"
     },
     {
       "id": "v-149",
       "nodeId": "r-148",
       "userId": "u-arvioija",
       "confidence": 90,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-152",
       "nodeId": "r-151",
       "userId": "u-arvioija",
       "confidence": 100,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-155",
       "nodeId": "r-154",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-158",
       "nodeId": "r-157",
       "userId": "u-arvioija",
       "confidence": 70,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-161",
       "nodeId": "r-160",
       "userId": "u-arvioija",
       "confidence": 80,
-      "updatedAt": "2026-11-10T09:00:00.000Z"
+      "updatedAt": "2026-11-10T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     }
   ],
   "edgeAssessments": [

@@ -255,6 +255,15 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
           ))}
           <label>
             <input
+              id="showSpread"
+              type="checkbox"
+              checked={view.showSpread}
+              onChange={(e) => store.setView({ showSpread: e.target.checked })}
+            />
+            <span>{t('spreadToggle')}</span>
+          </label>
+          <label>
+            <input
               id="showSharedReasons"
               type="checkbox"
               checked={view.showRecurringInTree}

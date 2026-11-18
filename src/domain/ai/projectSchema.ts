@@ -653,6 +653,10 @@ export const PROJECT_SCHEMA: JsonSchema = {
           type: 'string',
           maxLength: 50,
         },
+        subtree: {
+          type: 'string',
+          maxLength: 40,
+        },
       },
     },
     ballot: {

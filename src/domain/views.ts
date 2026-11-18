@@ -1,5 +1,5 @@
 // View-only projections: what is visible, what a focus highlights, review order. They never change the document.
-import { assessmentFields, isValue } from './model.ts';
+import { SCORING_RULES, assessmentFields, isValue } from './model.ts';
 import type { Node, Project } from './model.ts';
 import { descendants, rootNode } from './graph.ts';
 import { influenceSummary, personalInfluence } from './reviews.ts';
@@ -136,7 +136,9 @@ export function optionGroupPath(project: Project, id: string): Node[] {
   }
   return path;
 }
-/** Guided review order: depth-first from the root, every node that has a credence or an impact to review. */
+/** Guided review order: depth-first, every node that has a credence or an impact to review. Under the anchored
+ * methods a claim comes after its reasons (leaves first, the root last), because its rating is given knowing them
+ * (owner 2026-11-18); under the earlier methods it comes before them, as in the prototype. */
 export function assessmentOrder(project: Project): string[] {
   const byParent = new Map<string | null, Node[]>();
   for (const node of project.nodes) {
@@ -144,10 +146,13 @@ export function assessmentOrder(project: Project): string[] {
     byParent.get(node.parentId)?.push(node);
   }
   const result: string[] = [];
+  const reasonsFirst = SCORING_RULES[project.settings.scoring].claimBase === 'anchored';
   function visit(node: Node): void {
     const fields = assessmentFields(node);
-    if (!node.sharedReasonId && (fields.credence || fields.impact)) result.push(node.id);
+    const queued = !node.sharedReasonId && (fields.credence || fields.impact);
+    if (queued && !reasonsFirst) result.push(node.id);
     for (const child of byParent.get(node.id) ?? []) visit(child);
+    if (queued && reasonsFirst) result.push(node.id);
   }
   const root = rootNode(project);
   if (root) visit(root);

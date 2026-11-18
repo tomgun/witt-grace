@@ -1,7 +1,13 @@
 // The assessment round's browser-side progress, in the prototype's exact shape (inv-review-vote-table §A.3):
 // `witt-assessment-pass-v2:<projectId>:<actorId>` → { cursorId, doneIds, fingerprints }. A "done" mark expires when
 // the node, its parent, its relation or the person's own stored values changed since the mark was written.
-import { assessmentFields, assessmentOrder, personalCredence, personalInfluence } from '../domain/index.ts';
+import {
+  assessmentFields,
+  assessmentOrder,
+  credenceSubtreeChanged,
+  personalCredence,
+  personalInfluence,
+} from '../domain/index.ts';
 import type { Project } from '../domain/index.ts';
 import { browserStore, readPreference, writePreference } from '../lib/storage.ts';
 import type { KeyValueStore } from '../lib/storage.ts';
@@ -65,7 +71,9 @@ export function loadAssessmentPass(store: KeyValueStore, project: Project, actor
           (id): id is string =>
             typeof id === 'string' &&
             allowed.has(id) &&
-            fingerprints[id] === assessmentFingerprint(project, id, actorId)
+            fingerprints[id] === assessmentFingerprint(project, id, actorId) &&
+            // A rating whose reasons changed since is asked again (owner 2026-11-18).
+            !credenceSubtreeChanged(project, personalCredence(project, id, actorId))
         )
       : []
   );

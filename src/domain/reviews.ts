@@ -95,6 +95,59 @@ export function assessmentRelation(
     suggestedInfluence: relation === 'neutral' ? 0 : (relation === 'oppose' ? -1 : 1) * documentImpact,
   };
 }
+/** A short stable digest of a string (cyrb53); identity of content, never a secret. */
+function digest(text: string): string {
+  let h1 = 0xdeadbeef;
+  let h2 = 0x41c6ce57;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+/**
+ * What lies below a claim, as a digest: every descendant's id, parent, title, relation, kind of reason and unrated
+ * flag, and every secondary link into the claim or a descendant. The order of siblings and other people's ratings
+ * are not part of it. A credence rating stores it, so a later change below the claim can be told (owner 2026-11-18).
+ */
+export function subtreeFingerprint(project: Project, nodeId: string): string {
+  const children = new Map<string, Node[]>();
+  for (const n of project.nodes)
+    if (n.parentId) {
+      if (!children.has(n.parentId)) children.set(n.parentId, []);
+      children.get(n.parentId)?.push(n);
+    }
+  const inside = new Set<string>([nodeId]);
+  const rows: string[] = [];
+  const stack = [...(children.get(nodeId) ?? [])];
+  for (let n = stack.pop(); n; n = stack.pop()) {
+    if (inside.has(n.id)) continue;
+    inside.add(n.id);
+    rows.push(
+      JSON.stringify([n.id, n.parentId, n.title, n.relation, n.semanticType ?? null, n.unrated === true])
+    );
+    stack.push(...(children.get(n.id) ?? []));
+  }
+  const titles = new Map(project.nodes.map((n) => [n.id, n.title]));
+  for (const link of project.links ?? [])
+    if (inside.has(link.targetId))
+      rows.push(
+        JSON.stringify([
+          link.id,
+          link.sourceId,
+          link.targetId,
+          link.relation,
+          titles.get(link.sourceId) ?? '',
+        ])
+      );
+  return digest(rows.sort().join('\n'));
+}
+/** The claim's reasons changed after this rating was given. A rating without a stored digest is never marked. */
+export const credenceSubtreeChanged = (project: Project, vote: Vote | null | undefined): boolean =>
+  !!vote && vote.subtree !== undefined && vote.subtree !== subtreeFingerprint(project, vote.nodeId);
 export const personalCredence = (project: Project, nodeId: string, userId: string): Vote | null =>
   project.votes.find((v) => v.nodeId === nodeId && v.userId === userId) ?? null;
 export interface PersonalInfluence {

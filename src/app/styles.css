@@ -9152,3 +9152,16 @@ input[type='range'].range-unset:focus-visible {
 .collab-turn legend {
   font-weight: 650;
 }
+
+/* Owner 2026-11-18: the round's reasons panel and the spread chip. */
+#assessmentTopReasons {
+  margin: 0;
+  padding-left: 22px;
+  list-style: none;
+}
+#assessmentReasons .inline-warning::before {
+  content: none;
+}
+.meta-spread.conflict .meta-value {
+  color: var(--oppose, #b3261e);
+}

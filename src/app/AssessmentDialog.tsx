@@ -1,12 +1,16 @@
 // The assessment round (`#assessmentDialog`): one claim at a time through the whole tree, credence 0–100 and the
 // signed relation influence −5…+5 reviewed separately, progress kept per document and per person in this browser
 // (inv-review-vote-table §A). Only the parent's TYPE selects the fixed question template; content never does.
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import {
   INFLUENCE_STEP,
   INFLUENCE_STEP_COARSE,
+  SCORING_RULES,
   assessmentFields,
+  credenceSubtreeChanged,
+  evaluate,
+  evaluateAssessor,
   hasAbstained,
   isExcused,
   personalCredence,
@@ -19,7 +23,7 @@ import { newId } from '../lib/providers.ts';
 import { canEdit } from './actions.ts';
 import { loadAssessmentPass, passStore, saveAssessmentPass } from './assessmentPass.ts';
 import type { AssessmentPass } from './assessmentPass.ts';
-import { signed } from './derive.ts';
+import { credencePercentText, hasScoringReasons, signed } from './derive.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
 interface Inputs {
@@ -128,6 +132,28 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
       impact = null;
     }
   }
+  // Owner 2026-11-18: a claim is rated knowing its reasons. Under the anchored methods the round shows the
+  // person's earlier rating, what their own ratings of the reasons make of it, and the weightiest reasons; the
+  // group's figure stays hidden unless asked for.
+  const rule = SCORING_RULES[project.settings.scoring];
+  const ownScores = useMemo(() => evaluateAssessor(project, actorId), [project, actorId]);
+  const showGroup = state.view.roundShowsGroup;
+  const groupScores = useMemo(() => (showGroup ? evaluate(project) : null), [project, showGroup]);
+  const reasoned =
+    !!node &&
+    rule.claimBase === 'anchored' &&
+    fields.credence &&
+    node.parentId !== null &&
+    !abstained &&
+    hasScoringReasons(project, node);
+  const ownResult = reasoned && node ? ownScores.get(node.id) : undefined;
+  const ownReasons = (ownResult?.contributions ?? [])
+    .filter((c) => !c.missing && c.impact !== null && (c.magnitude ?? 0) > 0)
+    .sort((a, b) => (b.magnitude ?? 0) - (a.magnitude ?? 0) || a.id.localeCompare(b.id))
+    .slice(0, 3);
+  const subtreeChanged = reasoned && credenceSubtreeChanged(project, claim);
+  const groupResult = reasoned && node ? groupScores?.get(node.id) : undefined;
+  const groupValue = groupResult ? (groupResult.derived ?? groupResult.score) : null;
   const defaults = (): Inputs => {
     const credence = String(claim?.confidence ?? node?.confidence ?? 100);
     const influence =
@@ -171,6 +197,8 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
         return;
       }
       const unchanged =
+        // Saving the same figure after the reasons changed marks the rating current again.
+        !credenceSubtreeChanged(project, claim) &&
         (!fields.credence || claim?.confidence === credence) &&
         (!fields.impact || (!!impact?.current && impact.record?.influence === influence));
       if (
@@ -410,6 +438,57 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                     <span aria-hidden="true">/ 100</span>
                   </div>
                 </div>
+                {reasoned ? (
+                  <div className="assessment-reflection" id="assessmentReasons">
+                    {subtreeChanged ? (
+                      <p className="inline-warning" id="assessmentSubtreeChanged">
+                        {t('subtreeChangedNote')} {t('roundKeepHint')}
+                      </p>
+                    ) : null}
+                    {claim ? (
+                      <p id="assessmentEarlier">{t('roundEarlier', { value: claim.confidence })}</p>
+                    ) : null}
+                    {ownResult && ownReasons.length ? (
+                      <>
+                        <p id="assessmentWithReasons">
+                          {t('roundWithReasons', {
+                            value: credencePercentText(
+                              rule.combine(
+                                values.credenceRange,
+                                ownResult.positive,
+                                ownResult.negative,
+                                false
+                              ),
+                              0
+                            ),
+                          })}
+                        </p>
+                        <p>{t('roundTopReasons')}</p>
+                        <ul id="assessmentTopReasons">
+                          {ownReasons.map((c) => (
+                            <li key={c.id}>
+                              {(c.impact ?? 0) < 0 ? '−' : '+'} {c.title} ({(c.magnitude ?? 0).toFixed(1)})
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : null}
+                    <label className="inspector-check" htmlFor="assessmentShowGroup">
+                      <input
+                        type="checkbox"
+                        id="assessmentShowGroup"
+                        checked={showGroup}
+                        onChange={(e) => store.setView({ roundShowsGroup: e.target.checked })}
+                      />
+                      <span>{t('roundShowGroup')}</span>
+                    </label>
+                    {showGroup && groupValue !== null && groupValue !== undefined ? (
+                      <p id="assessmentGroupResult">
+                        {t('roundGroupResult', { value: credencePercentText(groupValue, 0) })}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
                 <div className="assessment-field" id="assessmentImpactField" hidden={!hasEdge || abstained}>
                   <p className="assessment-axis">
                     {t(parent?.kind === 'option' ? 'assessmentSignificanceAxis' : 'assessmentInfluenceAxis')}

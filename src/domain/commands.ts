@@ -37,7 +37,7 @@ import type {
 import { childrenOf, descendants, graphHasCycle, reasonConcept, rootNode, sharedReason } from './graph.ts';
 import { parseProject } from './parse.ts';
 import { newNode, autoLayoutPositions } from './project.ts';
-import { assessmentRelation } from './reviews.ts';
+import { assessmentRelation, subtreeFingerprint } from './reviews.ts';
 
 export interface CommandContext {
   /** ISO timestamp for every `updatedAt`/`createdAt` the command writes. */
@@ -383,10 +383,12 @@ function upsertVote(
   if (typeof credence !== 'number' || !Number.isFinite(credence) || credence < 0 || credence > 100)
     fail('Arvion on oltava välillä 0–100');
   const existing = p.votes.find((v) => v.nodeId === nodeId && v.userId === userId);
+  const subtree = subtreeFingerprint(p, nodeId);
   if (existing) {
     existing.confidence = credence;
     existing.updatedAt = now;
-  } else p.votes.push({ id, nodeId, userId, confidence: credence, updatedAt: now });
+    existing.subtree = subtree;
+  } else p.votes.push({ id, nodeId, userId, confidence: credence, updatedAt: now, subtree });
 }
 function upsertEdgeAssessment(
   p: Project,

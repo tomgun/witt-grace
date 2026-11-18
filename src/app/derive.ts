@@ -4,9 +4,11 @@ import {
   argumentBalance,
   assessmentFields,
   baseConfidence,
+  credenceSpread,
   descendants,
   directionFromInfluence,
   indexAssessable,
+  influenceSummary,
   isGate,
   isValue,
   marginalIndexEffects,
@@ -15,6 +17,7 @@ import {
   personalInfluence,
   SCORING_RULES,
   sharedReason,
+  viewpointSpread,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
 import type { MessageKey, Translator } from '../lib/i18n/i18n.ts';
@@ -287,6 +290,54 @@ export function importanceHint(project: Project, t: Translator, effect: TargetEf
   return `${main} | ${local}${effect.provisional ? ` ${t('importanceProvisional')}` : ''}`;
 }
 
+export interface ReviewSpread {
+  /** Full sentences for a tooltip: the range of credence ratings, of influence ratings and of people's own results. */
+  ratings: string[];
+  results: string | null;
+  /** The compact card text, e.g. `40–90%/-1…+2!`; null when fewer than two people gave anything to compare. */
+  short: string | null;
+  signConflict: boolean;
+}
+const NO_SPREAD: ReviewSpread = { ratings: [], results: null, short: null, signConflict: false };
+/** How far apart the counted people are on a node (owner 2026-11-18): shown in tooltips, and on the card only
+ * when the view asks. Needs two people; nothing in a personal view, under a review filter or for a locked reason. */
+export function reviewSpread(ctx: DeriveContext, t: Translator, node: Node): ReviewSpread {
+  const { project, view, lens } = ctx;
+  if (view.indexMode === 'personal' || lens.filtered || node.sharedReasonId) return NO_SPREAD;
+  if (project.settings.assessmentWeighting === 'structural') return NO_SPREAD;
+  const fields = assessmentFields(node);
+  const ratings: string[] = [];
+  const short: string[] = [];
+  let signConflict = false;
+  const credence = fields.credence ? credenceSpread(project, node.id) : null;
+  if (credence && credence.count > 1) {
+    const range = `${fmt(credence.min)}–${fmt(credence.max)}`;
+    ratings.push(t('spreadCredence', { range, count: credence.count }));
+    short.push(`${range}%`);
+  }
+  if (fields.impact) {
+    const influence = influenceSummary(project, 'primary', node.id);
+    if (influence.count > 1 && influence.min !== null && influence.max !== null) {
+      const range = `${signed(Number(influence.min.toFixed(1)))}…${signed(Number(influence.max.toFixed(1)))}`;
+      ratings.push(t('spreadInfluence', { range, count: influence.count }));
+      signConflict = influence.signConflict;
+      if (signConflict) ratings.push(t('spreadSignConflict'));
+      short.push(range + (signConflict ? '!' : ''));
+    }
+  }
+  let results: string | null = null;
+  const score = ctx.scores.get(node.id);
+  if (derivedResult(node, score)) {
+    const own = viewpointSpread(project, node.id);
+    if (own && own.count > 1) {
+      const range = `${valueText(score, own.min, 0)}…${valueText(score, own.max, 0)}`;
+      results = t('spreadResults', { range, count: own.count });
+      if (!short.length) short.push(range);
+    }
+  }
+  return { ratings, results, short: short.length ? short.join('/') : null, signConflict };
+}
+
 export interface CardChip {
   label: string;
   value: string;
@@ -313,20 +364,37 @@ export function cardChips(
     (x) => x.sourceId === node.id || x.targetId === node.id
   ).length;
   const commentCount = project.comments.filter((c) => c.nodeId === node.id).length;
+  const spread = reviewSpread(ctx, t, node);
+  const said = (...parts: (string | null | undefined)[]) => parts.filter(Boolean).join(' ');
   if (l.index)
     chips.push({
       // A rated claim's result under the anchored versions is a credence, not a net balance.
       label: t(score?.credence && derivedResult(node, score) ? 'computedCredenceChip' : 'indexChip'),
       value: ctx.lens.filtered && view.indexMode === 'shared' ? EM_DASH : resultText(node, score, 0),
       cls: 'meta-index',
-      title: view.indexMode === 'personal' ? t('personalIndexExplain') : t('indexHint'),
+      title: said(
+        view.indexMode === 'personal' ? t('personalIndexExplain') : t('indexHint'),
+        score?.net && score.score !== null
+          ? score.score > 50
+            ? t('netPassesShort', { share: Math.round(2 * score.score - 100) })
+            : t('netPassesNothing')
+          : null,
+        spread.results
+      ),
     });
   if (l.assessments && ratings)
     chips.push({
       label: t('assessmentSummaryShort'),
       value: ratings.value,
       cls: `meta-assessment${ratings.averaging ? ' aggregated' : ''}${ratings.filtered ? ' filtered' : ''}`,
-      title: ratings.provenance,
+      title: said(ratings.provenance, ...spread.ratings),
+    });
+  if (view.showSpread && spread.short)
+    chips.push({
+      label: t('spreadChip'),
+      value: spread.short,
+      cls: `meta-spread${spread.signConflict ? ' conflict' : ''}`,
+      title: said(t('spreadHint'), ...spread.ratings, spread.results),
     });
   if (view.showImportance && important && effect)
     chips.push({

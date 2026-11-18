@@ -34,6 +34,7 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 | Golden fixtures from the prototype engine (18 examples + 20 hand-built cases): scores, balances, contributions, marginal effects, rankings, feasibility, ballots, influence summaries, directions | DONE-verified(golden, sandbox) | `scripts/golden-from-proto.mjs`, `tests/golden/` |
 | `src/domain`: v8 model, `parseProject`, `evidence-v3-links` engine (shared and per person), reviews, eligibility, ballots, rankings, views; pure, direction enforced | DONE-verified(golden, unit) | `src/domain/*.ts`, `tests/unit/import-direction.test.ts` |
 | Calculation methods (WG-029, owner 2026-11-18): `anchored-reasons-v1` (default for new documents) and `direct-reasons-v1` beside the five earlier ones; one rule row per version (`SCORING_RULES`) applied by one `settle` step in both evaluators; a rated claim's result is a credence shown as a percentage, an unrated claim's the net of its reasons; the earlier methods under *Vanhat*; a method note under the select; an unknown method refused by name; the import preflight accepts every version the engine scores | DONE-verified(unit with literal oracles and mutation probes; e2e sandbox). Not verified: the owner's own trees; measured only in a scratch study: behaviour on 4 500 random trees (no direction violations) | `src/domain/model.ts`, `scoring.ts`, `src/app/scoringText.ts`, `derive.ts`; `tests/unit/scoring-anchored.test.ts`, `marginal-effects.test.ts`, `ai-import-report.test.ts`; `tests/e2e/argument-walk.spec.ts` |
+| Bottom-up assessment round and the “reasons changed” mark (WG-031), spread of ratings in tooltips and behind a view setting (WG-032), owner 2026-11-18 | DONE-verified(unit with literal oracles; e2e sandbox). Not verified: a round with several real people; the spread chip has no browser walk (unit only) | `src/domain/reviews.ts` (`subtreeFingerprint`), `scoring.ts` (`credenceSpread`, `viewpointSpread`), `views.ts` (`assessmentOrder`), `src/app/AssessmentDialog.tsx`, `derive.ts` (`reviewSpread`); `tests/unit/round-and-spread.test.ts`, `review-spread-chips.test.ts`, `tests/e2e/round-walk.spec.ts` |
 | Serializable commands (43) with caller-supplied ids; 60 replayed edits identical to the prototype | DONE-verified(unit) | `src/domain/commands.ts`, `tests/unit/commands.test.ts` |
 | Serialization byte-identical to the prototype's export; export filename slug | DONE-verified(unit) | `src/domain/serialize.ts` |
 | Layout (three orientations, four-way balancing and stable additions, compact and depth projections, edge and link paths), keyboard navigation, review lens and assessor summary, table rows and details: line-for-line ports | DONE-verified(parity): every example × orientations × card heights × keys; 7 620 table-row comparisons | `src/domain/layout.ts`, `navigation.ts`, `lens.ts`, `table.ts`; `tests/unit/layout-parity.test.ts`, `table-parity.test.ts` |
@@ -56,8 +57,7 @@ The single truth table for the rebuild. States: `DONE-source` (code exists), `DO
 - Owner decisions that change the prototype's visible UI are listed in `docs/spec/UI_INVENTORY.md` S-15 (decided deviations).
 
 ## Next 5
-1. WG-031, WG-032 — the follow-ups of the 2026-11-18 decisions: the bottom-up assessment round with a “subtree changed since your rating” marker, and the spread of reviews in tooltips and behind a view layer.
-2. WG-028 — the remaining open items (a separate importance for values, a criteria mode); the unrated note, *En arvioi* and the 0.1 scale are done (2026-11-10).
-3. WG-024 — owner decisions on the remaining S-15 quirks.
-4. WG-001 close-out — enable Pages, confirm CI and `/proto/` live (owner).
-5. WG-027 — customisable toolbar proposal (owner decision first).
+1. WG-028 — the remaining open items (a separate importance for values, a criteria mode); the unrated note, *En arvioi* and the 0.1 scale are done (2026-11-10).
+2. WG-024 — owner decisions on the remaining S-15 quirks.
+3. WG-001 close-out — enable Pages, confirm CI and `/proto/` live (owner).
+4. WG-027 — customisable toolbar proposal (owner decision first).

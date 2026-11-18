@@ -86,6 +86,12 @@ function start(mode: 'argument' | 'decision'): Pair {
   assert.deepEqual(clone(mine), oracle, 'blank documents match');
   return { oracle, mine, actorId: userId };
 }
+/** A credence rating stores a digest of what lay below the claim (owner 2026-11-18); the prototype has no such
+ * field, and tests/unit/subtree-changed.test.ts pins it. */
+function withoutSubtreeDigests(project: Project): Project {
+  for (const vote of project.votes) delete vote.subtree;
+  return project;
+}
 /** Run the same edit through the oracle and through a command; `command` receives the ids the oracle issued. */
 function step(
   pair: Pair,
@@ -98,7 +104,7 @@ function step(
   const before = JSON.stringify(pair.mine);
   const mine = applyCommand(pair.mine, command(ids), { ...ACTOR_NOW, actorId: pair.actorId });
   assert.equal(JSON.stringify(pair.mine), before, `${label}: the input is not mutated`);
-  assert.deepEqual(clone(mine), oracle, label);
+  assert.deepEqual(withoutSubtreeDigests(clone(mine)), oracle, label);
   pair.oracle = oracle;
   pair.mine = mine;
 }

@@ -19,6 +19,7 @@ import {
   optionFeasibility,
   optionValueProfile,
   personalCredence,
+  credenceSubtreeChanged,
   personalInfluence,
   potentialEvidenceOverlap,
   reasonConcept,
@@ -1056,6 +1057,21 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             </p>
           ) : !ownVote && !excused ? (
             <p className="inline-warning">{t('profileUnsetHint')}</p>
+          ) : null}
+          {ownVote && credenceSubtreeChanged(project, ownVote) ? (
+            <p className="inline-warning" data-testid="subtree-changed">
+              {t('subtreeChangedNote')}{' '}
+              {editable ? (
+                <button
+                  type="button"
+                  className="btn quiet"
+                  id="btnKeepCredence"
+                  onClick={() => commit(ownVote.confidence, null)}
+                >
+                  {t('subtreeKeep')}
+                </button>
+              ) : null}
+            </p>
           ) : null}
         </>
       ) : null}

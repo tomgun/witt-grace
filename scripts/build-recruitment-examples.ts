@@ -10,6 +10,7 @@ import {
   serializeProjectFile,
 } from '../src/domain/index.ts';
 import type { Command, Project } from '../src/domain/index.ts';
+import { ratedAsBuilt } from './build-scoring-example.ts';
 
 const NOW = '2026-11-09T09:00:00.000Z';
 const USERS = ['u-aino', 'u-bertil', 'u-ceren'] as const;
@@ -109,7 +110,7 @@ function oneCandidate(): Project {
       p = rate(p, eid, ecred, einfl);
     }
   }
-  return run(p, { type: 'layout.auto' });
+  return ratedAsBuilt(run(p, { type: 'layout.auto' }));
 }
 
 function threeCandidates(): Project {
@@ -172,7 +173,7 @@ function threeCandidates(): Project {
       p = rate(p, nid, credences[i]!, weight);
     });
   }
-  return run(p, { type: 'layout.auto' });
+  return ratedAsBuilt(run(p, { type: 'layout.auto' }));
 }
 
 const out = path.join(process.cwd(), 'public', 'examples');

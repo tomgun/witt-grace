@@ -81,6 +81,10 @@ export interface ViewState {
   readingLines: number;
   highlightOptions: boolean;
   showImportance: boolean;
+  /** Owner 2026-11-18: the range of people's ratings on the card; off by default, always in the tooltips. */
+  showSpread: boolean;
+  /** Owner 2026-11-18: the assessment round also shows the group's computed result; off by default. */
+  roundShowsGroup: boolean;
   showSharedReasons: boolean;
   showRecurringInTree: boolean;
   compactVisible: boolean;
@@ -113,6 +117,8 @@ export function defaultView(windowWidth = 1440): ViewState {
     readingLines: 10,
     highlightOptions: false,
     showImportance: false,
+    showSpread: false,
+    roundShowsGroup: false,
     showSharedReasons: true,
     showRecurringInTree: true,
     compactVisible: false,
@@ -171,6 +177,8 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
     readingLines: READING_LINES.includes(saved.readingLines as number) ? (saved.readingLines as number) : 10,
     highlightOptions: !!saved.highlightOptions,
     showImportance: !!saved.showImportance,
+    showSpread: saved.showSpread === true,
+    roundShowsGroup: saved.roundShowsGroup === true,
     showSharedReasons: saved.showSharedReasons !== false,
     showRecurringInTree: saved.showRecurringInTree !== false,
     compactVisible: !!saved.compactVisible,

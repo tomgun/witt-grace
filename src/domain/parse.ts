@@ -394,6 +394,7 @@ export function parseProject(input: unknown): Project {
       userId,
       confidence: num(p.confidence, 0, 100, 'Arvio'),
       updatedAt: str(p.updatedAt, 50, 'Aikaleima'),
+      ...(p.subtree === undefined ? {} : { subtree: str(p.subtree, 40, 'Arvion alipuun tunniste') }),
     };
   });
   const seenBallots = new Set<string>();

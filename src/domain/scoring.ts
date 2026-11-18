@@ -104,6 +104,45 @@ export function baseConfidence(
     totalPower: summary.totalPower,
   };
 }
+/** The lowest and highest of several figures and how many there were. */
+export interface Spread {
+  count: number;
+  min: number;
+  max: number;
+}
+const spreadOf = (values: number[]): Spread | null =>
+  values.length ? { count: values.length, min: Math.min(...values), max: Math.max(...values) } : null;
+/** The range of the credence ratings that enter a node's base: the same people `baseConfidence` counts. */
+export function credenceSpread(project: Project, nodeId: string): Spread | null {
+  return spreadOf(
+    project.votes
+      .filter(
+        (v) =>
+          v.nodeId === nodeId &&
+          assessmentPower(project, v.userId) > 0 &&
+          !isExcused(project, nodeId, v.userId)
+      )
+      .map((v) => v.confidence)
+  );
+}
+const viewpointCache = new WeakMap<Project, Map<string, Scores>>();
+/** The range of the counted people's own results for a node (each from their own reviews only, `evaluateAssessor`);
+ * a person whose own result is missing there is left out, never read as zero. */
+export function viewpointSpread(project: Project, nodeId: string): Spread | null {
+  let viewpoints = viewpointCache.get(project);
+  if (!viewpoints) {
+    viewpoints = new Map();
+    for (const user of project.users)
+      if (assessmentPower(project, user.id) > 0) viewpoints.set(user.id, evaluateAssessor(project, user.id));
+    viewpointCache.set(project, viewpoints);
+  }
+  const values: number[] = [];
+  for (const scores of viewpoints.values()) {
+    const score = scores.get(nodeId)?.score;
+    if (score !== null && score !== undefined) values.push(score);
+  }
+  return spreadOf(values);
+}
 
 interface Weighted {
   value: number;

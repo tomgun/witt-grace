@@ -296,189 +296,216 @@
       "nodeId": "o-a-k-sales",
       "userId": "u-aino",
       "confidence": 85,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-056",
       "nodeId": "o-a-k-sales",
       "userId": "u-bertil",
       "confidence": 80,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-058",
       "nodeId": "o-a-k-sales",
       "userId": "u-ceren",
       "confidence": 90,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-060",
       "nodeId": "o-a-k-culture",
       "userId": "u-aino",
       "confidence": 40,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-062",
       "nodeId": "o-a-k-culture",
       "userId": "u-bertil",
       "confidence": 35,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-064",
       "nodeId": "o-a-k-culture",
       "userId": "u-ceren",
       "confidence": 50,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-066",
       "nodeId": "o-a-k-experience",
       "userId": "u-aino",
       "confidence": 90,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-068",
       "nodeId": "o-a-k-experience",
       "userId": "u-bertil",
       "confidence": 95,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-070",
       "nodeId": "o-a-k-experience",
       "userId": "u-ceren",
       "confidence": 85,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-072",
       "nodeId": "o-b-k-sales",
       "userId": "u-aino",
       "confidence": 55,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-074",
       "nodeId": "o-b-k-sales",
       "userId": "u-bertil",
       "confidence": 60,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-076",
       "nodeId": "o-b-k-sales",
       "userId": "u-ceren",
       "confidence": 50,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-078",
       "nodeId": "o-b-k-culture",
       "userId": "u-aino",
       "confidence": 85,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-080",
       "nodeId": "o-b-k-culture",
       "userId": "u-bertil",
       "confidence": 90,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-082",
       "nodeId": "o-b-k-culture",
       "userId": "u-ceren",
       "confidence": 80,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-084",
       "nodeId": "o-b-k-experience",
       "userId": "u-aino",
       "confidence": 60,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-086",
       "nodeId": "o-b-k-experience",
       "userId": "u-bertil",
       "confidence": 55,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-088",
       "nodeId": "o-b-k-experience",
       "userId": "u-ceren",
       "confidence": 65,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-090",
       "nodeId": "o-c-k-sales",
       "userId": "u-aino",
       "confidence": 70,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-092",
       "nodeId": "o-c-k-sales",
       "userId": "u-bertil",
       "confidence": 65,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-094",
       "nodeId": "o-c-k-sales",
       "userId": "u-ceren",
       "confidence": 75,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-096",
       "nodeId": "o-c-k-culture",
       "userId": "u-aino",
       "confidence": 65,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-098",
       "nodeId": "o-c-k-culture",
       "userId": "u-bertil",
       "confidence": 70,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-100",
       "nodeId": "o-c-k-culture",
       "userId": "u-ceren",
       "confidence": 60,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-102",
       "nodeId": "o-c-k-experience",
       "userId": "u-aino",
       "confidence": 30,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-104",
       "nodeId": "o-c-k-experience",
       "userId": "u-bertil",
       "confidence": 40,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     },
     {
       "id": "v-106",
       "nodeId": "o-c-k-experience",
       "userId": "u-ceren",
       "confidence": 35,
-      "updatedAt": "2026-11-09T09:00:00.000Z"
+      "updatedAt": "2026-11-09T09:00:00.000Z",
+      "subtree": "wvjl67o803"
     }
   ],
   "edgeAssessments": [

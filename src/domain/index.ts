@@ -19,11 +19,16 @@ export {
   assessmentWeighting,
   assessmentPower,
   baseConfidence,
+  credenceSpread,
+  viewpointSpread,
   median,
 } from './scoring.ts';
+export type { Spread } from './scoring.ts';
 export type { Contribution, NodeScore, Scores, MarginalEffect, TargetEffect } from './scoring.ts';
 export {
   assessmentRelation,
+  subtreeFingerprint,
+  credenceSubtreeChanged,
   personalCredence,
   personalInfluence,
   displayedStance,
