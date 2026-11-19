@@ -68,6 +68,14 @@ const ORIENTATION_KEYS = {
   'four-way': 'fourDirections',
 } as const;
 
+/** The title editor is as tall as its text, never shorter than the room the card gives it: a title that wraps to
+ * a second line used to lose the lower half of its letters (owner's report 2026-11-19). */
+function fitEditor(el: HTMLTextAreaElement | null): void {
+  if (!el) return;
+  el.style.height = '';
+  if (el.scrollHeight > el.clientHeight) el.style.height = `${el.scrollHeight + 4}px`;
+}
+
 function InlineEditor({ node, onFinish }: { node: Node; onFinish: (title: string | null) => void }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const t = useTranslator();
@@ -75,6 +83,7 @@ function InlineEditor({ node, onFinish }: { node: Node; onFinish: (title: string
   useEffect(() => {
     ref.current?.focus({ preventScroll: true });
     ref.current?.select();
+    fitEditor(ref.current);
   }, []);
   const finish = (save: boolean) => {
     if (done.current) return;
@@ -89,6 +98,7 @@ function InlineEditor({ node, onFinish }: { node: Node; onFinish: (title: string
       aria-label={t('editSelected')}
       aria-multiline="true"
       defaultValue={node.title}
+      onInput={(e) => fitEditor(e.currentTarget)}
       onKeyDown={(e) => {
         e.stopPropagation();
         if (e.key === 'Escape') {

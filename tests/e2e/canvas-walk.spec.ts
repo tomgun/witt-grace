@@ -148,3 +148,35 @@ test('a card selected from the outline comes into view; a pressed card stays put
   await expect(first).toHaveAttribute('aria-selected', 'true');
   expect((await first.boundingBox())!.x).toBe(before.x);
 });
+
+/**
+ * must: a card's title editor shows all of its text: when the text wraps to more lines than the card has room for,
+ *       the editor grows over the card's lower edge instead of cutting the last line (owner's report 2026-11-19);
+ *       Enter saves and Esc cancels, as the walkthrough's step says
+ * red-against: an editor fixed to the card's height, so the second line of a title shows only the top of its letters
+ */
+test('the title editor grows with its text; Enter saves', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the tree canvas is a desktop walk');
+  await page.goto('/');
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
+  await page.locator('#btnHomeNew').click();
+  await page.locator('#btnNewWorkArgument').click();
+  const editor = page.locator('.node-inline-editor');
+  await expect(editor).toBeFocused();
+  await editor.press('Escape');
+  await page.locator('#viewport').focus();
+  await page.keyboard.press('+');
+  await expect(editor).toBeFocused();
+  const fits = () => editor.evaluate((el) => el.scrollHeight <= el.clientHeight);
+  await page.keyboard.type('Työmatkat vähenevät');
+  expect(await fits()).toBe(true);
+  await page.keyboard.type(
+    ' ja jää enemmän aikaa perheelle, harrastuksille ja palautumiseen joka ikinen viikko'
+  );
+  expect(await fits()).toBe(true);
+  await page.keyboard.press('Enter');
+  await expect(
+    page.locator('.node-title', { hasText: 'Työmatkat vähenevät ja jää enemmän aikaa' })
+  ).toBeVisible();
+});
