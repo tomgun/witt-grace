@@ -32,6 +32,8 @@ import {
   toggleFocus,
 } from './actions.ts';
 import { ADD_LOCAL_USER } from './actions.ts';
+import { FIT_LEGIBLE, FIT_WHOLE, fitCamera, pinchCamera, revealRect, wheelAction, zoomAt } from './camera.ts';
+import type { Camera, Point } from './camera.ts';
 import { ClaimPreview, previewHandlers } from './ClaimPreview.tsx';
 import { ContextMenu } from './ContextMenu.tsx';
 import {
@@ -57,11 +59,8 @@ import type { Shortcuts } from './shortcuts.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import type { Orientation } from './view.ts';
 
-interface Camera {
-  x: number;
-  y: number;
-  scale: number;
-}
+/** The selection bar's height with its gap: the room it needs above a card, else it goes below. */
+const SELECTION_BAR_ROOM = 46;
 const ORIENTATION_ARROWS: Record<Orientation, string> = { horizontal: '→', vertical: '↓', 'four-way': '✣' };
 const ORIENTATION_KEYS = {
   horizontal: 'leftRight',
@@ -74,7 +73,7 @@ function InlineEditor({ node, onFinish }: { node: Node; onFinish: (title: string
   const t = useTranslator();
   const done = useRef(false);
   useEffect(() => {
-    ref.current?.focus();
+    ref.current?.focus({ preventScroll: true });
     ref.current?.select();
   }, []);
   const finish = (save: boolean) => {
@@ -137,25 +136,35 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   );
 
   // ---- camera -------------------------------------------------------------------------------------------------
-  const fitViewport = useCallback(() => {
-    const viewport = viewportRef.current;
-    if (!viewport || !nodes.length) return;
-    const vw = viewport.clientWidth;
-    const vh = viewport.clientHeight;
-    if (!vw || !vh) return;
-    const points = nodes.map((n) => ({ ...frame.visualPosition(n), ...frame.sizeOf(n.id) }));
-    const minX = Math.min(...points.map((p) => p.x));
-    const minY = Math.min(...points.map((p) => p.y));
-    const maxX = Math.max(...points.map((p) => p.x + p.w));
-    const maxY = Math.max(...points.map((p) => p.y + p.h));
-    const gap = 100;
-    const scale = clamp(Math.min((vw - gap) / (maxX - minX), (vh - gap) / (maxY - minY)), 0.3, 1.15);
-    setCamera({
-      scale,
-      x: (vw - (maxX - minX) * scale) / 2 - minX * scale,
-      y: (vh - (maxY - minY) * scale) / 2 - minY * scale,
-    });
-  }, [nodes, frame]);
+  // An automatic fit (a document opened, a card added, the tree arranged) keeps the cards readable and, when the
+  // tree is then larger than the view, keeps the selected card in view: the main claim of an opened document, the
+  // card just added. "Sovita näkymään" (the ⤢ button, the dock's button, the 0 key) shows the whole tree (camera.ts).
+  const fitViewport = useCallback(
+    (floor: number) => {
+      const viewport = viewportRef.current;
+      if (!viewport || !nodes.length) return;
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      if (!vw || !vh) return;
+      const selectedId = getStore().get().selectedId;
+      const rects = nodes.map((n) => ({
+        ...frame.visualPosition(n),
+        ...frame.sizeOf(n.id),
+        anchor: n.id === selectedId ? 2 : n.parentId ? 0 : 1,
+      }));
+      const minX = Math.min(...rects.map((p) => p.x));
+      const minY = Math.min(...rects.map((p) => p.y));
+      const bounds = {
+        x: minX,
+        y: minY,
+        w: Math.max(...rects.map((p) => p.x + p.w)) - minX,
+        h: Math.max(...rects.map((p) => p.y + p.h)) - minY,
+      };
+      const anchor = rects.reduce((best, r) => (r.anchor > best.anchor ? r : best));
+      setCamera(fitCamera(bounds, { w: vw, h: vh }, floor, anchor));
+    },
+    [nodes, frame]
+  );
   const centerNode = useCallback(
     (id: string) => {
       const viewport = viewportRef.current;
@@ -177,13 +186,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     const viewport = viewportRef.current;
     if (!viewport) return;
     const rect = viewport.getBoundingClientRect();
-    const c = cameraRef.current;
-    const scale = clamp(nextScale, 0.25, 2);
-    const px = clientX - rect.left;
-    const py = clientY - rect.top;
-    const wx = (px - c.x) / c.scale;
-    const wy = (py - c.y) / c.scale;
-    setCamera({ scale, x: px - wx * scale, y: py - wy * scale });
+    setCamera(zoomAt(cameraRef.current, nextScale, clientX - rect.left, clientY - rect.top));
   }, []);
   const zoomCenter = useCallback(
     (factor: number) => {
@@ -194,9 +197,31 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     },
     [zoomAround]
   );
+  // The card being worked on is never off screen: a card whose title editor opens (just added, F2, a double click)
+  // and a card selected from the outline, the table or the keyboard are brought wholly into view by the smallest
+  // move. A card pressed on the canvas is under the pointer already and stays put, so a drag never starts with a jump.
+  const pressedOnCanvas = useRef(false);
+  const editingId = state.inlineEditId;
+  const revealId = editingId ?? state.selectedId;
+  useEffect(() => {
+    if (pressedOnCanvas.current && !editingId) {
+      pressedOnCanvas.current = false;
+      return;
+    }
+    pressedOnCanvas.current = false;
+    const raf = requestAnimationFrame(() => {
+      const viewport = viewportRef.current;
+      const node = nodes.find((n) => n.id === revealId);
+      if (!viewport || !node) return;
+      const rect = { ...frame.visualPosition(node), ...frame.sizeOf(node.id) };
+      setCamera((c) => revealRect(c, rect, { w: viewport.clientWidth, h: viewport.clientHeight }));
+    });
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealId, editingId, nodes.length]);
   const fitRequest = state.fitRequest;
   useEffect(() => {
-    const raf = requestAnimationFrame(fitViewport);
+    const raf = requestAnimationFrame(() => fitViewport(FIT_LEGIBLE));
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fitRequest]);
@@ -212,7 +237,9 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     if (!viewport) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      zoomAround(cameraRef.current.scale * (e.deltaY > 0 ? 0.93 : 1.07), e.clientX, e.clientY);
+      const action = wheelAction(e);
+      if (action.kind === 'zoom') zoomAround(cameraRef.current.scale * action.factor, e.clientX, e.clientY);
+      else setCamera((c) => ({ ...c, x: c.x + action.dx, y: c.y + action.dy }));
     };
     viewport.addEventListener('wheel', onWheel, { passive: false });
     return () => viewport.removeEventListener('wheel', onWheel);
@@ -223,7 +250,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       const detail = (
         e as CustomEvent<{ kind: 'zoom' | 'fit' | 'pan'; factor?: number; dx?: number; dy?: number }>
       ).detail;
-      if (detail.kind === 'fit') fitViewport();
+      if (detail.kind === 'fit') fitViewport(FIT_WHOLE);
       else if (detail.kind === 'zoom') zoomCenter(detail.factor ?? 1);
       else setCamera((c) => ({ ...c, x: c.x + (detail.dx ?? 0), y: c.y + (detail.dy ?? 0) }));
     };
@@ -233,6 +260,36 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
 
   // ---- pan ----------------------------------------------------------------------------------------------------
   const pan = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null);
+  // Two fingers anywhere on the canvas, cards included, move and scale the view; a card drag under way is dropped.
+  const touches = useRef(new Map<number, Point>());
+  const pinch = useRef<{ ids: [number, number]; from: [Point, Point]; camera: Camera } | null>(null);
+  const viewportPoint = (e: { clientX: number; clientY: number }): Point => {
+    const rect = viewportRef.current!.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+  const onTouchDownCapture = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'touch') return;
+    touches.current.set(e.pointerId, viewportPoint(e));
+    if (touches.current.size !== 2) return;
+    const [a, b] = [...touches.current.entries()] as [[number, Point], [number, Point]];
+    pinch.current = { ids: [a[0], b[0]], from: [a[1], b[1]], camera: cameraRef.current };
+    pan.current = null;
+    setLive(null);
+    e.stopPropagation();
+  };
+  const onTouchMoveCapture = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!touches.current.has(e.pointerId)) return;
+    touches.current.set(e.pointerId, viewportPoint(e));
+    const p = pinch.current;
+    if (!p) return;
+    const [a, b] = [touches.current.get(p.ids[0]), touches.current.get(p.ids[1])];
+    if (a && b) setCamera(pinchCamera(p.camera, p.from, [a, b]));
+    e.stopPropagation();
+  };
+  const onTouchEndCapture = (e: ReactPointerEvent<HTMLDivElement>) => {
+    touches.current.delete(e.pointerId);
+    if (pinch.current?.ids.includes(e.pointerId)) pinch.current = null;
+  };
   const onViewportPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.button !== 0 || (e.target as HTMLElement).closest('.node')) return;
     pan.current = { startX: e.clientX, startY: e.clientY, originX: camera.x, originY: camera.y };
@@ -241,7 +298,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   };
   const onViewportPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
     const p = pan.current;
-    if (!p) return;
+    if (!p || pinch.current) return;
     setCamera((c) => ({
       ...c,
       x: p.originX + (e.clientX - p.startX),
@@ -287,7 +344,10 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
     if (!fromTitle) e.preventDefault();
     e.stopPropagation();
-    if (state.selectedId !== node.id || state.selectedLibraryReason) store.select(node.id);
+    if (state.selectedId !== node.id || state.selectedLibraryReason) {
+      pressedOnCanvas.current = true;
+      store.select(node.id);
+    }
     if (!editable || frame.reading) return;
     if ((view.depthLimit !== null && view.depthCompact) || view.compactVisible) {
       store.showMessage(t('compactDragHint'));
@@ -302,6 +362,10 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     let last = original;
     handle.setPointerCapture(e.pointerId);
     const move = (ev: PointerEvent) => {
+      if (pinch.current) {
+        changed = false;
+        return;
+      }
       const dx = (ev.clientX - startX) / cameraRef.current.scale;
       const dy = (ev.clientY - startY) / cameraRef.current.scale;
       if (!changed && Math.abs(dx) + Math.abs(dy) < 4) return;
@@ -559,8 +623,10 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     }
     const carriedWeight = carried(node);
     if (carriedWeight !== null && carriedWeight < 0.15) classes.push('weak-reason');
+    if (frame.mutedIds.has(node.id)) classes.push('muted-node');
     if (isUnrated(node)) classes.push('unrated-node');
     else if (
+      frame.mutedBranchIds.has(node.id) ||
       underUnrated(node) ||
       (view.indexMode === 'personal' &&
         isExcused(project, node.id, viewedAssessorId(project, view, state.actorId)))
@@ -759,6 +825,21 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
               </button>
             </>
           ) : null}
+          {frame.mutedIds.has(node.id) ? (
+            <button
+              type="button"
+              className="node-mute"
+              data-testid="node-muted"
+              title={t('muteOff')}
+              aria-label={`${t('muteOff')}: ${node.title}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                store.toggleMuted(node.id);
+              }}
+            >
+              {t('mutedMark')}
+            </button>
+          ) : null}
           <button
             type="button"
             className="node-collapse"
@@ -839,7 +920,11 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             onFinish={(title) => {
               store.setInlineEdit(null);
               if (title && title !== node.title) store.dispatch({ type: 'node.edit', id: node.id, title });
-              requestAnimationFrame(() => focusCard(node.id));
+              // Back to the card, unless another card's editor opened meanwhile (a reason added straight after):
+              // taking the focus then would close that editor.
+              requestAnimationFrame(() => {
+                if (!store.get().inlineEditId) focusCard(node.id);
+              });
             }}
           />
         ) : null}
@@ -858,6 +943,121 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           />
         ) : null}
       </article>
+    );
+  };
+
+  // The selected card's actions at a fixed size (owner 2026-11-19, S-15): the buttons inside a card shrink with the
+  // zoom (24 px at 100 %), so below that, and on a touch screen at any zoom, the same actions follow the card here.
+  const renderSelectionBar = () => {
+    const node = nodes.find((n) => n.id === state.selectedId);
+    if (!node || live || state.inlineEditId === node.id || state.selectedLibraryReason) return null;
+    const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+    if (camera.scale >= 1 && !coarse) return null;
+    const pos = visualPosition(node);
+    const size = sizeOf(node.id);
+    const top = camera.y + pos.y * camera.scale;
+    const bottom = camera.y + (pos.y + size.h) * camera.scale;
+    const right = camera.x + (pos.x + size.w) * camera.scale;
+    const above = top >= SELECTION_BAR_ROOM;
+    const childCount = project.nodes.filter((n) => n.parentId === node.id).length;
+    const collapsed = frame.isNodeCollapsed(node);
+    const addDisabled = !editable || !!node.sharedReasonId || node.kind === 'group';
+    const optionParent = project.mode === 'decision' && (node.parentId === null || node.kind === 'group');
+    const roundOpen = project.votingRound?.status === 'open';
+    return (
+      <div
+        id="selectionBar"
+        className={`selection-bar${above ? '' : ' below'}`}
+        role="toolbar"
+        aria-label={`${t('toolbarEditGroup')}: ${node.title}`}
+        data-testid="selection-bar"
+        style={{
+          left: `clamp(${SELECTION_BAR_ROOM * 5}px, ${Math.round(right)}px, 100% - 4px)`,
+          top: `${Math.round(above ? top - 6 : bottom + 6)}px`,
+        }}
+      >
+        <button
+          type="button"
+          className="support"
+          data-action="support"
+          title={`${t('supportAdd')} (${displayShortcut(shortcuts.support)})`}
+          aria-label={t('supportAdd')}
+          disabled={addDisabled}
+          onClick={() => addNode('support', node.id)}
+        >
+          +
+        </button>
+        <button
+          type="button"
+          className="oppose"
+          data-action="oppose"
+          title={`${t('opposeAdd')} (${displayShortcut(shortcuts.oppose)})`}
+          aria-label={t('opposeAdd')}
+          disabled={addDisabled}
+          onClick={() => addNode('oppose', node.id)}
+        >
+          −
+        </button>
+        {optionParent ? (
+          <>
+            <button
+              type="button"
+              className="option"
+              data-action="option"
+              title={t('optionAdd')}
+              aria-label={t('optionAdd')}
+              disabled={!editable || roundOpen}
+              onClick={() => addNode('option', node.id)}
+            >
+              *
+            </button>
+            <button
+              type="button"
+              className="option"
+              data-action="group"
+              title={t('optionGroupAdd')}
+              aria-label={t('optionGroupAdd')}
+              disabled={!editable || roundOpen}
+              onClick={() => addNode('group', node.id)}
+            >
+              ▦
+            </button>
+          </>
+        ) : null}
+        <button
+          type="button"
+          data-action="edit"
+          title={`${t('editSelected')} (F2)`}
+          aria-label={t('editSelected')}
+          disabled={!editable || !!node.sharedReasonId || !!node.reasonConceptId}
+          onClick={() => startInlineEdit(node.id)}
+        >
+          {'✎\uFE0E'}
+        </button>
+        <button
+          type="button"
+          data-action="collapse"
+          title={collapsed ? t('branchOpen') : t('branchClose')}
+          aria-label={collapsed ? t('branchOpen') : t('branchClose')}
+          disabled={childCount === 0}
+          onClick={() => setSubtreeCollapsed(node.id)}
+        >
+          {collapsed ? '▸' : '▾'}
+        </button>
+        {node.parentId !== null ? (
+          <button
+            type="button"
+            className="danger"
+            data-action="delete"
+            title={`${t(childCount ? 'deleteSubtree' : 'deleteNode')} (Del)`}
+            aria-label={t(childCount ? 'deleteSubtree' : 'deleteNode')}
+            disabled={!editable}
+            onClick={() => void deleteNode(node.id)}
+          >
+            ×
+          </button>
+        ) : null}
+      </div>
     );
   };
 
@@ -978,6 +1178,10 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         tabIndex={0}
         aria-label={t('canvasKeyboardHelp')}
         data-testid="viewport"
+        onPointerDownCapture={onTouchDownCapture}
+        onPointerMoveCapture={onTouchMoveCapture}
+        onPointerUpCapture={onTouchEndCapture}
+        onPointerCancelCapture={onTouchEndCapture}
         onPointerDown={onViewportPointerDown}
         onPointerMove={onViewportPointerMove}
         onPointerUp={onViewportPointerUp}
@@ -1062,6 +1266,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         </div>
       </div>
       <div id="keyboardStatus" aria-live="polite" className="visually-hidden" />
+      {renderSelectionBar()}
       <div className="zoom-controls">
         <button type="button" id="zoomOut" title={t('zoomOut')} onClick={() => zoomCenter(1 / 1.2)}>
           −
@@ -1072,7 +1277,13 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         <button type="button" id="zoomIn" title={t('zoomIn')} onClick={() => zoomCenter(1.2)}>
           +
         </button>
-        <button type="button" id="zoomReset" title={t('fit')} data-testid="fit" onClick={fitViewport}>
+        <button
+          type="button"
+          id="zoomReset"
+          title={t('fit')}
+          data-testid="fit"
+          onClick={() => fitViewport(FIT_WHOLE)}
+        >
           ⤢
         </button>
       </div>
@@ -1089,6 +1300,9 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           <i className="option-mark" />
           <span>{t('optionType')}</span>
         </span>
+        {l.index && view.workflow === 'evaluate' ? (
+          <span id="incompleteLegend">{t('incompleteLegend')}</span>
+        ) : null}
         {l.links ? (
           <span id="linkLegend">
             <i className="secondary-mark" />

@@ -431,6 +431,11 @@ export function TableView({ frame }: { frame: Frame }) {
       <div id="tableSummary" className="table-summary" role="status">
         {t('tableResults', { count: rows.length, total: project.nodes.length })}
       </div>
+      {view.workflow === 'evaluate' ? (
+        <p id="tableIncompleteLegend" className="table-legend">
+          {t('incompleteLegend')}
+        </p>
+      ) : null}
       <div id="reviewLensBanner" className="review-lens-banner" hidden={!lens.filtered}>
         {lens.filtered
           ? t('lensSelectedBanner', { selected: lens.selectedCount, total: lens.totalCount })

@@ -48,29 +48,10 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   const assessment = page.locator('#assessmentDialog');
   await expect(assessment).toBeVisible();
   await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/active/);
-  await expect(page.locator('#assessmentProfile')).toHaveText('Käyttäjänä: Omistaja');
+  await expect(page.locator('#assessmentProfile')).toHaveText('Arvioijana: Omistaja');
   await expect(page.locator('#assessmentStep')).toHaveText('Kohta 1/3');
   await expect(page.locator('#assessmentReviewed')).toHaveText('Arvioitu 0/3');
-  await expect(page.locator('#assessmentContext')).toHaveText('Päätösvaihtoehto: Uimahalliin');
-  await expect(page.locator('#assessmentClaim')).toHaveText('Uiminen virkistää');
-  await expect(page.locator('#assessmentInfluenceLabel')).toHaveText(
-    'Kuinka vahvasti peruste puoltaa tai vastustaa tämän vaihtoehdon valitsemista?'
-  );
-  // The questions and guidance sit behind "?" (owner 2026-11-10); the buttons stay in view.
-  await expect(page.locator('#assessmentInfluenceLabel')).toHaveClass(/visually-hidden/);
-  await expect(page.locator('#btnAssessNext')).toBeInViewport();
-  await page.locator('#btnAssessHelp').click();
-  await expect(page.locator('#assessmentInfluenceLabel')).toBeVisible();
-  await expect(page.locator('#assessmentImpactReflection')).toBeVisible();
-  await page.locator('#btnAssessHelp').click();
-  await page.locator('#assessmentCredenceNumber').fill('80');
-  await expect(page.locator('#assessmentCredence')).toHaveValue('80');
-  await page.locator('#assessmentInfluence').fill('4');
-  await expect(page.locator('#assessmentInfluenceValue')).toHaveText('+4');
-  await page.locator('#btnAssessNext').click();
-
-  await expect(page.locator('#assessmentStep')).toHaveText('Kohta 2/3');
-  await expect(page.locator('#assessmentReviewed')).toHaveText('Arvioitu 1/3');
+  // Under the default method a claim is asked after its reasons (owner 2026-11-18): the deeper reason comes first.
   await expect(page.locator('#assessmentContext')).toHaveText('Johtopäätös: Uiminen virkistää');
   await expect(page.locator('#assessmentClaim')).toHaveText('Liike parantaa oloa');
   // The ⋮ button lists the whole line of ancestors up to the root (owner 2026-11-11) and stays open between steps.
@@ -86,8 +67,28 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   await expect(page.locator('#assessmentInfluenceLabel')).toHaveText(
     'Kuinka voimakkaasti peruste puoltaa tai vastustaa ylemmän väitteen paikkansapitävyyttä?'
   );
+  // The questions and guidance sit behind "?" (owner 2026-11-10); the buttons stay in view.
+  await expect(page.locator('#assessmentInfluenceLabel')).toHaveClass(/visually-hidden/);
+  await expect(page.locator('#btnAssessNext')).toBeInViewport();
+  await page.locator('#btnAssessHelp').click();
+  await expect(page.locator('#assessmentInfluenceLabel')).toBeVisible();
+  await expect(page.locator('#assessmentImpactReflection')).toBeVisible();
+  await page.locator('#btnAssessHelp').click();
   await page.locator('#assessmentCredenceNumber').fill('60');
+  await expect(page.locator('#assessmentCredence')).toHaveValue('60');
   await page.locator('#assessmentInfluence').fill('2');
+  await expect(page.locator('#assessmentInfluenceValue')).toHaveText('+2');
+  await page.locator('#btnAssessNext').click();
+
+  await expect(page.locator('#assessmentStep')).toHaveText('Kohta 2/3');
+  await expect(page.locator('#assessmentReviewed')).toHaveText('Arvioitu 1/3');
+  await expect(page.locator('#assessmentContext')).toHaveText('Päätösvaihtoehto: Uimahalliin');
+  await expect(page.locator('#assessmentClaim')).toHaveText('Uiminen virkistää');
+  await expect(page.locator('#assessmentInfluenceLabel')).toHaveText(
+    'Kuinka vahvasti peruste puoltaa tai vastustaa tämän vaihtoehdon valitsemista?'
+  );
+  await page.locator('#assessmentCredenceNumber').fill('80');
+  await page.locator('#assessmentInfluence').fill('4');
   await page.locator('#btnAssessNext').click();
 
   await expect(page.locator('#assessmentStep')).toHaveText('Kohta 3/3');
@@ -130,14 +131,14 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   await expect(page.locator('#assessmentReviewedMarker')).toHaveText(
     'Tämä kohta on jo arvioitu tällä kierroksella.'
   );
-  await expect(page.locator('#assessmentCredenceNumber')).toHaveValue('60');
-  await expect(page.locator('#assessmentInfluenceValue')).toHaveText('+2');
+  await expect(page.locator('#assessmentCredenceNumber')).toHaveValue('80');
+  await expect(page.locator('#assessmentInfluenceValue')).toHaveText('+4');
   await page.keyboard.press('Escape');
   await expect(assessment).toBeHidden();
 
   // --- Review lens: deselect one person, the menu and quick-bar buttons carry the count ---
   const lensButton = page.locator('#btnReviewLens');
-  await expect(lensButton).toHaveText('Käyttäjien arvioiden näkyminen');
+  await expect(lensButton).toHaveText('Kenen arviot näkyvät');
   await fromAssessMenu(page, '#btnReviewLens');
   const lens = page.locator('#reviewLensDialog');
   await expect(lens).toBeVisible();
@@ -146,12 +147,12 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   await expect(page.locator('#lensInsights')).toContainText('Suurimmat arvioerot');
   await page.locator('#lensPeople .lens-person', { hasText: 'Työntekijä 3' }).locator('input').uncheck();
   await expect(page.locator('#lensPeople input:checked')).toHaveCount(3);
-  await expect(lensButton).toHaveText('Käyttäjien arvioiden näkyminen · 3/4');
-  await expect(page.locator('#btnReviewLensQuick')).toHaveText('Käyttäjien arvioiden näkyminen · 3/4');
+  await expect(lensButton).toHaveText('Kenen arviot näkyvät · 3/4');
+  await expect(page.locator('#btnReviewLensQuick')).toHaveText('Kenen arviot näkyvät · 3/4');
   expect(((await storedJson(page, `witt-review-view-v1:${PROJECT_ID}`)) as string[]).length).toBe(3);
   await page.locator('#btnLensAll').click();
   await expect(page.locator('#lensPeople input:checked')).toHaveCount(4);
-  await expect(lensButton).toHaveText('Käyttäjien arvioiden näkyminen');
+  await expect(lensButton).toHaveText('Kenen arviot näkyvät');
   await page.locator('#btnLensDone').click();
   await expect(lens).toBeHidden();
 

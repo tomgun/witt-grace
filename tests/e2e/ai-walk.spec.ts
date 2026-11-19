@@ -93,6 +93,8 @@ test('AI draft, AI results, proposal report and File → Avaa JSON routing', asy
   await expect(preview).toHaveCount(0);
   await expect(page.getByTestId('project-title')).toHaveValue('Mitä tekisin lauantaina?');
   await expect(page.getByTestId('node-count')).toHaveText('9');
+  // A document made from a draft is a new document: the default method, not the prototype's (owner 2026-11-18).
+  await expect(page.locator('#scoringSelect')).toHaveValue('anchored-reasons-v1');
 
   // The AI is a separate profile: listed in the actor select and behind the AI results button; the editor stays.
   await expect(
@@ -121,7 +123,7 @@ test('AI draft, AI results, proposal report and File → Avaa JSON routing', asy
   await expect(page.locator('.ai-assessor-option')).toHaveCount(3);
   await expect(page.locator('.ai-assessor-option.ai-leading-option strong')).toHaveText('Siivoamaan');
   await expect(page.locator('#aiResultsRankingHint')).toHaveText(
-    'Korostetaan korkein valmis ja hyväksyttävä indeksitulos. Tämä ei ole AI:n päätösääni eikä automaattinen suositus.'
+    'Korostetaan korkein valmis ja hyväksyttävä perustelutulos. Tämä ei ole AI:n päätösääni eikä automaattinen suositus.'
   );
   await page.locator('#btnAIResultsShow').click();
   await expect(results).toHaveCount(0);

@@ -47,7 +47,7 @@ test('two options, a review, the ranking and a second person', async ({ page }, 
   expect(selected).toBe('Bea');
   // Bea sees the first person's review as the shared result, not as her own.
   await page.locator('[data-testid^="outline-"]', { hasText: 'Halvin' }).click();
-  await expect(page.locator('#inspector')).toContainText('Käyttäjänä: Bea');
+  await expect(page.locator('#inspector')).toContainText('Arvioijana: Bea');
   await expect(page.getByTestId('review-credence')).toHaveValue('100');
   await expect(page.locator('#inspector .inline-warning').first()).toContainText('Et ole vielä arvioinut');
 });

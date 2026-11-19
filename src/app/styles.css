@@ -27,15 +27,15 @@ body[data-theme='light'] {
   --panel: #fff;
   --canvas: #f8fafc;
   --ink: #212c42;
-  --muted: #8190a7;
-  --subtle: #65758d;
+  --muted: #636e7f;
+  --subtle: #56647b;
   --border: #e6eaf1;
   --accent: #5251bd;
   --accent-soft: #f1f0ff;
   --accent-text: #4f46a8;
-  --green: #138e75;
+  --green: #117e68;
   --green-bg: #eafaf4;
-  --red: #c45b68;
+  --red: #ae515d;
   --red-bg: #fff0f2;
   --option: #7966c6;
   --option-bg: #f2efff;
@@ -71,15 +71,15 @@ body[data-theme='paper'] {
   --panel: #fffdf7;
   --canvas: #f9f5ea;
   --ink: #322e29;
-  --muted: #9b917f;
-  --subtle: #736959;
+  --muted: #6e675a;
+  --subtle: #716757;
   --border: #e6dccb;
   --accent: #836448;
   --accent-soft: #f2e8d6;
   --accent-text: #765232;
-  --green: #557b54;
+  --green: #517550;
   --green-bg: #edf3e5;
-  --red: #ae6c5d;
+  --red: #955c4f;
   --red-bg: #f9ebe6;
   --option: #80629d;
   --option-bg: #f1e8f8;
@@ -515,6 +515,64 @@ h2 {
 #canvasModeLabel {
   color: var(--ink);
   font-weight: 750;
+}
+/* The selected card's actions at a fixed size (S-15, 2026-11-19): right-aligned above the card, below it at the top edge. */
+.selection-bar {
+  z-index: 3;
+  position: absolute;
+  transform: translate(-100%, -100%);
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.selection-bar.below {
+  transform: translate(-100%, 0);
+}
+.selection-bar button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.selection-bar button:hover:not(:disabled),
+.selection-bar button:focus-visible {
+  background: var(--accent-soft);
+}
+.selection-bar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.selection-bar button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.selection-bar .support {
+  color: var(--green);
+}
+.selection-bar .oppose,
+.selection-bar .danger {
+  color: var(--red);
+}
+.selection-bar .option {
+  color: var(--option);
+}
+@media (pointer: coarse) {
+  .selection-bar button {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
 }
 .zoom-controls {
   z-index: 2;
@@ -3529,15 +3587,15 @@ body[data-theme='manuscript-pen'] {
   --panel: #f5ead0;
   --canvas: #eee2c7;
   --ink: #332619;
-  --muted: #89785f;
+  --muted: #6b5e4a;
   --subtle: #685239;
   --border: #c9b28c;
   --accent: #7e442a;
   --accent-soft: #eee0bc;
   --accent-text: #743b23;
-  --green: #526f40;
+  --green: #4d683c;
   --green-bg: #e6e8ce;
-  --red: #a44e37;
+  --red: #994933;
   --red-bg: #f1d9c7;
   --option: #715b7c;
   --option-bg: #e8dce9;
@@ -4274,7 +4332,7 @@ body[data-theme='manuscript-pen'] {
   --panel: #eee1c4;
   --canvas: #f0e2c5;
   --ink: #282322;
-  --muted: #756858;
+  --muted: #605548;
   --subtle: #4d423a;
   --border: #ad9b80;
   --accent: #373f49;
@@ -4638,7 +4696,7 @@ body[data-theme='manuscript-pen'] {
   --canvas: #ebeae3;
   --input: #fbfaf5;
   --border: #a9a69a;
-  --muted: #706961;
+  --muted: #6a645c;
   --subtle: #524a43;
 }
 body[data-theme='manuscript-pen'] .home-screen::before {
@@ -9164,4 +9222,200 @@ input[type='range'].range-unset:focus-visible {
 }
 .meta-spread.conflict .meta-value {
   color: var(--oppose, #b3261e);
+}
+
+/* Owner 2026-11-18: a reason muted for a what-if. Dashed and dimmed like its branch; the mark is the way back. */
+.node.muted-node {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.node-header .node-mute {
+  padding: 0 6px;
+  height: 20px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---- Inspector in Punnitse (owner 2026-11-19, UI_INVENTORY S-15): ratings and result first, the rest on request ---- */
+.inspector-who {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--subtle);
+}
+.option-row {
+  position: relative;
+  padding-right: 34px;
+  margin-bottom: 10px;
+}
+.option-row > .inspector-check {
+  margin-bottom: 0;
+}
+.help-note > summary {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 750;
+}
+.help-note > summary::-webkit-details-marker {
+  display: none;
+}
+.help-note[open] > summary,
+.help-note > summary:hover {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+.help-note > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.help-note > .inspector-note {
+  margin: 8px -34px 0 0;
+}
+.type-label-field {
+  position: relative;
+  padding-right: 34px;
+  margin-bottom: 14px;
+}
+.type-label-field > .field {
+  margin-bottom: 0;
+}
+.inspector-group {
+  margin: 0 0 14px;
+  padding: 10px 12px 4px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  min-width: 0;
+}
+.inspector-group > legend {
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 750;
+  color: var(--subtle);
+}
+.inspector-group .repeat-from-node {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.score-viewpoint {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.score-viewpoint button {
+  min-height: 26px;
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--subtle);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.score-viewpoint button.active {
+  background: var(--accent);
+  color: var(--surface);
+}
+.score-viewpoint button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.score-whose {
+  margin: 0 0 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.score-reading {
+  margin: 2px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+.score-formation .score-line:first-of-type {
+  margin-top: 8px;
+}
+.score-hero .score-value {
+  flex-wrap: wrap;
+  white-space: nowrap;
+}
+.score-hero .score-value small {
+  flex-basis: 100%;
+  white-space: normal;
+}
+.table-legend {
+  margin: 0;
+  padding: 0 22px 8px;
+  font-size: 12px;
+  color: var(--subtle);
+}
+/* ---- Small fixes of the 2026-11-19 UX review (S-15) ---- */
+.add-row {
+  flex-wrap: wrap;
+}
+.add-row .btn.neutral-add {
+  flex-basis: 100%;
+}
+.save-status-top {
+  flex: none;
+  font-size: 12px;
+  color: var(--subtle);
+  white-space: nowrap;
+}
+.save-status-top.error {
+  color: var(--red);
+  font-weight: 700;
+}
+.help-section > h3 {
+  margin: 18px 0 6px;
+  font-size: 14px;
+}
+.help-section:first-of-type > h3 {
+  margin-top: 4px;
+}
+.collab-source {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.collab-source > legend {
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 750;
+  color: var(--subtle);
+}
+.collab-source > label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 1150px) {
+  .save-status-top:not(.error) {
+    display: none;
+  }
 }

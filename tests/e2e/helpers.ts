@@ -11,6 +11,13 @@ export async function startBlank(page: Page, mode: 'argument' | 'decision'): Pro
   await page.locator(mode === 'decision' ? '#btnNewWorkDecision' : '#btnNewWorkArgument').click();
   await expect(page.getByTestId('app')).toBeVisible();
   await expect(page.getByTestId('node-count')).toHaveText('1');
+  // In the tree a new document opens with its placeholder title being edited (S-15, 2026-11-19); the walks that
+  // start from a blank document keep the placeholder.
+  const editor = page.locator('.node-inline-editor');
+  if (await page.locator('#btnTreeView.active').count()) {
+    await expect(editor).toBeFocused();
+    await editor.press('Escape');
+  }
   await ensureTree(page);
 }
 
@@ -64,8 +71,30 @@ export async function reviewSelected(page: Page, credence: string, influence: st
   await i.blur();
 }
 
-/** Selects the root by tapping its card: works at every width, unlike the outline on a phone. */
+/** In Punnitse the inspector keeps what is needed now and then (what is counted, the place in the tree, reuse)
+ * under "Lisää valintoja" (S-15, 2026-11-19); opens it when it is closed. */
+export async function openMore(page: Page): Promise<void> {
+  const more = page.locator('#inspectorMore');
+  if (!(await more.evaluate((d) => (d as HTMLDetailsElement).open))) await more.locator('> summary').click();
+}
+
+/** Selects the root: by tapping its card when it is in view (works at every width, unlike the outline on a phone),
+ * else with Home on the canvas, which also brings the card into view (S-15, 2026-11-19). */
 export async function selectRoot(page: Page): Promise<void> {
-  await page.locator('.node.is-root .node-title').click();
-  await expect(page.locator('.node.is-root')).toHaveClass(/selected/);
+  const root = page.locator('.node.is-root');
+  const view = await page.locator('#viewport').boundingBox();
+  const box = await root.locator('.node-title').boundingBox();
+  const inView =
+    !!view &&
+    !!box &&
+    box.x >= view.x &&
+    box.y >= view.y &&
+    box.x + box.width <= view.x + view.width &&
+    box.y + box.height <= view.y + view.height;
+  if (inView) await root.locator('.node-title').click();
+  else {
+    await page.locator('#nodesLayer .node.selected').focus();
+    await page.keyboard.press('Home');
+  }
+  await expect(root).toHaveClass(/selected/);
 }

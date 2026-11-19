@@ -250,7 +250,15 @@ function NewWorkDialog() {
     const current = store.get().project;
     const hasWork = current.nodes.length > 1 || current.title !== blankProject(current.mode).title;
     if (hasWork && !(await store.askConfirm(t('newDocumentConfirm')))) return;
-    store.load(blankProject(mode));
+    const blank = blankProject(mode);
+    store.load(blank);
+    // A new document starts by writing its question: the placeholder title is open for editing, selected, so the
+    // first keystroke replaces it (owner 2026-11-19, S-15). The table presentation edits in the inspector instead.
+    const root = blank.nodes.find((n) => n.parentId === null);
+    // Two frames: the closing dialog hands the focus back first; an editor opened in the same frame would lose it
+    // to that and close.
+    if (root && store.get().view.presentation === 'tree')
+      requestAnimationFrame(() => requestAnimationFrame(() => store.setInlineEdit(root.id)));
   };
   return (
     <Modal
@@ -267,7 +275,7 @@ function NewWorkDialog() {
           type="button"
           id="btnNewWorkArgument"
           data-testid="new-argument"
-          className="btn quiet"
+          className="btn primary"
           onClick={() => void create('argument')}
         >
           {t('newBlankArgument')}
@@ -284,7 +292,7 @@ function NewWorkDialog() {
         <button
           type="button"
           id="btnAIDraft"
-          className="btn primary"
+          className="btn quiet"
           onClick={() => store.openDialog('aiDraft')}
         >
           {t('newWithAI')}

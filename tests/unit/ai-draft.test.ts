@@ -412,6 +412,15 @@ test('draftToProject builds the prototype document for every shipped draft and o
     }
 });
 
+test("a draft becomes a document with the method the caller names; the prototype's when none is named", () => {
+  // Owner report 2026-11-18: a tree imported from an AI draft opened with the prototype's method selected.
+  assert.equal(draftToProject(sample(), clock('d')).settings.scoring, 'evidence-v3-links');
+  assert.equal(
+    draftToProject(sample(), { ...clock('d'), scoring: 'anchored-reasons-v1' }).settings.scoring,
+    'anchored-reasons-v1'
+  );
+});
+
 test('draftToProject with the dev14 example: literal ids, the AI profile, its ratings and the locked shared reason', () => {
   const p = draftToProject(sample(), clock('d'));
   assert.deepEqual(

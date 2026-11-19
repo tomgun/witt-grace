@@ -1,7 +1,12 @@
 /**
  * must: the same steps, driven through the same element ids, produce the same visible texts in the frozen prototype
- *       (served at 4174) and in the app (4173): outline, kicker, relation line, score hero, card chips, table summary,
- *       lens button, dock summary, people rows — for the Kaupunkiliikenne example in Punnitse (WG-025, UI_INVENTORY)
+ *       (served at 4174) and in the app (4173): outline, kicker, relation line, card chips, table summary, lens
+ *       button, dock summary, people rows — for the Kaupunkiliikenne example in Punnitse (WG-025, UI_INVENTORY).
+ *       The computed results are left out of the comparison: the app opens the prototype's file under its own
+ *       default calculation method (owner 2026-11-18, S-15), so those figures differ by decision; the ratings
+ *       people gave, which do not depend on the method, are still compared. Texts the owner has decided to show
+ *       differently (S-15) are compared after the prototype's text is brought to the decided form, one rule per
+ *       decision (`asDecided`), so any other difference still fails
  * test: tests/e2e/parity-walk.spec.ts (desktop)
  * red-against: a number formatted differently, a label from another key, a section missing in one app, a different
  *              row order
@@ -73,6 +78,34 @@ async function digest(page: Page, base: string) {
   };
 }
 
+type Digest = Awaited<ReturnType<typeof digest>>;
+/** The digest without what the calculation method decides: the score hero and its lines, the result chip and the
+ * result column of the table. */
+function withoutResults(d: Digest) {
+  return {
+    ...d,
+    scoreValue: null,
+    scoreLines: null,
+    chips: d.chips.filter((chip) => !/ (netto|laskettu)$/.test(chip)),
+    tableRows: d.tableRows.map((row) => row.replace(/ (?:[+-]?\d+\.\d(?: %)?|—)(?: †)? ▾/, ' ▾')),
+  };
+}
+
+/** The prototype's digest in the form the owner decided for the app (UI_INVENTORY S-15), one rule per decision. */
+function asDecided(d: Digest): Digest {
+  return {
+    ...d,
+    // 2026-11-19: "Arvioinnin mukaan" shows one decimal (the prototype prints +3.6666666666666665).
+    relationLine: (d.relationLine ?? '').replace(/[+-]?\d+\.\d{2,}/, (figure) => {
+      const rounded = Number(Number(figure).toFixed(1));
+      return (rounded > 0 ? '+' : '') + String(rounded);
+    }),
+    // 2026-11-19: one word for the person who rates (arvioija), where the prototype also says käyttäjä or henkilö.
+    compare: (d.compare ?? '').replace('Arviot henkilöittäin', 'Arviot arvioijittain'),
+    lensButton: (d.lensButton ?? '').replace('Käyttäjien arvioiden näkyminen', 'Kenen arviot näkyvät'),
+  };
+}
+
 test('the prototype and the app agree on every visible text of the walk', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'the desktop walk compares the full layout');
   const proto = await digest(page, PROTO);
@@ -82,5 +115,8 @@ test('the prototype and the app agree on every visible text of the walk', async 
   expect(proto.tableRows).toHaveLength(11);
   expect(proto.scoreValue).toContain('+100.0');
   const app = await digest(page, APP);
-  expect(app).toEqual(proto);
+  expect(app.scoreValue).toContain('94.4 %');
+  expect(proto.relationLine).toBe('Arvioinnin mukaan: Puoltava (+3.6666666666666665/5)');
+  expect(asDecided(proto).relationLine).toBe('Arvioinnin mukaan: Puoltava (+3.7/5)');
+  expect(withoutResults(app)).toEqual(withoutResults(asDecided(proto)));
 });

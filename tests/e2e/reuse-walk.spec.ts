@@ -7,7 +7,7 @@
  * red-against: ratings copied to the second use, the use attached under the source itself, the card created invisibly
  */
 import { expect, test } from '@playwright/test';
-import { addNamed, reviewSelected, startBlank } from './helpers.ts';
+import { addNamed, openMore, reviewSelected, startBlank } from './helpers.ts';
 
 test.beforeEach(async ({ page }) => {
   await startBlank(page, 'decision');
@@ -25,6 +25,7 @@ test('reuse a reason under a second option with independent ratings', async ({ p
   await reviewSelected(page, '70', '4');
 
   // Promote and attach under Luontoretki from the library inspector.
+  await openMore(page);
   await page.getByTestId('reuse-open').click();
   const target = page.getByTestId('reuse-target');
   await target.selectOption({ label: 'Luontoretki' });

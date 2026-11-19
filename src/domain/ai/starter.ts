@@ -3,7 +3,7 @@
 // by "Minä"; its prompt builder is kept for completeness (no dialog calls it). Ported from `src/ai-starter.js`.
 import { createBlankProject } from '../project.ts';
 import { ParseError, parseProject } from '../parse.ts';
-import type { Node, Project } from '../model.ts';
+import type { Node, Project, ScoringVersion } from '../model.ts';
 import type { JsonSchema } from './jsonSchema.ts';
 import { addChild } from './engine.ts';
 import type { Clock } from './engine.ts';
@@ -144,13 +144,20 @@ export function parseStarter(input: unknown): StarterDraft {
 }
 
 /** An argument-mode document owned by "Minä" with neutral placeholders (confidence 50, impact 0) and no ratings. */
-export function starterToProject(input: unknown, clock: Clock): Project {
+export function starterToProject(input: unknown, clock: Clock & { scoring?: ScoringVersion }): Project {
   const draft = parseStarter(input);
   const { now, newId } = clock;
   const userId = newId();
   const rootId = newId();
   const projectId = newId();
-  const project = createBlankProject({ mode: 'argument', projectId, rootId, userId, now });
+  const project = createBlankProject({
+    mode: 'argument',
+    projectId,
+    rootId,
+    userId,
+    now,
+    scoring: clock.scoring,
+  });
   project.title = draft.title;
   const root = project.nodes[0] as Node;
   root.title = draft.root.title;

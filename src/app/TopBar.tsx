@@ -141,6 +141,15 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
           }}
         />
         <CollabChip />
+        {/* The saving state where it can be seen without opening a menu (S-15, 2026-11-19): quiet when all is
+            well, red when a save failed. The Tiedosto menu's line is the one screen readers hear. */}
+        <span
+          id="saveStatusTop"
+          className={`save-status-top${state.saveStatus === 'saveFailed' ? ' error' : ''}`}
+          aria-hidden="true"
+        >
+          {t(state.saveStatus)}
+        </span>
       </div>
       <div className="header-right">
         <div

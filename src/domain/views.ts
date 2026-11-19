@@ -1,5 +1,5 @@
 // View-only projections: what is visible, what a focus highlights, review order. They never change the document.
-import { SCORING_RULES, assessmentFields, isValue } from './model.ts';
+import { SCORING_RULES, assessmentFields, isGate, isUnrated, isValue } from './model.ts';
 import type { Node, Project } from './model.ts';
 import { descendants, rootNode } from './graph.ts';
 import { influenceSummary, personalInfluence } from './reviews.ts';
@@ -135,6 +135,31 @@ export function optionGroupPath(project: Project, id: string): Node[] {
     current = current.parentId ? byId.get(current.parentId) : undefined;
   }
   return path;
+}
+/** A reason that can be muted for a what-if: a rated reason under a parent (not an option, group, gate or value). */
+export const mutable = (node: Node | undefined | null): boolean =>
+  !!node &&
+  node.kind === 'claim' &&
+  node.parentId !== null &&
+  node.relation !== 'option' &&
+  node.relation !== 'group' &&
+  !isGate(node) &&
+  !isValue(node) &&
+  !isUnrated(node);
+/**
+ * The document as it scores with some reasons muted (owner 2026-11-18): each muted reason and everything below it
+ * leaves the result exactly as an unrated note does, for every assessor, and so do secondary links that start inside
+ * a muted branch. A copy for evaluation only: no review is touched and the input is returned when nothing is muted.
+ */
+export function withoutBranches(project: Project, mutedIds: ReadonlySet<string>): Project {
+  const out = new Set<string>();
+  for (const node of project.nodes)
+    if (mutedIds.has(node.id) && mutable(node)) {
+      out.add(node.id);
+      for (const id of descendants(project, node.id)) out.add(id);
+    }
+  if (!out.size) return project;
+  return { ...project, nodes: project.nodes.map((n) => (out.has(n.id) ? { ...n, unrated: true } : n)) };
 }
 /** Guided review order: depth-first, every node that has a credence or an impact to review. Under the anchored
  * methods a claim comes after its reasons (leaves first, the root last), because its rating is given knowing them

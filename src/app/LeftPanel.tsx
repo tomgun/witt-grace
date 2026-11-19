@@ -209,7 +209,7 @@ function RepeatPane({ frame }: { frame: Frame }) {
         </p>
       </form>
       <div className="repeat-library-heading">{t('repeatExisting')}</div>
-      <div id="repeatCards" className="repeat-cards" role="list">
+      <div id="repeatCards" className="repeat-cards">
         {records.length === 0 ? <p className="repeat-empty">{t('repeatEmpty')}</p> : null}
         {records.map(({ type, reason }) => {
           const uses = project.nodes.filter((n) =>
@@ -346,7 +346,7 @@ export function LeftPanel({ frame }: { frame: Frame }) {
       <div className="panel-heading">
         <div>
           <div className="eyebrow">{t('workArea')}</div>
-          <h2>{t('tree')}</h2>
+          <h2>{t(project.mode === 'decision' ? 'treeDecision' : 'tree')}</h2>
         </div>
         <span className="count-pill" id="nodeCount" data-testid="node-count">
           {project.nodes.length}
@@ -420,7 +420,7 @@ export function LeftPanel({ frame }: { frame: Frame }) {
               disabled={!editable || selected?.kind === 'group'}
               onClick={() => addNode('neutral')}
             >
-              0
+              {t('neutralAdd')}
             </button>
           </div>
           {project.mode === 'decision' ? (

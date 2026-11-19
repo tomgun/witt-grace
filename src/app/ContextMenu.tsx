@@ -1,6 +1,6 @@
 // The node context menu (right click, Shift+F10) with the prototype's items, order and predicates (inv-canvas §2).
 import { useEffect, useRef } from 'react';
-import { childrenOf } from '../domain/index.ts';
+import { childrenOf, mutable } from '../domain/index.ts';
 import {
   addNode,
   arrangeTree,
@@ -108,6 +108,11 @@ export function ContextMenu({
       action: () => addNode('option', nodeId),
       disabled: !editable,
       key: displayShortcut(shortcuts.option),
+    });
+  if (mutable(node))
+    add({
+      label: t(state.mutedIds.has(nodeId) ? 'muteOff' : 'muteOn'),
+      action: () => store.toggleMuted(nodeId),
     });
   if (childrenOf(project, nodeId).length)
     add({

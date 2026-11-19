@@ -65,8 +65,21 @@ export const resultText = (node: Node, result: NodeScore | undefined | null, dig
   return valueText(result, result!.score, digits) + mark;
 };
 
+/** A balance read in words: which way the reasons lean, from the figure as it is shown (one decimal), so the word
+ * never disagrees with the number beside it. Null for a result that is a credence percentage or not derived. */
+export function balanceReading(
+  node: Node,
+  result: NodeScore | undefined | null
+): 'leansFor' | 'leansAgainst' | 'leansNeither' | null {
+  if (!derivedResult(node, result) || result!.credence || result!.derived !== undefined) return null;
+  const shown = Number((argumentBalance(result!.score) ?? 0).toFixed(1));
+  return shown > 0 ? 'leansFor' : shown < 0 ? 'leansAgainst' : 'leansNeither';
+}
+
 export interface DeriveContext {
   project: Project;
+  /** The document as it scores when reasons are muted for a what-if; the document itself when none is. */
+  scored?: Project;
   view: ViewState;
   actorId: string;
   scores: Scores;
@@ -249,7 +262,8 @@ export interface Importance {
 }
 /** Marginal effects on the top target; when highlighting is on, the strongest 20 % per target are "important". */
 export function recalculateImportance(ctx: DeriveContext): Importance {
-  const { project, view, lens } = ctx;
+  const { view, lens } = ctx;
+  const project = ctx.scored ?? ctx.project;
   const importantIds = new Set<string>();
   if (view.indexMode === 'shared' && lens.filtered) return { effects: new Map(), importantIds };
   const evaluated = view.indexMode === 'personal' ? ctx.personalScores : ctx.scores;
@@ -328,7 +342,7 @@ export function reviewSpread(ctx: DeriveContext, t: Translator, node: Node): Rev
   let results: string | null = null;
   const score = ctx.scores.get(node.id);
   if (derivedResult(node, score)) {
-    const own = viewpointSpread(project, node.id);
+    const own = viewpointSpread(ctx.scored ?? project, node.id);
     if (own && own.count > 1) {
       const range = `${valueText(score, own.min, 0)}…${valueText(score, own.max, 0)}`;
       results = t('spreadResults', { range, count: own.count });

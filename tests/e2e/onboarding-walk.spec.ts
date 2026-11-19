@@ -9,7 +9,7 @@
  *              holds in the document, a highlight left behind after the panel closes
  */
 import { expect, test } from '@playwright/test';
-import { startBlank } from './helpers.ts';
+import { reviewSelected, startBlank } from './helpers.ts';
 
 const DEMO_CONFIRM =
   'Esimerkin avaaminen korvaa nykyisen aktiivisen työn. Haluatko tallentaa nykyisen työn kirjastoon ensin?';
@@ -57,7 +57,7 @@ test('an example and the practice open through the replacement dialog; the pract
   await expect(page.getByTestId('app')).toBeVisible();
   const panel = page.locator('#tutorialPanel');
   await expect(panel).toBeVisible();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 1/7');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 1/9');
   await expect(page.locator('#tutorialHeading')).toHaveText('Harjoitellaan yhdessä');
   await expect(page.locator('#tutorialText')).toContainText('Valitse pääväite ja paina + Puoltava');
   await expect(page.locator('.node.is-root .node-title')).toContainText('Nelipäiväinen työviikko');
@@ -71,13 +71,13 @@ test('an example and the practice open through the replacement dialog; the pract
   await page.keyboard.press('+');
   const editor = page.locator('.node-inline-editor');
   await expect(editor).toBeFocused();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 2/7');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 2/9');
   await expect(page.locator('.node[data-relation="support"]')).toHaveClass(/tutorial-highlight/);
   // Step 2: the default title is not a wording; naming it is.
   await editor.fill('Työmatkat vähenevät');
   await editor.press('Enter');
   await expect(page.locator('.node-title', { hasText: 'Työmatkat vähenevät' })).toBeVisible();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/7');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/9');
   await expect(page.locator('.node.is-root .node-add[data-relation="oppose"]')).toHaveClass(
     /tutorial-highlight/
   );
@@ -90,15 +90,63 @@ test('an example and the practice open through the replacement dialog; the pract
     await page.keyboard.press('Enter');
   }
   await expect(editor).toBeFocused();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/7');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/9');
   await editor.press('Escape');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/7');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/9');
   // Skip the wording step; the next one points at Punnitse.
   await page.locator('#tutorialNext').click();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 5/7');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 5/9');
   await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/tutorial-highlight/);
+  // Rating the supporting reason moves on to the opposing one; rating that one leads to reading the result.
+  await page.locator('#tutorialTarget').click();
+  await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/active/);
+  await reviewSelected(page, '80', '4');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 6/9');
+  await expect(page.locator('#tutorialText')).toContainText('Arvioi nyt myös vastaväite');
+  await page.locator('#tutorialTarget').click();
+  await reviewSelected(page, '60', '-2');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/9');
+  await expect(page.locator('#tutorialText')).toContainText('Plussalla perustelut kallistuvat puolesta');
+  // Nothing in the document completes this step: it waits for the person, and its button reads Jatka.
+  await page.locator('#tutorialTarget').click();
+  await expect(page.locator('.node.is-root')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByTestId('score-reading')).toHaveText('kallistuu puolesta');
+  await expect(page.locator('#inspector .score-hero')).toHaveClass(/tutorial-highlight/);
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/9');
+  await expect(page.locator('#tutorialNext')).toHaveText('Jatka');
+  await page.locator('#tutorialNext').click();
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 8/9');
+  await expect(page.locator('#btnTableView')).toHaveClass(/tutorial-highlight/);
   await page.locator('#tutorialClose').click();
   await expect(panel).toBeHidden();
   await expect(page.locator('.tutorial-highlight')).toHaveCount(0);
   await expect(page.getByTestId('node-count')).toHaveText('3');
+});
+
+/**
+ * must: "Uusi työ" offers the blank argument tree as the main choice and the AI route as a secondary one; a new
+ *       blank document opens in the tree with its placeholder title selected for editing, so typing names the main
+ *       claim at once (owner 2026-11-19, UI_INVENTORY S-11.11, S-15)
+ * red-against: the AI route (three steps outside the app) as the highlighted choice, a new document that waits for a
+ *              double click before its title can be written
+ */
+test('a new document starts by writing its main claim', async ({ page }, testInfo) => {
+  await page.goto('/');
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
+  await page.locator('#btnHomeNew').click();
+  await expect(page.locator('#btnNewWorkArgument')).toHaveClass(/primary/);
+  await expect(page.locator('#btnAIDraft')).not.toHaveClass(/primary/);
+  await page.locator('#btnNewWorkArgument').click();
+  await expect(page.getByTestId('app')).toBeVisible();
+  test.skip(
+    testInfo.project.name === 'mobile',
+    'a phone starts in the table, where the title is edited in the list'
+  );
+  const editor = page.locator('.node-inline-editor');
+  await expect(editor).toBeFocused();
+  await expect(editor).toHaveValue('Mikä on tarkasteltava väite?');
+  await page.keyboard.type('Etätyö parantaa keskittymistä');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.node.is-root .node-title')).toHaveText('Etätyö parantaa keskittymistä');
 });

@@ -247,6 +247,12 @@ export function setWorkflow(next: Workflow): void {
   store.requestFit();
 }
 
+/** Every other way into Punnitse (an example, the assessment round, a use opened from the library): the cards show
+ * the ratings and the result there, as after the toolbar's button; a view already in Punnitse keeps its layers. */
+export function enterEvaluate(): void {
+  if (getStore().get().view.workflow !== 'evaluate') setWorkflow('evaluate');
+}
+
 export function choosePerspective(value: string): void {
   const store = getStore();
   if (value === 'shared' || value === 'personal')

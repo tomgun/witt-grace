@@ -41,6 +41,20 @@ export const SCORING_VERSIONS = [
 export type ScoringVersion = (typeof SCORING_VERSIONS)[number];
 /** The version a new document gets (owner 2026-11-18; evidence-v4-reasons from 2026-11-09 until then). */
 export const SCORING_VERSION: ScoringVersion = SCORING_ANCHORED;
+/**
+ * The versions the app offers and keeps (owner 2026-11-18). The five earlier ones are archived: the engine still
+ * computes them, because the golden fixtures pin `evidence-v3-links` against the prototype and the method study
+ * compares all of them, but the app no longer offers them and opens a document stored with one under the default.
+ */
+export const SCORING_OFFERED = [SCORING_ANCHORED, SCORING_DIRECT] as const;
+export type OfferedScoring = (typeof SCORING_OFFERED)[number];
+export const isOfferedScoring = (version: ScoringVersion): version is OfferedScoring =>
+  (SCORING_OFFERED as readonly ScoringVersion[]).includes(version);
+/** The document as the app keeps it: an archived calculation method becomes the default; every review stays. */
+export const withOfferedScoring = (project: Project): Project =>
+  isOfferedScoring(project.settings.scoring)
+    ? project
+    : { ...project, settings: { ...project.settings, scoring: SCORING_VERSION } };
 
 export const MODES = ['argument', 'decision'] as const;
 export const THEMES = ['light', 'dark', 'paper'] as const;

@@ -1,7 +1,8 @@
 // The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
+import { useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { childrenOf, isAiProfile } from '../domain/index.ts';
+import { SCORING_OFFERED, childrenOf, isAiProfile } from '../domain/index.ts';
 import type { Mode, ScoringVersion } from '../domain/index.ts';
 import {
   ADD_LOCAL_USER,
@@ -19,17 +20,45 @@ import {
   toggleFocus,
   toggleViewDock,
 } from './actions.ts';
-import type { MessageKey } from '../lib/i18n/i18n.ts';
 import { viewedAssessorId } from './derive.ts';
-import { SCORING_CURRENT, SCORING_EARLIER, SCORING_TEXT } from './scoringText.ts';
+import { scoringText } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
+/** One menu open at a time (`name` makes the browser close the others); a press outside or Escape closes it. */
+const MENU_GROUP = 'toolbar-menu';
+const openMenus = (): HTMLDetailsElement[] => [
+  ...document.querySelectorAll<HTMLDetailsElement>('details.toolbar-popover[open]'),
+];
+function useMenuDismissal(): void {
+  useEffect(() => {
+    const onPointerDown = (e: PointerEvent) => {
+      for (const menu of openMenus())
+        if (!(e.target instanceof Node && menu.contains(e.target))) menu.open = false;
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      for (const menu of openMenus()) {
+        const hadFocus = menu.contains(document.activeElement);
+        menu.open = false;
+        if (hadFocus) menu.querySelector('summary')?.focus();
+        e.stopPropagation();
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown, true);
+    };
+  }, []);
+}
+
 function Menu({ id, label, children }: { id: string; label: string; children: ReactNode }) {
   return (
-    <details id={id} className="toolbar-popover" data-testid={`menu-${id}`}>
+    <details id={id} name={MENU_GROUP} className="toolbar-popover" data-testid={`menu-${id}`}>
       <summary>{label}</summary>
       <div
         className="toolbar-popup"
@@ -81,6 +110,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
+  useMenuDismissal();
   const { project, view } = state;
   const editable = canEdit(state);
   const selected = project.nodes.find((n) => n.id === state.selectedId);
@@ -401,7 +431,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
               id="scoringSelect"
               data-testid="scoring-select"
               aria-label={t('scoringLabel')}
-              aria-describedby={SCORING_TEXT[project.settings.scoring].note ? 'scoringNote' : undefined}
+              aria-describedby="scoringNote"
               title={t('scoringHint')}
               value={project.settings.scoring}
               disabled={!editable}
@@ -409,24 +439,15 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
                 store.dispatch({ type: 'project.setScoring', scoring: e.target.value as ScoringVersion })
               }
             >
-              {SCORING_CURRENT.map((v) => (
+              {SCORING_OFFERED.map((v) => (
                 <option key={v} value={v}>
-                  {t(SCORING_TEXT[v].label)}
+                  {t(scoringText(v).label)}
                 </option>
               ))}
-              <optgroup id="scoringOldGroup" label={t('scoringOldGroup')}>
-                {SCORING_EARLIER.map((v) => (
-                  <option key={v} value={v}>
-                    {t(SCORING_TEXT[v].label)}
-                  </option>
-                ))}
-              </optgroup>
             </select>
-            {SCORING_TEXT[project.settings.scoring].note ? (
-              <p id="scoringNote" className="inspector-note" data-testid="scoring-note">
-                {t(SCORING_TEXT[project.settings.scoring].note as MessageKey)}
-              </p>
-            ) : null}
+            <p id="scoringNote" className="inspector-note" data-testid="scoring-note">
+              {t(scoringText(project.settings.scoring).note)}
+            </p>
           </Menu>
           <Menu id="viewMenu" label={t('toolbarViewGroup')}>
             <Item id="btnViewPanelMenu" onClick={showViewDock} kbd="Alt+V">
@@ -489,6 +510,19 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
           </Menu>
         </div>
       </div>
+      {frame.mutedIds.size ? (
+        <div id="muteBanner" className="analysis-perspective-banner" role="status">
+          <span id="muteBannerLabel">{t('muteBanner', { count: frame.mutedIds.size })}</span>
+          <button
+            type="button"
+            id="btnUnmuteAll"
+            className="btn quiet"
+            onClick={() => store.toggleMuted(null)}
+          >
+            {t('muteClear')}
+          </button>
+        </div>
+      ) : null}
       {inspected && inspected.id !== state.actorId ? (
         <div id="analysisPerspectiveBanner" className="analysis-perspective-banner" role="status">
           <span id="analysisPerspectiveLabel">

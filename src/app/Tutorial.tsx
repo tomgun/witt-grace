@@ -14,7 +14,11 @@ import { blankProject, getStore, useAppState, useTranslator } from './store.ts';
 import type { AppState } from './store.ts';
 import { LAYER_PRESETS } from './view.ts';
 
-export const TUTORIAL_STEPS = 7;
+// Nine steps since 2026-11-19 (owner, S-15): after rating the supporting reason the practice also has the opposing
+// one rated and the main claim's result read, which is what the method is for; the prototype has seven.
+export const TUTORIAL_STEPS = 9;
+/** The step that explains the result: it waits for the person, nothing in the document completes it. */
+const READ_RESULT_STEP = 6;
 /** The toolbar element each step points at (steps 0–3 point at cards instead). */
 const ANCHORS: readonly (string | null)[] = [
   null,
@@ -22,6 +26,8 @@ const ANCHORS: readonly (string | null)[] = [
   null,
   null,
   'btnWorkflowEvaluate',
+  null,
+  null,
   'btnTableView',
   'btnLayout',
   null,
@@ -154,9 +160,14 @@ function check(state: AppState): void {
     const influence = personalInfluence(project, 'primary', next.supportId, state.actorId);
     if (voted && influence.current) next = { ...next, step: 5 };
   }
+  if (next.step === 5 && next.opposeId && project.nodes.some((n) => n.id === next.opposeId)) {
+    const voted = personalCredence(project, next.opposeId, state.actorId);
+    const influence = personalInfluence(project, 'primary', next.opposeId, state.actorId);
+    if (voted && influence.current) next = { ...next, step: READ_RESULT_STEP };
+  }
   let mess = false;
-  if (next.step === 5 && state.view.presentation === 'table') {
-    next = { ...next, step: 6 };
+  if (next.step === 7 && state.view.presentation === 'table') {
+    next = { ...next, step: 8 };
     mess = true;
   }
   if (next !== current) update({ tutorial: next });
@@ -192,10 +203,23 @@ function showTarget(): void {
     if (current.supportId) store.select(current.supportId);
     return;
   }
-  if (current.step === 5) selectPresentation('table');
-  if (current.step === 6) {
+  if (current.step === 5) {
+    store.setView({ workflow: 'evaluate', layers: { ...LAYER_PRESETS.analysis } });
+    if (current.opposeId) store.select(current.opposeId);
+    return;
+  }
+  if (current.step === READ_RESULT_STEP) {
+    store.setView({ workflow: 'evaluate', presentation: 'tree', layers: { ...LAYER_PRESETS.analysis } });
+    store.select(current.rootId);
+    requestAnimationFrame(() =>
+      document.querySelector('#inspector .score-hero')?.scrollIntoView({ block: 'nearest' })
+    );
+    return;
+  }
+  if (current.step === 7) selectPresentation('table');
+  if (current.step === 8) {
     arrangeTree();
-    setStep(7);
+    setStep(9);
   }
 }
 
@@ -208,7 +232,7 @@ function skipStep(): void {
     return;
   }
   setStep(current.step + 1);
-  if (current.step + 1 === 6) showMessyTutorialTree();
+  if (current.step + 1 === 8) showMessyTutorialTree();
 }
 
 const clamp = (panel: HTMLElement, x: number, y: number) => ({
@@ -261,8 +285,16 @@ export function Tutorial() {
     const action = tutorial.step === 0 ? 'support' : tutorial.step === 2 ? 'oppose' : null;
     if (action)
       targets.push(card(tutorial.rootId)?.querySelector(`.node-add[data-relation="${action}"]`) ?? null);
-    const editId = tutorial.step === 1 ? tutorial.supportId : tutorial.step === 3 ? tutorial.opposeId : null;
-    if (editId) targets.push(card(editId));
+    const cardId =
+      tutorial.step === 1
+        ? tutorial.supportId
+        : tutorial.step === 3 || tutorial.step === 5
+          ? tutorial.opposeId
+          : tutorial.step === READ_RESULT_STEP
+            ? tutorial.rootId
+            : null;
+    if (cardId) targets.push(card(cardId));
+    if (tutorial.step === READ_RESULT_STEP) targets.push(document.querySelector('#inspector .score-hero'));
     for (const target of targets) target?.classList.add('tutorial-highlight');
     return clear;
   }, [visible, tutorial, state.project, state.view, state.selectedId, state.inlineEditId]);
@@ -378,7 +410,13 @@ export function Tutorial() {
           {tr('tutorialShowTarget')}
         </button>
         <button type="button" className="btn quiet" id="tutorialNext" onClick={skipStep}>
-          {tr(complete ? 'tutorialDone' : 'tutorialSkip')}
+          {tr(
+            complete
+              ? 'tutorialDone'
+              : tutorial.step === READ_RESULT_STEP
+                ? 'confirmContinue'
+                : 'tutorialSkip'
+          )}
         </button>
       </div>
     </aside>

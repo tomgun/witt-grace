@@ -7,6 +7,8 @@ import {
   depthProjection,
   evaluate,
   evaluateAssessor,
+  mutable,
+  withoutBranches,
   focusProjection,
   fourWayProjection,
   fourWayVisualDirections,
@@ -43,6 +45,9 @@ export interface Frame extends DeriveContext {
   importance: Importance;
   /** Options an assessor's perspective ranks first, when highlighting is on (inv-canvas §1.10). */
   leadingOptionIds: Set<string>;
+  /** Reasons muted for a what-if that still exist, and those reasons with everything below them. */
+  mutedIds: ReadonlySet<string>;
+  mutedBranchIds: ReadonlySet<string>;
   /** The actor's own personal scores (the inspector compares them with the shared result). */
   actorScores: Scores;
   rootId: string;
@@ -64,7 +69,7 @@ export function buildFrame(
   session: Pick<
     AppState,
     'actorId' | 'selectedId' | 'depthOverrides' | 'explicitlyClosedIds' | 'tableRevealId' | 'reviewIds'
-  >
+  > & { mutedIds?: ReadonlySet<string> }
 ): Frame {
   const root = rootNode(project) as Node;
   const anchor = project.nodes.some((n) => n.id === view.focus.anchorId) ? view.focus.anchorId : root.id;
@@ -122,18 +127,36 @@ export function buildFrame(
       projection = { ...projection, visibleIds, nodes: projection.nodes.filter((n) => visibleIds.has(n.id)) };
     }
   }
-  const scores = evaluate(project);
+  // Muted reasons (a what-if, never in the document) leave every shown result with their branches.
+  const mutedIds = new Set(
+    [...(session.mutedIds ?? [])].filter((id) => mutable(project.nodes.find((n) => n.id === id)))
+  );
+  const scored = withoutBranches(project, mutedIds);
+  const mutedBranchIds = new Set<string>();
+  if (scored !== project)
+    scored.nodes.forEach((n, i) => {
+      if (n !== project.nodes[i]) mutedBranchIds.add(n.id);
+    });
+  const scores = evaluate(scored);
   const personalScores: Scores =
     view.indexMode === 'personal'
-      ? evaluateAssessor(project, viewedAssessorId(project, view, session.actorId))
+      ? evaluateAssessor(scored, viewedAssessorId(project, view, session.actorId))
       : new Map();
   const lens: Lens = projectLens(project, session.reviewIds);
-  const actorScores: Scores = evaluateAssessor(project, session.actorId);
-  const ctx: DeriveContext = { project, view, actorId: session.actorId, scores, personalScores, lens };
+  const actorScores: Scores = evaluateAssessor(scored, session.actorId);
+  const ctx: DeriveContext = {
+    project,
+    scored,
+    view,
+    actorId: session.actorId,
+    scores,
+    personalScores,
+    lens,
+  };
   const importance = recalculateImportance(ctx);
   const leadingOptionIds =
     view.highlightOptions && project.mode === 'decision' && view.indexMode === 'personal'
-      ? new Set(assessorSummary(project, viewedAssessorId(project, view, session.actorId)).leadingIds)
+      ? new Set(assessorSummary(scored, viewedAssessorId(project, view, session.actorId)).leadingIds)
       : new Set<string>();
   const cardH = cardHeight(view.layers);
   let positions = new Map<string, Position>();
@@ -188,6 +211,8 @@ export function buildFrame(
     maxDepth,
     importance,
     leadingOptionIds,
+    mutedIds,
+    mutedBranchIds,
     actorScores,
     rootId: root.id,
     visualPosition,
@@ -208,6 +233,7 @@ export function useFrame(state: AppState): Frame {
     explicitlyClosedIds,
     tableRevealId,
     reviewIds,
+    mutedIds,
   } = state;
   return useMemo(
     () =>
@@ -218,8 +244,19 @@ export function useFrame(state: AppState): Frame {
         explicitlyClosedIds,
         tableRevealId,
         reviewIds,
+        mutedIds,
       }),
-    [project, view, actorId, selectedId, depthOverrides, explicitlyClosedIds, tableRevealId, reviewIds]
+    [
+      project,
+      view,
+      actorId,
+      selectedId,
+      depthOverrides,
+      explicitlyClosedIds,
+      tableRevealId,
+      reviewIds,
+      mutedIds,
+    ]
   );
 }
 

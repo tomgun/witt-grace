@@ -7,7 +7,7 @@
 import { createBlankProject } from '../project.ts';
 import { ParseError, parseProject } from '../parse.ts';
 import { sameName } from '../model.ts';
-import type { Mode, Node, Project, User } from '../model.ts';
+import type { Mode, Node, Project, ScoringVersion, User } from '../model.ts';
 import type { JsonSchema } from './jsonSchema.ts';
 import {
   addChild,
@@ -475,6 +475,8 @@ export interface DraftImportOptions extends Clock {
    * their name, instead of a profile of its own; absent: everyone gets a new profile and the importer stays "Minä".
    */
   selfParticipantId?: string;
+  /** The new document's calculation method; the prototype's when absent (the app passes its default). */
+  scoring?: ScoringVersion;
 }
 
 /**
@@ -494,7 +496,14 @@ export function draftToProject(input: unknown, options: DraftImportOptions): Pro
   const userId = newId();
   const rootId = newId();
   const projectId = newId();
-  const p = createBlankProject({ mode: draft.mode, projectId, rootId, userId, now });
+  const p = createBlankProject({
+    mode: draft.mode,
+    projectId,
+    rootId,
+    userId,
+    now,
+    scoring: options.scoring,
+  });
   p.title = draft.title;
   const profile: User = {
     id: newId(),

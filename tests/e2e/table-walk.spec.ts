@@ -118,7 +118,7 @@ test('summary, filters, search, Enter, Punnitse columns, the lens banner and bac
   await page.locator('#tableSearch').fill('');
   await expect(rows).toHaveCount(11);
   const rootNumbers = rows.first().locator('td.table-number');
-  await expect(rootNumbers).toHaveText(['60 % (3)', '—', '+47.5 †']);
+  await expect(rootNumbers).toHaveText(['60 % (3)', '—', '+23.8 †']);
   await expect(page.locator('#reviewLensBanner')).toBeHidden();
   await page.locator('#btnReviewLensTable').click();
   await expect(page.locator('#reviewLensDialog')).toBeVisible();
@@ -138,13 +138,13 @@ test('summary, filters, search, Enter, Punnitse columns, the lens banner and bac
     /^Tallennettujen arvioiden keskiarvo: \d+\.\d %$/
   );
   await expect(rootEvaluation.locator('p').nth(1)).toHaveText('Ei puolesta/vastaan-vaikutusta vanhempaan.');
-  await expect(rootEvaluation.locator('p').nth(2)).toContainText('Argumentti-indeksi on piilotettu');
+  await expect(rootEvaluation.locator('p').nth(2)).toContainText('Perustelutulos on piilotettu');
   await page.locator('#btnReviewLensTable').click();
   await page.locator('#btnLensAll').click();
   await page.locator('#btnLensDone').click();
   await expect(page.locator('#reviewLensBanner')).toBeHidden();
-  await expect(rootNumbers.nth(2)).toHaveText('+47.5 †');
-  await expect(rootEvaluation.locator('p').nth(2)).toHaveText('Perustelutulos: +47.5 †');
+  await expect(rootNumbers.nth(2)).toHaveText('+23.8 †');
+  await expect(rootEvaluation.locator('p').nth(2)).toHaveText('Perustelutulos: +23.8 †');
   await page.locator('#tableSummary').click();
   await page.keyboard.press('t');
   await expect(area).toHaveCount(0);
@@ -207,7 +207,7 @@ test('the mobile argument list at 390 px: cards, ratings, details and the add ro
   ]);
   await expect(cards.first().locator('.mobile-ratings span')).toHaveText([
     'Uskottavuus: 60 %',
-    'Perustelutulos: +47.5 †',
+    'Perustelutulos: +23.8 †',
   ]);
 
   // The add row creates a supporting child under the card and selects it.

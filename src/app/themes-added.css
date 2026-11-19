@@ -10,7 +10,7 @@ body[data-theme='terminal'] {
   --panel: #020d05;
   --canvas: #010802;
   --ink: #5cff8f;
-  --muted: #2f9c58;
+  --muted: #33a85f;
   --subtle: #48d978;
   --border: #1b6b37;
   --accent: #8dffb0;
@@ -136,7 +136,7 @@ body[data-theme='ascii'] {
   --panel: #fbfaf4;
   --canvas: #fbfaf4;
   --ink: #26261f;
-  --muted: #7a786b;
+  --muted: #6c6a5f;
   --subtle: #55544a;
   --border: #b9b6a5;
   --accent: #1d4ed8;

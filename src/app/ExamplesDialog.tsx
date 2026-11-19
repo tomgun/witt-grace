@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { parseProject } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
+import { enterEvaluate } from './actions.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import { stopTutorial } from './Tutorial.tsx';
 
@@ -44,7 +45,7 @@ export function ExamplesDialog() {
       // A new workspace: never the fixture's own id, so a library copy is never overwritten.
       store.load({ ...sample, id: newId() });
       store.openDialog(null);
-      if (store.get().project.users.length > 1) store.setView({ workflow: 'evaluate' });
+      if (store.get().project.users.length > 1) enterEvaluate();
     } catch (error) {
       store.showMessage(`${entry.title}: ${error instanceof Error ? error.message : String(error)}`);
     } finally {

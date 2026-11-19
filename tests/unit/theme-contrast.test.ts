@@ -2,9 +2,14 @@
  * must: the Lehto (grove) theme stays readable on its dark forest: text pairs reach WCAG AA 4.5:1, and the focus
  *       ring, card borders and branch strokes reach 3:1 against the canvas and the cards (S-15, owner request
  *       2026-11-12; the decorations are beneath the cards and never lower these pairs)
- * test: tests/unit/theme-contrast.test.ts (reads the `body[data-theme='grove']` token block of themes-added.css)
+ *       Every theme's secondary text (muted, subtle) and its supporting and opposing colours reach 4.5:1 on the
+ *       page, card, panel and canvas backgrounds (WG-037, owner 2026-11-19, S-15: the prototype's light, paper,
+ *       manuscript and ASCII greys were 2.7–4.4:1)
+ * test: tests/unit/theme-contrast.test.ts (reads the `body[data-theme='grove']` token block of themes-added.css and
+ *       every theme block of styles.css and themes-added.css)
  * red-against: a decorative colour pair copied from another theme that fails (a muted text of #2f9c58 on the
- *              forest surface), a selector rename that makes the parser see zero tokens and pass vacuously
+ *              forest surface), a selector rename that makes the parser see zero tokens and pass vacuously, a
+ *              theme's grey restored to the prototype's value (light --muted #8190a7 is 3.05:1 on the page)
  */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -75,4 +80,45 @@ test('focus ring, borders and branch strokes reach 3:1', () => {
     assert.ok(ratio(token('border'), token(against)) >= 3, `border on ${against}`);
   for (const stroke of ['#8fc46a', '#e0905f', token('option')])
     assert.ok(ratio(stroke, token('canvas')) >= 3, `branch ${stroke} on canvas`);
+});
+
+test('every theme: muted, subtle, supporting and opposing text reach 4.5:1 on its backgrounds', () => {
+  const sheets = [readFileSync(new URL('../../src/app/styles.css', import.meta.url), 'utf8'), css];
+  const seen: string[] = [];
+  // The tinted background each colour is also written on: notes on the accent tint, relation tags on their own tint.
+  const TINTED: Record<string, string> = {
+    muted: 'accent-soft',
+    subtle: 'accent-soft',
+    green: 'green-bg',
+    red: 'red-bg',
+  };
+  for (const sheet of sheets)
+    for (const m of sheet.matchAll(/body\[data-theme='([a-z-]+)'\][^{]*\{([^}]*)\}/g)) {
+      const theme = new Map<string, string>();
+      for (const t of (m[2] as string).matchAll(/--([a-z-]+):\s*(#[0-9a-f]{6})\s*;/g))
+        theme.set(t[1] as string, t[2] as string);
+      if (!theme.has('muted') || !theme.has('bg')) continue;
+      seen.push(m[1] as string);
+      for (const fg of ['muted', 'subtle', 'green', 'red'])
+        for (const bg of ['bg', 'surface', 'panel', 'canvas', TINTED[fg] as string]) {
+          const a = theme.get(fg);
+          const b = theme.get(bg);
+          if (!a || !b) continue;
+          assert.ok(ratio(a, b) >= 4.5, `${m[1]}: ${fg} ${a} on ${bg} ${b} is ${ratio(a, b).toFixed(2)}`);
+        }
+    }
+  assert.deepEqual([...new Set(seen)].sort(), [
+    'ascii',
+    'bitberg',
+    'comic',
+    'cosmos',
+    'dark',
+    'grove',
+    'hologram',
+    'light',
+    'manuscript-book',
+    'manuscript-pen',
+    'paper',
+    'terminal',
+  ]);
 });

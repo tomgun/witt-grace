@@ -9,9 +9,9 @@
  *       Sarjakuva and Lehto themes apply and persist, and ASCII draws the edges as characters; an unassessed slider reads "—" and
  *       saving one axis saves the other as shown in one undo step; the dock has seven layers and no drag-from-text
  *       option; a new document uses Laskenta koko puusta (a claim's rating counts and its result reads as a
- *       percentage; an unrated claim reads the net of its reasons), the earlier methods sit under Vanhat, and the
- *       Arviointi menu switches the calculation method (under the earlier ones the credence of a claim with reasons
- *       is a felt sense) (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
+ *       percentage; an unrated claim reads the net of its reasons), the Arviointi menu offers that and Laskenta
+ *       suorista perusteluista only, and a document stored with an archived method opens under the default
+ *       (owner 2026-11-18) (UI_INVENTORY S-01, S-02, S-03, S-07, S-07.1, S-08, S-15)
  * test: tests/e2e/argument-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a leaf thesis shown as 0, a review saved under the wrong node, the autosave skipped, the incomplete
  *              marker rendered as "*", undo/redo buttons wired to nothing, redo enabled with nothing to redo, the
@@ -275,14 +275,8 @@ test('a new document computes from the whole tree; the calculation method switch
   await expect(page.locator('#scoringSelect option')).toHaveText([
     'Laskenta koko puusta (oletus)',
     'Laskenta suorista perusteluista',
-    'Perustelut ratkaisevat',
-    'Log-odds: näyttö kertyy kertoimina',
-    'Nettotulos välittyy (kokeellinen)',
-    'Vahva ketju välittyy (log-odds, kokeellinen)',
-    'Oma arvio + perustelut (prototyyppi)',
   ]);
-  await expect(page.locator('#scoringOldGroup')).toHaveAttribute('label', 'Vanhat');
-  await expect(page.locator('#scoringOldGroup option')).toHaveCount(5);
+  await expect(page.locator('#scoringOldGroup')).toHaveCount(0);
   await expect(page.getByTestId('scoring-note')).toHaveText(
     'Väitteen oma arvio on lähtötaso, jota sen perustelut siirtävät. Muutos syvällä puussa näkyy ylös asti.'
   );
@@ -299,16 +293,17 @@ test('a new document computes from the whole tree; the calculation method switch
   await expect(page.getByTestId('credence-note')).toHaveText(
     'Tässä laskentatavassa arviosi on väitteen tulos sellaisenaan. Perustelut näkyvät erittelyssä, mutta eivät muuta tulosta.'
   );
-  // The earlier methods keep their wording and their balance scale.
+  // A document stored with an archived method opens under the default one, and the menu offers the two only.
+  await page.evaluate(() => {
+    const stored = JSON.parse(window.localStorage.getItem('witt-project-v3') ?? '{}') as {
+      settings: { scoring: string };
+    };
+    stored.settings.scoring = 'evidence-v3-links';
+    window.localStorage.setItem('witt-project-v3', JSON.stringify(stored));
+  });
+  await page.reload();
+  await page.locator('#btnHomeContinue').click();
   await openAssessMenu();
-  await select.selectOption('evidence-v4-reasons');
-  await expect(page.getByTestId('scoring-note')).toHaveCount(0);
-  await expect(page.locator('label[for="nodeConfidence"]')).toContainText(
-    'Oma tuntuma (ei vaikuta laskentaan)'
-  );
-  await expect(claimCard.locator('.meta-index .meta-value')).toHaveText('+10');
-  await select.selectOption('logodds-reasons-v1');
-  await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma tuntuma');
-  await select.selectOption('evidence-v3-links');
-  await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma uskottavuusarvio');
+  await expect(select).toHaveValue('anchored-reasons-v1');
+  await expect(page.locator('#scoringSelect option')).toHaveCount(2);
 });

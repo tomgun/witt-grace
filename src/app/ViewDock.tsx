@@ -314,7 +314,7 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
             id="btnFit"
             className="btn quiet"
             disabled={isTable}
-            onClick={() => store.requestFit()}
+            onClick={() => window.dispatchEvent(new CustomEvent('witt-camera', { detail: { kind: 'fit' } }))}
           >
             {t('fit')}
           </button>

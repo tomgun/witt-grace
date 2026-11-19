@@ -1,5 +1,5 @@
 /**
- * must: with two local people, Näkymäasetukset → Korosta käyttäjän jäljet picks either one regardless of the active
+ * must: with two local people, Näkymäasetukset → Korosta arvioijan jäljet picks either one regardless of the active
  *       profile; that person's created nodes get a ring and a "Luonut" mark, the others fade, the summary counts them,
  *       "Näytä myös hänen arvionsa" switches the result to that person's viewpoint, and "Ei korostusta" clears it
  *       (owner request 2026-11-10, UI_INVENTORY S-15)

@@ -1,6 +1,7 @@
 // The shell: body classes, zones, keyboard, home/workspace switch, bottom zone, footer and the dialog hosts.
 import { useEffect, useMemo, useState } from 'react';
 import {
+  SCORING_VERSION,
   exportFilename,
   inspectImport,
   parseProject,
@@ -115,7 +116,7 @@ export function App() {
         }
         const incoming =
           report.format === 'starter'
-            ? starterToProject(report.parsed, { now: nowIso(), newId })
+            ? starterToProject(report.parsed, { now: nowIso(), newId, scoring: SCORING_VERSION })
             : parseProject(report.parsed);
         const description = `${t('importConfirm', { title: incoming.title })}\nJSON tarkistettu: ${report.formatName}.`;
         if (!(await store.prepareReplacement(description))) return;

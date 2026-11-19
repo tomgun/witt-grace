@@ -8,6 +8,7 @@ Always: `README.md` (quick start, layout) and `docs/STATUS.md` (what exists, wha
 | Any change under `src/`, `locales/` or `schemas/` | `docs/ARCHITECTURE.md` |
 | Writing or reviewing tests, generating golden fixtures | `docs/TESTING.md`, `docs/PROTOTYPE_REFERENCE.md` |
 | Adding a dependency, changing a boundary, re-opening a decision | `docs/ADRS.md` (one row per decision) |
+| Why the numbers are computed as they are, re-running the comparison of methods | `docs/SCORING_STUDY.md`, `scripts/scoring-study.ts` |
 | Changing a spec, or finding code and spec disagree | `docs/spec/README.md` (change policy), `docs/spec/CHANGELOG.md` |
 | Picking work | `docs/ISSUE-PLAN.md` (P0 first), later the GitHub milestone |
 | Planning a feature or a review round | `docs/principles/*` and the lens docs in `docs/lenses/` the change earns (`/feature`, `/review`) |

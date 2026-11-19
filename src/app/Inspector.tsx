@@ -20,6 +20,7 @@ import {
   optionValueProfile,
   personalCredence,
   credenceSubtreeChanged,
+  mutable,
   personalInfluence,
   potentialEvidenceOverlap,
   reasonConcept,
@@ -30,18 +31,21 @@ import {
   TYPE_LABEL_MAX,
   SCORING_RULES,
 } from '../domain/index.ts';
-import type { InfluenceSummary, Node, NodeScore, SemanticType, Stance } from '../domain/index.ts';
+import type { InfluenceSummary, Node, NodeScore, Project, SemanticType, Stance } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
 import {
   addNode,
   attachLibraryReason,
   canAttachLibraryReason,
   canEdit,
+  choosePerspective,
+  enterEvaluate,
   reuseFromTreeNode,
 } from './actions.ts';
 import {
   EM_DASH,
   balanceDeltaText,
+  balanceReading,
   balanceText,
   credenceIsFeeling,
   credenceNoteKey,
@@ -59,12 +63,27 @@ import {
   signed,
   viewedAssessorId,
 } from './derive.ts';
-import { SCORING_TEXT } from './scoringText.ts';
+import { scoringText } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import { LAYER_PRESETS } from './view.ts';
 
 let inspectorAdvancedOpen = false;
+let inspectorMoreOpen = false;
+
+/** A help text behind a ? button: there when it is needed, out of the way once it has been read (owner 2026-11-19,
+ * UI_INVENTORY S-15). */
+function HelpNote({ id, children }: { id: string; children: ReactNode }) {
+  const t = useTranslator();
+  return (
+    <details className="help-note" id={id}>
+      <summary aria-label={t('helpNote')} title={t('helpNote')}>
+        ?
+      </summary>
+      <p className="inspector-note">{children}</p>
+    </details>
+  );
+}
 
 export function InfluenceStatusTag({ summary }: { summary: InfluenceSummary }) {
   const t = useTranslator();
@@ -229,7 +248,7 @@ function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
       store.dispatch({ type: 'node.edit', id: node.id, typeLabel: next || null });
   };
   return (
-    <>
+    <div className="type-label-field">
       <Field id="nodeTypeLabel" label={t('typeLabelField')}>
         <input
           id="nodeTypeLabel"
@@ -257,8 +276,8 @@ function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
             ))}
         </datalist>
       </Field>
-      <p className="inspector-note">{t('typeLabelHelp')}</p>
-    </>
+      <HelpNote id="typeLabelHelp">{t('typeLabelHelp')}</HelpNote>
+    </div>
   );
 }
 function Toggle({
@@ -297,7 +316,7 @@ function UnratedField({ node, editable }: { node: Node; editable: boolean }) {
   if (!node.parentId || node.kind !== 'claim' || node.sharedReasonId || isGate(node) || isValue(node))
     return null;
   return (
-    <>
+    <div className="option-row">
       <Toggle
         id="nodeUnrated"
         testId="node-unrated"
@@ -306,8 +325,8 @@ function UnratedField({ node, editable }: { node: Node; editable: boolean }) {
         editable={editable}
         onChange={(unrated) => getStore().dispatch({ type: 'node.edit', id: node.id, unrated })}
       />
-      <p className="inspector-note">{t('unratedHelp')}</p>
-    </>
+      <HelpNote id="unratedHelp">{t('unratedHelp')}</HelpNote>
+    </div>
   );
 }
 function Select({
@@ -358,7 +377,7 @@ function LibraryInspector({ frame }: { frame: Frame }) {
   const openUse = (id: string) => {
     store.selectLibraryReason(null);
     store.select(id);
-    store.setView({ workflow: 'evaluate' });
+    enterEvaluate();
     requestAnimationFrame(() =>
       document.querySelector('#inspector #nodeImpact')?.scrollIntoView({ block: 'nearest' })
     );
@@ -861,6 +880,65 @@ function SemanticSection({ node, editable }: { node: Node; editable: boolean }) 
 }
 
 // ---- §14 evaluate block ------------------------------------------------------------------------------------------
+/** What keeps a reason out of the result, side by side (owner 2026-11-19, S-15): a note nobody rates, my own
+ * abstention, and the mute for a what-if. Each toggle shows only where it applies. */
+function CountedOptions({ frame, node, editable }: { frame: Frame; node: Node; editable: boolean }) {
+  const state = useAppState();
+  const t = useTranslator();
+  const store = getStore();
+  const { project, view, actorId } = state;
+  const otherPerspective =
+    view.indexMode === 'personal' && viewedAssessorId(project, view, actorId) !== actorId;
+  const canAbstain =
+    !otherPerspective &&
+    !!node.parentId &&
+    node.kind === 'claim' &&
+    !node.sharedReasonId &&
+    !isUnrated(node) &&
+    !isGate(node) &&
+    !isValue(node);
+  const canBeUnrated =
+    !!node.parentId && node.kind === 'claim' && !node.sharedReasonId && !isGate(node) && !isValue(node);
+  if (!canAbstain && !canBeUnrated && !mutable(node)) return null;
+  return (
+    <fieldset className="inspector-group" data-testid="counted-options">
+      <legend>{t('countedLegend')}</legend>
+      <UnratedField node={node} editable={editable} />
+      {canAbstain ? (
+        <div className="option-row">
+          <Toggle
+            id="nodeAbstain"
+            testId="review-abstain"
+            label={t('abstain')}
+            checked={hasAbstained(project, node.id, actorId)}
+            editable={editable}
+            onChange={(abstain) =>
+              store.dispatch({ type: 'review.abstain', nodeId: node.id, userId: actorId, abstain })
+            }
+          />
+          <HelpNote id="abstainHelp">{t('abstainHelp')}</HelpNote>
+        </div>
+      ) : null}
+      {mutable(node) ? (
+        <div className="option-row">
+          <Toggle
+            id="nodeMute"
+            testId="node-mute"
+            label={t('muteToggle')}
+            checked={frame.mutedIds.has(node.id)}
+            editable
+            onChange={() => store.toggleMuted(node.id)}
+          />
+          <HelpNote id="muteHelp">{t('muteHelp')}</HelpNote>
+        </div>
+      ) : null}
+    </fieldset>
+  );
+}
+/** True when one of the "counted" toggles is on for this reason: the section that holds them then stays open. */
+const countedOptionActive = (frame: Frame, project: Project, node: Node, actorId: string): boolean =>
+  isUnrated(node) || frame.mutedIds.has(node.id) || hasAbstained(project, node.id, actorId);
+
 function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
   const state = useAppState();
   const t = useTranslator();
@@ -929,8 +1007,6 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
   // "En arvioi (muut voivat)" (owner 2026-11-10): on this reason, or on one above it.
   const excused = isExcused(project, node.id, actorId);
   const abstained = !otherPerspective && hasAbstained(project, node.id, actorId);
-  const abstain = (value: boolean) =>
-    store.dispatch({ type: 'review.abstain', nodeId: node.id, userId: actorId, abstain: value });
   const beforeClamp =
     effective && effective.base !== null && effective.score !== null
       ? effective.base + 5 * ((effective.positive || 0) - (effective.negative || 0))
@@ -942,6 +1018,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
       ? personalInfluence(project, 'primary', node.id, inspected.id)
       : null;
   const summary = allImpacts.length ? summarizeInfluenceReviews(allImpacts) : null;
+  const reading = balanceReading(node, effective);
   return (
     <>
       <div className="inspector-divider" />
@@ -975,31 +1052,17 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           </button>
         </div>
       ) : (
-        <p className="inspector-note">{t('profileActive', { name: me?.name ?? '' })}</p>
+        <p className="inspector-who">{t('profileActive', { name: me?.name ?? '' })}</p>
       )}
       {!otherPerspective && excused && !abstained ? (
         <p className="inline-warning" data-testid="abstain-branch">
           {t('abstainBranchNote')}
         </p>
       ) : null}
-      {!otherPerspective &&
-      node.parentId &&
-      node.kind === 'claim' &&
-      !node.sharedReasonId &&
-      !isUnrated(node) &&
-      !isGate(node) &&
-      !isValue(node) ? (
-        <>
-          <Toggle
-            id="nodeAbstain"
-            testId="review-abstain"
-            label={t('abstain')}
-            checked={abstained}
-            editable={editable}
-            onChange={abstain}
-          />
-          <p className="inspector-note">{t('abstainHelp')}</p>
-        </>
+      {!mutable(node) && frame.mutedBranchIds.has(node.id) && !isUnrated(node) ? (
+        <p className="inline-warning" data-testid="mute-branch">
+          {t('muteBranchNote')}
+        </p>
       ) : null}
       {!otherPerspective && node.sharedReasonId ? (
         <p className="inspector-note">{t('sharedFixedExplanation')}</p>
@@ -1144,54 +1207,49 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
       ) : null}
       {!frame.lens.filtered || view.indexMode === 'personal' ? (
         <div className="score-hero" data-testid="score-section">
+          <div className="score-viewpoint" role="group" aria-label={t('indexDisplay')}>
+            <button
+              type="button"
+              id="btnResultShared"
+              className={view.indexMode === 'shared' ? 'active' : ''}
+              aria-pressed={view.indexMode === 'shared'}
+              onClick={() => choosePerspective('shared')}
+            >
+              {t('indexShared')}
+            </button>
+            <button
+              type="button"
+              id="btnResultPersonal"
+              className={view.indexMode === 'personal' && !otherPerspective ? 'active' : ''}
+              aria-pressed={view.indexMode === 'personal' && !otherPerspective}
+              onClick={() => choosePerspective('personal')}
+            >
+              {t('indexPersonal')}
+            </button>
+          </div>
+          <p className="score-whose" data-testid="score-whose">
+            {view.indexMode === 'personal'
+              ? t('resultPersonal', { name: (inspected ?? me)?.name ?? '' })
+              : t('resultShared', { count: frame.lens.selectedCount })}
+          </p>
           <div className="score-value" data-testid="score-balance">
             {resultText(node, effective)}
             <small>{t(effective?.credence ? 'credenceScoreCaption' : 'indexScoreCaption')}</small>
           </div>
+          {reading || effective?.incomplete ? (
+            <p className="score-reading" data-testid="score-reading">
+              {[reading ? t(reading) : null, effective?.incomplete ? t('incompleteWord') : null]
+                .filter(Boolean)
+                .join(' · ')}
+            </p>
+          ) : null}
           <p className="score-index-compare">
             {t(view.indexMode === 'personal' ? 'indexOtherShared' : 'indexOtherPersonal', {
               score: resultText(node, otherScore),
             })}
           </p>
-          <div className="score-line">
-            <span>{t(node.kind === 'option' ? 'optionReferenceLevel' : 'baseCredence')}</span>
-            <strong>
-              {effective?.base == null
-                ? EM_DASH
-                : node.kind === 'option'
-                  ? '0'
-                  : effective.net
-                    ? t('baseUnratedDerived')
-                    : `${effective.base.toFixed(1)} %`}
-            </strong>
-          </div>
-          {effective?.derived !== undefined ? (
-            <div className="score-line" data-testid="score-derived">
-              <span>{t('derivedFromReasons')}</span>
-              <strong>{credencePercentText(effective.derived)}</strong>
-            </div>
-          ) : null}
-          {effective?.net && effective.score !== null ? (
-            <p className="inspector-note" data-testid="net-note">
-              {effective.score > 50
-                ? t('netPassesUp', { share: Math.round(2 * effective.score - 100) })
-                : t('netPassesNothing')}
-            </p>
-          ) : null}
           {node.kind === 'option' ? <p className="score-index-compare">{t('optionIndexNotTruth')}</p> : null}
-          <div className="score-line">
-            <span>{t('childInfluence')}</span>
-            <strong>
-              {effective?.delta == null || effective.derived !== undefined
-                ? EM_DASH
-                : effective.credence
-                  ? `${signed(Number(effective.delta.toFixed(1)))} %`
-                  : `${balanceDeltaText(effective.delta)} p`}
-            </strong>
-          </div>
-          <div className="score-explain">
-            {t(view.indexMode === 'personal' ? 'personalIndexExplain' : 'heuristicExplain')}
-          </div>
+          {effective?.incomplete ? <p className="inline-warning">{t('personalIncomplete')}</p> : null}
           {SCORING_RULES[project.settings.scoring].capped &&
           beforeClamp !== null &&
           beforeClamp > 100 + 1e-9 ? (
@@ -1202,9 +1260,50 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
           beforeClamp < 0 - 1e-9 ? (
             <p className="inline-warning">{t('scoreCappedLow')}</p>
           ) : null}
+          <details className="score-help score-formation" data-testid="score-formation">
+            <summary>{t('resultBreakdown')}</summary>
+            <div className="score-line">
+              <span>{t(node.kind === 'option' ? 'optionReferenceLevel' : 'baseCredence')}</span>
+              <strong>
+                {effective?.base == null
+                  ? EM_DASH
+                  : node.kind === 'option'
+                    ? '0'
+                    : effective.net
+                      ? t('baseUnratedDerived')
+                      : `${effective.base.toFixed(1)} %`}
+              </strong>
+            </div>
+            {effective?.derived !== undefined ? (
+              <div className="score-line" data-testid="score-derived">
+                <span>{t('derivedFromReasons')}</span>
+                <strong>{credencePercentText(effective.derived)}</strong>
+              </div>
+            ) : null}
+            {effective?.net && effective.score !== null ? (
+              <p className="inspector-note" data-testid="net-note">
+                {effective.score > 50
+                  ? t('netPassesUp', { share: Math.round(2 * effective.score - 100) })
+                  : t('netPassesNothing')}
+              </p>
+            ) : null}
+            <div className="score-line">
+              <span>{t('childInfluence')}</span>
+              <strong>
+                {effective?.delta == null || effective.derived !== undefined
+                  ? EM_DASH
+                  : effective.credence
+                    ? `${signed(Number(effective.delta.toFixed(1)))} %`
+                    : `${balanceDeltaText(effective.delta)} p`}
+              </strong>
+            </div>
+            <div className="score-explain">
+              {t(view.indexMode === 'personal' ? 'personalIndexExplain' : 'heuristicExplain')}
+            </div>
+          </details>
           <details className="score-help">
             <summary>{t('indexQuestion')}</summary>
-            <p>{t(SCORING_TEXT[project.settings.scoring].explain)}</p>
+            <p>{t(scoringText(project.settings.scoring).explain)}</p>
             {effective && derivedResult(node, effective) ? (
               <p>
                 {effective.derived !== undefined
@@ -1277,7 +1376,6 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
               <p className="inline-warning">{t('linkScoreNotice')}</p>
             </details>
           ) : null}
-          {effective?.incomplete ? <p className="inline-warning">{t('personalIncomplete')}</p> : null}
           {!derivedResult(node, effective) ? <p className="inspector-note">{t('resultNotDerived')}</p> : null}
         </div>
       ) : (
@@ -1351,6 +1449,7 @@ export function Inspector({ frame }: { frame: Frame }) {
   const store = getStore();
   const { project, view } = state;
   const [advancedOpen, setAdvancedOpen] = useState(inspectorAdvancedOpen);
+  const [moreOpen, setMoreOpen] = useState(inspectorMoreOpen);
   const node = project.nodes.find((n) => n.id === state.selectedId);
   const body = (() => {
     if (state.selectedLibraryReason) return <LibraryInspector frame={frame} />;
@@ -1450,25 +1549,68 @@ export function Inspector({ frame }: { frame: Frame }) {
     const conceptUses = node.reasonConceptId
       ? project.nodes.filter((n) => n.reasonConceptId === node.reasonConceptId)
       : [];
+    // Punnitse is for rating: the ratings and the result come first, and what is needed now and then (the place in
+    // the tree, the type name, what is counted) waits in "Lisää valintoja" (owner 2026-11-19, S-15). Kartoita keeps
+    // them in the open, where the tree is being built.
+    const evaluating = view.workflow === 'evaluate';
+    const reuseButton =
+      node.kind === 'claim' && node.parentId && !node.sharedReasonId ? (
+        <>
+          <button
+            type="button"
+            className="btn primary repeat-from-node"
+            data-testid="reuse-open"
+            disabled={!fullyEditable && !node.reasonConceptId}
+            onClick={() => reuseFromTreeNode(node.id)}
+          >
+            {t('repeatLinkOtherTargets')}
+          </button>
+          {node.reasonConceptId ? <p className="inspector-note">{t('repeatPerTargetAssessments')}</p> : null}
+        </>
+      ) : null;
+    const typeLabel = !node.sharedReasonId ? (
+      <TypeLabelField key={`type:${node.id}:${node.typeLabel ?? ''}`} node={node} editable={editable} />
+    ) : null;
+    const placement = node.parentId ? (
+      <>
+        <Select
+          id="nodeRelation"
+          testId="node-relation"
+          label={t('relationInitial')}
+          value={node.relation}
+          choices={allowed}
+          editable={editable && node.kind !== 'option'}
+          onCommit={(value) => {
+            if (value === 'option' && (project.mode !== 'decision' || parent?.parentId !== null)) {
+              store.showMessage(t('optionOnlyRoot'));
+              return;
+            }
+            const relation = value as Stance;
+            const magnitude = Math.abs(node.impact || 3);
+            const influence = relation === 'neutral' ? 0 : relation === 'oppose' ? -magnitude : magnitude;
+            store.dispatch({
+              type: 'node.template',
+              id: node.id,
+              credence: node.confidence,
+              influence: relation === 'option' ? null : influence,
+            });
+          }}
+        />
+        <Select
+          id="nodeParent"
+          testId="node-parent"
+          label={t('parentNode')}
+          value={node.parentId}
+          choices={parentChoices}
+          editable={editable}
+          onCommit={(v) => store.dispatch({ type: 'node.move', id: node.id, parentId: v })}
+        />
+      </>
+    ) : null;
     return (
       <>
         <p className="inspector-note">{kicker}</p>
-        {node.kind === 'claim' && node.parentId && !node.sharedReasonId ? (
-          <>
-            <button
-              type="button"
-              className="btn primary repeat-from-node"
-              data-testid="reuse-open"
-              disabled={!fullyEditable && !node.reasonConceptId}
-              onClick={() => reuseFromTreeNode(node.id)}
-            >
-              {t('repeatLinkOtherTargets')}
-            </button>
-            {node.reasonConceptId ? (
-              <p className="inspector-note">{t('repeatPerTargetAssessments')}</p>
-            ) : null}
-          </>
-        ) : null}
+        {evaluating ? null : reuseButton}
         {node.reasonConceptId ? (
           <section className="shared-locked-inspector" data-testid="concept-box">
             <strong>{t('contextBadge')}</strong>
@@ -1541,10 +1683,8 @@ export function Inspector({ frame }: { frame: Frame }) {
           maxLength={5000}
           onCommit={(v) => store.dispatch({ type: 'node.edit', id: node.id, details: v })}
         />
-        {!node.sharedReasonId ? (
-          <TypeLabelField key={`type:${node.id}:${node.typeLabel ?? ''}`} node={node} editable={editable} />
-        ) : null}
-        <UnratedField node={node} editable={editable} />
+        {evaluating ? null : typeLabel}
+        {evaluating ? null : <UnratedField node={node} editable={editable} />}
         {node.relation === 'option' ? <OptionValues node={node} /> : null}
         {project.mode === 'decision' && node.parentId === null ? <DecisionValueMatrix /> : null}
         {project.mode === 'decision' && (node.parentId === null || node.relation === 'option') ? (
@@ -1557,61 +1697,27 @@ export function Inspector({ frame }: { frame: Frame }) {
             {t('votingButton')}
           </button>
         ) : null}
-        {node.parentId ? (
-          <>
-            <Select
-              id="nodeRelation"
-              testId="node-relation"
-              label={t('relationInitial')}
-              value={node.relation}
-              choices={allowed}
-              editable={editable && node.kind !== 'option'}
-              onCommit={(value) => {
-                if (value === 'option' && (project.mode !== 'decision' || parent?.parentId !== null)) {
-                  store.showMessage(t('optionOnlyRoot'));
-                  return;
-                }
-                const relation = value as Stance;
-                const magnitude = Math.abs(node.impact || 3);
-                const influence = relation === 'neutral' ? 0 : relation === 'oppose' ? -magnitude : magnitude;
-                store.dispatch({
-                  type: 'node.template',
-                  id: node.id,
-                  credence: node.confidence,
-                  influence: relation === 'option' ? null : influence,
-                });
-              }}
-            />
-            <Select
-              id="nodeParent"
-              testId="node-parent"
-              label={t('parentNode')}
-              value={node.parentId}
-              choices={parentChoices}
-              editable={editable}
-              onCommit={(v) => store.dispatch({ type: 'node.move', id: node.id, parentId: v })}
-            />
-            {node.kind === 'claim' ? (
-              <p
-                className={`relation-effective ${effective === null ? 'unassessed' : direction}`}
-                title={t('relationAssessorExplanation')}
-                data-testid="relation-effective"
-              >
-                {effective === null
-                  ? t('relationNoReview')
-                  : t('relationEffective', {
-                      direction: t(
-                        direction === 'support'
-                          ? 'supportWord'
-                          : direction === 'oppose'
-                            ? 'opposeWord'
-                            : 'neutralWord'
-                      ),
-                      impact: signed(effective),
-                    })}
-              </p>
-            ) : null}
-          </>
+        {evaluating ? null : placement}
+        {node.parentId && node.kind === 'claim' ? (
+          <p
+            className={`relation-effective ${effective === null ? 'unassessed' : direction}`}
+            title={t('relationAssessorExplanation')}
+            data-testid="relation-effective"
+          >
+            {effective === null
+              ? t('relationNoReview')
+              : t('relationEffective', {
+                  direction: t(
+                    direction === 'support'
+                      ? 'supportWord'
+                      : direction === 'oppose'
+                        ? 'opposeWord'
+                        : 'neutralWord'
+                  ),
+                  // One decimal, as the table shows the same value (S-15, decided 2026-11-19).
+                  impact: signed(Number(effective.toFixed(1))),
+                })}
+          </p>
         ) : null}
         {view.workflow !== 'evaluate' ? (
           <div className="assessment-discovery">
@@ -1632,7 +1738,32 @@ export function Inspector({ frame }: { frame: Frame }) {
             </button>
           </div>
         ) : (
-          <EvaluateBlock frame={frame} node={node} />
+          <>
+            <EvaluateBlock frame={frame} node={node} />
+            <details
+              id="inspectorMore"
+              className="inspector-advanced inspector-more"
+              data-testid="inspector-more"
+              open={moreOpen || countedOptionActive(frame, project, node, state.actorId)}
+              onToggle={(e) => {
+                inspectorMoreOpen = e.currentTarget.open;
+                setMoreOpen(e.currentTarget.open);
+              }}
+            >
+              <summary>{t('inspectorMore')}</summary>
+              <div className="inspector-advanced-content">
+                <CountedOptions frame={frame} node={node} editable={editable} />
+                {node.parentId || !node.sharedReasonId ? (
+                  <fieldset className="inspector-group">
+                    <legend>{t('structureLegend')}</legend>
+                    {typeLabel}
+                    {placement}
+                    {reuseButton}
+                  </fieldset>
+                ) : null}
+              </div>
+            </details>
+          </>
         )}
         <details
           className="inspector-advanced"
@@ -1663,7 +1794,7 @@ export function Inspector({ frame }: { frame: Frame }) {
                   onClick={() => {
                     store.selectLibraryReason(null);
                     store.select(use.id);
-                    store.setView({ workflow: 'evaluate' });
+                    enterEvaluate();
                   }}
                 >
                   <strong>{useParent?.title ?? '?'}</strong>
@@ -1769,7 +1900,7 @@ export function Inspector({ frame }: { frame: Frame }) {
       <div className="panel-heading">
         <div>
           <div className="eyebrow">{t('selectedNode')}</div>
-          <h2>{t('editArgument')}</h2>
+          <h2>{t(view.workflow === 'evaluate' ? 'inspectorEvaluateTitle' : 'editArgument')}</h2>
         </div>
       </div>
       <div id="inspector">{body}</div>

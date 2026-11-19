@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DRAFT_SCHEMA,
+  SCORING_VERSION,
   draftSummary,
   draftToProject,
   buildDraftPrompt,
@@ -161,6 +162,8 @@ export function AiDraftDialog() {
         ...(selfParticipant ? { selfParticipantId: selfParticipant } : {}),
         now: nowIso(),
         newId,
+        // A document made from an AI draft is a new document: the app's default method, not the prototype's.
+        scoring: SCORING_VERSION,
       });
       const choice = await store.prepareReplacement(t('importConfirm', { title: incoming.title }));
       if (!choice) return;

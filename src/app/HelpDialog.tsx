@@ -35,15 +35,15 @@ export function HelpDialog({ onShortcutsChanged }: { onShortcutsChanged: () => v
     setStatus(t('shortcutSaved'));
     onShortcutsChanged();
   };
-  const paragraphs = [
-    'helpMethod',
-    'helpTree',
-    'helpComments',
-    'assessmentHelpMain',
-    'helpIndex',
-    'helpImportance',
-    'helpScoring',
-    'helpLocal',
+  // Under three headings, so that the answer to "what does the figure mean" can be found without reading it all
+  // (owner 2026-11-19, S-15); the paragraphs are the prototype's.
+  const sections = [
+    { heading: 'helpHeadMethod', paragraphs: ['helpMethod', 'helpTree', 'helpComments'] },
+    {
+      heading: 'helpHeadRating',
+      paragraphs: ['assessmentHelpMain', 'helpIndex', 'helpImportance', 'helpScoring'],
+    },
+    { heading: 'helpHeadSaving', paragraphs: ['helpLocal'] },
   ] as const;
   const keyboard = [
     'shortcutNavigation',
@@ -63,8 +63,13 @@ export function HelpDialog({ onShortcutsChanged }: { onShortcutsChanged: () => v
       id="helpDialog"
       testId="help-dialog"
     >
-      {paragraphs.map((key) => (
-        <p key={key}>{t(key)}</p>
+      {sections.map((section) => (
+        <section key={section.heading} className="help-section">
+          <h3>{t(section.heading)}</h3>
+          {section.paragraphs.map((key) => (
+            <p key={key}>{t(key)}</p>
+          ))}
+        </section>
       ))}
       <section aria-label={t('shortcutTitle')} className="shortcuts-help">
         <h3>{t('shortcutTitle')}</h3>

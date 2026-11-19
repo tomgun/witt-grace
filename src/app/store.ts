@@ -7,6 +7,7 @@ import {
   parseProject,
   rootNode,
   SCORING_VERSION,
+  withOfferedScoring,
 } from '../domain/index.ts';
 import type { Command, ImportReport, Mode, Project, RejectReason } from '../domain/index.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
@@ -123,6 +124,9 @@ export interface AppState {
   depthOverrides: ReadonlyMap<string, boolean>;
   /** Branches the person closed by hand; they win over focus peeks and table reveals. */
   explicitlyClosedIds: ReadonlySet<string>;
+  /** Reasons muted for a what-if (owner 2026-11-18): out of the shown results with their branches; never saved,
+   * never in the document, cleared when another document opens. */
+  mutedIds: ReadonlySet<string>;
   /** A closed path revealed from the table until the next selection. */
   tableRevealId: string | null;
   /** The review lens: null = every human; an array = exactly these assessors (per document, per browser). */
@@ -201,7 +205,7 @@ export function createStore(
   const persistent = options.persistent ?? detected?.persistent ?? false;
   const width = options.windowWidth ?? (typeof window === 'undefined' ? 1440 : window.innerWidth);
   const loaded = loadProject(store);
-  const initialProject = loaded.ok ? loaded.project : blankProject('argument');
+  const initialProject = loaded.ok ? withOfferedScoring(loaded.project) : blankProject('argument');
   const savedLanguage = readPreference(store, LOCALE_KEY);
   let state: AppState = {
     project: initialProject,
@@ -218,6 +222,7 @@ export function createStore(
     selectedLibraryReason: null,
     depthOverrides: new Map(),
     explicitlyClosedIds: new Set(),
+    mutedIds: new Set(),
     tableRevealId: null,
     reviewIds: readReviewIds(store, initialProject.id),
     fitRequest: 0,
@@ -259,7 +264,10 @@ export function createStore(
     set({ saveStatus: result.ok ? (persistent ? 'savedBrowser' : 'noServer') : 'saveFailed' });
     if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
   };
-  const replace = (project: Project, { remember = true } = {}) => {
+  const replace = (incoming: Project, { remember = true } = {}) => {
+    // Every document enters here (open, import, example, library, join): an archived calculation method becomes
+    // the default one (owner 2026-11-18).
+    const project = withOfferedScoring(incoming);
     // Undo replaces whole documents, which a shared session cannot replay: no history while one is open.
     if (remember && !collab) {
       past.push(state.project);
@@ -299,6 +307,7 @@ export function createStore(
       selectedLibraryReason: null,
       depthOverrides: new Map(),
       explicitlyClosedIds: new Set(),
+      mutedIds: new Set(),
       tableRevealId: null,
       reviewIds: readReviewIds(store, validated.id),
       view: {
@@ -489,6 +498,12 @@ export function createStore(
     },
     setExplicitlyClosed(explicitlyClosedIds: ReadonlySet<string>) {
       set({ explicitlyClosedIds });
+    },
+    /** Mutes a reason for a what-if, or brings it back; `null` brings every muted reason back. */
+    toggleMuted(id: string | null) {
+      const mutedIds = new Set(id === null ? [] : state.mutedIds);
+      if (id !== null && !mutedIds.delete(id)) mutedIds.add(id);
+      set({ mutedIds });
     },
     setTableReveal(tableRevealId: string | null) {
       set({ tableRevealId });

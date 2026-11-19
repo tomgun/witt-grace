@@ -98,6 +98,10 @@ test('starterToProject builds the prototype document: argument mode, neutral pla
   const ours = starterToProject(validDraft(), clock('s'));
   const theirs = withOracle(() => proto.starter.toProject(validDraft(), proto.core), 's');
   assert.deepEqual(clone(ours), clone(theirs));
+  assert.equal(
+    starterToProject(validDraft(), { ...clock('s'), scoring: 'anchored-reasons-v1' }).settings.scoring,
+    'anchored-reasons-v1'
+  );
   assert.equal(ours.mode, 'argument');
   assert.equal(ours.nodes.length, 4);
   assert.ok(ours.nodes.every((n) => n.confidence === 50 && n.impact === 0 && n.createdBy === 's-0001'));

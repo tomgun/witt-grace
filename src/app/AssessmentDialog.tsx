@@ -20,7 +20,7 @@ import {
 import type { Node, PersonalInfluence } from '../domain/index.ts';
 import { translator } from '../lib/i18n/i18n.ts';
 import { newId } from '../lib/providers.ts';
-import { canEdit } from './actions.ts';
+import { canEdit, enterEvaluate } from './actions.ts';
 import { loadAssessmentPass, passStore, saveAssessmentPass } from './assessmentPass.ts';
 import type { AssessmentPass } from './assessmentPass.ts';
 import { credencePercentText, hasScoringReasons, signed } from './derive.ts';
@@ -80,7 +80,7 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
       store.showMessage(translator(current.messages)('assessmentNone'));
       return;
     }
-    if (current.view.workflow !== 'evaluate') store.setView({ workflow: 'evaluate' });
+    enterEvaluate();
     const dialog = ref.current;
     if (dialog && !dialog.open) dialog.showModal();
   }, [store, queued]);

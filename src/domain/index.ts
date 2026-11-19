@@ -54,6 +54,8 @@ export {
   respectExplicitCollapse,
   optionGroupPath,
   assessmentOrder,
+  mutable,
+  withoutBranches,
   optionValueProfile,
   potentialEvidenceOverlap,
 } from './views.ts';
