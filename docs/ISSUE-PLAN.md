@@ -45,7 +45,7 @@ Use these as small GitHub issues once the repository is on GitHub. Start with th
 - [ ] **WG-043** One dialog shell (× in the heading, secondary action left, primary right) for the fourteen dialogs; the contribution dialog has no ×, the vote dialog's *Sulje* sits left.
 - [ ] **WG-044** A short confirmation with *Kumoa* after deleting, copying and saving a file.
 - [ ] **WG-045** Numbers by locale: decimal comma in Finnish and the other comma languages, one minus sign (− not -) everywhere on screen; exports stay byte-equal to the prototype. Touches every formatter and most literal oracles: plan with `/feature` first.
-- [ ] **WG-046** A 12 px minimum text size (97 elements below it on the workspace today) and the vocabulary pass of WG-040 for de, es, fr, ru, zh-Hans, ja, ko.
+- [ ] **WG-046** Done 2026-11-19: a 12 px minimum text size outside the canvas cards (121 declarations raised; a census over the workspace, the menus and eight dialogs at both widths finds none left). Open: the vocabulary pass of WG-040 for de, es, fr, ru, zh-Hans, ja, ko.
 - [ ] **WG-047** Think-aloud test with three first-time users on the Painonhallinta example before and after WG-041…WG-046 (owner).
 
 ## Housekeeping (P2)
