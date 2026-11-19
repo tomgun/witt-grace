@@ -468,6 +468,18 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
               {t('tutorialStart')}
             </Item>
             <Item
+              id="btnTutorialPeople"
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial', { detail: 'people' }))}
+            >
+              {t('tutMenuPeople')}
+            </Item>
+            <Item
+              id="btnTutorialCollab"
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial', { detail: 'collab' }))}
+            >
+              {t('tutMenuCollab')}
+            </Item>
+            <Item
               id="btnKeyboardTop"
               onClick={() => store.openDialog('help')}
               kbd={shortcuts.help}

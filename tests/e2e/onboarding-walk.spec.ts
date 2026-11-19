@@ -9,7 +9,7 @@
  *              holds in the document, a highlight left behind after the panel closes
  */
 import { expect, test } from '@playwright/test';
-import { reviewSelected, startBlank } from './helpers.ts';
+import { addNamed, reviewSelected, startBlank } from './helpers.ts';
 
 const DEMO_CONFIRM =
   'Esimerkin avaaminen korvaa nykyisen aktiivisen työn. Haluatko tallentaa nykyisen työn kirjastoon ensin?';
@@ -57,7 +57,27 @@ test('an example and the practice open through the replacement dialog; the pract
   await expect(page.getByTestId('app')).toBeVisible();
   const panel = page.locator('#tutorialPanel');
   await expect(panel).toBeVisible();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 1/9');
+  // A wide window starts with a look around: the tree, the left panel and the inspector, each with the callout
+  // beside it and its arrow pointing at it; a phone has no side panels and starts from the first thing to do.
+  if (testInfo.project.name !== 'mobile') {
+    await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 1/12');
+    await expect(page.locator('#tutorialPhases li[aria-current="step"]')).toHaveText('Tutustu');
+    await expect(page.locator('#tutorialText')).toContainText('Ylimpänä on pääväite');
+    await expect(page.locator('.node.is-root')).toHaveClass(/tutorial-highlight/);
+    await expect(panel).not.toHaveAttribute('data-side', 'free');
+    await expect(page.locator('#tutorialNext')).toHaveText('Seuraava');
+    await page.locator('#tutorialNext').click();
+    await expect(page.locator('#tutorialText')).toContainText('Vasemmalla näet saman puun listana');
+    await expect(page.locator('.leftpanel')).toHaveClass(/tutorial-highlight/);
+    await expect(panel).toHaveAttribute('data-side', 'right');
+    await page.locator('#tutorialNext').click();
+    await expect(page.locator('#tutorialText')).toContainText('Oikealla ovat valitun kortin tiedot');
+    await expect(page.locator('.inspector-panel')).toHaveClass(/tutorial-highlight/);
+    await expect(panel).toHaveAttribute('data-side', 'left');
+    await page.locator('#tutorialNext').click();
+  }
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/12');
+  await expect(page.locator('#tutorialPhases li[aria-current="step"]')).toHaveText('Kartoita');
   await expect(page.locator('#tutorialHeading')).toHaveText('Harjoitellaan yhdessä');
   await expect(page.locator('#tutorialText')).toContainText('Valitse pääväite ja paina + Puoltava');
   await expect(page.locator('.node.is-root .node-title')).toContainText('Nelipäiväinen työviikko');
@@ -71,13 +91,13 @@ test('an example and the practice open through the replacement dialog; the pract
   await page.keyboard.press('+');
   const editor = page.locator('.node-inline-editor');
   await expect(editor).toBeFocused();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 2/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 5/12');
   await expect(page.locator('.node[data-relation="support"]')).toHaveClass(/tutorial-highlight/);
   // Step 2: the default title is not a wording; naming it is.
   await editor.fill('Työmatkat vähenevät');
   await editor.press('Enter');
   await expect(page.locator('.node-title', { hasText: 'Työmatkat vähenevät' })).toBeVisible();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 6/12');
   await expect(page.locator('.node.is-root .node-add[data-relation="oppose"]')).toHaveClass(
     /tutorial-highlight/
   );
@@ -90,32 +110,32 @@ test('an example and the practice open through the replacement dialog; the pract
     await page.keyboard.press('Enter');
   }
   await expect(editor).toBeFocused();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/12');
   await editor.press('Escape');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/12');
   // Skip the wording step; the next one points at Punnitse.
   await page.locator('#tutorialNext').click();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 5/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 8/12');
   await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/tutorial-highlight/);
   // Rating the supporting reason moves on to the opposing one; rating that one leads to reading the result.
   await page.locator('#tutorialTarget').click();
   await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/active/);
   await reviewSelected(page, '80', '4');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 6/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 9/12');
   await expect(page.locator('#tutorialText')).toContainText('Arvioi nyt myös vastaväite');
   await page.locator('#tutorialTarget').click();
   await reviewSelected(page, '60', '-2');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 10/12');
   await expect(page.locator('#tutorialText')).toContainText('Plussalla perustelut kallistuvat puolesta');
-  // Nothing in the document completes this step: it waits for the person, and its button reads Jatka.
+  // Nothing in the document completes this step: it waits for the person, and its button reads Seuraava.
   await page.locator('#tutorialTarget').click();
   await expect(page.locator('.node.is-root')).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByTestId('score-reading')).toHaveText('kallistuu puolesta');
   await expect(page.locator('#inspector .score-hero')).toHaveClass(/tutorial-highlight/);
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/9');
-  await expect(page.locator('#tutorialNext')).toHaveText('Jatka');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 10/12');
+  await expect(page.locator('#tutorialNext')).toHaveText('Seuraava');
   await page.locator('#tutorialNext').click();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 8/9');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 11/12');
   await expect(page.locator('#btnTableView')).toHaveClass(/tutorial-highlight/);
   await page.locator('#tutorialClose').click();
   await expect(panel).toBeHidden();
@@ -149,4 +169,130 @@ test('a new document starts by writing its main claim', async ({ page }, testInf
   await page.keyboard.type('Etätyö parantaa keskittymistä');
   await page.keyboard.press('Enter');
   await expect(page.locator('.node.is-root .node-title')).toHaveText('Etätyö parantaa keskittymistä');
+});
+
+/**
+ * must: the home screen asks once per visit whether to take the walkthrough: "Ei nyt" hides the question until the
+ *       next visit, "Älä kysy enää" for good in this browser, "Aloita opastus" starts it; it is a card on the page
+ *       and never stands in the way of the other buttons; the walkthroughs stay in the Apua menu (owner 2026-11-19,
+ *       UI_INVENTORY S-01, S-12, S-15)
+ * red-against: a question that comes back after "Älä kysy enää", a question that blocks "Luo uusi asiakirja", the
+ *              walkthroughs unreachable once the question is gone
+ */
+test('the home screen invites to the walkthrough; no, later and never are all respected', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
+  const invite = page.locator('#tutorialInvite');
+  await expect(invite).toContainText('Ensimmäistä kertaa täällä?');
+  await expect(invite).toContainText('Opastukset löytyvät aina Apua-valikosta.');
+  // The page works with the question open.
+  await page.locator('#btnHomeNew').click();
+  await expect(page.locator('#newWorkDialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await page.locator('#btnInviteLater').click();
+  await expect(invite).toHaveCount(0);
+  await page.reload();
+  await expect(invite).toBeVisible();
+  await page.locator('#btnInviteNever').click();
+  await expect(invite).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByTestId('home')).toBeVisible();
+  await expect(invite).toHaveCount(0);
+  expect(await page.evaluate(() => window.localStorage.getItem('witt-tutorial-invite-v1'))).toBe('never');
+
+  // Still there on request: from the home screen and from the Apua menu.
+  await page.locator('#btnHomeTutorial').click();
+  await expect(page.locator('#tutorialPanel')).toBeVisible();
+  await expect(page.locator('#tutorialPanel')).toHaveAttribute('data-tutorial', 'basics');
+  await page.locator('#tutorialClose').click();
+  await page.locator('#helpMenu > summary').click();
+  await expect(page.locator('#btnTutorial')).toHaveText('Opastettu harjoitus');
+  await expect(page.locator('#btnTutorialPeople')).toHaveText('Opastus: useampi arvioija');
+  await expect(page.locator('#btnTutorialCollab')).toHaveText('Opastus: yhteistyö verkossa');
+});
+
+test('"Aloita opastus" on the invite starts the walkthrough', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
+  await page.locator('#btnInviteStart').click();
+  await expect(page.getByTestId('app')).toBeVisible();
+  await expect(page.locator('#tutorialPanel')).toHaveAttribute('data-tutorial', 'basics');
+  await expect(page.locator('#tutorialHeading')).toHaveText('Harjoitellaan yhdessä');
+});
+
+/**
+ * must: the second walkthrough has a second local assessor added and rate the same reason, then shows where the
+ *       two views are compared; it advances when the document shows the step was done; it ends by offering the
+ *       third one (owner 2026-11-19, S-15)
+ * red-against: the step passed before an assessor exists, the first assessor's ratings counted as the second's
+ */
+test('the walkthrough for several assessors follows what is done', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the toolbar menus and the side panels are a desktop walk');
+  await startBlank(page, 'argument');
+  await page.locator('#helpMenu > summary').click();
+  await page.locator('#btnTutorialPeople').click();
+  await page.locator('#replaceForget').click();
+  const panel = page.locator('#tutorialPanel');
+  await expect(panel).toHaveAttribute('data-tutorial', 'people');
+  await expect(page.getByTestId('node-count')).toHaveText('3');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 1/5');
+  await expect(page.locator('#actorSelect')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(page.locator('#tutorialText')).toContainText('Lisää toinen arvioija');
+
+  // Adding the assessor (the select's last choice asks for a name) completes the step.
+  await page.locator('#actorSelect').selectOption({ label: '+ Lisää paikallinen arvioija…' });
+  await page.locator('#textValue').fill('Bea');
+  await page.locator('#textAccept').click();
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/5');
+  await expect(page.locator('#actorSelect option:checked')).toHaveText('Bea');
+
+  // The first assessor's ratings do not count as Bea's: only her own complete the step.
+  await page.locator('#tutorialTarget').click();
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/5');
+  await reviewSelected(page, '40', '1');
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 4/5');
+  await page.locator('#tutorialTarget').click();
+  await expect(page.getByTestId('score-whose')).toBeVisible();
+  await expect(page.locator('#inspector .score-hero')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(page.locator('#assessmentMenu')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(page.locator('#tutorialProgress')).toHaveText('Harjoitus valmis');
+  await expect(page.locator('#tutorialContinue')).toHaveText('Seuraavaksi: yhteistyö verkossa');
+});
+
+/**
+ * must: the third walkthrough uses the open document, points at the Tiedosto menu, waits until the collaboration
+ *       dialog has been opened and closed, and stays out of the way while a dialog is open (owner 2026-11-19, S-15)
+ * red-against: the open work replaced by a practice document, the callout drawn over a dialog it cannot be used with
+ */
+test('the walkthrough for working together online points at the menu and waits for the dialog', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'the toolbar menus are a desktop walk');
+  await startBlank(page, 'argument');
+  await addNamed(page, '#btnSupport', 'Oma perustelu');
+  await page.locator('#helpMenu > summary').click();
+  await page.locator('#btnTutorialCollab').click();
+  const panel = page.locator('#tutorialPanel');
+  await expect(panel).toHaveAttribute('data-tutorial', 'collab');
+  // The document is the person's own: nothing was replaced.
+  await expect(page.getByTestId('node-count')).toHaveText('2');
+  await expect(page.locator('#fileMenu')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 2/4');
+  await page.locator('#fileMenu > summary').click();
+  await page.locator('#btnCollab').click();
+  await expect(page.locator('#collabDialog, dialog[open]').first()).toBeVisible();
+  await expect(panel).toBeHidden();
+  await page.keyboard.press('Escape');
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/4');
+  await expect(page.locator('#tutorialText')).toContainText('Kutsuttu avaa linkin');
 });

@@ -1,4 +1,5 @@
 // The home screen (UI_INVENTORY S-01): every button, the current-work card and the warnings.
+import { dismissInviteForGood, dismissInviteForNow, useTutorialInvite } from './Tutorial.tsx';
 import { useEffect, useRef } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
 import { homeCard } from '../lib/workspaceMeta.ts';
@@ -23,6 +24,7 @@ export function Home() {
     (continueRef.current ?? newRef.current)?.focus();
   }, []);
   const continueWork = () => store.setHome(false);
+  const invite = useTutorialInvite();
   return (
     <section id="homeScreen" className="home-screen" aria-labelledby="homeTitle" data-testid="home">
       <nav className="home-nav" aria-label="WITT">
@@ -68,22 +70,57 @@ export function Home() {
               <span className="home-hero-line accent">{t('homeHeroSecond')}</span>
             </h1>
             <p className="home-lead">{t('homeLead')}</p>
+            {invite ? (
+              // Asked, not imposed (owner 2026-11-19, S-15): a card on the page, three plain answers, and where to
+              // find the walkthroughs later, so that saying no costs nothing.
+              <section className="home-invite" id="tutorialInvite" aria-labelledby="tutorialInviteTitle">
+                <h2 id="tutorialInviteTitle">{t('tutInviteTitle')}</h2>
+                <p>{t('tutInviteText')}</p>
+                <div className="home-invite-actions">
+                  <button
+                    type="button"
+                    className="btn primary"
+                    id="btnInviteStart"
+                    onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial'))}
+                  >
+                    {t('tutInviteStart')}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn quiet"
+                    id="btnInviteLater"
+                    onClick={dismissInviteForNow}
+                  >
+                    {t('tutInviteLater')}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn quiet"
+                    id="btnInviteNever"
+                    onClick={dismissInviteForGood}
+                  >
+                    {t('tutInviteNever')}
+                  </button>
+                </div>
+                <small>{t('tutInviteWhere')}</small>
+              </section>
+            ) : null}
             <div className="home-main-actions">
               {hasWork ? (
                 <button
                   type="button"
-                  className="btn quiet home-secondary"
+                  className="btn primary home-primary"
                   id="btnHomeContinue"
                   data-testid="home-continue"
                   ref={continueRef}
                   onClick={continueWork}
                 >
-                  {t('homeContinue')}
+                  {card.title ? t('homeContinueNamed', { title: card.title }) : t('homeContinue')}
                 </button>
               ) : null}
               <button
                 type="button"
-                className="btn primary home-primary"
+                className={hasWork || invite ? 'btn quiet home-secondary' : 'btn primary home-primary'}
                 id="btnHomeNew"
                 data-testid="home-new"
                 ref={newRef}
@@ -197,7 +234,6 @@ export function Home() {
             <span className="feature-number">03</span>
             <h2>{t('homeStageDecide')}</h2>
             <p>{t('homeDecide')}</p>
-            <span className="home-soon">{t('homeSoon')}</span>
           </article>
         </div>
         <div className="home-bottom">

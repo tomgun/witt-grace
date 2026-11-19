@@ -4,7 +4,11 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ## [Unreleased]
 
+### Added
+- Owner request 2026-11-19: **walkthroughs that guide by the hand.** The home screen asks whether to take the walkthrough (*Aloita opastus*, *Ei nyt*, *Älä kysy enää*); it is a card, not a dialog, and the walkthroughs stay in the Apua menu. Three of them: **the basics** (a look at the three parts of the screen, then from an empty tree through Kartoita and Punnitse to reading the result, twelve steps with the phase shown), **several assessors** (add a second local assessor, rate as them, compare the two views) and **working together online** (where a session starts, how others join, what is left when it ends). The instruction sits beside the control it talks about with an arrow pointing at it, the control is ringed, a step that asks for an action completes when it has been done, and each closing step offers the next walkthrough.
+
 ### Changed
+- Home screen (review 2026-11-19): with saved work the main button is *Jatka: <asiakirjan nimi>*; the third stage card no longer says that online collaboration comes later; the saved-work card speaks of files instead of JSON.
 - Owner request 2026-11-19: the 🌳 Lehto theme is redrawn. The twilight forest (dark green with black-green leaf clusters) is now a morning in a birch grove: a light theme with birch-paper cards, a watercolour crown over the main claim, a tree line and birch trunks behind the tree, branches in moss green and dashed rowan red, pollen floating in the light. Exports from it default to the light palette.
 - Owner decision 2026-11-19 after two UX reviews of the app (usability and accessibility; cognitive load and learnability), first part (`docs/spec/UI_INVENTORY.md` S-15):
   - **Punnitse shows the rating first.** With a reason selected the inspector shows the claim, its two sliders and the result without scrolling (before: about 700 px below a type-name field and five help boxes). *Lisää valintoja* holds what is needed now and then, in two groups: *Mukana laskennassa* (the note nobody rates, my own abstention, the mute) and *Paikka puussa* (type name, starting relation, parent, reuse). Help texts open from a ? beside their control.

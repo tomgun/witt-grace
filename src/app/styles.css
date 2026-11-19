@@ -9668,3 +9668,119 @@ input[type='range'].range-unset:focus-visible {
     min-height: 0;
   }
 }
+/* ---- Walkthroughs (owner 2026-11-19, S-15): the callout sits beside what it talks about ---- */
+.tutorial-panel[data-side]:not([data-side='free'])::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+.tutorial-panel[data-side='right']::before {
+  left: -8px;
+  top: calc(var(--arrow, 40px) - 7px);
+  border-right: 0;
+  border-top: 0;
+}
+.tutorial-panel[data-side='left']::before {
+  right: -8px;
+  top: calc(var(--arrow, 40px) - 7px);
+  border-left: 0;
+  border-bottom: 0;
+}
+.tutorial-panel[data-side='below']::before {
+  top: -8px;
+  left: calc(var(--arrow, 40px) - 7px);
+  border-right: 0;
+  border-bottom: 0;
+}
+.tutorial-panel[data-side='above']::before {
+  bottom: -8px;
+  left: calc(var(--arrow, 40px) - 7px);
+  border-left: 0;
+  border-top: 0;
+}
+.tutorial-panel {
+  border-color: var(--accent);
+  transition:
+    left 0.18s ease,
+    top 0.18s ease;
+}
+.tutorial-phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin: 8px 0 2px;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.tutorial-phases li {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.tutorial-phases li.done {
+  color: var(--subtle);
+  background: var(--bg);
+}
+.tutorial-phases li.done::before {
+  content: '✓ ';
+}
+.tutorial-phases li.current {
+  color: var(--surface);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.tutorial-highlight {
+  animation: tutorial-pulse 1.6s ease-in-out infinite;
+}
+@keyframes tutorial-pulse {
+  0%,
+  100% {
+    outline-offset: 4px;
+  }
+  50% {
+    outline-offset: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-highlight {
+    animation: none;
+  }
+  .tutorial-panel {
+    transition: none;
+  }
+}
+.home-invite {
+  max-width: 610px;
+  margin: 0 0 22px;
+  padding: 16px 18px;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  background: var(--accent-soft);
+}
+.home-invite h2 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+.home-invite p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.home-invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.home-invite small {
+  font-size: 12px;
+  color: var(--subtle);
+}
