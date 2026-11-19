@@ -3,7 +3,7 @@
 // `offset-path`), so `prefers-reduced-motion`, the calm class and the phone rules live in `themes-added.css` and
 // nothing here touches a timer or `matchMedia`. Every element is decoration: `aria-hidden`, no pointer events.
 import type { CSSProperties, ReactNode } from 'react';
-import { crownBlobs, type Creature, type CreatureKind } from './grove.ts';
+import { crownBlobs, foliageBlobs, type Creature, type CreatureKind, type FoliageCard } from './grove.ts';
 
 /** One wash of leaf green: opaque in the middle, gone at the rim, so overlapping clusters read as foliage. */
 const WASHES = [
@@ -34,6 +34,25 @@ export function GroveCrown({ x, y, spread }: { x: number; y: number; spread: num
         <circle key={i} className={`grove-leaves tone-${b.tone}`} cx={b.x} cy={b.y} r={b.r} />
       ))}
       <ellipse cx={x} cy={y - 40} rx={Math.max(560, spread) * 0.9} ry={240} fill="url(#groveGlow)" />
+    </g>
+  );
+}
+
+/** Foliage behind every card below the main claim, thinning with depth: the crown carries on down the branches
+ * instead of stopping at the root (owner 2026-11-19). It uses the crown's leaf washes and sits under the mist. */
+export function GroveFoliage({ cards }: { cards: readonly FoliageCard[] }) {
+  return (
+    <g className="grove-foliage" aria-hidden="true">
+      {foliageBlobs(cards).map((b, i) => (
+        <circle
+          key={i}
+          className={`grove-leaves tone-${b.tone}`}
+          cx={b.x}
+          cy={b.y}
+          r={b.r}
+          style={{ opacity: b.strength }}
+        />
+      ))}
     </g>
   );
 }

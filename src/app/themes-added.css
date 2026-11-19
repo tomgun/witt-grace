@@ -498,13 +498,19 @@ body[data-theme='grove'] :is(.topbar, .toolbar, .sidepanel, .app-footer) {
 .grove-crown .grove-leaves {
   opacity: 0.9;
 }
-.grove-crown .grove-leaves.tone-0 {
+.grove-foliage {
+  pointer-events: none;
+}
+.grove-crown .grove-leaves.tone-0,
+.grove-foliage .grove-leaves.tone-0 {
   fill: url(#groveLeaf0);
 }
-.grove-crown .grove-leaves.tone-1 {
+.grove-crown .grove-leaves.tone-1,
+.grove-foliage .grove-leaves.tone-1 {
   fill: url(#groveLeaf1);
 }
-.grove-crown .grove-leaves.tone-2 {
+.grove-crown .grove-leaves.tone-2,
+.grove-foliage .grove-leaves.tone-2 {
   fill: url(#groveLeaf2);
 }
 

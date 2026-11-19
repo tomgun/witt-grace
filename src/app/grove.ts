@@ -77,3 +77,57 @@ export function crownBlobs(cx: number, cy: number, spread: number): CrownBlob[] 
   }
   return blobs;
 }
+
+export interface FoliageCard {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /** 0 for the main claim, 1 for its reasons, and so on. */
+  depth: number;
+}
+export interface FoliageBlob extends CrownBlob {
+  /** 0…1: how strongly the cluster is drawn; it thins with depth. */
+  strength: number;
+}
+/** How large and how strong a card's foliage is at each depth: the crown is widest at the main claim and thins
+ * towards the twigs, so a tree drawn from the top down still reads as a crown and not as a hedge. */
+const FOLIAGE_BY_DEPTH = [
+  { scale: 1, strength: 0 },
+  { scale: 1, strength: 0.95 },
+  { scale: 0.8, strength: 0.75 },
+  { scale: 0.64, strength: 0.55 },
+  { scale: 0.52, strength: 0.4 },
+] as const;
+
+/** Leaf clusters behind every card below the main claim (owner 2026-11-19: the haze should not stop at the root):
+ * three per card, placed by the card's id so they stay put when the tree is redrawn, leaning above the card. */
+export function foliageBlobs(cards: readonly FoliageCard[]): FoliageBlob[] {
+  const blobs: FoliageBlob[] = [];
+  for (const card of cards) {
+    if (card.depth < 1) continue;
+    const level = FOLIAGE_BY_DEPTH[Math.min(card.depth, FOLIAGE_BY_DEPTH.length - 1)]!;
+    const h = hashId(card.id);
+    const cx = card.x + card.w / 2;
+    const cy = card.y + card.h / 2;
+    // Wider than the mist that is laid over it, so the green shows as a rim around the pale middle.
+    const r = Math.max(card.w * 0.85, card.h * 1.5) * level.scale;
+    const jitter = (shift: number) => (((h >>> shift) & 31) / 31 - 0.5) * r * 0.3;
+    const places = [
+      [-0.55, -0.3, 0.9],
+      [0.55, -0.34, 0.95],
+      [0, 0.12, 1.1],
+    ] as const;
+    places.forEach(([dx, dy, size], i) => {
+      blobs.push({
+        x: Math.round(cx + dx * r + jitter(i * 5)),
+        y: Math.round(cy + dy * r + jitter(i * 5 + 3)),
+        r: Math.round(r * size),
+        tone: (h + i) % 3,
+        strength: level.strength,
+      });
+    });
+  }
+  return blobs;
+}

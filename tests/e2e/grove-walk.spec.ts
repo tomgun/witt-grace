@@ -37,6 +37,14 @@ test('crown, shaped branches, a few animals and weather; input is never intercep
   expect(await page.locator('.grove-mist ellipse').count()).toBe(
     await page.locator('#nodesLayer .node').count()
   );
+  // The crown carries on down the branches: three leaf clusters behind every card below the main claim, the
+  // clusters of a first-level reason larger than those of a deeper one (owner 2026-11-19).
+  const cards = await page.locator('#nodesLayer .node').count();
+  await expect(page.locator('.grove-foliage circle')).toHaveCount((cards - 1) * 3);
+  const radii = await page
+    .locator('.grove-foliage circle')
+    .evaluateAll((els) => els.map((e) => Number(e.getAttribute('r'))));
+  expect(Math.max(...radii)).toBeGreaterThan(Math.min(...radii) * 1.2);
   await expect(page.getByTestId('grove-ambient')).toBeAttached();
   const animals = await page.locator('.grove-creature').count();
   expect(animals).toBeGreaterThan(0);

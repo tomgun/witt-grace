@@ -11,7 +11,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createStore } from '../../src/app/store.ts';
-import { crownBlobs, groveCalm, hashId, pickCreatures } from '../../src/app/grove.ts';
+import { crownBlobs, foliageBlobs, groveCalm, hashId, pickCreatures } from '../../src/app/grove.ts';
 import { memoryStore } from '../../src/lib/storage.ts';
 import { DARK_APPEARANCES } from '../../src/lib/export/diagram.ts';
 
@@ -80,4 +80,26 @@ test('the export dialog treats grove as a light skin since it was redrawn in day
   assert.ok(!DARK_APPEARANCES.includes('grove'));
   assert.ok(DARK_APPEARANCES.includes('terminal'));
   assert.ok(!DARK_APPEARANCES.includes('paper'));
+});
+
+test('foliage: none behind the main claim, three clusters per card below it, smaller and fainter with depth', () => {
+  const card = (id: string, depth: number) => ({ id, x: 0, y: 0, w: 240, h: 100, depth });
+  assert.deepEqual(foliageBlobs([card('root', 0)]), []);
+  const one = foliageBlobs([card('a', 1)]);
+  const three = foliageBlobs([card('a', 3)]);
+  const deep = foliageBlobs([card('a', 9)]);
+  assert.equal(one.length, 3);
+  assert.deepEqual(
+    one.map((b) => b.r),
+    [184, 194, 224]
+  );
+  assert.deepEqual(
+    three.map((b) => b.r),
+    [118, 124, 144]
+  );
+  assert.deepEqual([one[0]!.strength, three[0]!.strength, deep[0]!.strength], [0.95, 0.55, 0.4]);
+  // The two upper clusters stand above the card's middle (y 50), left and right of its centre (x 120).
+  assert.ok(one[0]!.x < 120 && one[1]!.x > 120);
+  assert.ok(one[0]!.y < 50 && one[1]!.y < 50);
+  assert.deepEqual(foliageBlobs([card('a', 1)]), one);
 });
