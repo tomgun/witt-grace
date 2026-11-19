@@ -142,6 +142,8 @@ export function setSubtreeCollapsed(nodeId: string, collapsed?: boolean): void {
     return;
   }
   store.setTableReveal(null);
+  // The pressed card stays where it is on screen while the rest is laid out again (Canvas.tsx).
+  window.dispatchEvent(new CustomEvent('witt-camera', { detail: { kind: 'hold', id: nodeId } }));
   const closed = new Set(state.explicitlyClosedIds);
   if (next) {
     closed.add(nodeId);

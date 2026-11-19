@@ -423,11 +423,6 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               </button>
             ) : null}
           </div>
-          {view.readingMode && view.orientation === 'four-way' ? (
-            <p className="focus-summary" id="readingFourWayNote">
-              {t('readingFourWayNote')}
-            </p>
-          ) : null}
           <div className="dock-checks">
             <label>
               <input

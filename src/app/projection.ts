@@ -32,7 +32,7 @@ import type {
 import { recalculateImportance, viewedAssessorId } from './derive.ts';
 import type { DeriveContext, Importance } from './derive.ts';
 import { cardHeight } from './view.ts';
-import { readingCard, readingLayout } from './reading.ts';
+import { readingCard, readingFourWay, readingLayout } from './reading.ts';
 import type { ViewState } from './view.ts';
 import type { AppState } from './store.ts';
 
@@ -175,7 +175,11 @@ export function buildFrame(
       }
   } else for (const [id, size] of Object.entries(project.layout.nodeSizes ?? {})) sizes.set(id, { ...size });
   const sizeOf = (id: string): Size => sizes.get(id) ?? { w: CARD_W, h: cardH };
-  if (reading) {
+  if (reading && view.orientation === 'four-way') {
+    const result = readingFourWay(project.nodes, projection.visibleIds, root.id, sizeOf);
+    positions = result.positions;
+    directions = result.groups;
+  } else if (reading) {
     positions = readingLayout(project.nodes, projection.visibleIds, root.id, view.orientation, sizeOf);
   } else if (compact) {
     const result = compactVisibleProjection(

@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { applyCommand, createBlankProject, parseProject } from '../../src/domain/index.ts';
 import type { Command, Project } from '../../src/domain/index.ts';
-import { readingCard, readingLayout, wrappedLines } from '../../src/app/reading.ts';
+import { readingCard, readingFourWay, readingLayout, wrappedLines } from '../../src/app/reading.ts';
 import { LAYER_PRESETS } from '../../src/app/view.ts';
 
 const ctx = { now: '2026-11-10T10:00:00.000Z', actorId: 'u1' };
@@ -84,4 +84,60 @@ test('the reading layout never overlaps cards and centres parents on their child
       assert.ok(Math.abs(a.y + heights.A! / 2 - centre) < 1e-6);
     }
   }
+});
+
+test('the reading view in four directions: every side used, mirrored round the main claim, nothing overlaps', () => {
+  let p = blank();
+  for (const [id, parent] of [
+    ['A', 'T'],
+    ['B', 'T'],
+    ['C', 'T'],
+    ['D', 'T'],
+    ['A1', 'A'],
+    ['A2', 'A'],
+    ['C1', 'C'],
+    ['C2', 'C'],
+    ['C3', 'C'],
+  ] as const)
+    p = run(p, { type: 'node.add', id, parentId: parent, relation: 'support' });
+  const heights: Record<string, number> = {
+    T: 80,
+    A: 200,
+    A1: 300,
+    A2: 260,
+    C: 90,
+    C1: 120,
+    C2: 240,
+    C3: 100,
+  };
+  const sizeOf = (id: string) => ({ w: 320, h: heights[id] ?? 60 });
+  const { positions, groups } = readingFourWay(p.nodes, new Set(p.nodes.map((n) => n.id)), 'T', sizeOf);
+  assert.deepEqual(positions.get('T'), { x: 0, y: 0 });
+  assert.deepEqual(
+    new Set(['A', 'B', 'C', 'D'].map((id) => groups.get(id))),
+    new Set(['right', 'left', 'down', 'up'])
+  );
+  // A sub-tree goes the way of its first-level reason, and stands on that side of the main claim.
+  for (const [id, direction] of groups) {
+    if (id === 'T') continue;
+    const at = positions.get(id)!;
+    const size = sizeOf(id);
+    if (direction === 'right') assert.ok(at.x >= 320, `${id} right`);
+    if (direction === 'left') assert.ok(at.x + size.w <= 0, `${id} left`);
+    if (direction === 'down') assert.ok(at.y >= 80, `${id} down`);
+    if (direction === 'up') assert.ok(at.y + size.h <= 0, `${id} up`);
+  }
+  assert.equal(groups.get('A1'), groups.get('A'));
+  assert.equal(groups.get('C3'), groups.get('C'));
+  const ids = [...positions.keys()];
+  for (const a of ids)
+    for (const b of ids) {
+      if (a >= b) continue;
+      const pa = { ...positions.get(a)!, ...sizeOf(a) };
+      const pb = { ...positions.get(b)!, ...sizeOf(b) };
+      assert.ok(
+        pa.x + pa.w <= pb.x || pb.x + pb.w <= pa.x || pa.y + pa.h <= pb.y || pb.y + pb.h <= pa.y,
+        `${a} overlaps ${b}`
+      );
+    }
 });

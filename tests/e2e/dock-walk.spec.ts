@@ -121,3 +121,56 @@ test('a tree is drawn from the top down; an example opens tidy', async ({ page }
   // The tidy tree puts a parent over the mean of its children.
   expect(Math.abs(root![0] - xs.reduce((sum, x) => sum + x, 0) / xs.length)).toBeLessThan(2);
 });
+
+/**
+ * must: in the reading view a branch that is closed or opened leaves the pressed card where it is on screen, and
+ *       "Neljä suuntaa" spreads the main claim's reasons to all four sides without two cards overlapping
+ *       (owner's report and request 2026-11-19, S-15)
+ * red-against: the camera left alone while the tidy layout moves every card (the main claim slides to the left
+ *              edge), the reading view drawing four directions as left to right
+ */
+test('the reading view: a closed branch keeps its card in place; four directions works', async ({ page }) => {
+  await page.locator('#btnViewSettings').click();
+  await openDockSection(page, 'reading');
+  await page.getByTestId('reading-mode').check();
+  await page.locator('#btnDockClose').click();
+  const root = page.locator('.node.is-root');
+  await expect(root).toHaveClass(/reading-card/);
+  const place = async () => {
+    const box = (await root.boundingBox())!;
+    return [Math.round(box.x), Math.round(box.y)];
+  };
+  const before = await place();
+  await root.locator('button', { hasText: '▾' }).first().click();
+  await expect(page.locator('#nodesLayer .node')).toHaveCount(1);
+  expect(await place()).toEqual(before);
+  await root.locator('button', { hasText: '▸' }).first().click();
+  await expect(page.locator('#nodesLayer .node')).toHaveCount(13);
+  expect(await place()).toEqual(before);
+
+  await page.locator('#btnViewSettings').click();
+  await page.locator('#orientationSelect').selectOption('four-way');
+  await page.locator('#btnDockClose').click();
+  await page.getByTestId('fit').click();
+  const sides = await page.evaluate(() => {
+    const rect = (el: Element) => el.getBoundingClientRect();
+    const main = rect(document.querySelector('.node.is-root')!);
+    const first = [...document.querySelectorAll('.node[aria-level="2"]')].map(rect);
+    const all = [...document.querySelectorAll('#nodesLayer .node')].map(rect);
+    let overlaps = 0;
+    for (let i = 0; i < all.length; i += 1)
+      for (let j = i + 1; j < all.length; j += 1) {
+        const a = all[i]!;
+        const b = all[j]!;
+        if (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top) overlaps += 1;
+      }
+    return {
+      right: first.some((r) => r.left >= main.right),
+      left: first.some((r) => r.right <= main.left),
+      down: first.some((r) => r.top >= main.bottom),
+      up: first.some((r) => r.bottom <= main.top),
+      overlaps,
+    };
+  });
+  expect(sides).toEqual({ right: true, left: true, down: true, up: true, overlaps: 0 });
+});

@@ -273,19 +273,44 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     viewport.addEventListener('wheel', onWheel, { passive: false });
     return () => viewport.removeEventListener('wheel', onWheel);
   }, [zoomAround]);
+  // The card to keep in place on screen across the next layout change, with where it stood (see below).
+  const hold = useRef<{ id: string; at: Position } | null>(null);
   // Camera keys live on the document in the prototype; App forwards them here through custom events.
   useEffect(() => {
     const onCamera = (e: Event) => {
       const detail = (
-        e as CustomEvent<{ kind: 'zoom' | 'fit' | 'pan'; factor?: number; dx?: number; dy?: number }>
+        e as CustomEvent<{
+          kind: 'zoom' | 'fit' | 'pan' | 'hold';
+          factor?: number;
+          dx?: number;
+          dy?: number;
+          id?: string;
+        }>
       ).detail;
-      if (detail.kind === 'fit') fitViewport(FIT_WHOLE);
+      if (detail.kind === 'hold') {
+        const held = nodes.find((n) => n.id === detail.id);
+        if (held) hold.current = { id: held.id, at: frame.visualPosition(held) };
+      } else if (detail.kind === 'fit') fitViewport(FIT_WHOLE);
       else if (detail.kind === 'zoom') zoomCenter(detail.factor ?? 1);
       else setCamera((c) => ({ ...c, x: c.x + (detail.dx ?? 0), y: c.y + (detail.dy ?? 0) }));
     };
     window.addEventListener('witt-camera', onCamera);
     return () => window.removeEventListener('witt-camera', onCamera);
-  }, [fitViewport, zoomCenter]);
+  }, [fitViewport, zoomCenter, nodes, frame]);
+  // A branch closed or opened where the layout is computed (reading view, compacted tree): every card gets a new
+  // place, and without this the card that was pressed slid away under the pointer, the main claim to the left edge
+  // (owner's report 2026-11-19). The camera moves by as much as the card did, so it stays where it was on screen.
+  useLayoutEffect(() => {
+    const held = hold.current;
+    if (!held) return;
+    hold.current = null;
+    const node = nodes.find((n) => n.id === held.id);
+    if (!node) return;
+    const now = frame.visualPosition(node);
+    const dx = held.at.x - now.x;
+    const dy = held.at.y - now.y;
+    if (dx || dy) setCamera((c) => ({ ...c, x: c.x + dx * c.scale, y: c.y + dy * c.scale }));
+  }, [frame, nodes]);
 
   // ---- pan ----------------------------------------------------------------------------------------------------
   const pan = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null);

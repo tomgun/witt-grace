@@ -1,7 +1,8 @@
 // The reading view (owner request 2026-11-10): every card shows its whole text, up to a line limit, and the visible
 // tree is laid out by each card's own height so nothing overlaps. Heights are estimated from the text, so layout and
 // rendering agree without measuring the DOM.
-import type { Node, Position, Size } from '../domain/index.ts';
+import { fourWayProjection } from '../domain/index.ts';
+import type { Direction, Node, Position, Size } from '../domain/index.ts';
 import type { Layers, Orientation } from './view.ts';
 
 const TITLE_LINE = 19;
@@ -103,4 +104,76 @@ export function readingLayout(
   };
   place(rootId, 0, 0);
   return positions;
+}
+
+/**
+ * The reading view in four directions (owner 2026-11-19: "voisi hyvin toimia"): the main claim's reasons are dealt to
+ * right, left, down and up exactly as the ordinary four-way layout deals them, and each direction is laid out as a
+ * tidy tree of its own by the cards' real sizes, mirrored for left and up. A sideways sector that would run into
+ * the one above or below is moved outward until it does not.
+ */
+export function readingFourWay(
+  nodes: Node[],
+  visibleIds: Set<string>,
+  rootId: string,
+  sizeOf: (id: string) => Size
+): { positions: Map<string, Position>; groups: Map<string, Direction> } {
+  const visible = nodes.filter((n) => visibleIds.has(n.id));
+  const groups = fourWayProjection(visible, rootId).groups;
+  const root = sizeOf(rootId);
+  const positions = new Map<string, Position>([[rootId, { x: 0, y: 0 }]]);
+  const sectors = new Map<Direction, string[]>();
+  for (const direction of ['right', 'left', 'down', 'up'] as const) {
+    const ids = visible.filter((n) => groups.get(n.id) === direction).map((n) => n.id);
+    if (!ids.length) continue;
+    sectors.set(direction, ids);
+    const sideways = direction === 'right' || direction === 'left';
+    const laid = readingLayout(
+      nodes,
+      new Set([rootId, ...ids]),
+      rootId,
+      sideways ? 'horizontal' : 'vertical',
+      sizeOf
+    );
+    const origin = laid.get(rootId) ?? { x: 0, y: 0 };
+    for (const id of ids) {
+      const at = laid.get(id);
+      if (!at) continue;
+      const size = sizeOf(id);
+      const x = at.x - origin.x;
+      const y = at.y - origin.y;
+      positions.set(id, {
+        x: direction === 'left' ? root.w - x - size.w : x,
+        y: direction === 'up' ? root.h - y - size.h : y,
+      });
+    }
+  }
+  const box = (ids: string[]) => {
+    const rects = ids.map((id) => ({ ...positions.get(id)!, ...sizeOf(id) }));
+    return {
+      left: Math.min(...rects.map((r) => r.x)),
+      right: Math.max(...rects.map((r) => r.x + r.w)),
+      top: Math.min(...rects.map((r) => r.y)),
+      bottom: Math.max(...rects.map((r) => r.y + r.h)),
+    };
+  };
+  for (const side of ['right', 'left'] as const) {
+    const ids = sectors.get(side);
+    if (!ids) continue;
+    for (const pole of ['down', 'up'] as const) {
+      const other = sectors.get(pole);
+      if (!other) continue;
+      const a = box(ids);
+      const b = box(other);
+      const overlapY = a.top < b.bottom + GAP_ACROSS && a.bottom + GAP_ACROSS > b.top;
+      const overlapX = a.left < b.right + GAP_ACROSS && a.right + GAP_ACROSS > b.left;
+      if (!overlapX || !overlapY) continue;
+      const push = side === 'right' ? b.right + GAP_ALONG - a.left : b.left - GAP_ALONG - a.right;
+      for (const id of ids) {
+        const at = positions.get(id)!;
+        positions.set(id, { x: at.x + push, y: at.y });
+      }
+    }
+  }
+  return { positions, groups };
 }
