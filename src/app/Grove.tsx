@@ -58,16 +58,17 @@ export function GroveFoliage({ cards }: { cards: readonly FoliageCard[] }) {
 }
 
 /** Morning mist behind every card (owner 2026-11-19: the haze behind the cards is what makes them sit in the
- * picture): a soft pale patch a little larger than the card, so the trunks and ferns fade where a card is read and
+ * picture): a soft, faintly green patch only a little larger than the card (smaller and thinner since the foliage came, so
+ * it no longer lies as a white cloud over the green), so the trunks and ferns fade where a card is read and
  * the cards of one branch are joined by the same light. World coordinates: it moves and scales with the tree. */
 export function GroveMist({ cards }: { cards: readonly { x: number; y: number; w: number; h: number }[] }) {
   return (
     <g className="grove-mist" aria-hidden="true">
       <defs>
         <radialGradient id="groveMist">
-          <stop offset="0" stopColor="#fbfcf2" stopOpacity="0.92" />
-          <stop offset="0.55" stopColor="#fbfcf2" stopOpacity="0.7" />
-          <stop offset="1" stopColor="#fbfcf2" stopOpacity="0" />
+          <stop offset="0" stopColor="#f1f7df" stopOpacity="0.6" />
+          <stop offset="0.6" stopColor="#f1f7df" stopOpacity="0.38" />
+          <stop offset="1" stopColor="#f1f7df" stopOpacity="0" />
         </radialGradient>
       </defs>
       {cards.map((c, i) => (
@@ -75,8 +76,8 @@ export function GroveMist({ cards }: { cards: readonly { x: number; y: number; w
           key={i}
           cx={c.x + c.w / 2}
           cy={c.y + c.h / 2}
-          rx={c.w * 0.95}
-          ry={c.h * 1.25}
+          rx={c.w * 0.68}
+          ry={c.h * 0.9}
           fill="url(#groveMist)"
         />
       ))}
