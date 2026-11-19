@@ -38,6 +38,33 @@ export function GroveCrown({ x, y, spread }: { x: number; y: number; spread: num
   );
 }
 
+/** Morning mist behind every card (owner 2026-11-19: the haze behind the cards is what makes them sit in the
+ * picture): a soft pale patch a little larger than the card, so the trunks and ferns fade where a card is read and
+ * the cards of one branch are joined by the same light. World coordinates: it moves and scales with the tree. */
+export function GroveMist({ cards }: { cards: readonly { x: number; y: number; w: number; h: number }[] }) {
+  return (
+    <g className="grove-mist" aria-hidden="true">
+      <defs>
+        <radialGradient id="groveMist">
+          <stop offset="0" stopColor="#fbfcf2" stopOpacity="0.92" />
+          <stop offset="0.55" stopColor="#fbfcf2" stopOpacity="0.7" />
+          <stop offset="1" stopColor="#fbfcf2" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {cards.map((c, i) => (
+        <ellipse
+          key={i}
+          cx={c.x + c.w / 2}
+          cy={c.y + c.h / 2}
+          rx={c.w * 0.95}
+          ry={c.h * 1.25}
+          fill="url(#groveMist)"
+        />
+      ))}
+    </g>
+  );
+}
+
 // A birch: a pale trunk with the dark lens-shaped marks of its bark and two thin branches. Drawn tall and cropped
 // from the top, so the foot of the trunk always stands on the tree line.
 const BIRCH_MARKS = [
@@ -59,21 +86,17 @@ const BIRCH_MARKS = [
 function Birch({ className }: { className: string }) {
   return (
     <svg className={`grove-birch ${className}`} viewBox="0 0 60 1100" preserveAspectRatio="xMidYMax slice">
-      <path
-        d="M30 420 C10 380 -6 372 -20 350 M30 660 C52 620 68 612 82 590"
-        stroke="#b9b6a4"
-        strokeWidth="4"
-        fill="none"
-      />
-      <rect x="6" y="0" width="48" height="1100" fill="#faf8ee" />
-      <rect x="6" y="0" width="9" height="1100" fill="#ffffff" opacity="0.8" />
-      <rect x="44" y="0" width="10" height="1100" fill="#e3e0d0" />
+      {/* A shadow side and an outline: a white trunk on a pale morning needs an edge to be a trunk at all. */}
+      <rect x="5" y="0" width="50" height="1100" fill="#c2c8b2" />
+      <rect x="6.5" y="0" width="47" height="1100" fill="#f6f4e8" />
+      <rect x="40" y="0" width="13.5" height="1100" fill="#dcdccb" />
+      <rect x="6.5" y="0" width="8" height="1100" fill="#fdfcf5" />
       {BIRCH_MARKS.map(([mx, my, w], i) => (
         <path
           key={i}
           d={`M${mx} ${my} q${w / 2} -5 ${w} 0 q${-w / 2} 5 ${-w} 0 Z`}
-          fill="#4b4a41"
-          opacity={0.75}
+          fill="#6b6a5c"
+          opacity={0.7}
         />
       ))}
     </svg>
@@ -81,38 +104,17 @@ function Birch({ className }: { className: string }) {
 }
 
 // The grove seen from inside it (owner 2026-11-19: small round trees at the foot made the falling leaves and the
-// animals on the branches hang in an empty sky). Tall trunks stand from the ground to a canopy that closes the top
-// of the view; the leaves fall from that canopy and the branches of the argument tree run among the trunks.
+// animals on the branches hang in an empty sky; the first redraw of this was a scatter of pale stripes, loose sprigs
+// and patches). One picture in four planes, each a single tone that darkens toward the viewer, as mist does it:
+// far trunks, nearer trunks, the ground, and the canopy closing the top. A birch stands at each side.
 // Fixed shapes: the same grove every time.
-const FAR_TRUNKS = [70, 190, 285, 400, 505, 610, 735, 840, 950, 1045, 1140];
-const MID_TRUNKS = [130, 345, 560, 690, 895, 1090];
-const CANOPY = [
-  [-20, 10, 150, 1],
-  [110, -30, 170, 0],
-  [240, 30, 140, 2],
-  [360, -20, 180, 1],
-  [500, 20, 150, 0],
-  [620, -40, 190, 2],
-  [760, 25, 150, 1],
-  [880, -25, 175, 0],
-  [1010, 30, 145, 2],
-  [1130, -20, 170, 1],
-  [1230, 20, 150, 0],
-  [60, 95, 110, 2],
-  [300, 110, 120, 0],
-  [560, 100, 105, 1],
-  [800, 115, 120, 2],
-  [1060, 100, 110, 0],
-] as const;
-const CANOPY_TONES = ['#5e9d4a', '#86bd62', '#b4d98a'];
-const SPRIGS = [150, 430, 700, 980];
+const FAR_TRUNKS = [40, 118, 212, 300, 392, 470, 548, 640, 722, 810, 905, 990, 1075, 1160];
+const MID_TRUNKS = [165, 436, 760, 1030];
 const FERNS = [60, 250, 470, 640, 860, 1040, 1160];
 const TUFTS = [20, 140, 330, 400, 560, 730, 790, 950, 1100];
 const LIGHTS = [
-  { x: 18, y: 34, s: 220, d: 0 },
-  { x: 46, y: 60, s: 170, d: -4 },
-  { x: 68, y: 30, s: 260, d: -7 },
-  { x: 84, y: 64, s: 150, d: -2 },
+  { x: 22, y: 26, s: 300, d: 0 },
+  { x: 62, y: 34, s: 340, d: -6 },
 ];
 
 /** The grove behind the tree: a canopy overhead, trunks from top to bottom, ferns and grass at the foot, light
@@ -121,29 +123,29 @@ export function GroveScenery() {
   return (
     <div className="grove-scenery" aria-hidden="true" data-testid="grove-scenery">
       <svg className="grove-trunks" viewBox="0 0 1200 800" preserveAspectRatio="none">
-        {FAR_TRUNKS.map((x, i) => (
-          <path
-            key={`f${i}`}
-            d={`M${x - 5 - (i % 3)} 800 L${x - 3} 0 L${x + 3 + (i % 2)} 0 L${x + 6 + (i % 3)} 800 Z`}
-            fill={i % 4 === 0 ? '#eef0e2' : '#c9d3b6'}
-            opacity="0.55"
-          />
-        ))}
-        {MID_TRUNKS.map((x, i) => (
-          <g key={`m${i}`} opacity="0.6">
+        <g fill="#c3d0ae">
+          {FAR_TRUNKS.map((x, i) => (
             <path
-              d={`M${x - 13 - (i % 2) * 3} 800 C${x - 9} 520 ${x - 7} 260 ${x - 6} 0 L${x + 6} 0 C${x + 8} 260 ${x + 10} 520 ${x + 15 + (i % 2) * 3} 800 Z`}
-              fill="#a9ae8f"
+              key={`f${i}`}
+              d={`M${x - 6 - (i % 3)} 800 L${x - 3} 0 L${x + 3 + (i % 2)} 0 L${x + 7 + (i % 3)} 800 Z`}
             />
-            <path
-              d={`M${x - 3} 300 C${x - 40} 250 ${x - 70} 240 ${x - 96} 200 M${x + 3} 190 C${x + 36} 150 ${x + 64} 140 ${x + 90} 104`}
-              stroke="#a9ae8f"
-              strokeWidth="5"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </g>
-        ))}
+          ))}
+        </g>
+        <g fill="#a7b592" stroke="#a7b592" strokeLinecap="round">
+          {MID_TRUNKS.map((x, i) => (
+            <g key={`m${i}`}>
+              <path
+                strokeWidth="0"
+                d={`M${x - 15 - (i % 2) * 3} 800 C${x - 10} 520 ${x - 8} 260 ${x - 7} 0 L${x + 7} 0 C${x + 9} 260 ${x + 11} 520 ${x + 17 + (i % 2) * 3} 800 Z`}
+              />
+              <path
+                fill="none"
+                strokeWidth="6"
+                d={`M${x - 4} 330 C${x - 44} 280 ${x - 78} 268 ${x - 104} 214 M${x + 4} 230 C${x + 40} 186 ${x + 70} 172 ${x + 96} 120`}
+              />
+            </g>
+          ))}
+        </g>
       </svg>
       {LIGHTS.map((l, i) => (
         <i
@@ -154,27 +156,17 @@ export function GroveScenery() {
               left: `${l.x}%`,
               top: `${l.y}%`,
               width: l.s,
-              height: l.s * 0.7,
+              height: l.s * 0.8,
               '--d': `${l.d}s`,
             } as CSSProperties
           }
         />
       ))}
       <svg className="grove-ground" viewBox="0 0 1200 150" preserveAspectRatio="xMidYMax slice">
-        <path
-          d="M0 70 C160 46 330 64 520 52 C740 38 930 66 1200 48 L1200 150 L0 150 Z"
-          fill="#cfe3b6"
-          opacity="0.9"
-        />
-        <path d="M0 104 C220 84 420 104 640 92 C860 80 1040 104 1200 90 L1200 150 L0 150 Z" fill="#b5d595" />
+        <path d="M0 62 C160 40 330 58 520 46 C740 32 930 60 1200 42 L1200 150 L0 150 Z" fill="#c6dcab" />
+        <path d="M0 100 C220 80 420 100 640 88 C860 76 1040 100 1200 86 L1200 150 L0 150 Z" fill="#aed08d" />
         {FERNS.map((fx, i) => (
-          <g
-            key={`fern${i}`}
-            stroke={i % 2 ? '#5f9a48' : '#6fa955'}
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-          >
+          <g key={`fern${i}`} stroke="#6fa955" strokeWidth="3" strokeLinecap="round" fill="none">
             <path d={`M${fx} 118 q-26 -34 -52 -30 M${fx} 118 q-12 -44 -30 -52 M${fx} 118 q2 -50 -2 -62`} />
             <path d={`M${fx} 118 q14 -44 32 -50 M${fx} 118 q28 -32 54 -26`} />
           </g>
@@ -183,7 +175,7 @@ export function GroveScenery() {
           <path
             key={`t${i}`}
             d={`M${tx} 134 q-7 -18 -12 -22 M${tx} 134 q-1 -22 -2 -28 M${tx} 134 q6 -18 12 -22`}
-            stroke={i % 3 === 0 ? '#4f8a3c' : '#79b05c'}
+            stroke="#7fb463"
             strokeWidth="2.5"
             strokeLinecap="round"
             fill="none"
@@ -191,44 +183,23 @@ export function GroveScenery() {
         ))}
       </svg>
       <Birch className="left" />
-      <Birch className="left far" />
       <Birch className="right" />
-      <Birch className="right far" />
-      <svg className="grove-canopy" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMin slice">
-        <defs>
-          {CANOPY_TONES.map((color, i) => (
-            <radialGradient key={i} id={`groveCanopy${i}`}>
-              <stop offset="0" stopColor={color} stopOpacity="0.95" />
-              <stop offset="0.7" stopColor={color} stopOpacity="0.8" />
-              <stop offset="1" stopColor={color} stopOpacity="0" />
-            </radialGradient>
-          ))}
-        </defs>
-        {CANOPY.map(([cx, cy, r, tone], i) => (
-          <ellipse key={i} cx={cx} cy={cy} rx={r} ry={r * 0.72} fill={`url(#groveCanopy${tone})`} />
-        ))}
-        {SPRIGS.map((sx, i) => (
-          <g key={`s${i}`} opacity="0.9">
-            <path
-              d={`M${sx} ${96 + (i % 2) * 14} q${14 - i * 6} 44 ${-10 + i * 5} ${86 + (i % 2) * 18}`}
-              stroke="#7a8f58"
-              strokeWidth="3"
-              strokeLinecap="round"
-              fill="none"
-            />
-            {[0, 1, 2, 3].map((k) => (
-              <ellipse
-                key={k}
-                cx={sx + (k % 2 ? 12 : -10) + (i % 2) * 4}
-                cy={118 + k * 20 + (i % 2) * 14}
-                rx="11"
-                ry="5.5"
-                transform={`rotate(${k % 2 ? 28 : -32} ${sx + (k % 2 ? 12 : -10) + (i % 2) * 4} ${118 + k * 20 + (i % 2) * 14})`}
-                fill={k % 2 ? '#86bd62' : '#6aa953'}
-              />
-            ))}
-          </g>
-        ))}
+      {/* The canopy: three unbroken bands of foliage with scalloped lower edges, the lightest hanging lowest. */}
+      <svg className="grove-canopy" viewBox="0 0 1200 260" preserveAspectRatio="none">
+        <path
+          fill="#b9dc92"
+          opacity="0.8"
+          d="M0 0 H1200 V150 C1150 196 1100 150 1050 176 C1000 214 950 160 900 184 C850 222 790 168 740 190 C690 226 640 170 590 186 C540 220 480 166 430 188 C380 224 330 172 280 190 C230 222 170 166 120 186 C80 210 40 176 0 190 Z"
+        />
+        <path
+          fill="#93c56f"
+          opacity="0.9"
+          d="M0 0 H1200 V104 C1140 150 1090 108 1030 132 C970 168 920 118 860 136 C800 170 750 122 690 140 C630 172 580 120 520 138 C460 170 410 124 350 140 C290 172 240 118 180 136 C120 168 60 126 0 142 Z"
+        />
+        <path
+          fill="#6fa955"
+          d="M0 0 H1200 V58 C1130 100 1080 62 1010 84 C940 116 890 70 820 88 C750 118 700 72 630 90 C560 120 510 70 440 88 C370 118 320 74 250 90 C180 120 120 72 60 90 C40 98 20 86 0 92 Z"
+        />
       </svg>
     </div>
   );

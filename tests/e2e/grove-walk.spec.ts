@@ -32,7 +32,11 @@ test('crown, shaped branches, a few animals and weather; input is never intercep
   expect(await page.evaluate(() => getComputedStyle(document.body).colorScheme)).toBe('light');
   await expect(page.locator('.grove-canopy')).toBeVisible();
   await expect(page.locator('.grove-ground')).toBeVisible();
-  if ((page.viewportSize()?.width ?? 0) > 600) await expect(page.locator('.grove-birch')).toHaveCount(4);
+  if ((page.viewportSize()?.width ?? 0) > 600) await expect(page.locator('.grove-birch')).toHaveCount(2);
+  // Every card stands on its patch of mist, drawn under the branches and the cards.
+  expect(await page.locator('.grove-mist ellipse').count()).toBe(
+    await page.locator('#nodesLayer .node').count()
+  );
   await expect(page.getByTestId('grove-ambient')).toBeAttached();
   const animals = await page.locator('.grove-creature').count();
   expect(animals).toBeGreaterThan(0);

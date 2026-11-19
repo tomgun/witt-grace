@@ -537,36 +537,26 @@ body[data-theme='grove'] :is(.topbar, .toolbar, .sidepanel, .app-footer) {
   right: 0;
   top: 0;
   width: 100%;
-  height: min(34%, 260px);
+  height: min(30%, 230px);
 }
 .grove-birch {
   position: absolute;
   top: 0;
   bottom: 0;
   height: 100%;
-  width: 74px;
-  opacity: 0.8;
+  width: 62px;
 }
 .grove-birch.left {
-  left: 2.5%;
-}
-.grove-birch.left.far {
-  left: 9%;
-  width: 46px;
-  opacity: 0.5;
+  left: 3%;
 }
 .grove-birch.right {
-  right: 3.5%;
-}
-.grove-birch.right.far {
-  right: 11%;
-  width: 40px;
-  opacity: 0.45;
+  right: 4.5%;
+  width: 52px;
 }
 .grove-light {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 249, 214, 0.75), transparent);
+  background: radial-gradient(closest-side, rgba(255, 250, 220, 0.5), transparent);
   animation: grove-dapple 11s ease-in-out var(--d) infinite alternate;
 }
 

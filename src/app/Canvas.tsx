@@ -50,7 +50,7 @@ import {
   viewedAssessorId,
 } from './derive.ts';
 import { asciiEdgeParts } from './AsciiEdge.tsx';
-import { GroveAmbient, GroveCreatures, GroveCrown, GroveScenery } from './Grove.tsx';
+import { GroveAmbient, GroveCreatures, GroveCrown, GroveMist, GroveScenery } from './Grove.tsx';
 import { groveCalm, pickCreatures } from './grove.ts';
 import { dropRestoredGhosts } from './fade.ts';
 import type { Frame } from './projection.ts';
@@ -1296,6 +1296,9 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
                 <path d="M0 0 L7 3 L0 6 Z" className="secondary-arrow-oppose" />
               </marker>
             </defs>
+            {grove && !groveCalm(nodes.length) ? (
+              <GroveMist cards={nodes.map((n) => ({ ...visualPosition(n), ...sizeOf(n.id) }))} />
+            ) : null}
             {rootAt && rootCard ? (
               <GroveCrown
                 x={view.orientation === 'vertical' ? (minX + maxX) / 2 : rootAt.x + sizeOf(rootCard.id).w / 2}
