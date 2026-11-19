@@ -106,3 +106,28 @@ test('the view settings dock has no sideways scroll', async ({ page }) => {
     expect(overflow, language).toEqual({ scroll: 0, beyond: [] });
   }
 });
+
+/**
+ * must: tree only is also a button beside the panel toggles of the top bar, a full-screen mark that names its key;
+ *       the saving state is in the footer and not beside the document's title (owner 2026-11-19, S-15)
+ * red-against: tree only reachable from a menu and a key alone, the saving state back in the title row
+ */
+test('tree only has a button by the panel toggles; the saving state is in the footer', async ({
+  page,
+}, testInfo) => {
+  await startBlank(page, 'argument');
+  await expect(page.locator('#saveStatusFooter')).toHaveText('Tallennettu selaimeen');
+  await expect(page.locator('#saveStatusTop')).toHaveCount(0);
+  await expect(page.locator('.topbar')).not.toContainText('Tallennettu selaimeen');
+  test.skip(testInfo.project.name === 'mobile', 'the tree-only bar is a desktop walk');
+  const button = page.locator('#btnFocusTop');
+  await expect(button).toHaveAttribute('title', 'Vain puu (F)');
+  expect(
+    await button.evaluate((el) => el.parentElement?.contains(document.getElementById('btnZoneLeft')))
+  ).toBe(true);
+  await button.click();
+  await expect(page.locator('.canvas-quick-controls')).toBeVisible();
+  await expect(page.locator('.inspector-panel')).toBeHidden();
+  await page.locator('#btnFocusQuick').click();
+  await expect(page.locator('.inspector-panel')).toBeVisible();
+});

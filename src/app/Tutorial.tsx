@@ -265,9 +265,7 @@ function besideWhat(target: HTMLElement): { left: number; top: number; right: nu
   const dock = target.closest('#viewDock');
   if (dock) return dock.getBoundingClientRect();
   const r = target.getBoundingClientRect();
-  // The type chip's list opens from its left edge; the toolbar's menus open from their right edge.
-  if (target.matches('.doc-type-menu'))
-    return { left: r.left, right: r.left + 296, top: r.bottom, bottom: r.bottom + 240 };
+
   if (target.matches('details.toolbar-popover'))
     return { left: r.right - 264, right: r.right, top: r.bottom, bottom: r.bottom + 420 };
   return r;
@@ -379,7 +377,7 @@ function showTarget(): void {
   if (current.id === 'decision') {
     const { step } = current;
     if (step === DECISION.intro || step === DECISION.switchType)
-      document.querySelector<HTMLElement>('#docTypeMenu > summary')?.click();
+      document.getElementById('modeDecision')?.focus();
     else if (step === DECISION.addOptions) store.select(current.rootId);
     else if (step === DECISION.addReason) {
       const option = store.get().project.nodes.find((n) => n.kind === 'option');

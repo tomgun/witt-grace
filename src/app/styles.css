@@ -10032,3 +10032,29 @@ body.witt-focus .canvas-quick-controls {
 .example-type.decision {
   color: var(--option);
 }
+/* The type switch beside the title, the saving state in the footer, tree only among the panel toggles
+   (owner 2026-11-19, S-15). */
+.doc-type-switch {
+  flex: none;
+  padding: 2px;
+  border-radius: 9px;
+}
+.doc-type-switch button {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.footer-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  justify-content: center;
+}
+.footer-status b {
+  font-weight: 700;
+}
+.footer-status b.error {
+  color: var(--red);
+}
+.zone-focus {
+  margin-left: 4px;
+}

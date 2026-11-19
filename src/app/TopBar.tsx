@@ -4,6 +4,7 @@ import { APPEARANCES, getStore, useAppState, useTranslator } from './store.ts';
 import type { Appearance, Zone } from './store.ts';
 import { LANGUAGES, LANGUAGE_NAMES } from '../lib/i18n/i18n.ts';
 import type { Language, MessageKey } from '../lib/i18n/i18n.ts';
+import { toggleFocus } from './actions.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
 import { CollabChip } from './CollabDialog.tsx';
@@ -91,7 +92,6 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   const store = getStore();
   const inSession = state.collab !== null && state.collab.phase !== 'ended';
   useMenuDismissal();
-  const typeName = t(state.project.mode === 'decision' ? 'modeDecision' : 'modeArgument');
   const setMode = (mode: Mode) => {
     if (mode === state.project.mode) return;
     if (
@@ -157,59 +157,37 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
           }}
         />
-        {/* The document's type, where it is seen and where it is changed (owner 2026-11-19, S-15): the chip beside
-            the title opens the two choices with a line on what each is for. */}
-        <details id="docTypeMenu" name={MENU_GROUP} className="toolbar-popover doc-type-menu">
-          <summary
-            id="docTypeChip"
-            title={t('docTypeLabel')}
-            aria-label={`${t('docTypeLabel')}: ${typeName}`}
-          >
-            {typeName}
-          </summary>
-          <div
-            className="toolbar-popup"
-            onClick={(e) => {
-              if ((e.target as HTMLElement).closest('button'))
-                (e.currentTarget.closest('details') as HTMLDetailsElement).open = false;
-            }}
-          >
-            <span className="menu-label">{t('docTypeLabel')}</span>
-            <div aria-label={t('docTypeLabel')} className="mode-switch" role="group">
-              <button
-                type="button"
-                id="modeArgument"
-                data-testid="mode-argument"
-                className={state.project.mode === 'argument' ? 'active' : ''}
-                aria-pressed={state.project.mode === 'argument'}
-                onClick={() => setMode('argument')}
-              >
-                {t('modeArgument')}
-              </button>
-              <button
-                type="button"
-                id="modeDecision"
-                data-testid="mode-decision"
-                className={state.project.mode === 'decision' ? 'active' : ''}
-                aria-pressed={state.project.mode === 'decision'}
-                onClick={() => setMode('decision')}
-              >
-                {t('modeDecision')}
-              </button>
-            </div>
-            <p className="inspector-note doc-type-help">{t('docTypeHelp')}</p>
-          </div>
-        </details>
-        <CollabChip />
-        {/* The saving state where it can be seen without opening a menu (S-15, 2026-11-19): quiet when all is
-            well, red when a save failed. The Tiedosto menu's line is the one screen readers hear. */}
-        <span
-          id="saveStatusTop"
-          className={`save-status-top${state.saveStatus === 'saveFailed' ? ' error' : ''}`}
-          aria-hidden="true"
+        {/* The document's type beside its name: both choices in sight, the current one lit, no list to open
+            (owner 2026-11-19, S-15: first a toolbar switch, then a menu entry, then a chip with a list). */}
+        <div
+          id="docTypeMenu"
+          className="mode-switch doc-type-switch"
+          role="group"
+          aria-label={t('docTypeLabel')}
+          title={t('docTypeHelp')}
         >
-          {t(state.saveStatus)}
-        </span>
+          <button
+            type="button"
+            id="modeArgument"
+            data-testid="mode-argument"
+            className={state.project.mode === 'argument' ? 'active' : ''}
+            aria-pressed={state.project.mode === 'argument'}
+            onClick={() => setMode('argument')}
+          >
+            {t('modeArgument')}
+          </button>
+          <button
+            type="button"
+            id="modeDecision"
+            data-testid="mode-decision"
+            className={state.project.mode === 'decision' ? 'active' : ''}
+            aria-pressed={state.project.mode === 'decision'}
+            onClick={() => setMode('decision')}
+          >
+            {t('modeDecision')}
+          </button>
+        </div>
+        <CollabChip />
       </div>
       <div className="header-right">
         <div
@@ -257,6 +235,17 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
               {glyph}
             </button>
           ))}
+          {/* Tree only, beside the panel toggles it belongs with (owner 2026-11-19, S-15): everything off at once. */}
+          <button
+            type="button"
+            id="btnFocusTop"
+            className="zone-toggle zone-focus"
+            title={`${t('focusTree')} (${shortcuts.focus})`}
+            aria-label={`${t('focusTree')} (${shortcuts.focus})`}
+            onClick={() => toggleFocus(true)}
+          >
+            ⛶
+          </button>
         </div>
         <div className="zone-controls help-controls" role="group">
           <button

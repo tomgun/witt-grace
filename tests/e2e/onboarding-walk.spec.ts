@@ -402,7 +402,7 @@ test('the walkthrough for working together online points at the menu and waits f
 });
 
 /**
- * must: the walkthrough for a decision starts from an argument document, has its type changed from the chip beside
+ * must: the walkthrough for a decision starts from an argument document, has its type changed with the switch beside
  *       the title, two options added, a reason put under one and rated, and then shows where the options are
  *       compared and where the vote is; each step is passed only by what it asks for (owner 2026-11-19, S-15)
  * red-against: the type step passed without the type changing, one option counted as a choice, the comparison
@@ -421,14 +421,13 @@ test('the walkthrough for a decision follows what is done', async ({ page }, tes
   const progress = page.locator('#tutorialProgress');
   await expect(panel).toHaveAttribute('data-tutorial', 'decision');
   await expect(progress).toHaveText('Vaihe 1/7');
-  await expect(page.locator('#docTypeChip')).toHaveText('Argumentointi');
+  await expect(page.locator('#modeArgument')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#docTypeMenu')).toHaveClass(/tutorial-highlight/);
   await page.locator('#tutorialNext').click();
   await expect(progress).toHaveText('Vaihe 2/7');
 
-  await page.locator('#docTypeChip').click();
   await page.locator('#modeDecision').click();
-  await expect(page.locator('#docTypeChip')).toHaveText('Päätös');
+  await expect(page.locator('#modeDecision')).toHaveAttribute('aria-pressed', 'true');
   await expect(progress).toHaveText('Vaihe 3/7');
   await expect(page.locator('#btnOption')).toHaveClass(/tutorial-highlight/);
   await addNamed(page, '#btnOption', 'Neljä päivää');

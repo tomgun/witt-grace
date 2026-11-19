@@ -44,8 +44,7 @@ test('one menu at a time; Escape and a press outside close it', async ({ page })
 });
 
 /**
- * must: in the menu of the type chip beside the title both document types, Argumentointi and Päätös, lie inside
- *       the frame of their switch,
+ * must: both document types, Argumentointi and Päätös, lie inside the frame of the switch beside the title,
  *       in Finnish and in a language with longer words (owner's report 2026-11-19)
  * red-against: the switch laid in the first column of the menu's grid, where the second choice ran out of its frame
  */
@@ -61,8 +60,7 @@ test('the document type switch holds both choices', async ({ page }) => {
     await page.locator('#btnNewWorkArgument').click();
     await expect(page.getByTestId('app')).toBeVisible();
     await page.keyboard.press('Escape');
-    await page.locator('#docTypeChip').click();
-    const inside = await page.locator('#docTypeMenu .mode-switch').evaluate((frame) => {
+    const inside = await page.locator('#docTypeMenu').evaluate((frame) => {
       const outer = frame.getBoundingClientRect();
       return [...frame.querySelectorAll('button')].map((button) => {
         const r = button.getBoundingClientRect();

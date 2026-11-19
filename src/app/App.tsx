@@ -358,7 +358,18 @@ export function App() {
         <span>
           WITT <b>{APP_VERSION}</b>
         </span>
-        <span>{t('footerFriendly')}</span>
+        {/* The saving state lives here, out of the way but always in sight (owner 2026-11-19, S-15): quiet when all is
+            well, red when a save failed. The Tiedosto menu's line is the one screen readers hear. */}
+        <span className="footer-status">
+          <b
+            id="saveStatusFooter"
+            className={state.saveStatus === 'saveFailed' ? 'error' : ''}
+            aria-hidden="true"
+          >
+            {t(state.saveStatus)}
+          </b>
+          <span>{t('footerFriendly').split(' · ').slice(1).join(' · ')}</span>
+        </span>
         <button type="button" id="btnHelp" onClick={() => store.openDialog('help')}>
           {t('help')}
         </button>

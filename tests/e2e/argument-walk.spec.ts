@@ -104,12 +104,12 @@ test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports
 });
 
 test('switching to decision mode offers options; Yövärit (bitberg) theme applies', async ({ page }) => {
-  // The document's type is shown beside the title, and that chip is where it is changed.
-  await expect(page.locator('#docTypeChip')).toHaveText('Argumentointi');
-  await page.locator('#docTypeChip').click();
-  await expect(page.locator('#docTypeMenu')).toContainText('Päätös vertaa vaihtoehtoja');
+  // The document's type is a switch beside the title: both choices in sight, the current one lit.
+  await expect(page.locator('#modeArgument')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#docTypeMenu')).toHaveAttribute('title', /Päätös vertaa vaihtoehtoja/);
   await page.locator('#modeDecision').click();
-  await expect(page.locator('#docTypeChip')).toHaveText('Päätös');
+  await expect(page.locator('#modeDecision')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#modeArgument')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('#modeDecision')).toHaveClass(/active/);
   await page.locator('#editMenu summary').click();
   await page.locator('#btnEditMenuOption').click();

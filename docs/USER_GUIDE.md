@@ -39,7 +39,7 @@ The card *Jatka keskeneräistä asiakirjaa* shows the current work's title and t
 **Walkthroughs.** When the app opens, the home screen asks whether to take the walkthrough: *Aloita opastus* (start), *Ei nyt* (not now; asked again next time) or *Älä kysy enää* (don't ask again). The walkthroughs are always in the Help menu, and there are four:
 
 - *Opastettu harjoitus* (the basics, 16 steps): you start by doing, adding and wording a supporting and an opposing reason with the card's own buttons (*Kartoita*); then three steps show the left panel, the right panel and the panel toggles of the top bar (*Tutustu*; passed on a narrow screen); you switch to *Punnitse*, rate both reasons and hear what the assessment round is; you read the main claim's result (*Tulos*); you open the table, return to the tree and arrange a deliberately untidy tree (*Näkymät*). Every panel is shown when a walkthrough starts.
-- *Opastus: päätös vaihtoehtojen välillä* (deciding between options): change the document's type from the chip beside the title, add two options, give one a reason and rate it, and see where the options are compared and voted on.
+- *Opastus: päätös vaihtoehtojen välillä* (deciding between options): change the document's type with the switch beside the title, add two options, give one a reason and rate it, and see where the options are compared and voted on.
 - *Opastus: useampi arvioija* (several assessors): add a second local assessor, rate the same reason as them and see where the views are compared.
 - *Opastus: yhteistyö verkossa* (working together online): where a session starts, how others join and what is left when it ends. This one uses your open document and replaces nothing.
 
@@ -47,7 +47,7 @@ The instruction sits beside the part of the interface it talks about with an arr
 
 ## 3. Mapping
 
-The workspace has the top bar (document title, ↶ undo and ↷ redo, four panel toggles, ? help and shortcuts, ⚙ settings: language and theme), the toolbar (*TYÖVAIHE* *Kartoita*/*Punnitse*, the person select, *Puu*/*Taulukko*, *Näkymäasetukset* and the menus *Tiedosto*, *Muokkaa*, *Arviointi*, *Näkymä*, *Apua* = File, Edit, Assessment, View, Help), the left panel (tabs *Puurakenne* = outline and *Yhteydet ja perustelut* = connections and reasons, plus *LISÄÄ VALITTUUN SOLMUUN* = add to selected node), the tree as cards in the centre and on the right *VALITTU SOLMU* / *Muokkaa väitettä* (the inspector). The bottom bar *Rakenne* (`Alt+4`) is hidden by default.
+The workspace has the top bar (document title and type, ↶ undo and ↷ redo, four panel toggles followed by ⛶ tree only, ? help and shortcuts, ⚙ settings: language and theme), the toolbar (*TYÖVAIHE* *Kartoita*/*Punnitse*, the person select, *Puu*/*Taulukko*, *Näkymäasetukset* and the menus *Tiedosto*, *Muokkaa*, *Arviointi*, *Näkymä*, *Apua* = File, Edit, Assessment, View, Help), the left panel (tabs *Puurakenne* = outline and *Yhteydet ja perustelut* = connections and reasons, plus *LISÄÄ VALITTUUN SOLMUUN* = add to selected node), the tree as cards in the centre and on the right *VALITTU SOLMU* / *Muokkaa väitettä* (the inspector). The bottom bar *Rakenne* (`Alt+4`) is hidden by default.
 
 **Cards.** Each node is a card: a relation tag (PÄÄVÄITE main claim, PUOLTAA supports, VASTUSTAA opposes, VAIHTOEHTO option, PÄÄTÖS decision), the title, and in *Punnitse* the balance and `75%/+5`. The card header has **+** (supporting), **−** (opposing), in decision mode on the root and on groups **\*** (option) and **▦** (option group), and **▾/▸** (collapse or expand the subtree). At the right edge **×** deletes the node; it shows when the card is selected or under the pointer. A node without children goes without a question (× or `Del`) and fades out over a second; a subtree asks first. Undo (↶ or `Ctrl/Cmd+Z`) brings it back. Click a card to select it.
 
@@ -196,7 +196,7 @@ If B's only reason were an objection, B's net would be negative and B would not 
 
 ## 7. Files and sharing
 
-**The document's type** (*Argumentointi* examines one claim, *Päätös* compares options) is the chip beside the document's title; pressing it changes the type. The example cards say which type each example is.
+**The document's type** (*Argumentointi* examines one claim, *Päätös* compares options) is chosen with the switch beside the document's title; both choices are in sight. The example cards say which type each example is.
 
 **File menu**: *+ Uusi* (new), *Avaa JSON* (open), *↓ Tallenna tiedosto* (`Ctrl/Cmd+S`; downloads `<title>.witt.json`, recorded on the home card), *Vie kuva / PDF* (image/PDF), *Asiakirjakirjasto*, *Tuo tai vie lisäyksiä (AI tai toinen arvioija)…* and the save status.
 
