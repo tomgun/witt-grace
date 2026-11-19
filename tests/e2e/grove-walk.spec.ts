@@ -65,15 +65,16 @@ test('crown, shaped branches, a few animals and weather; input is never intercep
   await page.mouse.move(view.x + view.width - 140, view.y + view.height - 160, { steps: 4 });
   await page.mouse.up();
   expect(await page.locator('#world').getAttribute('style')).not.toBe(before);
-  // The legend and the zoom controls are not covered by an animal.
-  const covered = await page.evaluate(() => {
-    const rect = (sel: string) => document.querySelector(sel)?.getBoundingClientRect();
-    const boxes = [rect('.legend'), rect('.zoom-controls')].filter((r): r is DOMRect => !!r);
-    return [...document.querySelectorAll('.grove-creature')].some((c) => {
-      const r = c.getBoundingClientRect();
-      return boxes.some((b) => r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top);
-    });
-  });
+  // The legend and the zoom controls are not covered by an animal: whatever passes beneath them on a small
+  // canvas, a press at the centre of each of their items reaches that item.
+  const covered = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('.legend > *, .zoom-controls > *')]
+      .filter((item) => item.getClientRects().length > 0)
+      .some((item) => {
+        const r = item.getBoundingClientRect();
+        return !item.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2));
+      })
+  );
   expect(covered).toBe(false);
 });
 

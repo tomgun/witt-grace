@@ -9579,3 +9579,45 @@ input[type='range'].range-unset:focus-visible {
 .dialog-actions {
   flex-wrap: wrap;
 }
+/* ---- Phone inspector (WG-042, S-15 2026-11-19): the selected card and its two sliders on screen together ---- */
+@media (max-width: 600px) {
+  .workspace:not(.table-view) .inspector-panel {
+    max-height: 46%;
+    box-shadow: 0 -8px 24px rgba(23, 35, 76, 0.08);
+  }
+  .workspace.table-evaluate:not(.table-view) .inspector-panel {
+    max-height: 56%;
+  }
+  .workspace:not(.table-view) .canvas-area {
+    min-height: 190px;
+  }
+  .workspace:not(.table-view) .inspector-panel .panel-heading {
+    display: none;
+  }
+  .workspace.table-evaluate:not(.table-view) #inspector > .inspector-note:first-child {
+    display: none;
+  }
+  .workspace.table-evaluate:not(.table-view) #inspector #nodeTitle {
+    min-height: 0;
+  }
+  .workspace.table-evaluate:not(.table-view) #inspector #nodeDetails {
+    min-height: 0;
+    height: 46px;
+  }
+  .workspace.table-evaluate:not(.table-view) #inspector .field {
+    margin-bottom: 8px;
+  }
+  /* The two text fields keep their accessible names; their visible captions give way to the sliders. */
+  .workspace.table-evaluate:not(.table-view) #inspector .field:has(#nodeTitle, #nodeDetails) > label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .workspace:not(.table-view) .zoom-controls {
+    right: 8px;
+    bottom: 8px;
+  }
+}

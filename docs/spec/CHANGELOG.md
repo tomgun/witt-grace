@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-19 — `UI_INVENTORY.md` — Same owner decision, eighth part, S-15: on a phone in the tree presentation the inspector takes up to 56 % of the workspace in Punnitse (37 % before) without its heading, kicker and the captions of the two text fields, so the selected card and its credence slider are on screen together.
 - 2026-11-19 — `UI_INVENTORY.md` — Same owner decision, seventh part, S-15: the labels of the one-word-per-concept pass (assessor, claim, argument result) also in de, es, fr, ru, zh-Hans, ja and ko.
 - 2026-11-19 — `UI_INVENTORY.md` — Same owner decision, sixth part, S-15: figures on screen follow the language (a decimal comma in fi, de, es, fr, ru; a point in en, zh-Hans, ja, ko; a true minus − in all nine). `.witt.json`, contribution bundles, AI tasks and the SVG/PNG/PDF exports keep the point and the hyphen and stay byte-equal to the prototype's.
 - 2026-11-19 — `UI_INVENTORY.md` — Same owner decision, fifth part, S-15: every working dialog has the heading row with × (the AI draft, its preview, the contribution dialog and its preview, AI results, the library and the links dialog had a bare title); a lone button of an action row sits at the right; action rows wrap (the library dialog's row overflowed, an open S-15 quirk); the × and the home button take their labels from the catalog.
