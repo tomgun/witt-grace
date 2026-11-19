@@ -66,11 +66,15 @@ import {
 import { scoringText } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
+import { nextSheetSize } from './sheet.ts';
+import type { SheetSize } from './sheet.ts';
 import { LAYER_PRESETS } from './view.ts';
 import { fig } from './numberFormat.ts';
 
 let inspectorAdvancedOpen = false;
 let inspectorMoreOpen = false;
+
+let inspectorSheetSize: SheetSize = 'half';
 
 /** A help text behind a ? button: there when it is needed, out of the way once it has been read (owner 2026-11-19,
  * UI_INVENTORY S-15). */
@@ -1451,6 +1455,12 @@ export function Inspector({ frame }: { frame: Frame }) {
   const { project, view } = state;
   const [advancedOpen, setAdvancedOpen] = useState(inspectorAdvancedOpen);
   const [moreOpen, setMoreOpen] = useState(inspectorMoreOpen);
+  const [sheet, setSheet] = useState<SheetSize>(inspectorSheetSize);
+  const dragStart = useRef<number | null>(null);
+  const moveSheet = (move: 'up' | 'down' | 'tap') => {
+    inspectorSheetSize = nextSheetSize(sheet, move);
+    setSheet(inspectorSheetSize);
+  };
   const node = project.nodes.find((n) => n.id === state.selectedId);
   const body = (() => {
     if (state.selectedLibraryReason) return <LibraryInspector frame={frame} />;
@@ -1897,7 +1907,45 @@ export function Inspector({ frame }: { frame: Frame }) {
     );
   })();
   return (
-    <aside className="sidepanel inspector-panel" aria-label={t('selectedNode')} data-testid="inspector">
+    <aside
+      className={`sidepanel inspector-panel sheet-${sheet}`}
+      aria-label={t('selectedNode')}
+      data-testid="inspector"
+      data-sheet={sheet}
+    >
+      {/* Shown on a phone only (styles.css): drag it up or down, or tap it, to change the sheet's height. */}
+      <button
+        type="button"
+        id="inspectorSheetHandle"
+        className="sheet-handle"
+        aria-label={t('sheetResize')}
+        title={t('sheetResize')}
+        onPointerDown={(e) => {
+          dragStart.current = e.clientY;
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }}
+        onPointerUp={(e) => {
+          const from = dragStart.current;
+          dragStart.current = null;
+          if (from === null) return;
+          const dy = e.clientY - from;
+          moveSheet(dy < -24 ? 'up' : dy > 24 ? 'down' : 'tap');
+        }}
+        onPointerCancel={() => {
+          dragStart.current = null;
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            moveSheet(e.key === 'ArrowUp' ? 'up' : 'down');
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            moveSheet('tap');
+          }
+        }}
+      >
+        <span aria-hidden="true" />
+      </button>
       <div className="panel-heading">
         <div>
           <div className="eyebrow">{t('selectedNode')}</div>

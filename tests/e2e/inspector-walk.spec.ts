@@ -83,3 +83,37 @@ test('Punnitse: ratings first, the rest on request, a result that says whose it 
   await expect(page.getByTestId('score-balance')).toContainText('+50,0 †');
   await expect(page.getByTestId('score-reading')).toHaveText('kallistuu puolesta · keskeneräinen');
 });
+
+/**
+ * must: on a phone the inspector is a sheet with a handle: a tap raises it to nearly the whole screen, the next
+ *       one lowers it to the handle so the tree has the screen, the next brings it back; the arrow keys do the
+ *       same from the keyboard; a wide window has no handle (WG-042, owner 2026-11-19, S-15)
+ * red-against: the sheet stuck at one height, the handle shown on a desktop, the lowered sheet still covering the tree
+ */
+test('the phone inspector is a sheet with three heights', async ({ page }, testInfo) => {
+  await startBlank(page, 'argument');
+  const handle = page.locator('#inspectorSheetHandle');
+  const sheet = page.getByTestId('inspector');
+  if (testInfo.project.name !== 'mobile') {
+    await expect(handle).toBeHidden();
+    return;
+  }
+  await expect(handle).toBeVisible();
+  await expect(sheet).toHaveAttribute('data-sheet', 'half');
+  const half = (await sheet.boundingBox())!.height;
+  await handle.click();
+  await expect(sheet).toHaveAttribute('data-sheet', 'full');
+  await expect.poll(async () => (await sheet.boundingBox())!.height).toBeGreaterThan(half + 100);
+  await handle.click();
+  await expect(sheet).toHaveAttribute('data-sheet', 'low');
+  await expect.poll(async () => Math.round((await sheet.boundingBox())!.height)).toBeLessThanOrEqual(30);
+  await expect(page.locator('#nodeTitle')).toBeHidden();
+  await handle.focus();
+  await page.keyboard.press('ArrowUp');
+  await expect(sheet).toHaveAttribute('data-sheet', 'half');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await expect(sheet).toHaveAttribute('data-sheet', 'low');
+  await page.keyboard.press('ArrowUp');
+  await expect(page.locator('#nodeTitle')).toBeVisible();
+});

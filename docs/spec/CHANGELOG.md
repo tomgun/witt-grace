@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-19 — `UI_INVENTORY.md` — Owner: “Korjaa loputkin”. S-15: on a phone the inspector is a sheet with a handle `#inspectorSheetHandle` and three heights (`data-sheet` low, half, full); the eighty-odd texts that were still English in de, es, fr, ru, zh-Hans, ja and ko (voting, values, new work, AI steps, multi-target claims) are translated.
 - 2026-11-19 — `UI_INVENTORY.md` — Owner: the Lehto theme “ei näytä mielestäni hyvältä tai luonnon läheiseltä yhtään… jos pystyt parantamaan sitä merkittävästi erilaiseksi”. The `grove` skin is redrawn as a morning in a birch grove: a light theme (`color-scheme: light`), birch-paper cards, a watercolour crown, a tree line and four birch trunks behind the tree (`.grove-scenery`), moss-green and rowan-red branches, pollen in the light in place of fireflies; the export dialog treats it as a light skin. The id, the stored key, the top-down branches, the animals and the calm rules are unchanged.
 - 2026-11-19 — `UI_INVENTORY.md` — Same owner decision, eighth part, S-15: on a phone in the tree presentation the inspector takes up to 56 % of the workspace in Punnitse (37 % before) without its heading, kicker and the captions of the two text fields, so the selected card and its credence slider are on screen together.
 - 2026-11-19 — `UI_INVENTORY.md` — Same owner decision, seventh part, S-15: the labels of the one-word-per-concept pass (assessor, claim, argument result) also in de, es, fr, ru, zh-Hans, ja and ko.

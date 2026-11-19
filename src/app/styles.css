@@ -9621,3 +9621,50 @@ input[type='range'].range-unset:focus-visible {
     bottom: 8px;
   }
 }
+/* The phone sheet's handle and its three heights (WG-042, S-15 2026-11-19). */
+.sheet-handle {
+  display: none;
+}
+@media (max-width: 600px) {
+  .workspace:not(.table-view) .inspector-panel .sheet-handle {
+    display: grid;
+    place-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: var(--surface);
+    cursor: ns-resize;
+    touch-action: none;
+  }
+  .sheet-handle > span {
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--muted);
+  }
+  .sheet-handle:focus-visible > span {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .workspace:not(.table-view) .inspector-panel.sheet-low,
+  .workspace.table-evaluate:not(.table-view) .inspector-panel.sheet-low {
+    max-height: 28px;
+    overflow: hidden;
+  }
+  .workspace:not(.table-view) .inspector-panel.sheet-full,
+  .workspace.table-evaluate:not(.table-view) .inspector-panel.sheet-full {
+    max-height: none;
+    flex: 0 0 78%;
+  }
+  /* Lowered, the sheet's content is not there at all: nothing behind the fold to tab into. */
+  .workspace:not(.table-view) .inspector-panel.sheet-low #inspector {
+    display: none;
+  }
+  .workspace:not(.table-view):has(.inspector-panel.sheet-full) .canvas-area {
+    min-height: 0;
+  }
+}

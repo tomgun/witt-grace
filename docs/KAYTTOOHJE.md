@@ -52,6 +52,8 @@ Työtilassa on yläpalkki (asiakirjan nimi ja sen vieressä tallennustila, esim.
 
 **Luvut.** Ruudulla luvut kirjoitetaan valitun kielen tavalla: suomeksi desimaalipilkulla ja oikealla miinusmerkillä (*−30,8*, *+3,3/5*). Tiedostoissa ja viedyissä kuvissa on desimaalipiste.
 
+**Puhelimella** tarkastin on puun alla paneelina, jonka yläreunassa on kahva: vedä tai napauta sitä, niin paneeli on matala (vain kahva, puu saa koko ruudun), puolikas tai lähes koko ruudun korkuinen.
+
 **Ilmoitukset.** Ikkunan alareunaan tulee lyhyt ilmoitus siitä, mitä juuri tapahtui: *Poistettu: …* ja painike **Kumoa**, *JSON-tiedosto ladattu* ja vastaavat. Vahvistus poistuu itsestään muutamassa sekunnissa, virheilmoitus pysyy kunnes suljet sen.
 
 **Raahaus ja näkymä.** Vedä korttia otsikkorivistä tai tekstistä siirtääksesi sen; sijainti tallentuu asiakirjaan ja on kumottavissa. Vedä tyhjää taustaa tai vieritä (hiiren rulla, ohjauslevyn kaksi sormea) siirtääksesi näkymää; `Ctrl`/`⌘` + vieritys tai ohjauslevyn nipistys zoomaa, kosketusnäytöllä kaksi sormea siirtää ja zoomaa. ⤢ sovittaa koko puun näkymään. Kun asiakirja avataan tai puu järjestetään, näkymä ei pienene alle 75 %:n, jotta korttien teksti pysyy luettavana; jos puu ei silloin mahdu, näkyvissä pidetään valittu kortti (avatessa pääväite). Valittu tai juuri lisätty kortti tuodaan aina näkyviin. Alle 100 %:n zoomilla ja kosketusnäytöllä valitun kortin toiminnot (+ − ✎ ▾ ×) näkyvät kortin vieressä vakiokokoisina. Tiivistetyssä näkymässä kortteja ei voi raahata ennen kuin omat sijainnit palautetaan.

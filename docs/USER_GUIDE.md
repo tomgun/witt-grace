@@ -52,6 +52,8 @@ The workspace has the top bar (document title, ↶ undo and ↷ redo, four panel
 
 **Figures.** On screen figures are written as the chosen language writes them: a decimal comma and a true minus in Finnish (*−30,8*, *+3,3/5*), a point in English. Files and exported pictures use a decimal point.
 
+**On a phone** the inspector is a sheet under the tree with a handle at its top: drag or tap it and the sheet is low (the handle only, the tree has the screen), half or nearly full height.
+
 **Notices.** A short message at the bottom of the window says what just happened: *Poistettu: …* with **Kumoa** (undo), *JSON-tiedosto ladattu* and the like. A confirmation leaves by itself in a few seconds; an error stays until you close it.
 
 **Dragging and the view.** Drag a card by its header or its text to move it; the position is saved in the document and undoable. Drag empty space or scroll (mouse wheel, two fingers on a trackpad) to move the view; `Ctrl`/`⌘` + scroll or a trackpad pinch zooms, and on a touch screen two fingers move and zoom. ⤢ fits the whole tree. When a document is opened or the tree arranged, the view never shrinks below 75 %, so the cards stay readable; if the tree does not fit then, the selected card stays in view (the main claim on opening). A selected or newly added card is always brought into view. Below 100 % and on a touch screen the selected card's actions (+ − ✎ ▾ ×) appear beside it at a fixed size. In a compacted view cards cannot be dragged until manual positions are restored.
