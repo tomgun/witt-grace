@@ -71,6 +71,12 @@ export async function reviewSelected(page: Page, credence: string, influence: st
   await i.blur();
 }
 
+/** Language and theme sit behind the ⚙ button of the top bar (S-15, 2026-11-19); opens it when it is closed. */
+export async function openSettings(page: Page): Promise<void> {
+  const menu = page.locator('#settingsMenu');
+  if (!(await menu.evaluate((d) => (d as HTMLDetailsElement).open))) await menu.locator('> summary').click();
+}
+
 /** In Punnitse the inspector keeps what is needed now and then (what is counted, the place in the tree, reuse)
  * under "Lisää valintoja" (S-15, 2026-11-19); opens it when it is closed. */
 export async function openMore(page: Page): Promise<void> {

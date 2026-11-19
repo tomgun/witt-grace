@@ -20,7 +20,7 @@
  */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { addNamed, reviewSelected as review, selectRoot, startBlank } from './helpers.ts';
+import { addNamed, openSettings, reviewSelected as review, selectRoot, startBlank } from './helpers.ts';
 
 test.beforeEach(async ({ page }) => {
   await startBlank(page, 'argument');
@@ -104,12 +104,17 @@ test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports
 });
 
 test('switching to decision mode offers options; Yövärit (bitberg) theme applies', async ({ page }) => {
+  // The document's type is in the Tiedosto menu and shown beside the title.
+  await expect(page.locator('#docTypeChip')).toHaveText('Argumentointi');
+  await page.locator('#fileMenu > summary').click();
   await page.locator('#modeDecision').click();
+  await expect(page.locator('#docTypeChip')).toHaveText('Päätös');
   await expect(page.locator('#modeDecision')).toHaveClass(/active/);
   await page.locator('#editMenu summary').click();
   await page.locator('#btnEditMenuOption').click();
   await expect(page.getByTestId('node-count')).toHaveText('2');
   await expect(page.locator('.node[data-relation="option"]')).toHaveCount(1);
+  await openSettings(page);
   await page.locator('#themeSelect').selectOption('bitberg');
   await expect(page.locator('body')).toHaveAttribute('data-theme', 'bitberg');
   await expect(page.locator('#themeSelect option:checked')).toHaveText('◆ Yövärit');
@@ -117,11 +122,13 @@ test('switching to decision mode offers options; Yövärit (bitberg) theme appli
 
 test('switching the language loads its messages on demand', async ({ page }) => {
   await expect(page.locator('#fileMenu summary')).toHaveText('Tiedosto');
+  await openSettings(page);
   await page.locator('#localeSelect').selectOption('en');
   await expect(page.locator('#fileMenu summary')).toHaveText('File');
   await page.reload();
   await page.locator('#btnHomeContinue').click();
   await expect(page.locator('#fileMenu summary')).toHaveText('File');
+  await openSettings(page);
   await page.locator('#localeSelect').selectOption('fi');
   await expect(page.locator('#fileMenu summary')).toHaveText('Tiedosto');
 });
@@ -187,6 +194,7 @@ test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browse
     ['comic', '✎ Sarjakuva'],
     ['grove', '🌳 Lehto'],
   ] as const) {
+    await openSettings(page);
     await page.locator('#themeSelect').selectOption(id);
     await expect(page.locator('body')).toHaveAttribute('data-theme', id);
     await expect(page.locator('#themeSelect option:checked')).toHaveText(label);

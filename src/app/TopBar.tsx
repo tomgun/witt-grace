@@ -6,6 +6,7 @@ import type { Language, MessageKey } from '../lib/i18n/i18n.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
 import { CollabChip } from './CollabDialog.tsx';
+import { MENU_GROUP, useMenuDismissal } from './menus.ts';
 
 const ZONE_BUTTONS: { zone: Zone; id: string; glyph: string; key: MessageKey; shortcut: string }[] = [
   { zone: 'left', id: 'btnZoneLeft', glyph: '◧', key: 'zoneLeft', shortcut: 'Alt+1' },
@@ -88,6 +89,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   const t = useTranslator();
   const store = getStore();
   const inSession = state.collab !== null && state.collab.phase !== 'ended';
+  useMenuDismissal();
   return (
     <header className="topbar" data-testid="topbar">
       <div className="brand" aria-label="WITT">
@@ -140,6 +142,9 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
           }}
         />
+        <span className="doc-type-chip" id="docTypeChip" title={t('docTypeLabel')}>
+          {t(state.project.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
+        </span>
         <CollabChip />
         {/* The saving state where it can be seen without opening a menu (S-15, 2026-11-19): quiet when all is
             well, red when a save failed. The Tiedosto menu's line is the one screen readers hear. */}
@@ -210,8 +215,19 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             ?
           </button>
         </div>
-        <LanguageSelect id="localeSelect" />
-        <ThemeSelect id="themeSelect" />
+        {/* Language and theme are set once in a while: behind one button, not two selects in the best place of the
+            screen (S-15, 2026-11-19). The home screen keeps its own two selects. */}
+        <details id="settingsMenu" name={MENU_GROUP} className="toolbar-popover topbar-settings">
+          <summary aria-label={t('settingsMenu')} title={t('settingsMenu')}>
+            ⚙
+          </summary>
+          <div className="toolbar-popup">
+            <span className="menu-label">{t('language')}</span>
+            <LanguageSelect id="localeSelect" />
+            <span className="menu-label">{t('theme')}</span>
+            <ThemeSelect id="themeSelect" />
+          </div>
+        </details>
       </div>
     </header>
   );

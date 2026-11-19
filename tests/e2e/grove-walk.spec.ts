@@ -12,13 +12,15 @@
  */
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { ensureTree, startWith } from './helpers.ts';
+import { ensureTree, openSettings, startWith } from './helpers.ts';
 
 const EXAMPLE = readFileSync('public/examples/debate-etatyomalli.witt.json', 'utf8');
 
 test.beforeEach(async ({ page }) => {
   await startWith(page, EXAMPLE);
+  await openSettings(page);
   await page.locator('#themeSelect').selectOption('grove');
+  await page.keyboard.press('Escape');
   await expect(page.locator('body')).toHaveAttribute('data-theme', 'grove');
   await ensureTree(page);
 });

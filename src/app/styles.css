@@ -9419,3 +9419,107 @@ input[type='range'].range-unset:focus-visible {
     display: none;
   }
 }
+/* ---- Top bar and toolbar rows (WG-041, S-15 2026-11-19) ---- */
+.doc-type-chip {
+  flex: none;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--subtle);
+  white-space: nowrap;
+}
+.topbar-settings {
+  position: relative;
+}
+.topbar-settings > summary {
+  min-width: 34px;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+.topbar-settings > summary::after {
+  content: none;
+}
+.topbar-settings > .toolbar-popup {
+  right: 0;
+  left: auto;
+  min-width: 220px;
+}
+.topbar-settings > .toolbar-popup select {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.toolbar-popup .mode-switch {
+  display: flex;
+  margin: 4px 0 8px;
+}
+.toolbar-popup .mode-switch button {
+  flex: 1;
+}
+.topbar:has(.topbar-settings[open]) {
+  position: relative;
+  z-index: 90;
+  overflow: visible;
+}
+.topbar-settings > .toolbar-popup {
+  grid-template-columns: 1fr;
+}
+/* ---- Phone header (WG-042, S-15 2026-11-19): five rows instead of seven before the content ---- */
+@media (max-width: 600px) {
+  .topbar {
+    gap: 6px 8px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+    min-height: 0;
+  }
+  .topbar .brand {
+    width: auto;
+    flex: none;
+  }
+  .topbar .brand .logo,
+  .topbar .brand .brand-title {
+    display: none;
+  }
+  .topbar .header-right {
+    order: 2;
+    flex: 1;
+    justify-content: flex-end;
+  }
+  .topbar .doc-header {
+    order: 3;
+    gap: 8px;
+  }
+  .topbar .doc-header #projectTitle {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+  .toolbar.witt-simplified-toolbar {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    gap: 6px 8px;
+  }
+  .witt-simplified-toolbar .toolbar-flow,
+  .witt-simplified-toolbar .toolbar-presentation {
+    flex-wrap: nowrap;
+  }
+  .witt-simplified-toolbar .toolbar-caption {
+    display: none;
+  }
+  .witt-simplified-toolbar .toolbar-simple-menus {
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: 4px;
+    justify-content: space-between;
+  }
+  .witt-simplified-toolbar .toolbar-simple-menus .toolbar-popover summary {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
+  }
+  .witt-simplified-toolbar .toolbar-simple-menus .toolbar-popover summary::after {
+    content: none;
+  }
+}

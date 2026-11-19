@@ -1,6 +1,5 @@
 // The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
-import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { SCORING_OFFERED, childrenOf, isAiProfile } from '../domain/index.ts';
 import type { Mode, ScoringVersion } from '../domain/index.ts';
@@ -25,36 +24,8 @@ import { scoringText } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
+import { MENU_GROUP } from './menus.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
-
-/** One menu open at a time (`name` makes the browser close the others); a press outside or Escape closes it. */
-const MENU_GROUP = 'toolbar-menu';
-const openMenus = (): HTMLDetailsElement[] => [
-  ...document.querySelectorAll<HTMLDetailsElement>('details.toolbar-popover[open]'),
-];
-function useMenuDismissal(): void {
-  useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      for (const menu of openMenus())
-        if (!(e.target instanceof Node && menu.contains(e.target))) menu.open = false;
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      for (const menu of openMenus()) {
-        const hadFocus = menu.contains(document.activeElement);
-        menu.open = false;
-        if (hadFocus) menu.querySelector('summary')?.focus();
-        e.stopPropagation();
-      }
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown, true);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown, true);
-    };
-  }, []);
-}
 
 function Menu({ id, label, children }: { id: string; label: string; children: ReactNode }) {
   return (
@@ -110,7 +81,6 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
-  useMenuDismissal();
   const { project, view } = state;
   const editable = canEdit(state);
   const selected = project.nodes.find((n) => n.id === state.selectedId);
@@ -143,32 +113,6 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
         aria-label={t('toolbarEditGroup')}
         data-testid="toolbar"
       >
-        <div
-          className="toolbar-group toolbar-purpose"
-          role="group"
-          aria-label={`${t('modeArgument')} / ${t('modeDecision')}`}
-        >
-          <div aria-label={t('workArea')} className="mode-switch" role="group">
-            <button
-              type="button"
-              id="modeArgument"
-              data-testid="mode-argument"
-              className={project.mode === 'argument' ? 'active' : ''}
-              onClick={() => setMode('argument')}
-            >
-              {t('modeArgument')}
-            </button>
-            <button
-              type="button"
-              id="modeDecision"
-              data-testid="mode-decision"
-              className={project.mode === 'decision' ? 'active' : ''}
-              onClick={() => setMode('decision')}
-            >
-              {t('modeDecision')}
-            </button>
-          </div>
-        </div>
         <div className="toolbar-group toolbar-flow" role="group" aria-label={t('workflow')}>
           <span className="toolbar-caption">{t('stageLabel')}</span>
           <div className="workflow-switch workflow-stages" role="group" aria-label={t('workflow')}>
@@ -300,6 +244,30 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             <Item id="btnCollab" onClick={() => store.openDialog('collab')}>
               {state.collab && state.collab.phase !== 'ended' ? t('collabManage') : t('collabInvite')}
             </Item>
+            <div className="menu-divider" />
+            {/* The document's type is the document's, not a view: it sits with the file, not among the view
+                switches (S-15, 2026-11-19). */}
+            <span className="menu-label">{t('docTypeLabel')}</span>
+            <div aria-label={t('docTypeLabel')} className="mode-switch" role="group">
+              <button
+                type="button"
+                id="modeArgument"
+                data-testid="mode-argument"
+                className={project.mode === 'argument' ? 'active' : ''}
+                onClick={() => setMode('argument')}
+              >
+                {t('modeArgument')}
+              </button>
+              <button
+                type="button"
+                id="modeDecision"
+                data-testid="mode-decision"
+                className={project.mode === 'decision' ? 'active' : ''}
+                onClick={() => setMode('decision')}
+              >
+                {t('modeDecision')}
+              </button>
+            </div>
             <div className="menu-divider" />
             <Item id="btnAIReview" onClick={() => store.openDialog('aiReview')}>
               {t('aiProposalMenu')}
