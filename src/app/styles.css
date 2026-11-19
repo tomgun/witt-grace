@@ -9862,3 +9862,17 @@ body.witt-focus .canvas-quick-controls {
     height: 44px;
   }
 }
+/* The view settings dock never scrolls sideways (owner's report 2026-11-19): its rows wrap instead. The row of
+   branch-highlight buttons outgrew the dock once its text reached 12 px, and sooner in the longer languages. */
+#viewDock .dock-row {
+  flex-wrap: wrap;
+  row-gap: 6px;
+  min-width: 0;
+}
+#viewDock .focus-segments {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+#viewDock :is(select, input, button, label) {
+  max-width: 100%;
+}

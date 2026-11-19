@@ -33,6 +33,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 - A card added at the edge of the view could land outside it with its title editor open; a reason added straight after naming another could lose its editor to the previous card regaining focus.
 - “Arvioinnin mukaan: Puoltava (+3.3333333333333335/5)” printed an unrounded number; one decimal now, as in the table.
 - The library list announced itself as a list without list items (axe: aria-required-children).
+- Owner's report 2026-11-19: the Näkymäasetukset panel scrolled sideways. The row of branch-highlight buttons was wider than the panel once its text was raised to 12 px (and wider still in German and Russian); the panel's rows now wrap. Checked in all nine languages at 1440 and 390 px.
 - Notices (for example *JSON-tiedosto ladattu* after saving a file) had no style rule and were rendered under the page, where nobody saw them; they are now a message at the bottom of the window.
 - Owner report 2026-11-18: a document made from an AI draft or an AI starter opened with the prototype's calculation method (*Oma arvio + perustelut*) instead of the default for new documents. The app now passes its default; the domain builders still produce the prototype's document when no method is named.
 - File → Avaa JSON refused documents saved with *Log-odds*, *Nettotulos välittyy* or *Vahva ketju välittyy*: the import preflight listed only two calculation methods. It now accepts every method the engine can score.

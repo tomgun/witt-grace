@@ -70,3 +70,39 @@ test('a long document title is shown whole', async ({ page }, testInfo) => {
   await expect(title).toHaveValue('Rekrytointi: kolme kandidaattia samoilla kriteereillä');
   expect(await title.evaluate((el: HTMLInputElement) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
 });
+
+/**
+ * must: the view settings dock never scrolls sideways: its rows wrap inside it, in Finnish and in the languages
+ *       with longer words, on a wide window and on a phone (owner's report 2026-11-19)
+ * red-against: the row of branch-highlight buttons (Kaikki, + Puoltavat, − Vastustavat) wider than the dock once
+ *              its text is 12 px, which gave the dock a horizontal scrollbar
+ */
+test('the view settings dock has no sideways scroll', async ({ page }) => {
+  for (const language of ['fi', 'de', 'ru']) {
+    await page.goto('/');
+    await page.evaluate((l) => {
+      window.localStorage.clear();
+      window.localStorage.setItem('witt-locale-v1', l);
+    }, language);
+    await page.reload();
+    await page.locator('#btnHomeNew').click();
+    await page.locator('#btnNewWorkArgument').click();
+    await expect(page.getByTestId('app')).toBeVisible();
+    await page.keyboard.press('Escape');
+    if (await page.locator('#btnTableView.active').count()) await page.locator('#btnTreeView').click();
+    await page.locator('#btnViewSettings').click();
+    const dock = page.locator('#viewDock');
+    await expect(dock).toBeVisible();
+    await page.locator('#btnLayers').click();
+    const overflow = await dock.evaluate((el) => {
+      const edge = el.getBoundingClientRect().right;
+      const beyond = [...el.querySelectorAll<HTMLElement>('*')]
+        .filter(
+          (child) => child.getClientRects().length > 0 && child.getBoundingClientRect().right > edge + 1
+        )
+        .map((child) => child.id || child.className);
+      return { scroll: el.scrollWidth - el.clientWidth, beyond };
+    });
+    expect(overflow, language).toEqual({ scroll: 0, beyond: [] });
+  }
+});
