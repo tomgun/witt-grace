@@ -9465,7 +9465,8 @@ input[type='range'].range-unset:focus-visible {
 .toolbar-popup .mode-switch button {
   flex: 1;
 }
-.topbar:has(.topbar-settings[open]) {
+.topbar:has(.topbar-settings[open]),
+.topbar:has(.doc-type-menu[open]) {
   position: relative;
   z-index: 90;
   overflow: visible;
@@ -9995,4 +9996,39 @@ body.witt-focus .canvas-quick-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+/* The document type's chip is its control (owner 2026-11-19, S-15). */
+.doc-type-menu {
+  position: relative;
+  flex: none;
+}
+.doc-type-menu > summary {
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--subtle);
+  white-space: nowrap;
+}
+.doc-type-menu > .toolbar-popup {
+  left: 0;
+  right: auto;
+  grid-template-columns: 1fr;
+  min-width: 280px;
+}
+.doc-type-help {
+  margin: 0;
+}
+.example-type {
+  justify-self: start;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+.example-type.decision {
+  color: var(--option);
 }

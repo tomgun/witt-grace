@@ -6,6 +6,8 @@ export interface ExampleEntry {
   filename: string;
   participants: string[];
   nodeCount: number;
+  /** The document's type, shown on the card so the two kinds of work can be told apart before opening. */
+  mode: 'argument' | 'decision';
 }
 /** The prototype's `Examples.list()` verbatim (fictional data; the files are byte-equal copies of its fixtures). */
 export const EXAMPLES: readonly ExampleEntry[] = [
@@ -16,6 +18,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'debate-painonhallinta.witt.json',
     participants: ['Aada · aktiiviliikkuja', 'Beni · kiireinen arki', 'Caro · ruoan ilo ja terveys'],
     nodeCount: 13,
+    mode: 'argument',
   },
   {
     id: 'etatyomalli',
@@ -24,6 +27,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'debate-etatyomalli.witt.json',
     participants: ['Eeva · tiiminvetäjä', 'Oskari · keskittymistehtävät', 'Mira · pitkä työmatka'],
     nodeCount: 12,
+    mode: 'argument',
   },
   {
     id: 'kaupunkiliikenne',
@@ -32,6 +36,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'debate-kaupunkiliikenne.witt.json',
     participants: ['Leena · keskustan asukas', 'Joonas · yrittäjä', 'Sari · esteettömyys'],
     nodeCount: 11,
+    mode: 'argument',
   },
   {
     id: 'tekoalykehitys',
@@ -40,6 +45,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'debate-tekoalykehitys.witt.json',
     participants: ['Noora · turvallisuus', 'Tuomas · kehittäjä', 'Veera · toimitus'],
     nodeCount: 11,
+    mode: 'argument',
   },
   {
     id: 'pilvialusta',
@@ -48,6 +54,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'debate-pilvialusta.witt.json',
     participants: ['Aino', 'Bertta', 'Caro'],
     nodeCount: 12,
+    mode: 'decision',
   },
   // Added after the prototype (owner 2026-11-09): criteria-based evaluation two ways, built from domain commands by
   // scripts/build-recruitment-examples.ts. Fictional people and data.
@@ -58,6 +65,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'rekrytointi-yksi-kandidaatti.witt.json',
     participants: ['Aino · myyntijohtaja', 'Bertil · HR', 'Ceren · tiimin myyjä'],
     nodeCount: 10,
+    mode: 'argument',
   },
   {
     id: 'rekry-kolme',
@@ -66,6 +74,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'rekrytointi-kolme-kandidaattia.witt.json',
     participants: ['Aino · myyntijohtaja', 'Bertil · HR', 'Ceren · tiimin myyjä'],
     nodeCount: 13,
+    mode: 'decision',
   },
   // Added 2026-11-10 (owner): the same decision under every calculation method, built by
   // scripts/build-scoring-example.ts. Fictional data.
@@ -77,6 +86,7 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'laskentatapojen-vertailu.witt.json',
     participants: ['Arvioija'],
     nodeCount: 44,
+    mode: 'decision',
   },
   {
     id: 'syva-vaittely',
@@ -86,5 +96,6 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     filename: 'syva-vaittely-ruuhkat.witt.json',
     participants: ['Arvioija'],
     nodeCount: 59,
+    mode: 'decision',
   },
 ];

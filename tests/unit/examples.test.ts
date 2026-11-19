@@ -37,6 +37,8 @@ test('every manifest entry parses and has the stated node count', () => {
   for (const entry of EXAMPLES) {
     const project = parseProject(JSON.parse(read(entry.filename)));
     assert.equal(project.nodes.length, entry.nodeCount, entry.filename);
+    // The type printed on the example's card is the document's own.
+    assert.equal(project.mode, entry.mode, entry.filename);
   }
 });
 

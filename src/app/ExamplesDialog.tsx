@@ -86,6 +86,9 @@ export function ExamplesDialog() {
                   disabled={busy}
                   onClick={() => void choose(entry)}
                 >
+                  <span className={`example-type ${entry.mode}`}>
+                    {t(entry.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
+                  </span>
                   <strong>{entry.title}</strong>
                   <small>{entry.description}</small>
                   <small>

@@ -1,4 +1,5 @@
 // The header: home, brand/about, document title, zone toggles, language and theme (inv-panels §C).
+import type { Mode } from '../domain/index.ts';
 import { APPEARANCES, getStore, useAppState, useTranslator } from './store.ts';
 import type { Appearance, Zone } from './store.ts';
 import { LANGUAGES, LANGUAGE_NAMES } from '../lib/i18n/i18n.ts';
@@ -90,6 +91,18 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   const store = getStore();
   const inSession = state.collab !== null && state.collab.phase !== 'ended';
   useMenuDismissal();
+  const typeName = t(state.project.mode === 'decision' ? 'modeDecision' : 'modeArgument');
+  const setMode = (mode: Mode) => {
+    if (mode === state.project.mode) return;
+    if (
+      mode === 'argument' &&
+      state.project.nodes.some((n) => n.relation === 'option' || n.relation === 'group')
+    ) {
+      store.showMessage(t('optionsPreventArgumentMode'));
+      return;
+    }
+    store.dispatch({ type: 'project.setMode', mode });
+  };
   return (
     <header className="topbar" data-testid="topbar">
       <div className="brand" aria-label="WITT">
@@ -144,9 +157,49 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
           }}
         />
-        <span className="doc-type-chip" id="docTypeChip" title={t('docTypeLabel')}>
-          {t(state.project.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
-        </span>
+        {/* The document's type, where it is seen and where it is changed (owner 2026-11-19, S-15): the chip beside
+            the title opens the two choices with a line on what each is for. */}
+        <details id="docTypeMenu" name={MENU_GROUP} className="toolbar-popover doc-type-menu">
+          <summary
+            id="docTypeChip"
+            title={t('docTypeLabel')}
+            aria-label={`${t('docTypeLabel')}: ${typeName}`}
+          >
+            {typeName}
+          </summary>
+          <div
+            className="toolbar-popup"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest('button'))
+                (e.currentTarget.closest('details') as HTMLDetailsElement).open = false;
+            }}
+          >
+            <span className="menu-label">{t('docTypeLabel')}</span>
+            <div aria-label={t('docTypeLabel')} className="mode-switch" role="group">
+              <button
+                type="button"
+                id="modeArgument"
+                data-testid="mode-argument"
+                className={state.project.mode === 'argument' ? 'active' : ''}
+                aria-pressed={state.project.mode === 'argument'}
+                onClick={() => setMode('argument')}
+              >
+                {t('modeArgument')}
+              </button>
+              <button
+                type="button"
+                id="modeDecision"
+                data-testid="mode-decision"
+                className={state.project.mode === 'decision' ? 'active' : ''}
+                aria-pressed={state.project.mode === 'decision'}
+                onClick={() => setMode('decision')}
+              >
+                {t('modeDecision')}
+              </button>
+            </div>
+            <p className="inspector-note doc-type-help">{t('docTypeHelp')}</p>
+          </div>
+        </details>
         <CollabChip />
         {/* The saving state where it can be seen without opening a menu (S-15, 2026-11-19): quiet when all is
             well, red when a save failed. The Tiedosto menu's line is the one screen readers hear. */}

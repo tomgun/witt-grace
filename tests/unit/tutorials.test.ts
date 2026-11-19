@@ -16,6 +16,7 @@ import test from 'node:test';
 import {
   BASICS,
   COLLAB,
+  DECISION,
   PEOPLE,
   TUTORIALS,
   advance,
@@ -71,7 +72,10 @@ const influence = (p: Project, nodeId: string, userId: string) =>
   });
 
 test('the three walkthroughs: counted steps and the order of the phases', () => {
-  assert.deepEqual([lastStep('basics'), lastStep('people'), lastStep('collab')], [16, 5, 4]);
+  assert.deepEqual(
+    [lastStep('basics'), lastStep('decision'), lastStep('people'), lastStep('collab')],
+    [16, 7, 5, 4]
+  );
   // Doing first: Kartoita, then the look around, then Punnitse, Tulos and Näkymät.
   assert.deepEqual(TUTORIALS.basics.phases, [
     'explore',
@@ -87,7 +91,9 @@ test('the three walkthroughs: counted steps and the order of the phases', () => 
   // The list of the tree is shown only once the tree has reasons in it.
   assert.ok(BASICS.tourLeft > BASICS.nameOppose);
   assert.equal(TUTORIALS.basics.steps[BASICS.addSupport]?.text, 'tutorialStep0');
-  assert.equal(TUTORIALS.basics.next?.id, 'people');
+  // Each one offers the next: the other document type comes right after the basics.
+  assert.equal(TUTORIALS.basics.next?.id, 'decision');
+  assert.equal(TUTORIALS.decision.next?.id, 'people');
   assert.equal(TUTORIALS.people.next?.id, 'collab');
   assert.equal(TUTORIALS.collab.next, undefined);
 });
@@ -177,6 +183,33 @@ test('going back to a step looks at it again: the document no longer moves it on
   // At the furthest step the document moves it on as before.
   const front = start('basics', { step: BASICS.addSupport });
   assert.equal(advance(front, facts(p)).step, BASICS.addOppose);
+});
+
+test('decision: the type, two options, a reason under an option, its rating', () => {
+  let r = start('decision', { step: DECISION.switchType });
+  assert.equal(advance(r, facts(blank)).step, DECISION.switchType);
+  let p = run(blank, { type: 'project.setMode', mode: 'decision' });
+  r = advance(r, facts(p));
+  assert.equal(r.step, DECISION.addOptions);
+  p = run(p, { type: 'node.add', id: 'O1', parentId: 'T', relation: 'option', title: 'Neljä päivää' });
+  assert.equal(advance(r, facts(p)).step, DECISION.addOptions, 'one option is not a choice');
+  p = run(p, { type: 'node.add', id: 'O2', parentId: 'T', relation: 'option', title: 'Viisi päivää' });
+  r = advance(r, facts(p));
+  assert.equal(r.step, DECISION.addReason);
+  p = run(p, {
+    type: 'node.add',
+    id: 'R',
+    parentId: 'O1',
+    relation: 'support',
+    title: 'Palautuminen paranee',
+  });
+  r = advance(r, facts(p));
+  assert.deepEqual([r.step, r.supportId], [DECISION.rateReason, 'R']);
+  p = influence(credence(p, 'R', 'u1'), 'R', 'u1');
+  r = advance(r, facts(p));
+  // Comparing and voting are explained: they wait for the person.
+  assert.equal(r.step, DECISION.compare);
+  assert.equal(advance(r, facts(p)).step, DECISION.compare);
 });
 
 test('people: the added human assessor, and that assessor’s own ratings', () => {

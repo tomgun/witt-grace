@@ -14,7 +14,7 @@ import { isAiProfile, personalCredence, personalInfluence } from '../domain/inde
 import type { Project } from '../domain/index.ts';
 import type { MessageKey } from '../lib/i18n/i18n.ts';
 
-export const TUTORIAL_IDS = ['basics', 'people', 'collab'] as const;
+export const TUTORIAL_IDS = ['basics', 'decision', 'people', 'collab'] as const;
 export type TutorialId = (typeof TUTORIAL_IDS)[number];
 
 export interface TutorialStep {
@@ -57,6 +57,22 @@ export const TUTORIALS: Record<TutorialId, TutorialDef> = {
       { phase: 4, text: 'tutTableBack' },
       { phase: 4, text: 'tutorialStep8' },
       { phase: 4, text: 'tutorialStep9', manual: true },
+    ],
+    next: { id: 'decision', label: 'tutNextDecision' },
+  },
+  // The other type of document: the same building and weighing, under options instead of one claim.
+  decision: {
+    title: 'tutMenuDecision',
+    phases: ['tutPhaseOptions', 'evaluate', 'tutPhaseCompare'],
+    steps: [
+      { phase: 0, text: 'tutDecision0', manual: true },
+      { phase: 0, text: 'tutDecision1' },
+      { phase: 0, text: 'tutDecision2' },
+      { phase: 0, text: 'tutDecision3' },
+      { phase: 1, text: 'tutDecision4' },
+      { phase: 2, text: 'tutDecision5', manual: true },
+      { phase: 2, text: 'tutDecision6', manual: true },
+      { phase: 2, text: 'tutDecision7', manual: true },
     ],
     next: { id: 'people', label: 'tutNextPeople' },
   },
@@ -105,6 +121,16 @@ export const BASICS = {
   tableBack: 14,
   arrange: 15,
   done: 16,
+} as const;
+export const DECISION = {
+  intro: 0,
+  switchType: 1,
+  addOptions: 2,
+  addReason: 3,
+  rateReason: 4,
+  compare: 5,
+  vote: 6,
+  done: 7,
 } as const;
 export const PEOPLE = { intro: 0, addAssessor: 1, rateAsSecond: 2, compare: 3, lens: 4, done: 5 } as const;
 export const COLLAB = { intro: 0, openDialog: 1, joining: 2, ending: 3, done: 4 } as const;
@@ -188,6 +214,21 @@ function advanceFrom(run: TutorialRun, facts: TutorialFacts): TutorialRun {
       next = { ...next, step: BASICS.tableBack };
     else if (next.step === BASICS.tableBack && facts.presentation === 'tree')
       next = { ...next, step: BASICS.arrange };
+  } else if (run.id === 'decision') {
+    const options = project.nodes.filter((n) => n.kind === 'option');
+    if (next.step === DECISION.switchType && project.mode === 'decision')
+      next = { ...next, step: DECISION.addOptions };
+    if (next.step === DECISION.addOptions && options.length >= 2)
+      next = { ...next, step: DECISION.addReason };
+    if (next.step === DECISION.addReason) {
+      // A reason directly under an option: the one that will be rated in the next step.
+      const reason = project.nodes.find(
+        (n) => n.kind === 'claim' && options.some((o) => o.id === n.parentId)
+      );
+      if (reason) next = { ...next, supportId: reason.id, step: DECISION.rateReason };
+    }
+    if (next.step === DECISION.rateReason && rated(project, next.supportId, facts.actorId))
+      next = { ...next, step: DECISION.compare };
   } else if (run.id === 'people') {
     if (next.step === PEOPLE.addAssessor) {
       const added = project.users.filter((u) => !isAiProfile(u) && u.id !== next.firstUserId).at(-1);

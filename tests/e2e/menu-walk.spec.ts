@@ -44,11 +44,12 @@ test('one menu at a time; Escape and a press outside close it', async ({ page })
 });
 
 /**
- * must: in the Tiedosto menu both document types, Argumentointi and Päätös, lie inside the frame of their switch,
+ * must: in the menu of the type chip beside the title both document types, Argumentointi and Päätös, lie inside
+ *       the frame of their switch,
  *       in Finnish and in a language with longer words (owner's report 2026-11-19)
  * red-against: the switch laid in the first column of the menu's grid, where the second choice ran out of its frame
  */
-test('the document type switch in the Tiedosto menu holds both choices', async ({ page }) => {
+test('the document type switch holds both choices', async ({ page }) => {
   for (const language of ['fi', 'de']) {
     await page.goto('/');
     await page.evaluate((l) => {
@@ -60,8 +61,8 @@ test('the document type switch in the Tiedosto menu holds both choices', async (
     await page.locator('#btnNewWorkArgument').click();
     await expect(page.getByTestId('app')).toBeVisible();
     await page.keyboard.press('Escape');
-    await page.locator('#fileMenu > summary').click();
-    const inside = await page.locator('#fileMenu .mode-switch').evaluate((frame) => {
+    await page.locator('#docTypeChip').click();
+    const inside = await page.locator('#docTypeMenu .mode-switch').evaluate((frame) => {
       const outer = frame.getBoundingClientRect();
       return [...frame.querySelectorAll('button')].map((button) => {
         const r = button.getBoundingClientRect();

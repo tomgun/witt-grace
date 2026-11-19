@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner's notes 2026-11-19 on the document type: the chip beside the title (*Argumentointi* / *Päätös*) is now where the type is changed, with a line on what each type is for; a fourth walkthrough, **Opastus: päätös vaihtoehtojen välillä**, comes right after the basics (change the type, add two options, give one a reason and rate it, see where options are compared and voted on); every example card says which type it is.
 - Owner request 2026-11-19: **walkthroughs that guide by the hand.** The home screen asks whether to take the walkthrough (*Aloita opastus*, *Ei nyt*, *Älä kysy enää*); it is a card, not a dialog, and the walkthroughs stay in the Apua menu. Three of them: **the basics** (a look at the three parts of the screen, then from an empty tree through Kartoita and Punnitse to reading the result, twelve steps with the phase shown), **several assessors** (add a second local assessor, rate as them, compare the two views) and **working together online** (where a session starts, how others join, what is left when it ends). The instruction sits beside the control it talks about with an arrow pointing at it, the control is ringed, a step that asks for an action completes when it has been done, and each closing step offers the next walkthrough.
 
 ### Changed

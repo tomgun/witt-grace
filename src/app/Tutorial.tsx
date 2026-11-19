@@ -12,7 +12,7 @@ import { addNode, arrangeTree, selectPresentation, startInlineEdit } from './act
 import { displayShortcut, readShortcuts } from './shortcuts.ts';
 import { blankProject, getStore, useAppState, useTranslator } from './store.ts';
 import type { AppState } from './store.ts';
-import { BASICS, COLLAB, PEOPLE, TUTORIALS, advance, lastStep, placeBeside } from './tutorials.ts';
+import { BASICS, COLLAB, DECISION, PEOPLE, TUTORIALS, advance, lastStep, placeBeside } from './tutorials.ts';
 import type { TutorialId, TutorialRun } from './tutorials.ts';
 import { LAYER_PRESETS } from './view.ts';
 
@@ -117,8 +117,18 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
   const root = doc.nodes[0] as Node;
   const project: Project = {
     ...doc,
-    title: tr(id === 'people' ? 'tutPeopleDocTitle' : 'tutorialDocumentTitle'),
-    nodes: [{ ...root, title: tr('tutorialRootClaim'), details: tr('tutorialRootDetail') }],
+    title: tr(
+      id === 'people'
+        ? 'tutPeopleDocTitle'
+        : id === 'decision'
+          ? 'tutDecisionDocTitle'
+          : 'tutorialDocumentTitle'
+    ),
+    nodes: [
+      id === 'decision'
+        ? { ...root, title: tr('tutDecisionRoot') }
+        : { ...root, title: tr('tutorialRootClaim'), details: tr('tutorialRootDetail') },
+    ],
   };
   store.load(project);
   if (id === 'basics') {
@@ -129,6 +139,13 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
       // A narrow window has no side panels to point at: the look-around steps are passed.
       tutorial: { ...base, id, rootId: root.id, firstUserId: store.get().actorId },
     });
+    return;
+  }
+  if (id === 'decision') {
+    // An argument document on purpose: changing its type is the walkthrough's first thing to do.
+    store.setView({ presentation: 'tree', workflow: 'explore', layers: { ...LAYER_PRESETS.text } });
+    showPanels();
+    update({ position: null, tutorial: { ...base, id, rootId: root.id, firstUserId: store.get().actorId } });
     return;
   }
   // people: a small tree the first assessor has already rated, so there is something to compare with.
@@ -248,6 +265,9 @@ function besideWhat(target: HTMLElement): { left: number; top: number; right: nu
   const dock = target.closest('#viewDock');
   if (dock) return dock.getBoundingClientRect();
   const r = target.getBoundingClientRect();
+  // The type chip's list opens from its left edge; the toolbar's menus open from their right edge.
+  if (target.matches('.doc-type-menu'))
+    return { left: r.left, right: r.left + 296, top: r.bottom, bottom: r.bottom + 240 };
   if (target.matches('details.toolbar-popover'))
     return { left: r.right - 264, right: r.right, top: r.bottom, bottom: r.bottom + 420 };
   return r;
@@ -286,6 +306,22 @@ function anchors(run: TutorialRun, state: AppState): string[] {
     if (run.step === BASICS.tableBack) list.push('#btnTreeView');
     // Arranging is in the view settings: their button first, then the button inside once they are open.
     if (run.step === BASICS.arrange) list.push(state.view.dockHidden ? '#btnViewSettings' : '#btnLayout');
+  } else if (run.id === 'decision') {
+    if (run.step === DECISION.intro || run.step === DECISION.switchType) list.push('#docTypeMenu');
+    if (run.step === DECISION.addOptions) list.push('#btnOption', cardSelector(run.rootId));
+    if (run.step === DECISION.addReason) list.push('.node[data-relation="option"]');
+    if (run.step === DECISION.rateReason)
+      list.push(
+        evaluating && state.selectedId === run.supportId ? '#nodeImpact' : null,
+        cardSelector(run.supportId),
+        evaluating ? null : '#btnWorkflowEvaluate'
+      );
+    if (run.step === DECISION.compare)
+      list.push(
+        state.selectedId === run.rootId ? '[data-testid="decision-overview"]' : null,
+        cardSelector(run.rootId)
+      );
+    if (run.step === DECISION.vote) list.push('#btnVoting');
   } else if (run.id === 'people') {
     if (run.step === PEOPLE.intro || run.step === PEOPLE.addAssessor) list.push('#actorSelect');
     if (run.step === PEOPLE.rateAsSecond)
@@ -338,6 +374,26 @@ function showTarget(): void {
     else if (step === BASICS.tableBack) selectPresentation('tree');
     else if (step === BASICS.arrange) arrangeTree();
     else store.select(current.rootId);
+    return;
+  }
+  if (current.id === 'decision') {
+    const { step } = current;
+    if (step === DECISION.intro || step === DECISION.switchType)
+      document.querySelector<HTMLElement>('#docTypeMenu > summary')?.click();
+    else if (step === DECISION.addOptions) store.select(current.rootId);
+    else if (step === DECISION.addReason) {
+      const option = store.get().project.nodes.find((n) => n.kind === 'option');
+      if (option) store.select(option.id);
+    } else if (step === DECISION.rateReason) {
+      evaluate();
+      if (current.supportId) store.select(current.supportId);
+    } else if (step === DECISION.compare) {
+      evaluate();
+      store.select(current.rootId);
+      requestAnimationFrame(() =>
+        document.querySelector('[data-testid="decision-overview"]')?.scrollIntoView({ block: 'nearest' })
+      );
+    }
     return;
   }
   if (current.id === 'people') {

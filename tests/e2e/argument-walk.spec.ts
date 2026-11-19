@@ -104,9 +104,10 @@ test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports
 });
 
 test('switching to decision mode offers options; Yövärit (bitberg) theme applies', async ({ page }) => {
-  // The document's type is in the Tiedosto menu and shown beside the title.
+  // The document's type is shown beside the title, and that chip is where it is changed.
   await expect(page.locator('#docTypeChip')).toHaveText('Argumentointi');
-  await page.locator('#fileMenu > summary').click();
+  await page.locator('#docTypeChip').click();
+  await expect(page.locator('#docTypeMenu')).toContainText('Päätös vertaa vaihtoehtoja');
   await page.locator('#modeDecision').click();
   await expect(page.locator('#docTypeChip')).toHaveText('Päätös');
   await expect(page.locator('#modeDecision')).toHaveClass(/active/);

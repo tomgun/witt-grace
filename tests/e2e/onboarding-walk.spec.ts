@@ -29,6 +29,11 @@ test('an example and the practice open through the replacement dialog; the pract
   const card = examples.locator('.example-card[data-example="painonhallinta"]');
   await expect(card).toContainText('Painonhallinta: mikä on kestävä tapa?');
   await expect(card).toContainText('13 väitettä · 3 arvioijaa');
+  // Every example says which type of document it is.
+  await expect(card.locator('.example-type')).toHaveText('Argumentointi');
+  await expect(examples.locator('.example-card[data-example="pilvialusta"] .example-type')).toHaveText(
+    'Päätös'
+  );
 
   await card.click();
   const replace = page.locator('#replaceDialog');
@@ -224,7 +229,7 @@ test('an example and the practice open through the replacement dialog; the pract
   } else await page.locator('#tutorialTarget').click();
   expect(await overlap()).toBe(false);
   await expect(progress).toHaveText('Harjoitus valmis');
-  await expect(page.locator('#tutorialContinue')).toHaveText('Seuraavaksi: useampi arvioija');
+  await expect(page.locator('#tutorialContinue')).toHaveText('Seuraavaksi: päätös vaihtoehtojen välillä');
 
   // Finished, every earlier step can still be looked at: one step back, or a phase at a time.
   await page.locator('#tutorialBack').click();
@@ -309,6 +314,7 @@ test('the home screen invites to the walkthrough; no, later and never are all re
   await page.locator('#tutorialClose').click();
   await page.locator('#helpMenu > summary').click();
   await expect(page.locator('#btnTutorial')).toHaveText('Opastettu harjoitus');
+  await expect(page.locator('#btnTutorialDecision')).toHaveText('Opastus: päätös vaihtoehtojen välillä');
   await expect(page.locator('#btnTutorialPeople')).toHaveText('Opastus: useampi arvioija');
   await expect(page.locator('#btnTutorialCollab')).toHaveText('Opastus: yhteistyö verkossa');
 });
@@ -393,4 +399,60 @@ test('the walkthrough for working together online points at the menu and waits f
   await expect(panel).toBeVisible();
   await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 3/4');
   await expect(page.locator('#tutorialText')).toContainText('Kutsuttu avaa linkin');
+});
+
+/**
+ * must: the walkthrough for a decision starts from an argument document, has its type changed from the chip beside
+ *       the title, two options added, a reason put under one and rated, and then shows where the options are
+ *       compared and where the vote is; each step is passed only by what it asks for (owner 2026-11-19, S-15)
+ * red-against: the type step passed without the type changing, one option counted as a choice, the comparison
+ *              pointed at while another card is selected
+ */
+test('the walkthrough for a decision follows what is done', async ({ page }, testInfo) => {
+  test.skip(
+    testInfo.project.name === 'mobile',
+    'the chip, the toolbar and the side panels are a desktop walk'
+  );
+  await startBlank(page, 'argument');
+  await page.locator('#helpMenu > summary').click();
+  await page.locator('#btnTutorialDecision').click();
+  await page.locator('#replaceForget').click();
+  const panel = page.locator('#tutorialPanel');
+  const progress = page.locator('#tutorialProgress');
+  await expect(panel).toHaveAttribute('data-tutorial', 'decision');
+  await expect(progress).toHaveText('Vaihe 1/7');
+  await expect(page.locator('#docTypeChip')).toHaveText('Argumentointi');
+  await expect(page.locator('#docTypeMenu')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(progress).toHaveText('Vaihe 2/7');
+
+  await page.locator('#docTypeChip').click();
+  await page.locator('#modeDecision').click();
+  await expect(page.locator('#docTypeChip')).toHaveText('Päätös');
+  await expect(progress).toHaveText('Vaihe 3/7');
+  await expect(page.locator('#btnOption')).toHaveClass(/tutorial-highlight/);
+  await addNamed(page, '#btnOption', 'Neljä päivää');
+  await expect(progress).toHaveText('Vaihe 3/7');
+  await page.locator('.node.is-root .node-title').click();
+  await addNamed(page, '#btnOption', 'Viisi päivää');
+  await expect(progress).toHaveText('Vaihe 4/7');
+
+  await page.locator('#tutorialTarget').click();
+  await addNamed(page, '#btnSupport', 'Palautuminen paranee');
+  await expect(progress).toHaveText('Vaihe 5/7');
+  await expect(page.locator('#tutorialText')).toContainText('merkitystä juuri tälle vaihtoehdolle');
+  await page.locator('#tutorialTarget').click();
+  await reviewSelected(page, '80', '4');
+  await expect(progress).toHaveText('Vaihe 6/7');
+
+  // The comparison belongs to the decision question: its card is pointed at until it is the selected one.
+  await expect(page.locator('.node.is-root')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialTarget').click();
+  await expect(page.getByTestId('decision-overview')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(progress).toHaveText('Vaihe 7/7');
+  await expect(page.locator('#btnVoting')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#tutorialNext').click();
+  await expect(progress).toHaveText('Harjoitus valmis');
+  await expect(page.locator('#tutorialContinue')).toHaveText('Seuraavaksi: useampi arvioija');
 });

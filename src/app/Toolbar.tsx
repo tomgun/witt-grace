@@ -2,7 +2,7 @@
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
 import type { ReactNode } from 'react';
 import { SCORING_OFFERED, childrenOf, isAiProfile } from '../domain/index.ts';
-import type { Mode, ScoringVersion } from '../domain/index.ts';
+import type { ScoringVersion } from '../domain/index.ts';
 import {
   ADD_LOCAL_USER,
   addNode,
@@ -85,14 +85,6 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
   const editable = canEdit(state);
   const selected = project.nodes.find((n) => n.id === state.selectedId);
   const root = project.nodes.find((n) => n.parentId === null);
-  const setMode = (mode: Mode) => {
-    if (mode === project.mode) return;
-    if (mode === 'argument' && project.nodes.some((n) => n.relation === 'option' || n.relation === 'group')) {
-      store.showMessage(t('optionsPreventArgumentMode'));
-      return;
-    }
-    store.dispatch({ type: 'project.setMode', mode });
-  };
   const aiProfiles = project.users.filter((u) => isAiProfile(u));
   const current = project.users.find((u) => u.id === state.actorId);
   const perspective =
@@ -244,30 +236,6 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             <Item id="btnCollab" onClick={() => store.openDialog('collab')}>
               {state.collab && state.collab.phase !== 'ended' ? t('collabManage') : t('collabInvite')}
             </Item>
-            <div className="menu-divider" />
-            {/* The document's type is the document's, not a view: it sits with the file, not among the view
-                switches (S-15, 2026-11-19). */}
-            <span className="menu-label">{t('docTypeLabel')}</span>
-            <div aria-label={t('docTypeLabel')} className="mode-switch" role="group">
-              <button
-                type="button"
-                id="modeArgument"
-                data-testid="mode-argument"
-                className={project.mode === 'argument' ? 'active' : ''}
-                onClick={() => setMode('argument')}
-              >
-                {t('modeArgument')}
-              </button>
-              <button
-                type="button"
-                id="modeDecision"
-                data-testid="mode-decision"
-                className={project.mode === 'decision' ? 'active' : ''}
-                onClick={() => setMode('decision')}
-              >
-                {t('modeDecision')}
-              </button>
-            </div>
             <div className="menu-divider" />
             <Item id="btnAIReview" onClick={() => store.openDialog('aiReview')}>
               {t('aiProposalMenu')}
@@ -466,6 +434,12 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             </Item>
             <Item id="btnTutorial" onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial'))}>
               {t('tutorialStart')}
+            </Item>
+            <Item
+              id="btnTutorialDecision"
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial', { detail: 'decision' }))}
+            >
+              {t('tutMenuDecision')}
             </Item>
             <Item
               id="btnTutorialPeople"
