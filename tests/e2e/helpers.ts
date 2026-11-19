@@ -104,3 +104,14 @@ export async function selectRoot(page: Page): Promise<void> {
   }
   await expect(root).toHaveClass(/selected/);
 }
+
+/** The view settings dock is in titled sections (S-15, 2026-11-19): cards, tree, limit, reading, person; opens one
+ * when it is closed. */
+export async function openDockSection(
+  page: Page,
+  id: 'cards' | 'tree' | 'limit' | 'reading' | 'person'
+): Promise<void> {
+  const section = page.locator(`#dockSection-${id}`);
+  if (!(await section.evaluate((d) => (d as HTMLDetailsElement).open)))
+    await section.locator('> summary').click();
+}

@@ -10,7 +10,7 @@
  *              a subtree count that shows only the direct children
  */
 import { expect, test } from '@playwright/test';
-import { addNamed, reviewSelected, selectRoot, startBlank } from './helpers.ts';
+import { addNamed, openDockSection, reviewSelected, selectRoot, startBlank } from './helpers.ts';
 
 const LONG =
   'Ruuhkamaksu vähentää autoliikennettä keskustassa, koska suurin osa ruuhka-ajan matkoista on lyhyitä ja ne voi korvata joukkoliikenteellä, pyörällä tai kävellen, kuten muissa kaupungeissa.';
@@ -54,6 +54,7 @@ test('text fills the card, the reading view shows it all, and a card can be resi
   // The reading view: the whole title shows.
   await page.locator('#viewport').focus();
   await page.keyboard.press('Alt+V');
+  await openDockSection(page, 'reading');
   await page.getByTestId('reading-mode').check();
   await expect(card).toHaveClass(/reading-card/);
   const clipped = await title.evaluate((el) => el.scrollHeight - el.clientHeight);

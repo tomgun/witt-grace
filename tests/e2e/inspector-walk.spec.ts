@@ -56,7 +56,12 @@ test('Punnitse: ratings first, the rest on request, a result that says whose it 
   await openMore(page);
   await page.getByTestId('node-mute').check();
   await selectRoot(page);
-  await page.locator('#nodesLayer .node', { hasText: 'Säästää aikaa' }).locator('.node-title').click();
+  // By the keyboard: in the top-down tree the reason is under the main claim, below a phone's small canvas.
+  await page.keyboard.press('ArrowDown');
+  await expect(page.locator('#nodesLayer .node', { hasText: 'Säästää aikaa' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
   await expect(page.getByTestId('node-mute')).toBeVisible();
   await page.getByTestId('node-mute').uncheck();
 

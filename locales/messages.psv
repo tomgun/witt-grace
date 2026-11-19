@@ -42,7 +42,7 @@ opposeAdd|− Vastainen|− Dagegen|− Opposing|− En contra|− Contre|− В
 optionAdd|+ Päätösvaihtoehto|+ Entscheidungsoption|+ Decision option|+ Opción de decisión|+ Option de décision|+ Вариант решения|+ 决策选项|+ 決定案|+ 결정 선택지
 localHint|Muutokset tallentuvat selaimeen automaattisesti. Vie JSON-tiedosto erilliseksi varmuuskopioksi.|Änderungen werden im Browser gespeichert. Exportiere JSON als Sicherungskopie.|Changes are saved in your browser automatically. Export JSON for a separate backup.|Los cambios se guardan automáticamente en el navegador. Exporta JSON como copia de seguridad.|Les modifications sont enregistrées dans le navigateur. Exportez un JSON comme sauvegarde.|Изменения сохраняются в браузере. Экспортируйте JSON для резервной копии.|更改自动保存在浏览器中。请导出 JSON 作为独立备份。|変更はブラウザーに自動保存されます。別途 JSON を書き出してバックアップしてください。|변경 내용은 브라우저에 자동 저장됩니다. 별도 백업용 JSON 파일을 내보내세요.
 canvasHint|Vedä solmuja ja avaa niiden haaroja|Knoten ziehen und Zweige aufklappen|Drag nodes and expand branches|Arrastra nodos y despliega ramas|Déplacez les nœuds et dépliez les branches|Перетаскивайте узлы и раскрывайте ветви|拖动节点并展开分支|ノードをドラッグして枝を展開|노드를 끌고 가지를 펼치세요
-layers|NÄKYMÄKERROKSET|ANSICHTSEBENEN|VIEW LAYERS|CAPAS DE VISTA|COUCHES D’AFFICHAGE|СЛОИ ПРЕДСТАВЛЕНИЯ|视图图层|表示レイヤー|보기 레이어
+layers|Näytä korteissa|Auf den Karten zeigen|Show on the cards|Mostrar en las tarjetas|Afficher sur les cartes|Показывать на карточках|在卡片上显示|カードに表示|카드에 표시
 viewScope|Näkymän laajuus|Ansichtsumfang|View detail|Nivel de detalle|Niveau de détail|Детализация вида|显示详细程度|表示の詳細度|보기 상세 수준
 textOnly|Vain väitteet|Nur Aussagen|Claims only|Solo afirmaciones|Affirmations seules|Только утверждения|仅显示论点|主張のみ|주장만
 analysis|Analyysi|Analyse|Analysis|Análisis|Analyse|Анализ|分析|分析|분석
@@ -55,7 +55,7 @@ layerDetails|Perustelut / muistiinpanot|Begründungen / Notizen|Reasoning / note
 layerIndex|Perustelutulos|Argumentbilanz|Argument result|Balance argumental|Bilan argumentatif|Баланс аргументов|论证净结果|論拠の収支|논거 순결과
 layerComments|Kommentit|Kommentare|Comments|Comentarios|Commentaires|Комментарии|评论|コメント|댓글
 layerCounts|Alisolmujen määrä (suorat / koko alipuu)|Anzahl Unterknoten (direkt / ganzer Teilbaum)|Number of child nodes (direct / whole subtree)|Número de subnodos (directos / subárbol)|Nombre de sous-nœuds (directs / sous-arbre)|Число дочерних узлов (прямых / всего поддерева)|子节点数量（直接 / 整个子树）|子ノード数（直接 / 部分木全体）|하위 노드 수 (직속 / 전체 하위 트리)
-focusHeading|HAARAN KOROSTUS|ZWEIG HERVORHEBEN|BRANCH HIGHLIGHT|RESALTAR RAMA|METTRE UNE BRANCHE EN AVANT|ВЫДЕЛЕНИЕ ВЕТВИ|分支高亮|枝の強調表示|가지 강조
+focusHeading|Näytä haarasta|Vom Zweig zeigen|Show from the branch|Mostrar de la rama|Afficher de la branche|Показать из ветви|显示分支中的|枝から表示|가지에서 표시
 all|Kaikki|Alle|All|Todos|Tous|Все|全部|すべて|전체
 focusSupport|+ Puoltavat|+ Unterstützende|+ Supporting|+ A favor|+ Favorables|+ Поддерживают|+ 支持|+ 支持|+ 찬성
 focusOppose|− Vastustavat|− Widersprechende|− Opposing|− En contra|− Opposants|− Возражают|− 反对|− 反対|− 반대
@@ -83,7 +83,7 @@ argumentModeLabel|Argumentointitila|Argumentmodus|Argument mode|Modo de argument
 decisionModeLabel|Päätöksentekotila|Entscheidungsmodus|Decision mode|Modo de decisión|Mode décision|Режим решения|决策模式|意思決定モード|의사결정 모드
 wholeTree|Koko puu|Gesamter Baum|Whole tree|Árbol completo|Arbre entier|Всё дерево|整棵树|ツリー全体|전체 트리
 startPoint|Lähtökohta: {name}|Ausgangspunkt: {name}|Starting point: {name}|Punto de partida: {name}|Point de départ : {name}|Начальная точка: {name}|起点：{name}|起点: {name}|시작점: {name}
-focusIdle|Valitse puoltavat tai vastustavat. Valitun haaran voi vaihtaa.|Unterstützung oder Widerspruch wählen. Der Zweig kann gewechselt werden.|Choose supporting or opposing arguments. You can change the selected branch.|Elige argumentos a favor o en contra. Puedes cambiar de rama.|Choisissez pour ou contre. Vous pouvez changer de branche.|Выберите поддерживающие или возражающие доводы. Ветвь можно сменить.|选择支持或反对论点，也可以切换分支。|支持・反対の論点を選択します。対象の枝も変更できます。|찬성 또는 반대 논거를 고르세요. 선택한 가지를 바꿀 수 있습니다.
+focusIdle|Valitse puoltavat tai vastustavat, niin muut himmenevät.|Wähle stützende oder widersprechende; die übrigen werden abgeblendet.|Choose supporting or opposing, and the rest dim.|Elige a favor o en contra y el resto se atenúa.|Choisissez pour ou contre : le reste s’estompe.|Выберите «за» или «против» — остальное приглушится.|选择支持或反对，其余将变暗。|賛成か反対を選ぶと、ほかは薄く表示されます。|찬성 또는 반대를 고르면 나머지는 흐려집니다.
 focusMatches|{kind}: {count} · Suljetuista haaroista näkyviin: {peek}. Sulkemistila säilyy.|{kind}: {count} · Ausgeblendete Treffer: {peek}. Einklappung bleibt erhalten.|{kind}: {count} · Revealed through collapsed branches: {peek}. Collapse state is unchanged.|{kind}: {count} · Mostrados desde ramas contraídas: {peek}. No cambia el estado.|{kind} : {count} · Révélés dans les branches repliées : {peek}. Aucun changement d’état.|{kind}: {count} · Показано из свёрнутых ветвей: {peek}. Состояние не меняется.|{kind}：{count} · 从折叠分支临时显示：{peek}。折叠状态不变。|{kind}: {count} · 折りたたみから一時表示: {peek}。状態は変わりません。|{kind}: {count} · 접힌 가지에서 임시 표시: {peek}. 접기 상태는 유지됩니다.
 supportType|PUOLTAA|STÜTZT|SUPPORTS|APOYA|SOUTIENT|ПОДДЕРЖИВАЕТ|支持|支持|지지
 opposeType|VASTUSTAA|WIDERSPRICHT|OPPOSES|SE OPONE|S’OPPOSE|ВОЗРАЖАЕТ|反对|反対|반대
@@ -1200,3 +1200,16 @@ proposalReviewCount|{count} arviota|{count} Bewertungen|{count} ratings|{count} 
 homeGroupOpen|Avaa|Öffnen|Open|Abrir|Ouvrir|Открыть|打开|開く|열기
 homeGroupLearn|Opettele|Lernen|Learn|Aprender|Apprendre|Изучить|学习|学ぶ|배우기
 homeGroupTogether|Yhdessä|Gemeinsam|Together|Juntos|Ensemble|Вместе|协作|共同で|함께
+dockSectionCards|Korttien sisältö|Inhalt der Karten|What the cards show|Contenido de las tarjetas|Contenu des cartes|Содержимое карточек|卡片内容|カードの内容|카드 내용
+dockSectionTree|Puun asettelu|Anordnung des Baums|Tree layout|Disposición del árbol|Disposition de l’arbre|Расположение дерева|树的布局|ツリーの配置|트리 배치
+dockSectionLimit|Rajaa näkyvää|Sichtbares eingrenzen|Limit what is shown|Limitar lo visible|Limiter l’affichage|Ограничить показ|限定显示范围|表示を絞る|표시 범위 좁히기
+dockSectionReading|Lukunäkymä|Leseansicht|Reading view|Vista de lectura|Vue de lecture|Режим чтения|阅读视图|読書ビュー|읽기 보기
+dockStateWhole|koko puu|ganzer Baum|whole tree|árbol completo|arbre entier|всё дерево|整棵树|ツリー全体|트리 전체
+dockStateDepth|tasot 0–{depth}|Ebenen 0–{depth}|levels 0–{depth}|niveles 0–{depth}|niveaux 0–{depth}|уровни 0–{depth}|层级 0–{depth}|レベル 0–{depth}|단계 0–{depth}
+dockStateOn|päällä|an|on|activada|activée|включён|开|オン|켜짐
+dockStateOff|pois|aus|off|desactivada|désactivée|выключен|关|オフ|꺼짐
+arrangeHint|Siirtää kortit siistiin järjestykseen. Muuttaa asiakirjaa; voit kumota sen.|Ordnet die Karten sauber an. Ändert das Dokument; du kannst es rückgängig machen.|Moves the cards into a tidy order. Changes the document; you can undo it.|Coloca las tarjetas en orden. Cambia el documento; puedes deshacerlo.|Range les cartes proprement. Modifie le document ; vous pouvez annuler.|Аккуратно расставляет карточки. Меняет документ; это можно отменить.|把卡片整齐排列。会更改文档；可以撤销。|カードを整然と並べます。文書が変更されますが、元に戻せます。|카드를 가지런히 정리합니다. 문서가 바뀌며, 실행 취소할 수 있습니다.
+viewReset|Palauta oletusnäkymä|Standardansicht wiederherstellen|Restore the default view|Restablecer la vista|Rétablir la vue par défaut|Вернуть вид по умолчанию|恢复默认视图|既定の表示に戻す|기본 보기로 되돌리기
+viewResetHint|Palauttaa korttien sisällön, rajaukset, lukunäkymän ja korostuksen. Puun suunta ja korttien paikat säilyvät.|Setzt Karteninhalt, Eingrenzungen, Leseansicht und Hervorhebung zurück. Richtung und Kartenpositionen bleiben.|Resets what the cards show, the limits, the reading view and the highlight. The direction and the cards' places stay.|Restablece el contenido de las tarjetas, los límites, la vista de lectura y el resaltado. La dirección y las posiciones se mantienen.|Rétablit le contenu des cartes, les limites, la vue de lecture et la mise en évidence. La direction et les positions restent.|Сбрасывает содержимое карточек, ограничения, режим чтения и выделение. Направление и места карточек сохраняются.|重置卡片内容、显示范围、阅读视图和高亮。方向和卡片位置保持不变。|カードの内容、絞り込み、読書ビュー、強調を元に戻します。向きとカードの位置はそのままです。|카드 내용, 범위, 읽기 보기, 강조를 되돌립니다. 방향과 카드 위치는 그대로입니다.
+focusBranchOf|Haara: {name}|Zweig: {name}|Branch: {name}|Rama: {name}|Branche : {name}|Ветвь: {name}|分支：{name}|枝：{name}|가지: {name}
+focusUseSelected|Käytä valittua solmua|Ausgewählten Knoten verwenden|Use the selected node|Usar el nodo seleccionado|Utiliser le nœud sélectionné|Взять выбранный узел|使用所选节点|選択中のノードを使う|선택한 노드 사용

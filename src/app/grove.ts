@@ -66,11 +66,12 @@ export function crownBlobs(cx: number, cy: number, spread: number): CrownBlob[] 
     return seed / 0x100000000;
   };
   for (let i = 0; i < 34; i += 1) {
-    const angle = Math.PI * (1 + (i % 17) / 16);
+    // All the way round (owner 2026-11-19): the main claim sits in the middle of its crown, not under it.
+    const angle = Math.PI * (1 + (2 * (i % 17)) / 17);
     const ring = i < 17 ? 1 : 0.62;
     blobs.push({
       x: Math.round(cx + Math.cos(angle) * rx * ring + (next() - 0.5) * 90),
-      y: Math.round(cy - 30 + Math.sin(angle) * rx * 0.34 * ring + (next() - 0.5) * 60),
+      y: Math.round(cy + Math.sin(angle) * rx * 0.34 * ring + (next() - 0.5) * 60),
       r: Math.round(110 + next() * 90),
       tone: Math.floor(next() * 3),
     });

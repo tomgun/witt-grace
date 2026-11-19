@@ -8,7 +8,7 @@
  *              bare state surviving into the next visit of the view
  */
 import { expect, test } from '@playwright/test';
-import { startBlank } from './helpers.ts';
+import { openDockSection, startBlank } from './helpers.ts';
 
 test('tree only: the exit at the right with its key; a bare full screen with a way back', async ({
   page,
@@ -93,7 +93,8 @@ test('the view settings dock has no sideways scroll', async ({ page }) => {
     await page.locator('#btnViewSettings').click();
     const dock = page.locator('#viewDock');
     await expect(dock).toBeVisible();
-    await page.locator('#btnLayers').click();
+    // Every section open: the widest rows are in the ones that start closed.
+    for (const id of ['limit', 'reading', 'person'] as const) await openDockSection(page, id);
     const overflow = await dock.evaluate((el) => {
       const edge = el.getBoundingClientRect().right;
       const beyond = [...el.querySelectorAll<HTMLElement>('*')]

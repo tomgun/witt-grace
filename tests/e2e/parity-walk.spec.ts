@@ -49,6 +49,9 @@ async function digest(page: Page, base: string) {
   const chips = await texts(page, `.node:has(.node-title:text-is("${SELECTED}")) .meta-chip`);
   const cardTags = await texts(page, '.node .node-tag');
   await page.locator('#btnViewSettings').click();
+  // 2026-11-19: the app's dock is in sections, and the one that limits what is shown starts closed.
+  const limit = page.locator('#dockSection-limit:not([open]) > summary');
+  if (await limit.count()) await limit.click();
   const dockSummary = (await texts(page, '#focusSummary'))[0];
   const depth = (await texts(page, '#treeDepthValue'))[0];
   await page.locator('#btnDockClose').click();
@@ -115,6 +118,11 @@ function asDecided(raw: Digest): Digest {
     // 2026-11-19: one word for the person who rates (arvioija), where the prototype also says käyttäjä or henkilö.
     compare: (d.compare ?? '').replace('Arviot henkilöittäin', 'Arviot arvioijittain'),
     lensButton: (d.lensButton ?? '').replace('Käyttäjien arvioiden näkyminen', 'Kenen arviot näkyvät'),
+    // 2026-11-19: the branch highlight says what choosing does; changing the branch has its own button and line.
+    dockSummary: (d.dockSummary ?? '').replace(
+      'Valitse puoltavat tai vastustavat. Valitun haaran voi vaihtaa.',
+      'Valitse puoltavat tai vastustavat, niin muut himmenevät.'
+    ),
   };
 }
 

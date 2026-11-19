@@ -237,7 +237,6 @@ test('the view dock has no separate credence or impact layer and no drag-from-te
   test.skip(testInfo.project.name === 'mobile', 'the dock is opened from the desktop toolbar');
   await page.locator('#viewport').focus();
   await page.keyboard.press('Alt+V');
-  await page.locator('#btnLayers').click();
   await expect(page.locator('#layersPanel input[data-layer]')).toHaveCount(7);
   await expect(
     page.locator('#layersPanel [data-layer="confidence"], #layersPanel [data-layer="impact"]')

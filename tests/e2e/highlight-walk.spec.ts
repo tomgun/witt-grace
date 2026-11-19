@@ -7,7 +7,7 @@
  * red-against: the highlight tied to the active profile, another person's node marked as theirs
  */
 import { expect, test } from '@playwright/test';
-import { addNamed, selectRoot, startBlank } from './helpers.ts';
+import { addNamed, openDockSection, selectRoot, startBlank } from './helpers.ts';
 
 test("one person's traces stand out in the tree", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'the desktop walk covers the flow');
@@ -23,6 +23,7 @@ test("one person's traces stand out in the tree", async ({ page }, testInfo) => 
   await page.locator('#actorSelect').selectOption({ index: 0 });
   await page.locator('#viewport').focus();
   await page.keyboard.press('Alt+V');
+  await openDockSection(page, 'person');
   const select = page.getByTestId('highlight-user');
   await select.selectOption({ label: 'Bea' });
   const bea = page.locator('#nodesLayer .node', { hasText: 'Bean vastaväite' });

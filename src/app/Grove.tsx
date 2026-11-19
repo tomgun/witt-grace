@@ -33,7 +33,7 @@ export function GroveCrown({ x, y, spread }: { x: number; y: number; spread: num
       {blobs.map((b, i) => (
         <circle key={i} className={`grove-leaves tone-${b.tone}`} cx={b.x} cy={b.y} r={b.r} />
       ))}
-      <ellipse cx={x} cy={y - 40} rx={Math.max(560, spread) * 0.9} ry={240} fill="url(#groveGlow)" />
+      <ellipse cx={x} cy={y} rx={Math.max(560, spread) * 0.9} ry={240} fill="url(#groveGlow)" />
     </g>
   );
 }

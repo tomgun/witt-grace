@@ -90,7 +90,7 @@ test('focus ring, borders and branch strokes reach 3:1', () => {
     (cls) =>
       new RegExp(`body\\[data-theme='grove'\\] \\.${cls} \\{[^}]*stroke: (#[0-9a-f]{6});`).exec(css)?.[1]
   );
-  assert.deepEqual(strokes, ['#4f8a3c', '#b0572f', '#255f75']);
+  assert.deepEqual(strokes, ['#2f6b25', '#b0572f', '#255f75']);
   for (const stroke of strokes as string[])
     assert.ok(ratio(stroke, token('canvas')) >= 3, `branch ${stroke} on canvas`);
 });

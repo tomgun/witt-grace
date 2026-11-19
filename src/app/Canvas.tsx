@@ -68,6 +68,17 @@ const ORIENTATION_KEYS = {
   'four-way': 'fourDirections',
 } as const;
 
+/** The height of the canvas that can be seen: on a phone the inspector is a sheet over its lower part, and a card
+ * brought into view under the sheet is not in view (the top-down tree puts a new reason exactly there). */
+function freeHeight(viewport: HTMLElement): number {
+  const sheet = document.querySelector<HTMLElement>('.inspector-panel');
+  if (!sheet || getComputedStyle(sheet).position !== 'fixed') return viewport.clientHeight;
+  const view = viewport.getBoundingClientRect();
+  const top = sheet.getBoundingClientRect().top;
+  if (top <= view.top || top >= view.bottom) return viewport.clientHeight;
+  return Math.max(120, Math.round(top - view.top));
+}
+
 /** The title editor is as tall as its text, never shorter than the room the card gives it: a title that wraps to
  * a second line used to lose the lower half of its letters (owner's report 2026-11-19). */
 function fitEditor(el: HTMLTextAreaElement | null): void {
@@ -162,7 +173,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       const viewport = viewportRef.current;
       if (!viewport || !nodes.length) return;
       const vw = viewport.clientWidth;
-      const vh = viewport.clientHeight;
+      const vh = freeHeight(viewport);
       if (!vw || !vh) return;
       const selectedId = getStore().get().selectedId;
       const rects = nodes.map((n) => ({
@@ -194,7 +205,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       setCamera({
         scale,
         x: viewport.clientWidth / 2 - (pos.x + size.w / 2) * scale,
-        y: viewport.clientHeight / 2 - (pos.y + size.h / 2) * scale,
+        y: freeHeight(viewport) / 2 - (pos.y + size.h / 2) * scale,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -232,7 +243,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       const node = nodes.find((n) => n.id === revealId);
       if (!viewport || !node) return;
       const rect = { ...frame.visualPosition(node), ...frame.sizeOf(node.id) };
-      setCamera((c) => revealRect(c, rect, { w: viewport.clientWidth, h: viewport.clientHeight }));
+      setCamera((c) => revealRect(c, rect, { w: viewport.clientWidth, h: freeHeight(viewport) }));
     });
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps

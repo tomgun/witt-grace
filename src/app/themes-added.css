@@ -463,12 +463,13 @@ body[data-theme='grove'] .node:focus-visible {
 }
 /* Branches: living wood for a supporting reason, a bare rowan-red twig, dashed, for an opposing one. */
 body[data-theme='grove'] .edge {
-  stroke-width: 3.4;
+  stroke-width: 3.6;
   stroke-linecap: round;
-  opacity: 0.95;
+  opacity: 1;
 }
+/* Darker than the leaves it crosses, so a supporting branch is not lost in the foliage behind it. */
 body[data-theme='grove'] .edge-support {
-  stroke: #4f8a3c;
+  stroke: #2f6b25;
 }
 body[data-theme='grove'] .edge-oppose {
   stroke: #b0572f;

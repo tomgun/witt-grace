@@ -10158,3 +10158,130 @@ body.witt-focus .canvas-quick-controls {
 .proposal-panel [role='status']:empty {
   margin: -11px 0 0;
 }
+
+/* View settings in titled sections (owner 2026-11-19, S-15): each heading names its section and says what is set
+   there, so a closed section still answers the question; the first two start open. */
+#viewDock .dock-content {
+  overflow-y: auto;
+}
+.dock-section {
+  border-top: 1px solid var(--border);
+}
+.dock-section > summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 40px;
+  padding: 10px 2px 9px;
+  cursor: pointer;
+  list-style: none;
+  box-sizing: border-box;
+}
+.dock-section > summary::-webkit-details-marker {
+  display: none;
+}
+.dock-section > summary::before {
+  content: '▸';
+  color: var(--subtle);
+  flex: none;
+  width: 12px;
+}
+.dock-section[open] > summary::before {
+  content: '▾';
+}
+.dock-section-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+}
+.dock-section-state {
+  font-size: 12px;
+  color: var(--subtle);
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55%;
+}
+.dock-section-state.is-active {
+  color: var(--accent-text);
+  font-weight: 750;
+}
+.dock-section-body {
+  padding: 0 2px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.dock-field-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--subtle);
+}
+#viewDock .dock-section .layers-panel,
+#viewDock .dock-section .dock-tree-tools,
+#viewDock .dock-section .dock-depth-tools {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.dock-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dock-checks label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.dock-arrange {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--border);
+}
+.dock-arrange .btn {
+  flex: none;
+  font-size: 12px;
+  padding: 7px 10px;
+}
+.dock-arrange small {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--subtle);
+}
+#viewDock .focus-target {
+  justify-content: space-between;
+  margin-top: 0;
+}
+#viewDock #treeDepthValue {
+  color: var(--subtle);
+  font-weight: 700;
+}
+.dock-reset {
+  border-top: 1px solid var(--border);
+  padding-top: 9px;
+  display: flex;
+  justify-content: flex-end;
+}
+.dock-reset .btn {
+  font-size: 12px;
+  padding: 7px 10px;
+}
+/* The dock's own header stays in place while its sections scroll: the way to move and close it is never lost. */
+#viewDock .dock-topline {
+  position: sticky;
+  top: -11px;
+  margin-top: -11px;
+  padding-top: 11px;
+  background: var(--surface);
+  z-index: 1;
+}

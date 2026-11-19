@@ -1,5 +1,6 @@
 // Näkymäasetukset: the floating, draggable dock with layers, tree tools, depth slider and branch focus (inv-panels §E).
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { arrangeTree, toggleCompactVisible, toggleOptionBranches } from './actions.ts';
 import { canEdit } from './actions.ts';
 import { userTraces } from './derive.ts';
@@ -27,12 +28,69 @@ const LAYER_KEYS: Record<
   links: 'layerLinks',
 };
 
+/** The dock's sections, in the order of use (owner 2026-11-19, S-15): what the cards show, how the tree is laid out,
+ * what part of it is shown, the reading view and one assessor's traces. */
+type SectionId = 'cards' | 'tree' | 'limit' | 'reading' | 'person';
+/** Which sections the person has opened or closed while the page is open; the first two start open. */
+const sectionOpen: Record<SectionId, boolean> = {
+  cards: true,
+  tree: true,
+  limit: false,
+  reading: false,
+  person: false,
+};
+function rememberSection(id: SectionId, open: boolean): void {
+  sectionOpen[id] = open;
+}
+
+/** One titled section: its heading always says the current state, so a closed section still answers "what is
+ * set here?" without being opened. */
+function Section({
+  id,
+  title,
+  status,
+  active,
+  onToggle,
+  children,
+}: {
+  id: SectionId;
+  title: string;
+  status: string;
+  /** A setting in the section differs from the default: the section starts open and its state stands out. */
+  active: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <details
+      className="dock-section"
+      id={`dockSection-${id}`}
+      data-section={id}
+      open={sectionOpen[id] || active}
+      onToggle={(e) => {
+        rememberSection(id, e.currentTarget.open);
+        onToggle();
+      }}
+    >
+      <summary>
+        <span className="dock-section-title">{title}</span>
+        <span className={`dock-section-state${active ? ' is-active' : ''}`} data-testid={`dock-state-${id}`}>
+          {status}
+        </span>
+      </summary>
+      <div className="dock-section-body">{children}</div>
+    </details>
+  );
+}
+
 export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }) {
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
   const { project, view } = state;
-  const [layersOpen, setLayersOpen] = useState(true);
+  // Opening or closing a section changes the dock's height: it is placed again so it stays inside the window.
+  const [sectionTick, setSectionTick] = useState(0);
+  const resized = () => setSectionTick((n) => n + 1);
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
 
@@ -70,7 +128,7 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
       top: Math.max(minTop, top),
     });
   };
-  useLayoutEffect(place, [view.dockScreenPosition, view.dockCollapsed, layersOpen, anchorId]);
+  useLayoutEffect(place, [view.dockScreenPosition, view.dockCollapsed, sectionTick, anchorId]);
   useEffect(() => {
     window.addEventListener('resize', place);
     return () => window.removeEventListener('resize', place);
@@ -151,6 +209,59 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
     store.requestFit();
   };
   const isTable = view.presentation === 'table';
+  const presetName = t(
+    preset === 'text'
+      ? 'compactView'
+      : preset === 'analysis'
+        ? 'analysis'
+        : preset === 'all'
+          ? 'allDetails'
+          : 'custom'
+  );
+  const orientationName = t(
+    view.orientation === 'vertical'
+      ? 'topDown'
+      : view.orientation === 'four-way'
+        ? 'fourDirections'
+        : 'leftRight'
+  );
+  const limited = view.depthLimit !== null || view.focus.mode !== 'all';
+  const limitState = [
+    view.depthLimit !== null ? t('dockStateDepth', { depth: depthValue }) : null,
+    view.focus.mode === 'support'
+      ? t('focusSupport')
+      : view.focus.mode === 'oppose'
+        ? t('focusOppose')
+        : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const highlighted = project.users.find((u) => u.id === view.highlightUserId) ?? null;
+  const atDefaults =
+    preset === 'text' &&
+    !limited &&
+    !view.readingMode &&
+    !highlighted &&
+    !view.compactVisible &&
+    !view.showSpread &&
+    view.showRecurringInTree &&
+    view.weightByRatings;
+  const resetView = () => {
+    store.setDepthOverrides(new Map());
+    store.setExplicitlyClosed(new Set());
+    store.setView({
+      layers: { ...LAYER_PRESETS.text },
+      depthLimit: null,
+      focus: { mode: 'all', anchorId: null },
+      readingMode: false,
+      highlightUserId: null,
+      compactVisible: false,
+      showSpread: false,
+      showRecurringInTree: true,
+      weightByRatings: true,
+    });
+    store.requestFit();
+  };
   return (
     <div
       id="viewDock"
@@ -200,237 +311,276 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
         </div>
       </div>
       <div className="dock-content" id="dockContent">
-        <div className="dock-row">
-          <span className="dock-label">{t('layers')}</span>
-          <label className="visually-hidden" htmlFor="viewPreset">
-            {t('viewScope')}
-          </label>
-          <select
-            id="viewPreset"
-            aria-label={t('viewScope')}
-            value={preset}
-            onChange={(e) => setPreset(e.target.value)}
-          >
-            <option value="text">{t('compactView')}</option>
-            <option value="analysis">{t('analysis')}</option>
-            <option value="all">{t('allDetails')}</option>
-            <option value="custom">{t('custom')}</option>
-          </select>
-          <button
-            type="button"
-            id="btnLayers"
-            className="btn quiet dock-button"
-            aria-controls="layersPanel"
-            aria-expanded={layersOpen}
-            onClick={() => setLayersOpen((v) => !v)}
-          >
-            {t('customize')}
-          </button>
-        </div>
-        <div
-          id="layersPanel"
-          className="layers-panel"
-          role="group"
-          aria-label={t('layers')}
-          hidden={!layersOpen}
+        <Section
+          id="cards"
+          title={t('dockSectionCards')}
+          status={presetName}
+          active={preset !== 'text' || view.showSpread}
+          onToggle={resized}
         >
-          <p>{t('layersHelp')}</p>
-          {LAYER_NAMES.map((layer) => (
-            <label key={layer}>
-              <input
-                type="checkbox"
-                data-layer={layer}
-                checked={view.layers[layer]}
-                onChange={(e) => {
-                  store.setView({
-                    layers: { [layer]: e.target.checked } as Partial<
-                      typeof view.layers
-                    > as typeof view.layers,
-                  });
-                  store.requestFit();
-                }}
-              />
-              <span>{t(LAYER_KEYS[layer])}</span>
+          <div className="dock-row">
+            <label className="dock-field-label" htmlFor="viewPreset">
+              {t('viewScope')}
             </label>
-          ))}
-          <label>
-            <input
-              id="showSpread"
-              type="checkbox"
-              checked={view.showSpread}
-              onChange={(e) => store.setView({ showSpread: e.target.checked })}
-            />
-            <span>{t('spreadToggle')}</span>
-          </label>
-          <label>
-            <input
-              id="showSharedReasons"
-              type="checkbox"
-              checked={view.showRecurringInTree}
-              onChange={(e) => store.setView({ showRecurringInTree: e.target.checked })}
-            />
-            <span>{t('sharedShowInTree')}</span>
-          </label>
-          <label>
-            <input
-              id="weightByRatings"
-              type="checkbox"
-              data-testid="weight-by-ratings"
-              checked={view.weightByRatings}
-              onChange={(e) => store.setView({ weightByRatings: e.target.checked })}
-            />
-            <span title={t('weightByRatingsHelp')}>{t('weightByRatings')}</span>
-          </label>
-        </div>
-        <div className="dock-tree-tools">
-          <label htmlFor="orientationSelect">{t('orientation')}</label>
-          <select
-            id="orientationSelect"
-            aria-label={t('orientation')}
-            title={t('orientation')}
-            value={view.orientation}
-            disabled={isTable}
-            onChange={(e) => {
-              store.setView({ orientation: e.target.value as Orientation });
-              store.requestFit();
-            }}
-          >
-            <option value="horizontal">→ {t('leftRight')}</option>
-            <option value="vertical">↓ {t('topDown')}</option>
-            <option value="four-way">✣ {t('fourDirections')}</option>
-          </select>
-          <button
-            type="button"
-            id="btnLayout"
-            className="btn quiet"
-            disabled={isTable}
-            title={`${t('arrange')} (Alt+A)`}
-            onClick={arrangeTree}
-          >
-            {t('arrange')}
-          </button>
-          <button
-            type="button"
-            id="btnFit"
-            className="btn quiet"
-            disabled={isTable}
-            onClick={() => window.dispatchEvent(new CustomEvent('witt-camera', { detail: { kind: 'fit' } }))}
-          >
-            {t('fit')}
-          </button>
-          <button
-            type="button"
-            id="btnCompactTree"
-            className="btn quiet"
-            aria-pressed={compactPressed}
-            onClick={toggleCompactVisible}
-          >
-            {t(view.depthLimit !== null && view.depthCompact ? 'restoreManualLayout' : 'compactVisibleTree')}
-          </button>
-          {project.mode === 'decision' ? (
-            <button
-              type="button"
-              id="btnCollapseOptions"
-              className="btn quiet"
-              title={t('collapseOptionsShortcut')}
-              disabled={!options.length || (!canEdit(state) && view.depthLimit === null)}
-              onClick={toggleOptionBranches}
-            >
-              {t(anyOpen ? 'collapseAllOptions' : 'expandAllOptions')}
-            </button>
-          ) : null}
-        </div>
-        <div className="dock-depth-tools">
-          <div className="dock-depth-heading">
-            <label htmlFor="treeDepthSlider">{t('treeDepthLabel')}</label>
-            <output id="treeDepthValue" htmlFor="treeDepthSlider" aria-live="polite">
-              {view.depthLimit === null
-                ? t('treeDepthManual')
-                : t('treeDepthPosition', { depth: depthValue, total: frame.maxDepth })}
-            </output>
+            <select id="viewPreset" value={preset} onChange={(e) => setPreset(e.target.value)}>
+              <option value="text">{t('compactView')}</option>
+              <option value="analysis">{t('analysis')}</option>
+              <option value="all">{t('allDetails')}</option>
+              <option value="custom">{t('custom')}</option>
+            </select>
           </div>
-          <input
-            id="treeDepthSlider"
-            type="range"
-            min={0}
-            max={frame.maxDepth}
-            step={1}
-            value={depthValue}
-            aria-label={t('treeDepthLabel')}
-            onChange={(e) => {
-              store.setDepthOverrides(new Map());
-              store.setView({ depthLimit: Number(e.target.value) });
-              store.requestFit();
-            }}
-          />
-          <div className="dock-depth-extremes">
-            <span>{t('treeDepthRoot')}</span>
-            <span>{t('treeDepthAll')}</span>
+          <div id="layersPanel" className="layers-panel" role="group" aria-label={t('layers')}>
+            <p>{t('layersHelp')}</p>
+            {LAYER_NAMES.map((layer) => (
+              <label key={layer}>
+                <input
+                  type="checkbox"
+                  data-layer={layer}
+                  checked={view.layers[layer]}
+                  onChange={(e) => {
+                    store.setView({
+                      layers: { [layer]: e.target.checked } as Partial<
+                        typeof view.layers
+                      > as typeof view.layers,
+                    });
+                    store.requestFit();
+                  }}
+                />
+                <span>{t(LAYER_KEYS[layer])}</span>
+              </label>
+            ))}
+            <label>
+              <input
+                id="showSpread"
+                type="checkbox"
+                checked={view.showSpread}
+                onChange={(e) => store.setView({ showSpread: e.target.checked })}
+              />
+              <span>{t('spreadToggle')}</span>
+            </label>
           </div>
-          {view.depthLimit !== null ? (
-            <button
-              type="button"
-              id="btnDepthReset"
-              className="btn quiet"
-              onClick={() => {
-                store.setDepthOverrides(new Map());
-                store.setView({ depthLimit: null });
+        </Section>
+        <Section
+          id="tree"
+          title={t('dockSectionTree')}
+          status={orientationName}
+          active={view.compactVisible}
+          onToggle={resized}
+        >
+          <div className="dock-tree-tools">
+            <label htmlFor="orientationSelect">{t('orientation')}</label>
+            <select
+              id="orientationSelect"
+              aria-label={t('orientation')}
+              title={t('orientation')}
+              value={view.orientation}
+              disabled={isTable}
+              onChange={(e) => {
+                store.setView({ orientation: e.target.value as Orientation });
                 store.requestFit();
               }}
             >
-              {t('treeDepthReset')}
+              <option value="vertical">↓ {t('topDown')}</option>
+              <option value="horizontal">→ {t('leftRight')}</option>
+              <option value="four-way">✣ {t('fourDirections')}</option>
+            </select>
+            <button
+              type="button"
+              id="btnFit"
+              className="btn quiet"
+              disabled={isTable}
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent('witt-camera', { detail: { kind: 'fit' } }))
+              }
+            >
+              {t('fit')}
             </button>
-          ) : null}
-        </div>
-        <div className="dock-divider" />
-        <div className="dock-row focus-head">
-          <span className="dock-label">{t('focusHeading')}</span>
-          <div className="focus-segments" role="group" aria-label={t('focusHeading')}>
-            {(['all', 'support', 'oppose'] as FocusMode[]).map((mode) => (
+            <button
+              type="button"
+              id="btnCompactTree"
+              className="btn quiet"
+              aria-pressed={compactPressed}
+              onClick={toggleCompactVisible}
+            >
+              {t(
+                view.depthLimit !== null && view.depthCompact ? 'restoreManualLayout' : 'compactVisibleTree'
+              )}
+            </button>
+            {project.mode === 'decision' ? (
               <button
-                key={mode}
                 type="button"
-                id={mode === 'all' ? 'focusAll' : mode === 'support' ? 'focusSupport' : 'focusOppose'}
-                data-focus={mode}
-                className={view.focus.mode === mode ? 'active' : ''}
-                aria-pressed={view.focus.mode === mode}
-                onClick={() => setFocusMode(mode)}
+                id="btnCollapseOptions"
+                className="btn quiet"
+                title={t('collapseOptionsShortcut')}
+                disabled={!options.length || (!canEdit(state) && view.depthLimit === null)}
+                onClick={toggleOptionBranches}
               >
-                {t(mode === 'all' ? 'all' : mode === 'support' ? 'focusSupport' : 'focusOppose')}
+                {t(anyOpen ? 'collapseAllOptions' : 'expandAllOptions')}
               </button>
-            ))}
+            ) : null}
           </div>
-        </div>
-        <div className="focus-target">
+          <div className="dock-checks">
+            <label>
+              <input
+                id="showSharedReasons"
+                type="checkbox"
+                checked={view.showRecurringInTree}
+                onChange={(e) => store.setView({ showRecurringInTree: e.target.checked })}
+              />
+              <span>{t('sharedShowInTree')}</span>
+            </label>
+            <label>
+              <input
+                id="weightByRatings"
+                type="checkbox"
+                data-testid="weight-by-ratings"
+                checked={view.weightByRatings}
+                onChange={(e) => store.setView({ weightByRatings: e.target.checked })}
+              />
+              <span title={t('weightByRatingsHelp')}>{t('weightByRatings')}</span>
+            </label>
+          </div>
+          <div className="dock-arrange">
+            <button
+              type="button"
+              id="btnLayout"
+              className="btn quiet"
+              disabled={isTable}
+              title={`${t('arrange')} (Alt+A)`}
+              onClick={arrangeTree}
+            >
+              {t('arrange')}
+            </button>
+            <small>{t('arrangeHint')}</small>
+          </div>
+        </Section>
+        <Section
+          id="limit"
+          title={t('dockSectionLimit')}
+          status={limited ? limitState : t('dockStateWhole')}
+          active={limited}
+          onToggle={resized}
+        >
+          <div className="dock-depth-tools">
+            <div className="dock-depth-heading">
+              <label htmlFor="treeDepthSlider">{t('treeDepthLabel')}</label>
+              <output id="treeDepthValue" htmlFor="treeDepthSlider" aria-live="polite">
+                {view.depthLimit === null
+                  ? t('treeDepthManual')
+                  : t('treeDepthPosition', { depth: depthValue, total: frame.maxDepth })}
+              </output>
+            </div>
+            <input
+              id="treeDepthSlider"
+              type="range"
+              min={0}
+              max={frame.maxDepth}
+              step={1}
+              value={depthValue}
+              aria-label={t('treeDepthLabel')}
+              onChange={(e) => {
+                store.setDepthOverrides(new Map());
+                store.setView({ depthLimit: Number(e.target.value) });
+                store.requestFit();
+              }}
+            />
+            <div className="dock-depth-extremes">
+              <span>{t('treeDepthRoot')}</span>
+              <span>{t('treeDepthAll')}</span>
+            </div>
+            {view.depthLimit !== null ? (
+              <button
+                type="button"
+                id="btnDepthReset"
+                className="btn quiet"
+                onClick={() => {
+                  store.setDepthOverrides(new Map());
+                  store.setView({ depthLimit: null });
+                  store.requestFit();
+                }}
+              >
+                {t('treeDepthReset')}
+              </button>
+            ) : null}
+          </div>
+          <div className="dock-row focus-head">
+            <span className="dock-label">{t('focusHeading')}</span>
+            <div className="focus-segments" role="group" aria-label={t('focusHeading')}>
+              {(['all', 'support', 'oppose'] as FocusMode[]).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  id={mode === 'all' ? 'focusAll' : mode === 'support' ? 'focusSupport' : 'focusOppose'}
+                  data-focus={mode}
+                  className={view.focus.mode === mode ? 'active' : ''}
+                  aria-pressed={view.focus.mode === mode}
+                  onClick={() => setFocusMode(mode)}
+                >
+                  {t(mode === 'all' ? 'all' : mode === 'support' ? 'focusSupport' : 'focusOppose')}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="focus-target">
+            <span id="focusAnchorText" title={anchor ? t('startPoint', { name: anchor.title }) : undefined}>
+              {t('focusBranchOf', {
+                name: anchor?.parentId === null ? t('wholeTree') : (anchor?.title ?? ''),
+              })}
+            </span>
+            <button
+              type="button"
+              id="btnFocusAnchor"
+              className="btn quiet dock-button"
+              disabled={!state.selectedId || state.selectedId === anchor?.id}
+              onClick={() => {
+                store.setExplicitlyClosed(new Set());
+                store.setView({ focus: { ...view.focus, anchorId: state.selectedId } });
+                if (view.focus.mode !== 'all') store.requestFit();
+              }}
+            >
+              {t('focusUseSelected')}
+            </button>
+          </div>
+          <p className="focus-summary" id="focusSummary" role="status">
+            {view.focus.mode === 'all'
+              ? t('focusIdle')
+              : t('focusMatches', {
+                  kind: t(view.focus.mode === 'support' ? 'focusSupport' : 'focusOppose'),
+                  count: frame.projection.matches,
+                  peek: frame.projection.peekIds.size,
+                })}
+          </p>
+        </Section>
+        <Section
+          id="reading"
+          title={t('dockSectionReading')}
+          status={t(view.readingMode ? 'dockStateOn' : 'dockStateOff')}
+          active={view.readingMode}
+          onToggle={resized}
+        >
+          <ReadingSettings />
+        </Section>
+        <Section
+          id="person"
+          title={t('highlightUserLabel')}
+          status={highlighted ? highlighted.name : t('highlightNone')}
+          active={Boolean(highlighted)}
+          onToggle={resized}
+        >
+          <UserHighlight />
+        </Section>
+        <div className="dock-reset">
           <button
             type="button"
-            id="btnFocusAnchor"
-            className="btn quiet dock-button"
-            onClick={() => {
-              store.setExplicitlyClosed(new Set());
-              store.setView({ focus: { ...view.focus, anchorId: state.selectedId } });
-              if (view.focus.mode !== 'all') store.requestFit();
-            }}
+            id="btnViewReset"
+            className="btn quiet"
+            disabled={atDefaults}
+            title={t('viewResetHint')}
+            onClick={resetView}
           >
-            {t('selectedBranch')}
+            {t('viewReset')}
           </button>
-          <span id="focusAnchorText" title={anchor ? t('startPoint', { name: anchor.title }) : undefined}>
-            {anchor?.parentId === null ? t('wholeTree') : (anchor?.title ?? '')}
-          </span>
         </div>
-        <p className="focus-summary" id="focusSummary" role="status">
-          {view.focus.mode === 'all'
-            ? t('focusIdle')
-            : t('focusMatches', {
-                kind: t(view.focus.mode === 'support' ? 'focusSupport' : 'focusOppose'),
-                count: frame.projection.matches,
-                peek: frame.projection.peekIds.size,
-              })}
-        </p>
-        <div className="dock-divider" />
-        <ReadingSettings />
-        <div className="dock-divider" />
-        <UserHighlight />
       </div>
     </div>
   );
@@ -446,7 +596,7 @@ function UserHighlight() {
   const traces = chosen ? [...userTraces(project, chosen.id).values()] : [];
   return (
     <div className="dock-user-highlight">
-      <label className="dock-label" htmlFor="highlightUserSelect">
+      <label className="visually-hidden" htmlFor="highlightUserSelect">
         {t('highlightUserLabel')}
       </label>
       <select

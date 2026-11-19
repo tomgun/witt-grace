@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   SCORING_VERSION,
+  arranged,
+  cardsOverlap,
   exportFilename,
   inspectImport,
   parseProject,
@@ -114,10 +116,13 @@ export function App() {
           });
           return;
         }
-        const incoming =
+        const opened =
           report.format === 'starter'
             ? starterToProject(report.parsed, { now: nowIso(), newId, scoring: SCORING_VERSION })
             : parseProject(report.parsed);
+        // A file whose cards have no places of their own opens as a tidy tree; an arrangement someone made is
+        // kept as it is (owner 2026-11-19, S-15).
+        const incoming = cardsOverlap(opened) ? arranged(opened) : opened;
         const description = `${t('importConfirm', { title: incoming.title })}\nJSON tarkistettu: ${report.formatName}.`;
         if (!(await store.prepareReplacement(description))) return;
         store.load(incoming);

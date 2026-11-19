@@ -59,8 +59,8 @@ test('the crown is deterministic: 34 clusters, the first two at literal places',
   const blobs = crownBlobs(100, 200, 300);
   assert.equal(blobs.length, 34);
   assert.deepEqual(blobs.slice(0, 2), [
-    { x: -478, y: 174, r: 112, tone: 2 },
-    { x: -483, y: 148, r: 175, tone: 1 },
+    { x: -478, y: 204, r: 112, tone: 2 },
+    { x: -455, y: 146, r: 175, tone: 1 },
   ]);
   assert.deepEqual(crownBlobs(100, 200, 300), blobs);
 });

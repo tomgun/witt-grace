@@ -49,7 +49,21 @@ test('an example opens readable; the selected card has full-size actions; the wh
   await expect(page.getByTestId('zoom-label')).toHaveText('94 %');
 
   // Below 100 % the selected card's actions follow it at a fixed size.
-  const reason = page.locator('.node:not(.is-root)').first();
+  // A reason that is on screen: the top-down tree of this example is wider than the view at this zoom.
+  const shown = await page.locator('.node:not(.is-root)').evaluateAll((cards) => {
+    const view = document.querySelector('#viewport')!.getBoundingClientRect();
+    return cards.findIndex((card) => {
+      const r = card.getBoundingClientRect();
+      return (
+        r.left > view.left + 40 &&
+        r.right < view.right - 40 &&
+        r.top > view.top + 60 &&
+        r.bottom < view.bottom
+      );
+    });
+  });
+  expect(shown).toBeGreaterThanOrEqual(0);
+  const reason = page.locator('.node:not(.is-root)').nth(shown);
   await reason.locator('.node-title').click();
   const bar = page.getByTestId('selection-bar');
   await expect(bar).toBeVisible();
@@ -70,7 +84,7 @@ test('an example opens readable; the selected card has full-size actions; the wh
 
   // ⤢ shows the whole tree, smaller than the automatic fit.
   await page.getByTestId('fit').click();
-  await expect(page.getByTestId('zoom-label')).toHaveText('40 %');
+  await expect(page.getByTestId('zoom-label')).toHaveText('37 %');
 });
 
 /**
@@ -100,7 +114,12 @@ test('a card added deep in a wide tree is in view', async ({ page }, testInfo) =
     await expect
       .poll(async () => {
         const box = (await card.boundingBox())!;
-        return box.x >= view.x && box.x + box.width <= view.x + view.width;
+        return (
+          box.x >= view.x &&
+          box.x + box.width <= view.x + view.width &&
+          box.y >= view.y &&
+          box.y + box.height <= view.y + view.height
+        );
       })
       .toBe(true);
   }
@@ -123,7 +142,7 @@ test('a card selected from the outline comes into view; a pressed card stays put
   const editor = page.locator('.node-inline-editor');
   await expect(editor).toBeFocused();
   await editor.press('Enter');
-  for (const title of ['Ensimmäinen taso', 'Toinen taso', 'Kolmas taso']) {
+  for (const title of ['Ensimmäinen taso', 'Toinen taso', 'Kolmas taso', 'Neljäs taso', 'Viides taso']) {
     await page.locator('#viewport').focus();
     await page.keyboard.press('+');
     await expect(editor).toBeFocused();
@@ -134,7 +153,12 @@ test('a card selected from the outline comes into view; a pressed card stays put
   const root = page.locator('.node.is-root');
   const inView = async (card: typeof root) => {
     const box = (await card.boundingBox())!;
-    return box.x >= view.x && box.x + box.width <= view.x + view.width;
+    return (
+      box.x >= view.x &&
+      box.x + box.width <= view.x + view.width &&
+      box.y >= view.y &&
+      box.y + box.height <= view.y + view.height
+    );
   };
   expect(await inView(root)).toBe(false);
   await page.locator('#treeOutline .outline-item').first().click();

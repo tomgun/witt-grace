@@ -119,3 +119,25 @@ export function autoLayoutPositions(project: Project): Map<string, Position> {
   walk(root, 0);
   return positions;
 }
+
+/** The same document with every card at its place in the tidy tree. Nothing but positions changes. */
+export function arranged(project: Project): Project {
+  const positions = autoLayoutPositions(project);
+  return {
+    ...project,
+    nodes: project.nodes.map((node) => ({ ...node, position: positions.get(node.id) ?? node.position })),
+  };
+}
+
+/** Whether any two cards lie on top of each other: a file whose cards were never given places of their own
+ * (all at one point, or written by hand or by a model without regard to the canvas). */
+export function cardsOverlap(project: Project): boolean {
+  const nodes = project.nodes;
+  for (let i = 0; i < nodes.length; i += 1)
+    for (let j = i + 1; j < nodes.length; j += 1) {
+      const a = nodes[i]!.position;
+      const b = nodes[j]!.position;
+      if (Math.abs(a.x - b.x) < 200 && Math.abs(a.y - b.y) < 100) return true;
+    }
+  return false;
+}

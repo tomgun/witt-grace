@@ -46,7 +46,7 @@ export { optionPreference, optionPreferenceForRound } from './ballots.ts';
 export type { Preference } from './ballots.ts';
 export { decisionRanking, decisionRankingForAssessor } from './ranking.ts';
 export type { RankedOption, PersonalRankedOption } from './ranking.ts';
-export { createBlankProject, newNode, autoLayoutPositions } from './project.ts';
+export { createBlankProject, newNode, autoLayoutPositions, arranged, cardsOverlap } from './project.ts';
 export type { CreateInput, NewNodeInput } from './project.ts';
 export {
   visibleNodes,

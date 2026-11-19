@@ -2,7 +2,7 @@
 // cards are a static manifest; the documents themselves are fetched from public/examples/ only when one is chosen, so
 // ~150 kB of fixtures stay out of the main bundle. Opening one passes the replacement dialog and gets a fresh id.
 import { useEffect, useRef, useState } from 'react';
-import { parseProject } from '../domain/index.ts';
+import { arranged, parseProject } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
 import { enterEvaluate } from './actions.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
@@ -43,7 +43,8 @@ export function ExamplesDialog() {
       const sample = parseProject(await fetchExample(entry));
       stopTutorial();
       // A new workspace: never the fixture's own id, so a library copy is never overwritten.
-      store.load({ ...sample, id: newId() });
+      // The examples open as a tidy tree whatever places their files carry (owner 2026-11-19, S-15).
+      store.load({ ...arranged(sample), id: newId() });
       store.openDialog(null);
       if (store.get().project.users.length > 1) enterEvaluate();
     } catch (error) {

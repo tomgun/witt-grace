@@ -101,7 +101,9 @@ export const READING_LINES = [4, 6, 10, 16] as const as readonly number[];
 export function defaultView(windowWidth = 1440): ViewState {
   return {
     presentation: windowWidth <= 600 ? 'table' : 'tree',
-    orientation: 'horizontal',
+    // Top-down by default (owner 2026-11-19, S-15; the prototype starts left to right): the main claim on top
+    // and its reasons under it, as a tree is usually drawn.
+    orientation: 'vertical',
     workflow: 'explore',
     layers: { ...LAYER_PRESETS.text },
     focus: { mode: 'all', anchorId: null },
@@ -151,7 +153,7 @@ export function readView(store: KeyValueStore, windowWidth = 1440): ViewState {
       saved.presentation === 'table' ? 'table' : saved.presentation === 'tree' ? 'tree' : base.presentation,
     orientation: ORIENTATIONS.includes(saved.orientation as Orientation)
       ? (saved.orientation as Orientation)
-      : 'horizontal',
+      : base.orientation,
     workflow: saved.workflow === 'evaluate' ? 'evaluate' : 'explore',
     layers,
     focus: {
