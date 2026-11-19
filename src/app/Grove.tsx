@@ -3,7 +3,15 @@
 // `offset-path`), so `prefers-reduced-motion`, the calm class and the phone rules live in `themes-added.css` and
 // nothing here touches a timer or `matchMedia`. Every element is decoration: `aria-hidden`, no pointer events.
 import type { CSSProperties, ReactNode } from 'react';
-import { crownBlobs, foliageBlobs, type Creature, type CreatureKind, type FoliageCard } from './grove.ts';
+import {
+  CROWN_RX,
+  CROWN_RY,
+  crownBlobs,
+  foliageBlobs,
+  type Creature,
+  type CreatureKind,
+  type FoliageCard,
+} from './grove.ts';
 
 /** One wash of leaf green: opaque in the middle, gone at the rim, so overlapping clusters read as foliage. */
 const WASHES = [
@@ -13,8 +21,8 @@ const WASHES = [
 ];
 
 /** The large crown behind the main claim: overlapping soft-edged leaf clusters with sunlight over them. */
-export function GroveCrown({ x, y, spread }: { x: number; y: number; spread: number }) {
-  const blobs = crownBlobs(x, y, spread);
+export function GroveCrown({ x, y }: { x: number; y: number }) {
+  const blobs = crownBlobs(x, y);
   return (
     <g className="grove-crown" aria-hidden="true">
       <defs>
@@ -33,7 +41,7 @@ export function GroveCrown({ x, y, spread }: { x: number; y: number; spread: num
       {blobs.map((b, i) => (
         <circle key={i} className={`grove-leaves tone-${b.tone}`} cx={b.x} cy={b.y} r={b.r} />
       ))}
-      <ellipse cx={x} cy={y} rx={Math.max(560, spread) * 0.9} ry={240} fill="url(#groveGlow)" />
+      <ellipse cx={x} cy={y} rx={CROWN_RX * 1.25} ry={CROWN_RY * 1.2} fill="url(#groveGlow)" />
     </g>
   );
 }

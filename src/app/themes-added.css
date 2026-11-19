@@ -786,3 +786,13 @@ body[data-theme='grove'] :is(.topbar, .toolbar, .sidepanel, .app-footer) {
     animation: none;
   }
 }
+
+/* Lehto: a reason that carries little weight is still drawn thinner, but no longer fainter. Over the pale mist a
+   30 % line or a see-through card read as lying behind the mist (owner's report 2026-11-19). */
+body[data-theme='grove'] .edge {
+  stroke-opacity: 1 !important;
+}
+body[data-theme='grove'] .node.weak-reason {
+  opacity: 1;
+  border-style: dashed;
+}

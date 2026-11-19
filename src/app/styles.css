@@ -10285,3 +10285,48 @@ body.witt-focus .canvas-quick-controls {
   background: var(--surface);
   z-index: 1;
 }
+
+/* The dock after the owner's first look (2026-11-19): every section's state in one weight; room between the rows of
+   "Rajaa näkyvää"; one look for the chosen branch-highlight button whichever it is. */
+.dock-section-state,
+.dock-section-state.is-active {
+  font-weight: 750;
+}
+.dock-section-state {
+  color: var(--text);
+}
+.dock-section-state.is-active {
+  color: var(--accent-text);
+}
+#dockSection-limit .dock-section-body {
+  gap: 16px;
+}
+#dockSection-limit .dock-depth-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#dockSection-limit .dock-depth-tools #btnDepthReset {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+#dockSection-limit .focus-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+#dockSection-limit .focus-head .dock-label {
+  font-size: 12px;
+  letter-spacing: 0;
+  font-weight: 700;
+  color: var(--text);
+}
+#viewDock .focus-segments button.active,
+#viewDock .focus-segments button[data-focus='support'].active,
+#viewDock .focus-segments button[data-focus='oppose'].active {
+  background: var(--surface);
+  color: var(--accent-text);
+  box-shadow: 0 1px 4px #0002;
+}

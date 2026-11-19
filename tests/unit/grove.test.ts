@@ -55,14 +55,26 @@ test('groveCalm turns on above 150 visible cards', () => {
   assert.equal(groveCalm(151), true);
 });
 
-test('the crown is deterministic: 34 clusters, the first two at literal places', () => {
-  const blobs = crownBlobs(100, 200, 300);
-  assert.equal(blobs.length, 34);
+test('the crown is a fixed-size cluster round the main claim: 23 clusters, the middle covered, none far off', () => {
+  const blobs = crownBlobs(100, 200);
+  assert.equal(blobs.length, 23);
   assert.deepEqual(blobs.slice(0, 2), [
-    { x: -478, y: 204, r: 112, tone: 2 },
-    { x: -455, y: 146, r: 175, tone: 1 },
+    { x: -240, y: 202, r: 106, tone: 2 },
+    { x: -204, y: 110, r: 149, tone: 1 },
   ]);
-  assert.deepEqual(crownBlobs(100, 200, 300), blobs);
+  assert.deepEqual(crownBlobs(100, 200), blobs);
+  // The main claim's place is inside a cluster, and the clusters lie as much to its left as to its right, above
+  // as below: it is in the middle of the crown and not under it.
+  assert.ok(blobs.some((b) => Math.hypot(b.x - 100, b.y - 200) < b.r * 0.5));
+  const mean = (pick: (b: (typeof blobs)[number]) => number) =>
+    blobs.reduce((sum, b) => sum + pick(b), 0) / blobs.length;
+  assert.ok(Math.abs(mean((b) => b.x) - 100) < 25, `mean x ${mean((b) => b.x)}`);
+  assert.ok(Math.abs(mean((b) => b.y) - 200) < 25, `mean y ${mean((b) => b.y)}`);
+  // However wide the tree is, no cluster is farther than the crown's own size from the card.
+  for (const b of blobs) {
+    assert.ok(Math.abs(b.x - 100) <= 330 + 25);
+    assert.ok(Math.abs(b.y - 200) <= 200 + 20);
+  }
 });
 
 test('a stored grove skin is kept per browser; an unknown value falls back to the document theme', () => {

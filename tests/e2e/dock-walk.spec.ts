@@ -8,7 +8,9 @@
  *       top down, and an example opens as a tidy tree with its main claim above the mean of its reasons
  *       (S-15, owner's notes 2026-11-19)
  * test: tests/e2e/dock-walk.spec.ts (desktop 1440×900; the dock is opened from the desktop toolbar)
- * red-against: a heading that does not follow its setting, every section open at once, the reset leaving the depth
+ *       "Omat valinnat" is listed only while it is the state; the compacting button names what it does now;
+ *       in the table only the layer that reaches the table is offered
+ * red-against: a heading that does not follow its setting, a compacting button that reads the same on and off, every section open at once, the reset leaving the depth
  *              limit or the highlight on, the reset enabled when nothing is changed, the default left at left to
  *              right, an example opened with its file's staircase of positions
  */
@@ -67,8 +69,28 @@ test('sections say their state; the reset brings the defaults back', async ({ pa
   await page.getByTestId('highlight-user').selectOption({ index: 1 });
   await expect(page.getByTestId('dock-state-person')).not.toHaveText('Ei korostusta');
 
+  // "Omat valinnat" is a state, not a choice: it is listed only while the choices match no preset.
+  await expect(page.locator('#viewPreset option')).toHaveCount(3);
+  await page.locator('#layersPanel input[data-layer="links"]').check();
+  await expect(page.locator('#viewPreset option')).toHaveCount(4);
+  await expect(page.getByTestId('dock-state-cards')).toHaveText('Omat valinnat');
+  // The compacting button says what pressing it does now, and the heading says the tree is compacted.
+  await page.locator('#btnDepthReset').click();
+  const compact = page.locator('#btnCompactTree');
+  await expect(compact).toHaveText('Tiivistä näkyvä puu');
+  await compact.click();
+  await expect(compact).toHaveText('Palauta solmujen omat sijainnit');
+  await expect(page.getByTestId('dock-state-tree')).toHaveText('Ylhäältä alas · tiivistetty');
+  // In the table only the choice that reaches the table is offered.
+  await page.locator('#btnTableView').click();
+  await expect(page.locator('#layersPanel input')).toHaveCount(1);
+  await expect(page.locator('#layersPanel input[data-layer="comments"]')).toBeVisible();
+  await page.locator('#btnTreeView').click();
+  await expect(page.locator('#layersPanel input[data-layer]')).toHaveCount(7);
+
   await expect(reset).toBeEnabled();
   await reset.click();
+  await expect(compact).toHaveText('Tiivistä näkyvä puu');
   await expect(page.getByTestId('dock-state-limit')).toHaveText('koko puu');
   await expect(page.getByTestId('dock-state-reading')).toHaveText('pois');
   await expect(page.getByTestId('dock-state-person')).toHaveText('Ei korostusta');

@@ -56,26 +56,36 @@ export interface CrownBlob {
   tone: number;
 }
 
-/** Overlapping leaf clusters forming the large crown around the main claim at (cx, cy). */
-export function crownBlobs(cx: number, cy: number, spread: number): CrownBlob[] {
-  const rx = Math.max(560, spread);
+/** The crown's half-width and half-height: a fixed size around the main claim's card. It used to grow with the
+ * width of the whole tree, which pushed the clusters away from the card as soon as a sub-tree was opened and left
+ * the middle empty (owner's report 2026-11-19). */
+export const CROWN_RX = 330;
+export const CROWN_RY = 200;
+/** Clusters per ring, outermost first: the innermost ring fills the middle, behind the card itself. */
+const CROWN_RINGS = [
+  { count: 12, at: 1 },
+  { count: 8, at: 0.58 },
+  { count: 3, at: 0.18 },
+] as const;
+
+/** Overlapping leaf clusters forming a full crown centred on the main claim at (cx, cy). */
+export function crownBlobs(cx: number, cy: number): CrownBlob[] {
   const blobs: CrownBlob[] = [];
   let seed = 7919;
   const next = () => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 0x100000000;
   };
-  for (let i = 0; i < 34; i += 1) {
-    // All the way round (owner 2026-11-19): the main claim sits in the middle of its crown, not under it.
-    const angle = Math.PI * (1 + (2 * (i % 17)) / 17);
-    const ring = i < 17 ? 1 : 0.62;
-    blobs.push({
-      x: Math.round(cx + Math.cos(angle) * rx * ring + (next() - 0.5) * 90),
-      y: Math.round(cy + Math.sin(angle) * rx * 0.34 * ring + (next() - 0.5) * 60),
-      r: Math.round(110 + next() * 90),
-      tone: Math.floor(next() * 3),
-    });
-  }
+  for (const ring of CROWN_RINGS)
+    for (let i = 0; i < ring.count; i += 1) {
+      const angle = Math.PI * (1 + (2 * i) / ring.count);
+      blobs.push({
+        x: Math.round(cx + Math.cos(angle) * CROWN_RX * ring.at + (next() - 0.5) * 50),
+        y: Math.round(cy + Math.sin(angle) * CROWN_RY * ring.at + (next() - 0.5) * 40),
+        r: Math.round(105 + next() * 60),
+        tone: Math.floor(next() * 3),
+      });
+    }
   return blobs;
 }
 

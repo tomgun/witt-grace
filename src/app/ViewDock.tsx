@@ -83,6 +83,9 @@ function Section({
   );
 }
 
+/** The table shows the same rows whatever the cards carry; of the layers only the comments reach it. */
+const TABLE_LAYERS: readonly LayerName[] = ['comments'];
+
 export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }) {
   const state = useAppState();
   const t = useTranslator();
@@ -326,12 +329,13 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               <option value="text">{t('compactView')}</option>
               <option value="analysis">{t('analysis')}</option>
               <option value="all">{t('allDetails')}</option>
-              <option value="custom">{t('custom')}</option>
+              {/* A state, not a choice: it is listed only while the choices below match no preset. */}
+              {preset === 'custom' ? <option value="custom">{t('custom')}</option> : null}
             </select>
           </div>
           <div id="layersPanel" className="layers-panel" role="group" aria-label={t('layers')}>
-            <p>{t('layersHelp')}</p>
-            {LAYER_NAMES.map((layer) => (
+            <p>{t(isTable ? 'dockCardsTableNote' : 'layersHelp')}</p>
+            {(isTable ? TABLE_LAYERS : LAYER_NAMES).map((layer) => (
               <label key={layer}>
                 <input
                   type="checkbox"
@@ -349,22 +353,24 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
                 <span>{t(LAYER_KEYS[layer])}</span>
               </label>
             ))}
-            <label>
-              <input
-                id="showSpread"
-                type="checkbox"
-                checked={view.showSpread}
-                onChange={(e) => store.setView({ showSpread: e.target.checked })}
-              />
-              <span>{t('spreadToggle')}</span>
-            </label>
+            {isTable ? null : (
+              <label>
+                <input
+                  id="showSpread"
+                  type="checkbox"
+                  checked={view.showSpread}
+                  onChange={(e) => store.setView({ showSpread: e.target.checked })}
+                />
+                <span>{t('spreadToggle')}</span>
+              </label>
+            )}
           </div>
         </Section>
         <Section
           id="tree"
           title={t('dockSectionTree')}
-          status={orientationName}
-          active={view.compactVisible}
+          status={compactPressed ? `${orientationName} · ${t('dockStateCompact')}` : orientationName}
+          active={compactPressed}
           onToggle={resized}
         >
           <div className="dock-tree-tools">
@@ -402,9 +408,7 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               aria-pressed={compactPressed}
               onClick={toggleCompactVisible}
             >
-              {t(
-                view.depthLimit !== null && view.depthCompact ? 'restoreManualLayout' : 'compactVisibleTree'
-              )}
+              {t(compactPressed ? 'restoreManualLayout' : 'compactVisibleTree')}
             </button>
             {project.mode === 'decision' ? (
               <button
@@ -419,6 +423,11 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               </button>
             ) : null}
           </div>
+          {view.readingMode && view.orientation === 'four-way' ? (
+            <p className="focus-summary" id="readingFourWayNote">
+              {t('readingFourWayNote')}
+            </p>
+          ) : null}
           <div className="dock-checks">
             <label>
               <input

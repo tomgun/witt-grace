@@ -1331,11 +1331,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
               <GroveMist cards={nodes.map((n) => ({ ...visualPosition(n), ...sizeOf(n.id) }))} />
             ) : null}
             {rootAt && rootCard ? (
-              <GroveCrown
-                x={rootAt.x + sizeOf(rootCard.id).w / 2}
-                y={rootAt.y + sizeOf(rootCard.id).h / 2}
-                spread={(maxX - minX) / 2}
-              />
+              <GroveCrown x={rootAt.x + sizeOf(rootCard.id).w / 2} y={rootAt.y + sizeOf(rootCard.id).h / 2} />
             ) : null}
             <g id="edgePaths">
               {edges}
