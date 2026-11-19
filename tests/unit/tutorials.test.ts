@@ -40,6 +40,7 @@ const facts = (project: Project, over: Partial<TutorialFacts> = {}): TutorialFac
   project,
   actorId: 'u1',
   presentation: 'tree',
+  workflow: 'explore',
   dialog: null,
   ...over,
 });
@@ -53,6 +54,8 @@ const start = (id: TutorialRun['id'], over: Partial<TutorialRun> = {}): Tutorial
   secondUserId: null,
   messShown: false,
   collabOpened: false,
+  // A run that starts at a step has reached it.
+  furthest: over.step ?? 0,
   ...over,
 });
 const credence = (p: Project, nodeId: string, userId: string) =>
@@ -68,18 +71,22 @@ const influence = (p: Project, nodeId: string, userId: string) =>
   });
 
 test('the three walkthroughs: counted steps and the order of the phases', () => {
-  assert.deepEqual([lastStep('basics'), lastStep('people'), lastStep('collab')], [13, 5, 4]);
+  assert.deepEqual([lastStep('basics'), lastStep('people'), lastStep('collab')], [16, 5, 4]);
+  // Doing first: Kartoita, then the look around, then Punnitse, Tulos and Näkymät.
   assert.deepEqual(TUTORIALS.basics.phases, [
-    'tutPhaseTour',
     'explore',
+    'tutPhaseTour',
     'evaluate',
     'tutPhaseResult',
     'tutPhaseViews',
   ]);
   assert.deepEqual(
     TUTORIALS.basics.steps.map((s) => s.phase),
-    [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 4, 4, 4]
+    [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 4, 4, 4, 4]
   );
+  // The list of the tree is shown only once the tree has reasons in it.
+  assert.ok(BASICS.tourLeft > BASICS.nameOppose);
+  assert.equal(TUTORIALS.basics.steps[BASICS.addSupport]?.text, 'tutorialStep0');
   assert.equal(TUTORIALS.basics.next?.id, 'people');
   assert.equal(TUTORIALS.people.next?.id, 'collab');
   assert.equal(TUTORIALS.collab.next, undefined);
@@ -98,6 +105,7 @@ test('basics: a step that explains waits, whatever the document already shows', 
     BASICS.tourLeft,
     BASICS.tourInspector,
     BASICS.tourZones,
+    BASICS.round,
     BASICS.readResult,
     BASICS.done,
   ])
@@ -109,7 +117,7 @@ test('basics: adding, wording and rating each pass exactly their own step', () =
   assert.equal(advance(r, facts(blank)).step, BASICS.addSupport);
   let p = run(blank, { type: 'node.add', id: 'A', parentId: 'T', relation: 'support' });
   r = advance(r, facts(p));
-  assert.deepEqual([r.step, r.supportId], [BASICS.nameSupport, 'A']);
+  assert.deepEqual([r.step, r.supportId, r.furthest], [BASICS.nameSupport, 'A', BASICS.nameSupport]);
   // The title a new reason is born with is not the person's wording.
   assert.equal(p.nodes.find((x) => x.id === 'A')?.title, 'Puoltava argumentti');
   p = run(p, { type: 'node.edit', id: 'A', title: 'Työmatkat vähenevät' });
@@ -117,22 +125,58 @@ test('basics: adding, wording and rating each pass exactly their own step', () =
   assert.equal(r.step, BASICS.addOppose);
   p = run(p, { type: 'node.add', id: 'B', parentId: 'T', relation: 'oppose', title: 'Maksaa liikaa' });
   r = advance(r, facts(p));
-  // Added with its wording at once: both steps are passed together.
-  assert.deepEqual([r.step, r.opposeId], [BASICS.rateSupport, 'B']);
-  p = credence(p, 'A', 'u1');
-  assert.equal(advance(r, facts(p)).step, BASICS.rateSupport, 'one of the two ratings is not both');
-  p = influence(p, 'A', 'u1');
+  // Added with its wording at once: both steps are passed together, and the look around begins. It waits.
+  assert.deepEqual([r.step, r.opposeId], [BASICS.tourLeft, 'B']);
+  p = influence(credence(p, 'A', 'u1'), 'A', 'u1');
+  assert.equal(advance(r, facts(p)).step, BASICS.tourLeft, 'ratings do not skip the look around');
+  r = { ...r, step: BASICS.rateSupport, furthest: BASICS.rateSupport };
+  const half = credence(
+    run(blank, { type: 'node.add', id: 'A', parentId: 'T', relation: 'support', title: 'x' }),
+    'A',
+    'u1'
+  );
+  assert.equal(advance(r, facts(half)).step, BASICS.rateSupport, 'one of the two ratings is not both');
   r = advance(r, facts(p));
   assert.equal(r.step, BASICS.rateOppose);
   p = influence(credence(p, 'B', 'u1'), 'B', 'u1');
   r = advance(r, facts(p));
-  assert.equal(r.step, BASICS.readResult);
-  // The table step is passed by opening the table, from its own step only.
-  assert.equal(advance(r, facts(p, { presentation: 'table' })).step, BASICS.readResult);
+  // Both rated: the round is explained next, and that step waits for the person.
+  assert.equal(r.step, BASICS.round);
+  assert.equal(advance(r, facts(p)).step, BASICS.round);
+});
+
+test('basics: switching to Punnitse is its own step, passed by the switch alone', () => {
+  const r = start('basics', { step: BASICS.toEvaluate });
+  assert.equal(advance(r, facts(blank)).step, BASICS.toEvaluate);
+  assert.equal(advance(r, facts(blank, { workflow: 'evaluate' })).step, BASICS.rateSupport);
+});
+
+test('basics: the table is opened, looked at and left before the tree is arranged', () => {
+  let r = start('basics', { step: BASICS.table });
+  assert.equal(advance(r, facts(blank)).step, BASICS.table);
+  r = advance(r, facts(blank, { presentation: 'table' }));
+  assert.equal(r.step, BASICS.tableBack);
   assert.equal(
-    advance({ ...r, step: BASICS.table }, facts(p, { presentation: 'table' })).step,
-    BASICS.arrange
+    advance(r, facts(blank, { presentation: 'table' })).step,
+    BASICS.tableBack,
+    'it stays while the table is open'
   );
+  assert.equal(advance(r, facts(blank)).step, BASICS.arrange);
+  // Opening the table earlier does not pass a step that has not been reached.
+  assert.equal(
+    advance(start('basics', { step: BASICS.readResult }), facts(blank, { presentation: 'table' })).step,
+    BASICS.readResult
+  );
+});
+
+test('going back to a step looks at it again: the document no longer moves it on', () => {
+  const p = run(blank, { type: 'node.add', id: 'A', parentId: 'T', relation: 'support', title: 'Oma' });
+  const back = start('basics', { step: BASICS.addSupport, furthest: BASICS.readResult, supportId: 'A' });
+  // The reason exists, which would pass the step at once; looked at again, it waits for the person.
+  assert.equal(advance(back, facts(p)), back);
+  // At the furthest step the document moves it on as before.
+  const front = start('basics', { step: BASICS.addSupport });
+  assert.equal(advance(front, facts(p)).step, BASICS.addOppose);
 });
 
 test('people: the added human assessor, and that assessor’s own ratings', () => {

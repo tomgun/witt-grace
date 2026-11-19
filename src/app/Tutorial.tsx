@@ -69,13 +69,19 @@ export const useTutorialInvite = (): boolean => {
 const t = () => translator(getStore().get().messages);
 const narrow = () => window.innerWidth <= 760;
 
-/** Leaves a step: the dragged position is forgotten, and entering the arrange step makes its untidy tree. */
+/** Leaves a step: the dragged position is forgotten, and entering the arrange step makes its untidy tree. On a
+ * narrow window the steps that point at the side panels are passed in either direction. */
 function goTo(step: number): void {
   const current = snapshot.tutorial;
   if (!current) return;
   const end = lastStep(current.id);
-  const next = Math.max(0, Math.min(end, step));
-  update({ tutorial: { ...current, step: next }, position: null });
+  let next = Math.max(0, Math.min(end, step));
+  if (current.id === 'basics' && narrow() && next >= BASICS.tourLeft && next <= BASICS.tourZones)
+    next = next > current.step ? BASICS.toEvaluate : BASICS.nameOppose;
+  update({
+    tutorial: { ...current, step: next, furthest: Math.max(current.furthest, next) },
+    position: null,
+  });
   if (current.id === 'basics') {
     if (next === BASICS.arrange) showMessyTutorialTree();
     if (next === end) dismissInviteForGood();
@@ -86,8 +92,12 @@ function goTo(step: number): void {
 export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
   const store = getStore();
   const tr = t();
+  // Every panel is shown, whatever was hidden before: a step that points at a panel that is not there teaches
+  // nothing, and where the panels are switched is itself one of the steps.
+  const showPanels = () => store.setZones({ left: true, top: true, right: true });
   const base = {
     step: 0,
+    furthest: 0,
     supportId: null,
     opposeId: null,
     secondUserId: null,
@@ -113,16 +123,11 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
   store.load(project);
   if (id === 'basics') {
     store.setView({ presentation: 'tree', workflow: 'explore', layers: { ...LAYER_PRESETS.text } });
+    showPanels();
     update({
       position: null,
       // A narrow window has no side panels to point at: the look-around steps are passed.
-      tutorial: {
-        ...base,
-        id,
-        rootId: root.id,
-        firstUserId: store.get().actorId,
-        step: narrow() ? BASICS.addSupport : 0,
-      },
+      tutorial: { ...base, id, rootId: root.id, firstUserId: store.get().actorId },
     });
     return;
   }
@@ -163,6 +168,7 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
     workflow: 'evaluate',
     layers: { ...LAYER_PRESETS.analysis, comments: true },
   });
+  showPanels();
   store.requestFit();
   update({
     position: null,
@@ -210,7 +216,8 @@ function showMessyTutorialTree(): void {
       });
     store.dispatch({ type: 'node.position', positions });
   }
-  store.setView({ presentation: 'tree', orientation: 'horizontal', dockCollapsed: false, dockHidden: false });
+  // The view settings are not opened here: they would cover the untidy tree the step is about.
+  store.setView({ presentation: 'tree', orientation: 'horizontal' });
   store.requestFit();
 }
 
@@ -222,6 +229,7 @@ function check(state: AppState): void {
     project: state.project,
     actorId: state.actorId,
     presentation: state.view.presentation,
+    workflow: state.view.workflow,
     dialog: state.dialog,
   });
   if (next === current) return;
@@ -229,9 +237,20 @@ function check(state: AppState): void {
     update({ tutorial: next });
     return;
   }
-  update({ tutorial: { ...next, step: current.step } });
+  update({ tutorial: { ...next, step: current.step, furthest: current.furthest } });
   // The untidy tree changes the document; let the store finish the notification that brought us here first.
   queueMicrotask(() => goTo(next.step));
+}
+
+/** The room the callout keeps clear. A control inside the view settings is pointed at from beside the whole panel,
+ * never over it; a menu is pointed at from beside the place its list drops into, so the list can be used. */
+function besideWhat(target: HTMLElement): { left: number; top: number; right: number; bottom: number } {
+  const dock = target.closest('#viewDock');
+  if (dock) return dock.getBoundingClientRect();
+  const r = target.getBoundingClientRect();
+  if (target.matches('details.toolbar-popover'))
+    return { left: r.right - 264, right: r.right, top: r.bottom, bottom: r.bottom + 420 };
+  return r;
 }
 
 const cardSelector = (id: string | null) => (id ? `.node[data-id="${CSS.escape(id)}"]` : null);
@@ -250,13 +269,23 @@ function anchors(run: TutorialRun, state: AppState): string[] {
     if (run.step === BASICS.nameSupport) list.push(cardSelector(run.supportId));
     if (run.step === BASICS.addOppose) list.push(`${root} .node-add[data-relation="oppose"]`, '#btnOppose');
     if (run.step === BASICS.nameOppose) list.push(cardSelector(run.opposeId));
+    if (run.step === BASICS.toEvaluate) list.push('#btnWorkflowEvaluate');
     if (run.step === BASICS.rateSupport)
-      list.push(evaluating ? '#nodeConfidence' : '#btnWorkflowEvaluate', cardSelector(run.supportId));
+      list.push(
+        evaluating && state.selectedId === run.supportId ? '#nodeConfidence' : null,
+        cardSelector(run.supportId),
+        evaluating ? null : '#btnWorkflowEvaluate'
+      );
+    if (run.step === BASICS.round) list.push('#assessmentMenu');
     if (run.step === BASICS.rateOppose)
       list.push(cardSelector(run.opposeId), evaluating ? '#nodeConfidence' : null);
-    if (run.step === BASICS.readResult) list.push('#inspector .score-hero', root);
+    // The result box is the selected card's: it is pointed at only when that card is the main claim.
+    if (run.step === BASICS.readResult)
+      list.push(state.selectedId === run.rootId && evaluating ? '#inspector .score-hero' : null, root);
     if (run.step === BASICS.table) list.push('#btnTableView');
-    if (run.step === BASICS.arrange) list.push('#btnLayout', '#btnViewSettings');
+    if (run.step === BASICS.tableBack) list.push('#btnTreeView');
+    // Arranging is in the view settings: their button first, then the button inside once they are open.
+    if (run.step === BASICS.arrange) list.push(state.view.dockHidden ? '#btnViewSettings' : '#btnLayout');
   } else if (run.id === 'people') {
     if (run.step === PEOPLE.intro || run.step === PEOPLE.addAssessor) list.push('#actorSelect');
     if (run.step === PEOPLE.rateAsSecond)
@@ -293,7 +322,9 @@ function showTarget(): void {
         store.select(id);
         startInlineEdit(id);
       }
-    } else if (step === BASICS.rateSupport || step === BASICS.rateOppose) {
+    } else if (step === BASICS.toEvaluate) evaluate();
+    else if (step === BASICS.round) document.querySelector<HTMLElement>('#assessmentMenu > summary')?.click();
+    else if (step === BASICS.rateSupport || step === BASICS.rateOppose) {
       evaluate();
       const id = step === BASICS.rateSupport ? current.supportId : current.opposeId;
       if (id) store.select(id);
@@ -304,10 +335,9 @@ function showTarget(): void {
         document.querySelector('#inspector .score-hero')?.scrollIntoView({ block: 'nearest' })
       );
     } else if (step === BASICS.table) selectPresentation('table');
-    else if (step === BASICS.arrange) {
-      arrangeTree();
-      goTo(BASICS.done);
-    } else store.select(current.rootId);
+    else if (step === BASICS.tableBack) selectPresentation('tree');
+    else if (step === BASICS.arrange) arrangeTree();
+    else store.select(current.rootId);
     return;
   }
   if (current.id === 'people') {
@@ -332,7 +362,20 @@ function showTarget(): void {
     document.querySelector<HTMLElement>('#fileMenu > summary')?.click();
 }
 
-/** "Seuraava" / "Ohita vaihe" / "Sulje opastus". */
+/** "Edellinen": one step back, to look at it again; it then waits for Seuraava (tutorials.ts `furthest`). */
+function previousStep(): void {
+  const current = snapshot.tutorial;
+  if (current && current.step > 0) goTo(current.step - 1);
+}
+/** A phase chip: to the first step of a phase that has been reached. */
+function goToPhase(phase: number): void {
+  const current = snapshot.tutorial;
+  if (!current) return;
+  const first = TUTORIALS[current.id].steps.findIndex((s) => s.phase === phase);
+  if (first >= 0 && first <= current.furthest) goTo(first);
+}
+
+/** "Seuraava" / "Sulje opastus". */
 function nextStep(): void {
   const current = snapshot.tutorial;
   if (!current) return;
@@ -366,15 +409,13 @@ export function Tutorial() {
     };
   }, [store]);
 
-  // The arrange step completes when "Järjestä puu" is pressed.
+  // The arrange step completes when the tree is arranged, from the view settings, a menu or Alt+A.
   const arranging = visible && tutorial?.id === 'basics' && tutorial.step === BASICS.arrange;
   useEffect(() => {
     if (!arranging) return;
-    const onClick = (event: MouseEvent) => {
-      if ((event.target as HTMLElement | null)?.closest('#btnArrangeQuick, #btnLayout')) goTo(BASICS.done);
-    };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    const onArranged = () => goTo(BASICS.done);
+    window.addEventListener('witt-arranged', onArranged);
+    return () => window.removeEventListener('witt-arranged', onArranged);
   }, [arranging]);
 
   // The ring and the callout follow the rendered DOM: after every change of the document, the view or the step, and
@@ -399,15 +440,16 @@ export function Tutorial() {
       const beside =
         first && !position && !narrow()
           ? placeBeside(
-              first.getBoundingClientRect(),
+              besideWhat(first),
               { w: panel.offsetWidth, h: panel.offsetHeight },
               {
                 w: window.innerWidth,
                 h: window.innerHeight,
-                // Below the header rows, unless the target is in them.
-                top: first.closest('.topbar, .toolbar')
-                  ? 0
-                  : (document.querySelector('.toolbar')?.getBoundingClientRect().bottom ?? 0),
+                // Below the header rows, unless the target is a plain control in them.
+                top:
+                  first.closest('.topbar, .toolbar') && !first.matches('details.toolbar-popover')
+                    ? 0
+                    : (document.querySelector('.toolbar')?.getBoundingClientRect().bottom ?? 0),
               }
             )
           : null;
@@ -448,18 +490,25 @@ export function Tutorial() {
   const end = lastStep(tutorial.id);
   const step = def.steps[tutorial.step]!;
   const complete = tutorial.step === end;
+  // Looking at an earlier step again: it no longer completes by itself, so Seuraava is the way on.
+  const reviewing = tutorial.step < tutorial.furthest;
   const shortcuts = readShortcuts(window.localStorage);
   const progress = complete
     ? tr('tutorialComplete')
     : tr('tutorialProgress', { current: tutorial.step + 1, total: end });
-  const hint =
+  const hintKey =
     tutorial.id !== 'basics'
-      ? ''
+      ? null
       : tutorial.step === BASICS.addSupport
-        ? ` (${displayShortcut(shortcuts.support)})`
+        ? shortcuts.support
         : tutorial.step === BASICS.addOppose
-          ? ` (${displayShortcut(shortcuts.oppose)})`
-          : '';
+          ? shortcuts.oppose
+          : tutorial.step === BASICS.round
+            ? shortcuts.assessment
+            : tutorial.step === BASICS.arrange
+              ? shortcuts.arrange
+              : null;
+  const hint = hintKey ? ` ${tr('tutShortcutHint', { key: displayShortcut(hintKey) })}` : '';
   const onPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
     event.preventDefault();
@@ -536,20 +585,34 @@ export function Tutorial() {
       </div>
       {def.phases.length > 1 ? (
         <ol className="tutorial-phases" id="tutorialPhases" aria-label={tr(def.title)}>
-          {def.phases.map((phase, i) => (
-            <li
-              key={phase}
-              className={i < step.phase || complete ? 'done' : i === step.phase ? 'current' : ''}
-              aria-current={i === step.phase && !complete ? 'step' : undefined}
-            >
-              {tr(phase)}
-            </li>
-          ))}
+          {def.phases.map((phase, i) => {
+            const first = def.steps.findIndex((x) => x.phase === i);
+            return (
+              <li
+                key={phase}
+                className={i < step.phase || complete ? 'done' : i === step.phase ? 'current' : ''}
+                aria-current={i === step.phase && !complete ? 'step' : undefined}
+              >
+                <button type="button" disabled={first > tutorial.furthest} onClick={() => goToPhase(i)}>
+                  {tr(phase)}
+                </button>
+              </li>
+            );
+          })}
         </ol>
       ) : null}
       <h2 id="tutorialHeading">{tr(complete ? 'tutorialComplete' : def.title)}</h2>
       <p id="tutorialText">{tr(step.text) + hint}</p>
       <div className="tutorial-actions">
+        <button
+          type="button"
+          className="btn quiet"
+          id="tutorialBack"
+          disabled={tutorial.step === 0}
+          onClick={previousStep}
+        >
+          {tr('assessmentPrevious')}
+        </button>
         {complete && def.next ? (
           <button
             type="button"
@@ -572,11 +635,11 @@ export function Tutorial() {
         )}
         <button
           type="button"
-          className={`btn ${step.manual && !complete ? 'primary' : 'quiet'}`}
+          className={`btn ${step.manual || reviewing ? 'primary' : 'quiet'}`}
           id="tutorialNext"
           onClick={nextStep}
         >
-          {tr(complete ? 'tutorialDone' : step.manual ? 'tutNext' : 'tutorialSkip')}
+          {tr(complete ? 'tutorialDone' : 'tutNext')}
         </button>
       </div>
     </aside>

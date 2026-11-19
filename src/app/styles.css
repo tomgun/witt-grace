@@ -9876,3 +9876,36 @@ body.witt-focus .canvas-quick-controls {
 #viewDock :is(select, input, button, label) {
   max-width: 100%;
 }
+/* Walkthrough: the phases are also the way back (owner 2026-11-19). */
+.tutorial-phases li {
+  padding: 0;
+}
+.tutorial-phases li button {
+  padding: 2px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.tutorial-phases li button:disabled {
+  cursor: default;
+}
+.tutorial-phases li button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.tutorial-actions {
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+.tutorial-actions .btn {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+/* The walkthrough's callout is above the view settings (72) and below an open menu (80): it must never end up
+   behind the thing it talks about (owner's report 2026-11-19). */
+.tutorial-panel {
+  z-index: 76;
+}

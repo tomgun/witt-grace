@@ -36,20 +36,25 @@ export interface TutorialDef {
 export const TUTORIALS: Record<TutorialId, TutorialDef> = {
   basics: {
     title: 'tutorialHeading',
-    phases: ['tutPhaseTour', 'explore', 'evaluate', 'tutPhaseResult', 'tutPhaseViews'],
+    // Doing comes first: the tree is built with the card's own buttons before the panels are shown, because a list
+    // of one claim explains nothing (owner 2026-11-19). The look around follows once there is something to see.
+    phases: ['explore', 'tutPhaseTour', 'evaluate', 'tutPhaseResult', 'tutPhaseViews'],
     steps: [
       { phase: 0, text: 'tutTourTree', manual: true },
-      { phase: 0, text: 'tutTourLeft', manual: true },
-      { phase: 0, text: 'tutTourInspector', manual: true },
-      { phase: 0, text: 'tutTourZones', manual: true },
-      { phase: 1, text: 'tutorialStep0' },
-      { phase: 1, text: 'tutorialStep1' },
-      { phase: 1, text: 'tutorialStep2' },
-      { phase: 1, text: 'tutorialStep3' },
+      { phase: 0, text: 'tutorialStep0' },
+      { phase: 0, text: 'tutorialStep1' },
+      { phase: 0, text: 'tutorialStep2' },
+      { phase: 0, text: 'tutorialStep3' },
+      { phase: 1, text: 'tutTourLeft', manual: true },
+      { phase: 1, text: 'tutTourInspector', manual: true },
+      { phase: 1, text: 'tutTourZones', manual: true },
+      { phase: 2, text: 'tutToEvaluate' },
       { phase: 2, text: 'tutorialStep4' },
       { phase: 2, text: 'tutorialStep5' },
+      { phase: 2, text: 'tutRound', manual: true },
       { phase: 3, text: 'tutorialStep6', manual: true },
       { phase: 4, text: 'tutorialStep7' },
+      { phase: 4, text: 'tutTableBack' },
       { phase: 4, text: 'tutorialStep8' },
       { phase: 4, text: 'tutorialStep9', manual: true },
     ],
@@ -84,19 +89,22 @@ export const TUTORIALS: Record<TutorialId, TutorialDef> = {
 /** Named steps of `basics`, so the panel and the tests do not count by hand. */
 export const BASICS = {
   tourTree: 0,
-  tourLeft: 1,
-  tourInspector: 2,
-  tourZones: 3,
-  addSupport: 4,
-  nameSupport: 5,
-  addOppose: 6,
-  nameOppose: 7,
-  rateSupport: 8,
-  rateOppose: 9,
-  readResult: 10,
-  table: 11,
-  arrange: 12,
-  done: 13,
+  addSupport: 1,
+  nameSupport: 2,
+  addOppose: 3,
+  nameOppose: 4,
+  tourLeft: 5,
+  tourInspector: 6,
+  tourZones: 7,
+  toEvaluate: 8,
+  rateSupport: 9,
+  rateOppose: 10,
+  round: 11,
+  readResult: 12,
+  table: 13,
+  tableBack: 14,
+  arrange: 15,
+  done: 16,
 } as const;
 export const PEOPLE = { intro: 0, addAssessor: 1, rateAsSecond: 2, compare: 3, lens: 4, done: 5 } as const;
 export const COLLAB = { intro: 0, openDialog: 1, joining: 2, ending: 3, done: 4 } as const;
@@ -117,12 +125,16 @@ export interface TutorialRun {
   messShown: boolean;
   /** `collab`: the collaboration dialog has been opened during the step that asks for it. */
   collabOpened: boolean;
+  /** The furthest step reached. A step before it is being looked at again: the document no longer moves it on,
+   * only the person does, so going back never bounces forward. */
+  furthest: number;
 }
 /** What a step's completion is read from: the document and three facts of the view. */
 export interface TutorialFacts {
   project: Project;
   actorId: string;
   presentation: 'tree' | 'table';
+  workflow: 'explore' | 'evaluate';
   dialog: string | null;
 }
 
@@ -140,6 +152,11 @@ const rated = (project: Project, nodeId: string | null, userId: string): boolean
  * at once never leaves the panel a step behind. Manual steps and the closing step are never passed here.
  */
 export function advance(run: TutorialRun, facts: TutorialFacts): TutorialRun {
+  if (run.step < run.furthest) return run;
+  const moved = advanceFrom(run, facts);
+  return moved.step > moved.furthest ? { ...moved, furthest: moved.step } : moved;
+}
+function advanceFrom(run: TutorialRun, facts: TutorialFacts): TutorialRun {
   const { project } = facts;
   let next = run;
   if (run.id === 'basics') {
@@ -158,13 +175,18 @@ export function advance(run: TutorialRun, facts: TutorialFacts): TutorialRun {
     }
     if (next.step === BASICS.nameOppose && next.opposeId) {
       const node = project.nodes.find((n) => n.id === next.opposeId);
-      if (node && !UNNAMED.includes(node.title)) next = { ...next, step: BASICS.rateSupport };
+      if (node && !UNNAMED.includes(node.title)) next = { ...next, step: BASICS.tourLeft };
     }
+    if (next.step === BASICS.toEvaluate && facts.workflow === 'evaluate')
+      next = { ...next, step: BASICS.rateSupport };
     if (next.step === BASICS.rateSupport && rated(project, next.supportId, facts.actorId))
       next = { ...next, step: BASICS.rateOppose };
     if (next.step === BASICS.rateOppose && rated(project, next.opposeId, facts.actorId))
-      next = { ...next, step: BASICS.readResult };
+      next = { ...next, step: BASICS.round };
+    // The table is opened, looked at, and left: the step after it waits for the tree to come back.
     if (next.step === BASICS.table && facts.presentation === 'table')
+      next = { ...next, step: BASICS.tableBack };
+    else if (next.step === BASICS.tableBack && facts.presentation === 'tree')
       next = { ...next, step: BASICS.arrange };
   } else if (run.id === 'people') {
     if (next.step === PEOPLE.addAssessor) {

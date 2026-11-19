@@ -57,91 +57,184 @@ test('an example and the practice open through the replacement dialog; the pract
   await expect(page.getByTestId('app')).toBeVisible();
   const panel = page.locator('#tutorialPanel');
   await expect(panel).toBeVisible();
-  // A wide window starts with a look around: the tree, the left panel and the inspector, each with the callout
-  // beside it and its arrow pointing at it; a phone has no side panels and starts from the first thing to do.
-  if (testInfo.project.name !== 'mobile') {
-    await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 1/13');
-    await expect(page.locator('#tutorialPhases li[aria-current="step"]')).toHaveText('Tutustu');
-    await expect(page.locator('#tutorialText')).toContainText('Ylimpänä on pääväite');
-    await expect(page.locator('.node.is-root')).toHaveClass(/tutorial-highlight/);
-    await expect(panel).not.toHaveAttribute('data-side', 'free');
-    await expect(page.locator('#tutorialNext')).toHaveText('Seuraava');
-    await page.locator('#tutorialNext').click();
-    await expect(page.locator('#tutorialText')).toContainText('Vasemmalla näet saman puun listana');
-    await expect(page.locator('.leftpanel')).toHaveClass(/tutorial-highlight/);
-    await expect(panel).toHaveAttribute('data-side', 'right');
-    await page.locator('#tutorialNext').click();
-    await expect(page.locator('#tutorialText')).toContainText('Oikealla ovat valitun kortin tiedot');
-    await expect(page.locator('.inspector-panel')).toHaveClass(/tutorial-highlight/);
-    await expect(panel).toHaveAttribute('data-side', 'left');
-    await page.locator('#tutorialNext').click();
-    // The panel toggles of the top bar are taught too, pointed at from below.
-    await expect(page.locator('#tutorialText')).toContainText('piilottavat ja näyttävät paneelit');
-    await expect(page.locator('#btnZoneLeft').locator('..')).toHaveClass(/tutorial-highlight/);
-    await expect(panel).toHaveAttribute('data-side', 'below');
-    await page.locator('#tutorialNext').click();
-  }
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 5/13');
-  await expect(page.locator('#tutorialPhases li[aria-current="step"]')).toHaveText('Kartoita');
+  const progress = page.locator('#tutorialProgress');
+  const text = page.locator('#tutorialText');
+  const next = page.locator('#tutorialNext');
+  const phase = page.locator('#tutorialPhases li[aria-current="step"]');
+  const wide = testInfo.project.name !== 'mobile';
+
+  // It begins with the tree itself and with doing: the list and the panels wait until there is something in them.
+  await expect(progress).toHaveText('Vaihe 1/16');
+  await expect(phase).toHaveText('Kartoita');
   await expect(page.locator('#tutorialHeading')).toHaveText('Harjoitellaan yhdessä');
-  await expect(page.locator('#tutorialText')).toContainText('Valitse pääväite ja paina + Puoltava');
+  await expect(text).toContainText('Ylimpänä on pääväite');
+  await expect(page.locator('.node.is-root')).toHaveClass(/tutorial-highlight/);
+  await expect(next).toHaveText('Seuraava');
+  await expect(page.locator('#tutorialBack')).toBeDisabled();
+  if (wide) {
+    // Every panel is shown when a walkthrough starts, and the callout stands beside what it talks about.
+    await expect(page.locator('.leftpanel')).toBeVisible();
+    await expect(page.locator('.inspector-panel')).toBeVisible();
+    await expect(panel).not.toHaveAttribute('data-side', 'free');
+  }
+  await next.click();
+
+  // Step 2: a supporting reason with the card's own + button; the step names the key.
+  await expect(progress).toHaveText('Vaihe 2/16');
+  await expect(text).toContainText('paina sen kortin +-painiketta');
+  await expect(text).toContainText('Pikanäppäin: +.');
   await expect(page.locator('.node.is-root .node-title')).toContainText('Nelipäiväinen työviikko');
   await expect(page.getByTestId('node-count')).toHaveText('1');
   await expect(page.locator('.node.is-root .node-add[data-relation="support"]')).toHaveClass(
     /tutorial-highlight/
   );
-
-  // Step 1: a supporting reason exists → step 2 asks for its wording.
   await page.locator('#viewport').focus();
   await page.keyboard.press('+');
   const editor = page.locator('.node-inline-editor');
   await expect(editor).toBeFocused();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 6/13');
+  await expect(progress).toHaveText('Vaihe 3/16');
   await expect(page.locator('.node[data-relation="support"]')).toHaveClass(/tutorial-highlight/);
-  // Step 2: the default title is not a wording; naming it is.
+  // Step 3: the default title is not a wording; naming it is.
   await editor.fill('Työmatkat vähenevät');
   await editor.press('Enter');
   await expect(page.locator('.node-title', { hasText: 'Työmatkat vähenevät' })).toBeVisible();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 7/13');
+  await expect(progress).toHaveText('Vaihe 4/16');
+  await expect(text).toContainText('Pikanäppäin: -.');
   await expect(page.locator('.node.is-root .node-add[data-relation="oppose"]')).toHaveClass(
     /tutorial-highlight/
   );
-  // Step 3: an opposing reason under the thesis. "Näytä kohde" selects the thesis and focuses its − button; on a
-  // narrow screen, where the panel covers the canvas, it adds the reason directly (the prototype's rule).
+  // Step 4: "Näytä kohde" selects the thesis and focuses its − button; on a narrow screen, where the panel covers
+  // the canvas, it adds the reason directly (the prototype's rule).
   await page.locator('#tutorialTarget').click();
-  if (testInfo.project.name !== 'mobile') {
+  if (wide) {
     await expect(page.locator('.node.is-root')).toHaveAttribute('aria-selected', 'true');
     await expect(page.locator('.node.is-root .node-add[data-relation="oppose"]')).toBeFocused();
     await page.keyboard.press('Enter');
   }
   await expect(editor).toBeFocused();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 8/13');
+  await expect(progress).toHaveText('Vaihe 5/16');
   await editor.press('Escape');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 8/13');
-  // Skip the wording step; the next one points at Punnitse.
-  await page.locator('#tutorialNext').click();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 9/13');
+  await expect(progress).toHaveText('Vaihe 5/16');
+
+  // Going back looks at a step again: it does not bounce forward although its condition holds, and Seuraava
+  // returns. The phase chips do the same.
+  await page.locator('#tutorialBack').click();
+  await expect(progress).toHaveText('Vaihe 4/16');
+  await page.locator('#tutorialBack').click();
+  await expect(progress).toHaveText('Vaihe 3/16');
+  await expect(next).toHaveText('Seuraava');
+  await next.click();
+  await next.click();
+  await expect(progress).toHaveText('Vaihe 5/16');
+
+  // The wording step can be passed with Seuraava; then, on a wide window, the look around: the list (now with two
+  // reasons in it), the inspector and the panel toggles.
+  await next.click();
+  if (wide) {
+    await expect(progress).toHaveText('Vaihe 6/16');
+    await expect(phase).toHaveText('Tutustu');
+    await expect(text).toContainText('Vasemmalla näet saman puun listana');
+    await expect(page.locator('.leftpanel')).toHaveClass(/tutorial-highlight/);
+    await expect(panel).toHaveAttribute('data-side', 'right');
+    await next.click();
+    await expect(text).toContainText('Oikealla ovat valitun kortin tiedot');
+    await expect(page.locator('.inspector-panel')).toHaveClass(/tutorial-highlight/);
+    await expect(panel).toHaveAttribute('data-side', 'left');
+    await next.click();
+    await expect(text).toContainText('piilottavat ja näyttävät paneelit');
+    await expect(page.locator('#btnZoneLeft').locator('..')).toHaveClass(/tutorial-highlight/);
+    await expect(panel).toHaveAttribute('data-side', 'below');
+    await next.click();
+  }
+  await expect(progress).toHaveText('Vaihe 9/16');
+  await expect(phase).toHaveText('Punnitse');
+  await expect(text).toContainText('Vaihda työkalurivistä vaiheeseen Punnitse');
   await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/tutorial-highlight/);
-  // Rating the supporting reason moves on to the opposing one; rating that one leads to reading the result.
+  // Switching the stage is its own step; the next one says what the two sliders mean.
+  await page.locator('#btnWorkflowEvaluate').click();
+  await expect(progress).toHaveText('Vaihe 10/16');
+  await expect(text).toContainText('Uskottavuus (0–100 %): kuinka varmasti väite pitää paikkansa');
+  await expect(text).toContainText('kuinka paljon se tukee (+) tai heikentää (−)');
+  // Rating the supporting reason moves on to the opposing one.
   await page.locator('#tutorialTarget').click();
-  await expect(page.locator('#btnWorkflowEvaluate')).toHaveClass(/active/);
   await reviewSelected(page, '80', '4');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 10/13');
-  await expect(page.locator('#tutorialText')).toContainText('Arvioi nyt myös vastaväite');
+  await expect(progress).toHaveText('Vaihe 11/16');
+  await expect(text).toContainText('Arvioi nyt myös vastaväite');
   await page.locator('#tutorialTarget').click();
   await reviewSelected(page, '60', '-2');
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 11/13');
-  await expect(page.locator('#tutorialText')).toContainText('Plussalla perustelut kallistuvat puolesta');
-  // Nothing in the document completes this step: it waits for the person, and its button reads Seuraava.
+  // Both rated: the assessment round is explained, with where it starts and its key; then the result.
+  await expect(progress).toHaveText('Vaihe 12/16');
+  await expect(text).toContainText('arviointikierrosta');
+  await expect(text).toContainText('Arviointi → Arviointikierros');
+  await expect(text).toContainText('Pikanäppäin: R.');
+  if (wide) await expect(page.locator('#assessmentMenu')).toHaveClass(/tutorial-highlight/);
+  await next.click();
+  await expect(progress).toHaveText('Vaihe 13/16');
+  await expect(phase).toHaveText('Tulos');
+  await expect(text).toContainText('Plussalla perustelut kallistuvat puolesta');
+  // The objection is still the selected card: its result box is not the one the step is about, so the main claim's
+  // card is pointed at until it is selected. Nothing in the document completes this step.
+  await expect(page.locator('.node.is-root')).toHaveClass(/tutorial-highlight/);
+  await expect(page.locator('#inspector .score-hero')).not.toHaveClass(/tutorial-highlight/);
   await page.locator('#tutorialTarget').click();
   await expect(page.locator('.node.is-root')).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByTestId('score-reading')).toHaveText('kallistuu puolesta');
   await expect(page.locator('#inspector .score-hero')).toHaveClass(/tutorial-highlight/);
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 11/13');
-  await expect(page.locator('#tutorialNext')).toHaveText('Seuraava');
-  await page.locator('#tutorialNext').click();
-  await expect(page.locator('#tutorialProgress')).toHaveText('Vaihe 12/13');
+  await expect(progress).toHaveText('Vaihe 13/16');
+  await next.click();
+
+  // The table is opened, stays open to be looked at, and is left; only then is the tree untidied for arranging.
+  await expect(progress).toHaveText('Vaihe 14/16');
+  await expect(phase).toHaveText('Näkymät');
   await expect(page.locator('#btnTableView')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#btnTableView').click();
+  await expect(progress).toHaveText('Vaihe 15/16');
+  await expect(page.locator('#btnTableView')).toHaveClass(/active/);
+  await expect(text).toContainText('palaa puuhun painikkeesta Puu');
+  await expect(page.locator('#btnTreeView')).toHaveClass(/tutorial-highlight/);
+  await page.locator('#btnTreeView').click();
+  await expect(progress).toHaveText('Vaihe 16/16');
+  await expect(text).toContainText('tarkoituksella epäjärjestyksessä');
+  await expect(text).toContainText('Pikanäppäin: Alt+A.');
+  await expect(page.locator('#viewport')).toBeVisible();
+  // The untidy tree is what the step is about, so it is in plain sight: the view settings are not opened over it,
+  // and the two reasons really lie on top of each other.
+  await expect(page.locator('#viewDock')).toBeHidden();
+  await expect(page.locator('#btnViewSettings')).toHaveClass(/tutorial-highlight/);
+  const overlap = async () => {
+    const [a, b] = await page
+      .locator('#nodesLayer .node:not(.is-root)')
+      .evaluateAll((els) => els.map((el) => el.getBoundingClientRect()));
+    return !!a && !!b && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+  };
+  expect(await overlap()).toBe(true);
+  if (wide) {
+    // With the view settings open the callout stands beside them, not behind them, and can still be used.
+    await page.locator('#btnViewSettings').click();
+    await expect(page.locator('#btnLayout')).toHaveClass(/tutorial-highlight/);
+    const dock = (await page.locator('#viewDock').boundingBox())!;
+    await expect
+      .poll(async () => {
+        const box = (await panel.boundingBox())!;
+        return box.x >= dock.x + dock.width || box.x + box.width <= dock.x;
+      })
+      .toBe(true);
+    await page.locator('#btnLayout').click();
+    await page.locator('#btnDockClose').click();
+  } else await page.locator('#tutorialTarget').click();
+  expect(await overlap()).toBe(false);
+  await expect(progress).toHaveText('Harjoitus valmis');
+  await expect(page.locator('#tutorialContinue')).toHaveText('Seuraavaksi: useampi arvioija');
+
+  // Finished, every earlier step can still be looked at: one step back, or a phase at a time.
+  await page.locator('#tutorialBack').click();
+  await expect(progress).toHaveText('Vaihe 16/16');
+  await page.locator('#tutorialPhases button', { hasText: 'Punnitse' }).click();
+  await expect(progress).toHaveText('Vaihe 9/16');
+  await expect(next).toHaveText('Seuraava');
+  await page.locator('#tutorialPhases button', { hasText: 'Kartoita' }).click();
+  await expect(progress).toHaveText('Vaihe 1/16');
+
   await page.locator('#tutorialClose').click();
   await expect(panel).toBeHidden();
   await expect(page.locator('.tutorial-highlight')).toHaveCount(0);

@@ -213,6 +213,8 @@ export function arrangeTree(): void {
   if (state.view.orientation === 'four-way') store.dispatch({ type: 'layout.fourWay', offsets: {} });
   else store.dispatch({ type: 'layout.auto' });
   store.requestFit();
+  // Said aloud for the walkthrough's arrange step, however the arranging was started (button, menu, Alt+A).
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('witt-arranged'));
 }
 
 export function toggleCompactVisible(): void {

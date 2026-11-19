@@ -87,7 +87,7 @@ function withoutResults(d: Digest) {
     ...d,
     scoreValue: null,
     scoreLines: null,
-    chips: d.chips.filter((chip) => !/ (netto|laskettu)$/.test(chip)),
+    chips: d.chips.filter((chip) => !/ (netto|tulos|laskettu)$/.test(chip)),
     tableRows: d.tableRows.map((row) => row.replace(/ (?:[+−-]?\d+[.,]\d(?: %)?|—)(?: †)? ▾/, ' ▾')),
   };
 }
