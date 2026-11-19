@@ -1,7 +1,8 @@
 /**
- * must: the Lehto (grove) theme stays readable on its dark forest: text pairs reach WCAG AA 4.5:1, and the focus
- *       ring, card borders and branch strokes reach 3:1 against the canvas and the cards (S-15, owner request
- *       2026-11-12; the decorations are beneath the cards and never lower these pairs)
+ * must: the Lehto (grove) theme stays readable in its daylight grove: text pairs reach WCAG AA 4.5:1, and the focus
+ *       ring, the cards' border and the branch strokes reach 3:1 against the canvas and the cards (S-15, owner
+ *       request 2026-11-12, redrawn light 2026-11-19; the decorations are beneath the cards and never lower these
+ *       pairs)
  *       Every theme's secondary text (muted, subtle) and its supporting and opposing colours reach 4.5:1 on the
  *       page, card, panel and canvas backgrounds (WG-037, owner 2026-11-19, S-15: the prototype's light, paper,
  *       manuscript and ASCII greys were 2.7–4.4:1)
@@ -40,7 +41,7 @@ const token = (name: string): string => {
 
 test('the parser found the grove tokens (a rename must not pass vacuously)', () => {
   assert.equal(tokens.size, 19);
-  assert.equal(token('canvas'), '#06100a');
+  assert.equal(token('canvas'), '#e7f0da');
 });
 
 test('the WCAG ratio helper agrees with published values', () => {
@@ -76,9 +77,21 @@ test('text pairs reach 4.5:1', () => {
 test('focus ring, borders and branch strokes reach 3:1', () => {
   for (const against of ['canvas', 'surface', 'accent-soft'])
     assert.ok(ratio(token('accent'), token(against)) >= 3, `accent on ${against}`);
+  // A card's edge is its own colour, darker than the hairline `--border` of panels and fields.
+  const cardBorder =
+    /body\[data-theme='grove'\] \.node\[data-relation\] \{[^}]*border: 1\.5px solid (#[0-9a-f]{6});/.exec(
+      css
+    )?.[1];
+  assert.equal(cardBorder, '#768c5e');
   for (const against of ['canvas', 'surface'])
-    assert.ok(ratio(token('border'), token(against)) >= 3, `border on ${against}`);
-  for (const stroke of ['#8fc46a', '#e0905f', token('option')])
+    assert.ok(ratio(cardBorder, token(against)) >= 3, `card border on ${against}`);
+  // The branch colours as the stylesheet writes them: living green, rowan red, lake blue.
+  const strokes = ['edge-support', 'edge-oppose', 'edge-option'].map(
+    (cls) =>
+      new RegExp(`body\\[data-theme='grove'\\] \\.${cls} \\{[^}]*stroke: (#[0-9a-f]{6});`).exec(css)?.[1]
+  );
+  assert.deepEqual(strokes, ['#4f8a3c', '#b0572f', '#255f75']);
+  for (const stroke of strokes as string[])
     assert.ok(ratio(stroke, token('canvas')) >= 3, `branch ${stroke} on canvas`);
 });
 

@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Changed
+- Owner request 2026-11-19: the 🌳 Lehto theme is redrawn. The twilight forest (dark green with black-green leaf clusters) is now a morning in a birch grove: a light theme with birch-paper cards, a watercolour crown over the main claim, a tree line and birch trunks behind the tree, branches in moss green and dashed rowan red, pollen floating in the light. Exports from it default to the light palette.
 - Owner decision 2026-11-19 after two UX reviews of the app (usability and accessibility; cognitive load and learnability), first part (`docs/spec/UI_INVENTORY.md` S-15):
   - **Punnitse shows the rating first.** With a reason selected the inspector shows the claim, its two sliders and the result without scrolling (before: about 700 px below a type-name field and five help boxes). *Lisää valintoja* holds what is needed now and then, in two groups: *Mukana laskennassa* (the note nobody rates, my own abstention, the mute) and *Paikka puussa* (type name, starting relation, parent, reuse). Help texts open from a ? beside their control.
   - **The result says whose it is and what it means.** The result box names the viewpoint (*Yhteinen tulos · arvioijia 3* / *Oma tulos · nimi*), switches it in place, reads a balance in words (*kallistuu puolesta / vastaan / tasan*, *keskeneräinen*) and keeps the breakdown under *Näin tulos muodostuu*. The † has a legend under the tree and above the table.

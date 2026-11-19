@@ -50,7 +50,7 @@ import {
   viewedAssessorId,
 } from './derive.ts';
 import { asciiEdgeParts } from './AsciiEdge.tsx';
-import { GroveAmbient, GroveCreatures, GroveCrown } from './Grove.tsx';
+import { GroveAmbient, GroveCreatures, GroveCrown, GroveScenery } from './Grove.tsx';
 import { groveCalm, pickCreatures } from './grove.ts';
 import { dropRestoredGhosts } from './fade.ts';
 import type { Frame } from './projection.ts';
@@ -1076,6 +1076,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       aria-label={t('tree')}
       data-testid="canvas"
     >
+      {grove ? <GroveScenery /> : null}
       {grove ? <GroveAmbient /> : null}
       <div className="canvas-quick-controls" aria-label={t('viewSettingsButton')}>
         <button

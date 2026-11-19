@@ -391,42 +391,40 @@ body[data-theme='comic'] .edge-option {
   stroke: var(--option);
 }
 
-/* ---- 🌳 Lehto (grove), 2026-11-12: a twilight forest. The main claim sits in a large crown at the top (the existing
-   vertical layout) and its reasons hang below as drooping branches; leaves drift, birds glide, fireflies glow and
-   small animals walk the branches (Grove.tsx). All motion is CSS; decorations never take input. ---- */
+/* ---- 🌳 Lehto (grove). Redrawn 2026-11-19 on the owner's word that the twilight forest of 2026-11-12 did not look
+   good or close to nature: a morning in a birch grove. Daylight on birch-paper cards, a watercolour crown over the
+   main claim, a tree line and birch trunks behind the tree, branches in moss green and rowan red; leaves drift,
+   birds pass, pollen floats in the light and small animals walk the branches (Grove.tsx). All motion is CSS;
+   decorations never take input. ---- */
 body[data-theme='grove'] {
-  color-scheme: dark;
-  --bg: #07120c;
-  --surface: #10231a;
-  --surface-secondary: #153020;
-  --panel: #0a1a11;
-  --canvas: #06100a;
-  --ink: #e8f3dc;
-  --muted: #a3c2a0;
-  --subtle: #bdd8b4;
-  --border: #4f8059;
-  --accent: #f2c75c;
-  --accent-soft: #2b3a17;
-  --accent-text: #ffe29a;
-  --green: #86dc7f;
-  --green-bg: #123a1c;
-  --red: #ff9d6e;
-  --red-bg: #3b1f12;
-  --option: #7fd6e6;
-  --option-bg: #0f3038;
+  color-scheme: light;
+  --bg: #eef2e4;
+  --surface: #fcfbf5;
+  --surface-secondary: #f2f5e9;
+  --panel: #f6f8ee;
+  --canvas: #e7f0da;
+  --ink: #22301f;
+  --muted: #556550;
+  --subtle: #48583f;
+  --border: #c9d3b8;
+  --accent: #3a7433;
+  --accent-soft: #dcebca;
+  --accent-text: #2c5f27;
+  --green: #2c6e34;
+  --green-bg: #dff0d4;
+  --red: #9c4226;
+  --red-bg: #f8e5da;
+  --option: #255f75;
+  --option-bg: #d9ecf1;
   --grid: transparent;
-  --shadow: 0 0 18px rgba(242, 199, 92, 0.1);
-  --input: #0b1a11;
-  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-}
-body[data-theme='grove'] :is(button, input, select, textarea) {
-  font-family: inherit;
+  --shadow: 0 8px 22px rgba(58, 84, 40, 0.13);
+  --input: #fffefa;
 }
 body[data-theme='grove'] .canvas-area {
   background:
-    radial-gradient(ellipse 80% 38% at 50% 0%, rgba(120, 190, 110, 0.22), transparent 72%),
-    radial-gradient(ellipse 60% 30% at 50% 100%, rgba(40, 90, 60, 0.28), transparent 80%),
-    linear-gradient(#0a1a11, #050d08);
+    radial-gradient(ellipse 46% 42% at 14% 0%, rgba(255, 244, 196, 0.85), transparent 70%),
+    radial-gradient(ellipse 70% 40% at 78% 6%, rgba(255, 252, 232, 0.6), transparent 72%),
+    linear-gradient(#f4f6e4 0%, #e9f1dc 46%, #dcebc9 100%);
 }
 body[data-theme='grove'] #viewport {
   background-image: none;
@@ -434,67 +432,127 @@ body[data-theme='grove'] #viewport {
 body[data-theme='grove'] .node,
 body[data-theme='grove'] .node[data-relation] {
   background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: 20px 6px 20px 6px;
-  box-shadow: none;
+  border: 1.5px solid #768c5e;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(58, 84, 40, 0.14);
 }
 body[data-theme='grove'] .node[data-relation='support'] {
-  border-left: 6px solid var(--green);
+  border-left: 6px solid #4f8a3c;
 }
 body[data-theme='grove'] .node[data-relation='oppose'] {
-  border-left: 6px solid var(--red);
+  border-left: 6px solid #b0572f;
 }
 body[data-theme='grove'] .node.selected {
   border-color: var(--accent);
   box-shadow:
     0 0 0 2px var(--accent),
-    0 0 22px rgba(242, 199, 92, 0.35);
+    0 8px 22px rgba(58, 116, 51, 0.28);
 }
 body[data-theme='grove'] .node.is-root {
+  border-color: #c9a646;
+  box-shadow:
+    0 0 0 3px rgba(255, 240, 180, 0.8),
+    0 10px 26px rgba(120, 100, 30, 0.2);
+}
+body[data-theme='grove'] .node.is-root.selected {
   border-color: var(--accent);
-  box-shadow: 0 0 26px rgba(242, 199, 92, 0.3);
-  animation: grove-aura 7s ease-in-out infinite alternate;
 }
 body[data-theme='grove'] .node:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
+/* Branches: living wood for a supporting reason, a bare rowan-red twig, dashed, for an opposing one. */
 body[data-theme='grove'] .edge {
-  stroke-width: 3.2;
+  stroke-width: 3.4;
+  stroke-linecap: round;
   opacity: 0.95;
 }
 body[data-theme='grove'] .edge-support {
-  stroke: #8fc46a;
+  stroke: #4f8a3c;
 }
 body[data-theme='grove'] .edge-oppose {
-  stroke: #e0905f;
-  stroke-dasharray: 7 6;
+  stroke: #b0572f;
+  stroke-dasharray: 9 7;
+}
+body[data-theme='grove'] .edge-option {
+  stroke: #255f75;
 }
 body[data-theme='grove'] .legend {
   padding: 5px 10px;
-  background: var(--surface);
+  background: rgba(252, 251, 245, 0.9);
   border: 1px solid var(--border);
-  border-radius: 12px 4px 12px 4px;
+  border-radius: 10px;
   color: var(--subtle);
 }
 body[data-theme='grove'] .legend .oppose-mark {
-  background: repeating-linear-gradient(90deg, #e0905f 0 5px, transparent 5px 8px);
+  background: repeating-linear-gradient(90deg, #b0572f 0 6px, transparent 6px 9px);
 }
 body[data-theme='grove'] .legend .support-mark {
-  background: #8fc46a;
+  background: #4f8a3c;
+}
+body[data-theme='grove'] :is(.topbar, .toolbar, .sidepanel, .app-footer) {
+  background: var(--panel);
 }
 
-body[data-theme='grove'] .grove-leaves {
-  opacity: 0.92;
+/* The crown: soft-edged washes of leaf green, light from above. */
+.grove-crown .grove-leaves {
+  opacity: 0.9;
 }
-body[data-theme='grove'] .grove-leaves.tone-0 {
-  fill: #17402a;
+.grove-crown .grove-leaves.tone-0 {
+  fill: url(#groveLeaf0);
 }
-body[data-theme='grove'] .grove-leaves.tone-1 {
-  fill: #1f5a35;
+.grove-crown .grove-leaves.tone-1 {
+  fill: url(#groveLeaf1);
 }
-body[data-theme='grove'] .grove-leaves.tone-2 {
-  fill: #2d7a43;
+.grove-crown .grove-leaves.tone-2 {
+  fill: url(#groveLeaf2);
+}
+
+/* The grove itself, behind the tree and fixed to the window: a tree line at the foot, birches at the sides. */
+.grove-scenery {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.grove-treeline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: min(46%, 380px);
+}
+.grove-birch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 74px;
+  opacity: 0.8;
+}
+.grove-birch.left {
+  left: 2.5%;
+}
+.grove-birch.left.far {
+  left: 9%;
+  width: 46px;
+  opacity: 0.5;
+}
+.grove-birch.right {
+  right: 3.5%;
+}
+.grove-birch.right.far {
+  right: 11%;
+  width: 40px;
+  opacity: 0.45;
+}
+.grove-light {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 249, 214, 0.75), transparent);
+  animation: grove-dapple 11s ease-in-out var(--d) infinite alternate;
 }
 
 /* Screen-space weather behind the cards. */
@@ -509,20 +567,23 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
   position: absolute;
   top: 0;
   left: var(--x);
-  width: 14px;
-  height: 14px;
-  border-radius: 0 100% 0 100%;
-  background: linear-gradient(135deg, #9ee06f, #3f8f4a);
-  opacity: 0.7;
+  width: 15px;
+  height: 15px;
+  border-radius: 2px 100% 2px 100%;
+  background: linear-gradient(135deg, #b9dc7c, #5d9e45);
+  opacity: 0.85;
   animation: grove-fall var(--t) linear var(--d) infinite;
+}
+.grove-leaf:nth-child(3n) {
+  background: linear-gradient(135deg, #f1dc7a, #c9a13a);
 }
 .grove-bird {
   position: absolute;
   top: var(--y);
   left: 0;
   width: calc(54px * var(--s));
-  fill: #cfe8c0;
-  opacity: 0.55;
+  fill: #4b5d49;
+  opacity: 0.5;
   animation: grove-glide var(--t) linear var(--d) infinite;
 }
 .grove-bird .wings {
@@ -530,18 +591,18 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
   transform-origin: center;
   animation: grove-flap 1s ease-in-out infinite alternate;
 }
-.grove-firefly {
+.grove-mote {
   position: absolute;
   left: var(--x);
   top: var(--y);
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #ffe58a;
-  box-shadow: 0 0 10px 3px rgba(255, 226, 120, 0.55);
+  background: #fffbe0;
+  box-shadow: 0 0 8px 3px rgba(255, 244, 190, 0.8);
   animation:
-    grove-float 9s ease-in-out var(--d) infinite alternate,
-    grove-glow 5s ease-in-out var(--d) infinite;
+    grove-float 13s ease-in-out var(--d) infinite alternate,
+    grove-glow 7s ease-in-out var(--d) infinite;
 }
 
 /* Small animals on the branches: `offset-path` carries them along the edge; static at mid-branch without motion. */
@@ -558,28 +619,28 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
   offset-distance: 62%;
 }
 .grove-creature .body {
-  fill: #b5733a;
+  fill: #a8632c;
 }
 .grove-creature .tail {
-  fill: #d98d4c;
+  fill: #c97d3c;
 }
 .grove-creature .eye {
-  fill: #140d06;
+  fill: #1c140c;
 }
 .grove-creature .eyewhite {
-  fill: #fff3c4;
+  fill: #fff6d6;
 }
 .grove-creature .beak {
-  fill: #f2b84b;
+  fill: #e0a233;
 }
 .grove-owl .body {
-  fill: #9b8157;
+  fill: #8a7350;
 }
 .grove-butterfly .wing.a {
-  fill: #f29ac0;
+  fill: #e98ab4;
 }
 .grove-butterfly .wing.b {
-  fill: #ffd36b;
+  fill: #f4c64f;
 }
 .grove-butterfly .body {
   fill: #2a1b2e;
@@ -590,13 +651,13 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
   animation: grove-flutter 0.6s ease-in-out infinite alternate;
 }
 .grove-snail .body {
-  fill: #cdb98d;
-  stroke: #cdb98d;
+  fill: #c2ad80;
+  stroke: #c2ad80;
   stroke-width: 2.4;
   stroke-linecap: round;
 }
 .grove-snail .shell {
-  fill: #a8693b;
+  fill: #a06538;
 }
 .grove-snail .spiral {
   fill: none;
@@ -645,16 +706,26 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
     transform: translate(0, 0);
   }
   to {
-    transform: translate(26px, -34px);
+    transform: translate(30px, -42px);
   }
 }
 @keyframes grove-glow {
   0%,
   100% {
-    opacity: 0.25;
+    opacity: 0.2;
   }
   50% {
-    opacity: 1;
+    opacity: 0.95;
+  }
+}
+@keyframes grove-dapple {
+  from {
+    opacity: 0.35;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 0.9;
+    transform: translate(14px, 8px);
   }
 }
 @keyframes grove-walk {
@@ -673,23 +744,17 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
     transform: scaleX(0.35);
   }
 }
-@keyframes grove-aura {
-  from {
-    box-shadow: 0 0 18px rgba(242, 199, 92, 0.22);
-  }
-  to {
-    box-shadow: 0 0 34px rgba(242, 199, 92, 0.42);
-  }
-}
 
-/* Big trees and phones: calm. Reduced motion: no weather at all, the animals stand still on their branches. */
+/* Big trees and phones: calm. Reduced motion: no weather at all, the animals stand still on their branches. The
+   scenery stays: it does not move. */
 .grove-calm .grove-ambient,
 .grove-calm .grove-creatures {
   display: none;
 }
 @media (max-width: 600px), (pointer: coarse) {
   .grove-bird,
-  .grove-firefly {
+  .grove-mote,
+  .grove-birch {
     display: none;
   }
   .grove-leaf:nth-child(n + 7) {
@@ -705,7 +770,7 @@ body[data-theme='grove'] .grove-leaves.tone-2 {
   }
   .grove-creature,
   .grove-creature .flap,
-  body[data-theme='grove'] .node.is-root {
+  .grove-light {
     animation: none;
   }
 }

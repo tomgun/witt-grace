@@ -2,8 +2,8 @@
  * must: the Lehto (grove) theme's decorations are derived from stable ids alone: the id hash is FNV-1a 32, about one
  *       branch in five carries an animal, at most `max` of them, an id's pick does not depend on the other ids, a
  *       tree above 150 cards is calm, the crown is the same every time; a stored `grove` skin is kept and an unknown
- *       one falls back to the document's base theme; the export dialog treats grove as a dark skin (S-15, owner
- *       request 2026-11-12)
+ *       one falls back to the document's base theme; the export dialog treats grove as a light skin since the theme was
+ *       redrawn in daylight (S-15, owner request 2026-11-12, redrawn 2026-11-19)
  * test: tests/unit/grove.test.ts
  * red-against: Math.random in the pick (a tree changing on every render), an off-by-one at 150, an animal picked per
  *              position instead of per id, `grove` missing from the stored skins so it reloads as the light theme
@@ -76,7 +76,8 @@ test('a stored grove skin is kept per browser; an unknown value falls back to th
   assert.notEqual(state.appearance, 'grove');
 });
 
-test('the export dialog treats grove as a dark skin', () => {
-  assert.ok(DARK_APPEARANCES.includes('grove'));
+test('the export dialog treats grove as a light skin since it was redrawn in daylight (2026-11-19)', () => {
+  assert.ok(!DARK_APPEARANCES.includes('grove'));
+  assert.ok(DARK_APPEARANCES.includes('terminal'));
   assert.ok(!DARK_APPEARANCES.includes('paper'));
 });
