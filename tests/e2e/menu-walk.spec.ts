@@ -42,3 +42,37 @@ test('one menu at a time; Escape and a press outside close it', async ({ page })
   await page.locator('#projectTitle').click();
   expect(await isOpen(assess)).toBe(false);
 });
+
+/**
+ * must: in the Tiedosto menu both document types, Argumentointi and Päätös, lie inside the frame of their switch,
+ *       in Finnish and in a language with longer words (owner's report 2026-11-19)
+ * red-against: the switch laid in the first column of the menu's grid, where the second choice ran out of its frame
+ */
+test('the document type switch in the Tiedosto menu holds both choices', async ({ page }) => {
+  for (const language of ['fi', 'de']) {
+    await page.goto('/');
+    await page.evaluate((l) => {
+      window.localStorage.clear();
+      window.localStorage.setItem('witt-locale-v1', l);
+    }, language);
+    await page.reload();
+    await page.locator('#btnHomeNew').click();
+    await page.locator('#btnNewWorkArgument').click();
+    await expect(page.getByTestId('app')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await page.locator('#fileMenu > summary').click();
+    const inside = await page.locator('#fileMenu .mode-switch').evaluate((frame) => {
+      const outer = frame.getBoundingClientRect();
+      return [...frame.querySelectorAll('button')].map((button) => {
+        const r = button.getBoundingClientRect();
+        return (
+          r.left >= outer.left - 0.5 &&
+          r.right <= outer.right + 0.5 &&
+          r.top >= outer.top - 0.5 &&
+          r.bottom <= outer.bottom + 0.5
+        );
+      });
+    });
+    expect(inside, language).toEqual([true, true]);
+  }
+});

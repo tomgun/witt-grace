@@ -9452,8 +9452,15 @@ input[type='range'].range-unset:focus-visible {
   margin-bottom: 10px;
 }
 .toolbar-popup .mode-switch {
+  /* Across both columns of the menu's grid: in the first one alone the second choice ran out of the frame
+     (owner's report 2026-11-19). */
+  grid-column: 1 / -1;
   display: flex;
   margin: 4px 0 8px;
+  white-space: normal;
+}
+.toolbar-popup .mode-switch button {
+  min-width: 0;
 }
 .toolbar-popup .mode-switch button {
   flex: 1;
