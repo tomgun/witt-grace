@@ -50,6 +50,8 @@ The workspace has the top bar (document title, ↶ undo and ↷ redo, four panel
 
 **The node menu** (right click or `Shift+F10`): edit text, *Liitä myös muihin solmuihin…* (attach to other nodes), + supporting, − opposing, 0 neutral, on the decision root + option, collapse/expand (Space), move subtree, delete subtree, arrange tree; repeated and locked reasons also offer detaching.
 
+**Notices.** A short message at the bottom of the window says what just happened: *Poistettu: …* with **Kumoa** (undo), *JSON-tiedosto ladattu* and the like. A confirmation leaves by itself in a few seconds; an error stays until you close it.
+
 **Dragging and the view.** Drag a card by its header or its text to move it; the position is saved in the document and undoable. Drag empty space or scroll (mouse wheel, two fingers on a trackpad) to move the view; `Ctrl`/`⌘` + scroll or a trackpad pinch zooms, and on a touch screen two fingers move and zoom. ⤢ fits the whole tree. When a document is opened or the tree arranged, the view never shrinks below 75 %, so the cards stay readable; if the tree does not fit then, the selected card stays in view (the main claim on opening). A selected or newly added card is always brought into view. Below 100 % and on a touch screen the selected card's actions (+ − ✎ ▾ ×) appear beside it at a fixed size. In a compacted view cards cannot be dragged until manual positions are restored.
 
 **The outline** (*Puurakenne*) lists nodes indented: a relation dot, the title, ▸N for a collapsed branch's child count. A truncated title shows in full as a tooltip on hover or focus.

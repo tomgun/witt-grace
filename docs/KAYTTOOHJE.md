@@ -50,6 +50,8 @@ Työtilassa on yläpalkki (asiakirjan nimi ja sen vieressä tallennustila, esim.
 
 **Solmun valikko** (hiiren oikea painike tai `Shift+F10`): Muokkaa tekstiä, Liitä myös muihin solmuihin…, + Puoltava, − Vastainen, 0 Neutraali, päätöksen juurella + Päätösvaihtoehto, Sulje/Avaa alipuu (välilyönti), Siirrä alipuu, Poista alipuu, Järjestä puu. Toistuville ja lukituille perusteluille lisäksi irrotus käsitteestä tai yhteisperusteesta.
 
+**Ilmoitukset.** Ikkunan alareunaan tulee lyhyt ilmoitus siitä, mitä juuri tapahtui: *Poistettu: …* ja painike **Kumoa**, *JSON-tiedosto ladattu* ja vastaavat. Vahvistus poistuu itsestään muutamassa sekunnissa, virheilmoitus pysyy kunnes suljet sen.
+
 **Raahaus ja näkymä.** Vedä korttia otsikkorivistä tai tekstistä siirtääksesi sen; sijainti tallentuu asiakirjaan ja on kumottavissa. Vedä tyhjää taustaa tai vieritä (hiiren rulla, ohjauslevyn kaksi sormea) siirtääksesi näkymää; `Ctrl`/`⌘` + vieritys tai ohjauslevyn nipistys zoomaa, kosketusnäytöllä kaksi sormea siirtää ja zoomaa. ⤢ sovittaa koko puun näkymään. Kun asiakirja avataan tai puu järjestetään, näkymä ei pienene alle 75 %:n, jotta korttien teksti pysyy luettavana; jos puu ei silloin mahdu, näkyvissä pidetään valittu kortti (avatessa pääväite). Valittu tai juuri lisätty kortti tuodaan aina näkyviin. Alle 100 %:n zoomilla ja kosketusnäytöllä valitun kortin toiminnot (+ − ✎ ▾ ×) näkyvät kortin vieressä vakiokokoisina. Tiivistetyssä näkymässä kortteja ei voi raahata ennen kuin omat sijainnit palautetaan.
 
 **Puurakenne** vasemmalla listaa solmut sisennettyinä: suhdepiste, otsikko, ▸N kertoo suljetun haaran lapsimäärän. Katkaistun otsikon koko teksti näkyy vihjeenä, kun osoitin tai kohdistus on rivillä.

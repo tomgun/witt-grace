@@ -72,9 +72,19 @@ export function Modal({
   );
 }
 
+/** How long a notice that only confirms something stays; an error stays until it is closed. */
+const NOTICE_MS = 7000;
+
+/** What just happened, said where it is seen (S-15, 2026-11-19): a confirmation leaves by itself, an error stays,
+ * and a change that undo takes back offers Kumoa. */
 export function NoticeBar() {
-  const { notice } = useAppState();
+  const { notice, canUndo } = useAppState();
   const t = useTranslator();
+  useEffect(() => {
+    if (!notice || notice.kind === 'error') return;
+    const timer = window.setTimeout(() => getStore().notify(null), NOTICE_MS);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
   if (!notice) return null;
   return (
     <div
@@ -83,6 +93,19 @@ export function NoticeBar() {
       data-testid="notice"
     >
       <span>{notice.text}</span>
+      {notice.undo && canUndo ? (
+        <button
+          type="button"
+          className="btn quiet"
+          id="btnNoticeUndo"
+          onClick={() => {
+            getStore().undo();
+            getStore().notify(null);
+          }}
+        >
+          {t('undo')}
+        </button>
+      ) : null}
       <button
         type="button"
         className="btn quiet"

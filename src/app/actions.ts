@@ -105,7 +105,9 @@ export async function deleteNode(nodeId: string): Promise<void> {
     return;
   fadeOutCards([nodeId, ...removed]);
   store.select(node.parentId);
-  store.dispatch({ type: 'node.remove', id: nodeId });
+  if (store.dispatch({ type: 'node.remove', id: nodeId }))
+    // A leaf goes without a question, so the way back is said aloud (S-15, 2026-11-19).
+    store.notify({ kind: 'info', text: t()('deletedNotice', { title: node.title }), undo: true });
 }
 
 export function startInlineEdit(nodeId: string): void {

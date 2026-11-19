@@ -99,6 +99,8 @@ export type ReplaceChoice = 'forget' | 'keep' | null;
 export interface Notice {
   kind: 'error' | 'info';
   text: string;
+  /** The notice follows a change that undo takes back: it offers Kumoa while undo is available. */
+  undo?: boolean;
 }
 export interface AppState {
   project: Project;

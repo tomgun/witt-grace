@@ -1121,3 +1121,4 @@ helpHeadRating|Arviointi ja tulos|Bewertung und Ergebnis|Rating and result|Valor
 helpHeadSaving|Tallennus|Speichern|Saving|Guardado|Enregistrement|Сохранение|保存|保存|저장
 settingsMenu|Asetukset|Einstellungen|Settings|Ajustes|Réglages|Настройки|设置|設定|설정
 docTypeLabel|Asiakirjan tyyppi|Dokumenttyp|Document type|Tipo de documento|Type de document|Тип документа|文档类型|文書の種類|문서 유형
+deletedNotice|Poistettu: {title}|Gelöscht: {title}|Deleted: {title}|Eliminado: {title}|Supprimé : {title}|Удалено: {title}|已删除：{title}|削除しました：{title}|삭제됨: {title}

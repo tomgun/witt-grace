@@ -11,6 +11,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
   - **A readable canvas.** An opened example shows ratings and results on the cards; the automatic fit stops at 75 % and keeps the selected card in view; a selected or newly added card is always brought into view; scrolling moves the view and Ctrl/⌘ + scroll or a pinch zooms (the wheel used to zoom 7 % per event whatever its size); two fingers move and zoom on a touch screen; below 100 % the selected card's actions follow it at a fixed size.
   - **Readable text.** The grey, green and red text colours of the light, paper, manuscript and ASCII themes meet WCAG AA (axe on 22 workspace states: 342 contrast failures before, 0 after on the light theme).
   - **One word per thing** in Finnish and English: *perustelutulos* / *argument result*, *arvioija* / *assessor*, *väite* / *claim* for a card.
+  - **What just happened is said.** Deleting a card shows *Poistettu: …* with *Kumoa*; a confirming message leaves by itself after seven seconds.
   - **No small print.** Outside the cards of the canvas no text is under 12 px (labels, notes, menu shortcuts and table details were 9–11 px).
   - **Less in the toolbar rows.** The document's type (Argumentointi / Päätös) moved from the row of view switches into the Tiedosto menu and is shown beside the title; language and theme sit behind a ⚙ button; a decision's toolbar fits one row at 1440 px; on a phone the header takes five rows (about 220 px) instead of seven (about 350 px).
   - **First use.** The guided practice has nine steps: it now also has the objection rated and the main claim's result read. *Uusi työ* highlights the blank argument tree instead of the AI route, and a new document opens with its title ready to be written. The help dialog has headings. The saving state is shown beside the document title.
@@ -24,6 +25,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 - A card added at the edge of the view could land outside it with its title editor open; a reason added straight after naming another could lose its editor to the previous card regaining focus.
 - “Arvioinnin mukaan: Puoltava (+3.3333333333333335/5)” printed an unrounded number; one decimal now, as in the table.
 - The library list announced itself as a list without list items (axe: aria-required-children).
+- Notices (for example *JSON-tiedosto ladattu* after saving a file) had no style rule and were rendered under the page, where nobody saw them; they are now a message at the bottom of the window.
 - Owner report 2026-11-18: a document made from an AI draft or an AI starter opened with the prototype's calculation method (*Oma arvio + perustelut*) instead of the default for new documents. The app now passes its default; the domain builders still produce the prototype's document when no method is named.
 - File → Avaa JSON refused documents saved with *Log-odds*, *Nettotulos välittyy* or *Vahva ketju välittyy*: the import preflight listed only two calculation methods. It now accepts every method the engine can score.
 
