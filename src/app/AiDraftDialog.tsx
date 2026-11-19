@@ -194,7 +194,6 @@ export function AiDraftDialog() {
         title={t('draftPreviewTitle')}
         id="aiDraftPreviewDialog"
         testId="ai-draft-preview-dialog"
-        heading={false}
       >
         <div id="aiDraftPreview" className="proposal-preview-lines">
           {previewError || draftPreviewLines(staged.draft)}

@@ -97,7 +97,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
           type="button"
           className="btn icon-btn"
           id="btnBackHome"
-          aria-label="Home"
+          aria-label={t('homeBack')}
           title={t('homeBack')}
           onClick={() => store.setHome(true)}
         >

@@ -9572,3 +9572,10 @@ input[type='range'].range-unset:focus-visible {
   color: var(--ink);
   border-color: var(--border);
 }
+/* One dialog shape (WG-043, S-15 2026-11-19): × in the heading, a lone closing button at the right like a primary one. */
+.dialog-actions > :only-child {
+  margin-left: auto;
+}
+.dialog-actions {
+  flex-wrap: wrap;
+}

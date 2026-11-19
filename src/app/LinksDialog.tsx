@@ -49,7 +49,6 @@ export function LinksDialog({
       id="linkDialog"
       testId="link-dialog"
       className="link-dialog"
-      heading={false}
     >
       <div className="eyebrow">{t('linkPreviewLabel')}</div>
       <p id="linkSourceTitle" className="link-source-title">

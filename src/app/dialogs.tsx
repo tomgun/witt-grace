@@ -39,6 +39,7 @@ export function Modal({
   heading?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const t = useTranslator();
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
@@ -59,7 +60,7 @@ export function Modal({
         {heading ? (
           <div className="dialog-heading">
             <h2 id={titleId}>{title}</h2>
-            <button type="button" className="btn icon-btn" aria-label="Sulje" onClick={onClose}>
+            <button type="button" className="btn icon-btn" aria-label={t('close')} onClick={onClose}>
               ×
             </button>
           </div>

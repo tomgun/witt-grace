@@ -61,7 +61,6 @@ export function AiResultsDialog() {
       id="aiResultsDialog"
       testId="ai-results-dialog"
       className="action-dialog ai-results-dialog"
-      heading={false}
     >
       <p>{t('aiReviewIsolation')}</p>
       <label htmlFor="aiResultsAssessorSelect">{t('aiReviewerLabel')}</label>

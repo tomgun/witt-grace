@@ -337,7 +337,6 @@ export function AiReviewDialog() {
         id="aiReviewPreviewDialog"
         testId="ai-review-preview-dialog"
         className="action-dialog contribution-preview-dialog"
-        heading={false}
       >
         <div className="proposal-source" id="proposalSingleSource" hidden={!single}>
           <label htmlFor="proposalSourceKind">{t('contributionSource')}</label>
@@ -483,7 +482,6 @@ export function AiReviewDialog() {
       id="aiReviewDialog"
       testId="ai-review-dialog"
       className="action-dialog ai-review-dialog"
-      heading={false}
     >
       <p>{t('contributionIntro')}</p>
       <div className="ai-flow-explainer">{t('aiProposalExplainer')}</div>

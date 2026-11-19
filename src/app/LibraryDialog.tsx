@@ -185,7 +185,6 @@ export function LibraryDialog() {
       id="libraryDialog"
       testId="library-dialog"
       className="action-dialog library-dialog"
-      heading={false}
     >
       <p>{t('libraryDisclaimer')}</p>
       <p id="libraryStatus" role="status" aria-live="polite">
