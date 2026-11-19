@@ -130,7 +130,9 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
           key={state.project.id + state.project.title}
           data-testid="project-title"
           maxLength={200}
-          title={t('docName')}
+          // As wide as its text (styles.css uses field-sizing where the browser has it; `size` elsewhere).
+          size={Math.max(16, Math.min(80, state.project.title.length + 2))}
+          title={`${t('docName')}: ${state.project.title}`}
           defaultValue={state.project.title}
           onChange={() => undefined}
           onBlur={(e) => {

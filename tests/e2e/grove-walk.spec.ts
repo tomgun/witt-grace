@@ -27,9 +27,11 @@ test.beforeEach(async ({ page }) => {
 
 test('crown, shaped branches, a few animals and weather; input is never intercepted', async ({ page }) => {
   await expect(page.locator('.grove-crown')).toHaveCount(1);
-  // A daylight grove (redrawn 2026-11-19): a light page, a tree line, and birches at the sides on a wide screen.
+  // A daylight grove (redrawn 2026-11-19): a light page seen from inside the grove: a canopy overhead that the
+  // leaves fall from, tall trunks, ferns at the foot, and birches at the sides on a wide screen.
   expect(await page.evaluate(() => getComputedStyle(document.body).colorScheme)).toBe('light');
-  await expect(page.locator('.grove-treeline')).toBeVisible();
+  await expect(page.locator('.grove-canopy')).toBeVisible();
+  await expect(page.locator('.grove-ground')).toBeVisible();
   if ((page.viewportSize()?.width ?? 0) > 600) await expect(page.locator('.grove-birch')).toHaveCount(4);
   await expect(page.getByTestId('grove-ambient')).toBeAttached();
   const animals = await page.locator('.grove-creature').count();
@@ -92,9 +94,10 @@ test('reduced motion removes the weather and the animals stand still', async ({ 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.getByTestId('grove-ambient')).toBeHidden();
   expect(await walking()).toBe('none');
-  // The grove itself does not move and stays: the tree line and the light, standing still.
+  // The grove itself does not move and stays: the canopy, the trunks and the light, standing still.
   await expect(page.getByTestId('grove-scenery')).toBeVisible();
-  await expect(page.locator('.grove-treeline')).toBeVisible();
+  await expect(page.locator('.grove-canopy')).toBeVisible();
+  await expect(page.locator('.grove-ground')).toBeVisible();
   expect(
     await page
       .locator('.grove-light')
@@ -113,5 +116,6 @@ test('a phone shows at most three animals and no birds', async ({ page }) => {
   await expect(page.locator('.grove-bird').first()).toBeHidden();
   // No birch trunks on a narrow screen: they would stand in the middle of the tree.
   await expect(page.locator('.grove-birch').first()).toBeHidden();
-  await expect(page.locator('.grove-treeline')).toBeVisible();
+  await expect(page.locator('.grove-canopy')).toBeVisible();
+  await expect(page.locator('.grove-ground')).toBeVisible();
 });

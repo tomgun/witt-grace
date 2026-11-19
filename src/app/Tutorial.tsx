@@ -244,6 +244,7 @@ function anchors(run: TutorialRun, state: AppState): string[] {
     if (run.step === BASICS.tourTree) list.push(root);
     if (run.step === BASICS.tourLeft) list.push('.leftpanel .left-add, .leftpanel');
     if (run.step === BASICS.tourInspector) list.push('.inspector-panel');
+    if (run.step === BASICS.tourZones) list.push('.zone-controls:not(.history-controls):not(.help-controls)');
     if (run.step === BASICS.addSupport)
       list.push(`${root} .node-add[data-relation="support"]`, '#btnSupport');
     if (run.step === BASICS.nameSupport) list.push(cardSelector(run.supportId));

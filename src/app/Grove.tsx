@@ -80,23 +80,71 @@ function Birch({ className }: { className: string }) {
   );
 }
 
-// The tree line: far hills, two rows of rounded crowns, ferns and grass at the foot. Fixed shapes: the same grove
-// every time.
-const FAR_CROWNS = [40, 150, 250, 370, 470, 590, 700, 810, 930, 1040, 1150];
-const NEAR_CROWNS = [-10, 110, 215, 330, 455, 560, 680, 790, 905, 1010, 1120, 1210];
-const TUFTS = [30, 120, 205, 300, 410, 520, 640, 735, 850, 960, 1075, 1170];
+// The grove seen from inside it (owner 2026-11-19: small round trees at the foot made the falling leaves and the
+// animals on the branches hang in an empty sky). Tall trunks stand from the ground to a canopy that closes the top
+// of the view; the leaves fall from that canopy and the branches of the argument tree run among the trunks.
+// Fixed shapes: the same grove every time.
+const FAR_TRUNKS = [70, 190, 285, 400, 505, 610, 735, 840, 950, 1045, 1140];
+const MID_TRUNKS = [130, 345, 560, 690, 895, 1090];
+const CANOPY = [
+  [-20, 10, 150, 1],
+  [110, -30, 170, 0],
+  [240, 30, 140, 2],
+  [360, -20, 180, 1],
+  [500, 20, 150, 0],
+  [620, -40, 190, 2],
+  [760, 25, 150, 1],
+  [880, -25, 175, 0],
+  [1010, 30, 145, 2],
+  [1130, -20, 170, 1],
+  [1230, 20, 150, 0],
+  [60, 95, 110, 2],
+  [300, 110, 120, 0],
+  [560, 100, 105, 1],
+  [800, 115, 120, 2],
+  [1060, 100, 110, 0],
+] as const;
+const CANOPY_TONES = ['#5e9d4a', '#86bd62', '#b4d98a'];
+const SPRIGS = [150, 430, 700, 980];
+const FERNS = [60, 250, 470, 640, 860, 1040, 1160];
+const TUFTS = [20, 140, 330, 400, 560, 730, 790, 950, 1100];
 const LIGHTS = [
-  { x: 18, y: 30, s: 220, d: 0 },
-  { x: 46, y: 58, s: 170, d: -4 },
-  { x: 68, y: 24, s: 260, d: -7 },
-  { x: 84, y: 62, s: 150, d: -2 },
+  { x: 18, y: 34, s: 220, d: 0 },
+  { x: 46, y: 60, s: 170, d: -4 },
+  { x: 68, y: 30, s: 260, d: -7 },
+  { x: 84, y: 64, s: 150, d: -2 },
 ];
 
-/** The grove behind the tree: light through the leaves, birches at the sides, a tree line at the foot. It does not
- * move with the canvas and nothing in it takes input. */
+/** The grove behind the tree: a canopy overhead, trunks from top to bottom, ferns and grass at the foot, light
+ * falling between. It does not move with the canvas and nothing in it takes input. */
 export function GroveScenery() {
   return (
     <div className="grove-scenery" aria-hidden="true" data-testid="grove-scenery">
+      <svg className="grove-trunks" viewBox="0 0 1200 800" preserveAspectRatio="none">
+        {FAR_TRUNKS.map((x, i) => (
+          <path
+            key={`f${i}`}
+            d={`M${x - 5 - (i % 3)} 800 L${x - 3} 0 L${x + 3 + (i % 2)} 0 L${x + 6 + (i % 3)} 800 Z`}
+            fill={i % 4 === 0 ? '#eef0e2' : '#c9d3b6'}
+            opacity="0.55"
+          />
+        ))}
+        {MID_TRUNKS.map((x, i) => (
+          <g key={`m${i}`} opacity="0.6">
+            <path
+              d={`M${x - 13 - (i % 2) * 3} 800 C${x - 9} 520 ${x - 7} 260 ${x - 6} 0 L${x + 6} 0 C${x + 8} 260 ${x + 10} 520 ${x + 15 + (i % 2) * 3} 800 Z`}
+              fill="#a9ae8f"
+            />
+            <path
+              d={`M${x - 3} 300 C${x - 40} 250 ${x - 70} 240 ${x - 96} 200 M${x + 3} 190 C${x + 36} 150 ${x + 64} 140 ${x + 90} 104`}
+              stroke="#a9ae8f"
+              strokeWidth="5"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </g>
+        ))}
+      </svg>
       {LIGHTS.map((l, i) => (
         <i
           key={i}
@@ -112,69 +160,31 @@ export function GroveScenery() {
           }
         />
       ))}
-      <svg className="grove-treeline" viewBox="0 0 1200 380" preserveAspectRatio="xMidYMax slice">
+      <svg className="grove-ground" viewBox="0 0 1200 150" preserveAspectRatio="xMidYMax slice">
         <path
-          d="M0 210 C150 150 300 190 450 165 C620 135 760 200 930 160 C1040 135 1130 170 1200 150 L1200 380 L0 380 Z"
-          fill="#d3e6bc"
-          opacity="0.75"
+          d="M0 70 C160 46 330 64 520 52 C740 38 930 66 1200 48 L1200 150 L0 150 Z"
+          fill="#cfe3b6"
+          opacity="0.9"
         />
-        {FAR_CROWNS.map((cx, i) => {
-          const top = 198 - (i % 3) * 14;
-          return (
-            <g key={`f${i}`} opacity="0.55">
-              <ellipse cx={cx - 22} cy={top + 16} rx={34 + (i % 3) * 6} ry={40} fill="#c4deaa" />
-              <ellipse cx={cx + 20} cy={top + 10} rx={38} ry={44 + (i % 4) * 5} fill="#bcd9a0" />
-              <ellipse cx={cx} cy={top - 14} rx={40 + (i % 4) * 6} ry={42} fill="#cbe3b2" />
-            </g>
-          );
-        })}
-        <path
-          d="M0 290 C200 262 380 286 600 270 C820 254 1000 284 1200 266 L1200 380 L0 380 Z"
-          fill="#c3dea6"
-        />
-        {NEAR_CROWNS.map((cx, i) => {
-          const top = 246 - (i % 4) * 11;
-          const lean = (i % 3) - 1;
-          return (
-            <g key={`n${i}`}>
-              <path
-                d={`M${cx} 344 C${cx + lean * 4} 310 ${cx - lean * 5} 286 ${cx + lean * 3} ${top + 20}`}
-                stroke="#8a8f6c"
-                strokeWidth={5 + (i % 2) * 2}
-                strokeLinecap="round"
-                fill="none"
-              />
-              <ellipse
-                cx={cx - 26}
-                cy={top + 14}
-                rx={30 + (i % 3) * 5}
-                ry={32}
-                fill="#93c173"
-                opacity="0.9"
-              />
-              <ellipse cx={cx + 24} cy={top + 8} rx={34} ry={36 + (i % 4) * 4} fill="#a3cb82" opacity="0.9" />
-              <ellipse
-                cx={cx + lean * 6}
-                cy={top - 16}
-                rx={38 + (i % 4) * 5}
-                ry={36}
-                fill="#aed38c"
-                opacity="0.92"
-              />
-              <ellipse cx={cx - 10} cy={top - 22} rx={18} ry={14} fill="#c6e2a6" opacity="0.8" />
-            </g>
-          );
-        })}
-        <path
-          d="M0 338 C180 322 420 340 640 328 C860 316 1040 338 1200 326 L1200 380 L0 380 Z"
-          fill="#a9cf88"
-        />
+        <path d="M0 104 C220 84 420 104 640 92 C860 80 1040 104 1200 90 L1200 150 L0 150 Z" fill="#b5d595" />
+        {FERNS.map((fx, i) => (
+          <g
+            key={`fern${i}`}
+            stroke={i % 2 ? '#5f9a48' : '#6fa955'}
+            strokeWidth="3"
+            strokeLinecap="round"
+            fill="none"
+          >
+            <path d={`M${fx} 118 q-26 -34 -52 -30 M${fx} 118 q-12 -44 -30 -52 M${fx} 118 q2 -50 -2 -62`} />
+            <path d={`M${fx} 118 q14 -44 32 -50 M${fx} 118 q28 -32 54 -26`} />
+          </g>
+        ))}
         {TUFTS.map((tx, i) => (
           <path
             key={`t${i}`}
-            d={`M${tx} 352 q-9 -22 -16 -26 M${tx} 352 q-2 -26 -3 -34 M${tx} 352 q7 -22 15 -27 M${tx} 352 q14 -12 24 -12`}
-            stroke={i % 3 === 0 ? '#5f9a48' : '#79b05c'}
-            strokeWidth="3"
+            d={`M${tx} 134 q-7 -18 -12 -22 M${tx} 134 q-1 -22 -2 -28 M${tx} 134 q6 -18 12 -22`}
+            stroke={i % 3 === 0 ? '#4f8a3c' : '#79b05c'}
+            strokeWidth="2.5"
             strokeLinecap="round"
             fill="none"
           />
@@ -184,6 +194,42 @@ export function GroveScenery() {
       <Birch className="left far" />
       <Birch className="right" />
       <Birch className="right far" />
+      <svg className="grove-canopy" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMin slice">
+        <defs>
+          {CANOPY_TONES.map((color, i) => (
+            <radialGradient key={i} id={`groveCanopy${i}`}>
+              <stop offset="0" stopColor={color} stopOpacity="0.95" />
+              <stop offset="0.7" stopColor={color} stopOpacity="0.8" />
+              <stop offset="1" stopColor={color} stopOpacity="0" />
+            </radialGradient>
+          ))}
+        </defs>
+        {CANOPY.map(([cx, cy, r, tone], i) => (
+          <ellipse key={i} cx={cx} cy={cy} rx={r} ry={r * 0.72} fill={`url(#groveCanopy${tone})`} />
+        ))}
+        {SPRIGS.map((sx, i) => (
+          <g key={`s${i}`} opacity="0.9">
+            <path
+              d={`M${sx} ${96 + (i % 2) * 14} q${14 - i * 6} 44 ${-10 + i * 5} ${86 + (i % 2) * 18}`}
+              stroke="#7a8f58"
+              strokeWidth="3"
+              strokeLinecap="round"
+              fill="none"
+            />
+            {[0, 1, 2, 3].map((k) => (
+              <ellipse
+                key={k}
+                cx={sx + (k % 2 ? 12 : -10) + (i % 2) * 4}
+                cy={118 + k * 20 + (i % 2) * 14}
+                rx="11"
+                ry="5.5"
+                transform={`rotate(${k % 2 ? 28 : -32} ${sx + (k % 2 ? 12 : -10) + (i % 2) * 4} ${118 + k * 20 + (i % 2) * 14})`}
+                fill={k % 2 ? '#86bd62' : '#6aa953'}
+              />
+            ))}
+          </g>
+        ))}
+      </svg>
     </div>
   );
 }

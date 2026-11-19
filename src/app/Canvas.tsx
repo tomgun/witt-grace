@@ -123,6 +123,14 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   const [live, setLive] = useState<{ id: string; pos: Position } | null>(null);
   const [menu, setMenu] = useState<{ nodeId: string; x: number; y: number } | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const [bareWanted, setBareWanted] = useState(false);
+  useEffect(() => {
+    const onChange = () => {
+      if (!document.fullscreenElement) setBareWanted(false);
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
   const nodes = frame.projection.nodes;
   const byId = new Map(project.nodes.map((n) => [n.id, n]));
   // A card being resized shows its live size (owner request 2026-11-10).
@@ -1061,6 +1069,17 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     );
   };
 
+  // Tree only, with nothing else on screen: the bar, the zoom control and the legend go, and the browser is asked
+  // for its full screen (it may refuse; the view is the same either way). Leaving the browser's full screen (Esc)
+  // brings the buttons back.
+  const bare = bareWanted && state.focusOnly;
+  // Leaving the tree-only view by any way (F, Esc, the menu) ends the bare state with it.
+  if (bareWanted && !state.focusOnly) setBareWanted(false);
+  const setBareMode = (on: boolean) => {
+    setBareWanted(on);
+    if (on) void document.documentElement.requestFullscreen?.().catch(() => undefined);
+    else if (document.fullscreenElement) void document.exitFullscreen?.().catch(() => undefined);
+  };
   const grove = state.appearance === 'grove';
   const rootCard = grove ? nodes.find((n) => !n.parentId) : undefined;
   const rootAt = rootCard ? visualPosition(rootCard) : null;
@@ -1072,23 +1091,13 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   };
   return (
     <section
-      className={`canvas-area${grove && groveCalm(nodes.length) ? ' grove-calm' : ''}`}
+      className={`canvas-area${grove && groveCalm(nodes.length) ? ' grove-calm' : ''}${bare ? ' canvas-bare' : ''}`}
       aria-label={t('tree')}
       data-testid="canvas"
     >
       {grove ? <GroveScenery /> : null}
       {grove ? <GroveAmbient /> : null}
       <div className="canvas-quick-controls" aria-label={t('viewSettingsButton')}>
-        <button
-          type="button"
-          className="btn quiet"
-          id="btnFocusQuick"
-          aria-pressed={state.focusOnly}
-          title={t(state.focusOnly ? 'exitFocus' : 'focusTree')}
-          onClick={() => toggleFocus()}
-        >
-          ⛶ {t(state.focusOnly ? 'exitFocus' : 'focusTree')}
-        </button>
         <button
           type="button"
           className="btn quiet"
@@ -1172,7 +1181,54 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         >
           ⌨ {t('shortcutsButton')}
         </button>
+        {/* Leaving is at the right end, under the Näkymä menu the view was entered from, and names its key as the
+            menu does (owner 2026-11-19, S-15); the prototype has it first on the left. */}
+        <button
+          type="button"
+          className="btn quiet quick-bare"
+          id="btnFocusBare"
+          title={t('focusBare')}
+          onClick={() => setBareMode(true)}
+        >
+          ⤢ {t('focusBare')}
+        </button>
+        <button
+          type="button"
+          className="btn quiet quick-exit"
+          id="btnFocusQuick"
+          aria-pressed={state.focusOnly}
+          title={`${t(state.focusOnly ? 'exitFocus' : 'focusTree')} (${shortcuts.focus}, Esc)`}
+          onClick={() => toggleFocus()}
+        >
+          ⛶ {t(state.focusOnly ? 'exitFocus' : 'focusTree')} <kbd>{shortcuts.focus}</kbd>
+        </button>
       </div>
+      {bare ? (
+        // Nothing but the tree (owner 2026-11-19): two small marks in the corner bring the buttons back or leave.
+        <div className="canvas-bare-controls" data-testid="bare-controls">
+          <button
+            type="button"
+            id="btnFocusBareShow"
+            title={t('focusBareShow')}
+            aria-label={t('focusBareShow')}
+            onClick={() => setBareMode(false)}
+          >
+            ⋯
+          </button>
+          <button
+            type="button"
+            id="btnFocusBareExit"
+            title={`${t('exitFocus')} (${shortcuts.focus}, Esc)`}
+            aria-label={t('exitFocus')}
+            onClick={() => {
+              setBareMode(false);
+              toggleFocus(false);
+            }}
+          >
+            ×
+          </button>
+        </div>
+      ) : null}
       <div
         id="viewport"
         ref={viewportRef}

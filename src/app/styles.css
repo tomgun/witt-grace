@@ -9784,3 +9784,81 @@ input[type='range'].range-unset:focus-visible {
   font-size: 12px;
   color: var(--subtle);
 }
+/* ---- Owner's notes of 2026-11-19 (S-15): the whole document title; the tree-only bar ---- */
+#projectTitle {
+  width: auto;
+  max-width: min(58vw, 760px);
+  field-sizing: content;
+  text-overflow: ellipsis;
+}
+@media (max-width: 1150px) {
+  #projectTitle {
+    max-width: 36vw;
+  }
+}
+body.witt-focus .canvas-quick-controls {
+  right: 18px;
+  max-width: none;
+}
+.canvas-quick-controls .quick-exit {
+  margin-left: auto;
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 750;
+}
+.canvas-quick-controls .quick-exit kbd {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--subtle);
+  font: inherit;
+  font-size: 12px;
+}
+/* Tree only with nothing else on screen (owner 2026-11-19, S-15). */
+.canvas-bare .canvas-quick-controls,
+.canvas-bare .zoom-controls,
+.canvas-bare .legend,
+.canvas-bare .selection-bar {
+  display: none !important;
+}
+.canvas-bare-controls {
+  position: absolute;
+  z-index: 7;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+}
+.canvas-bare-controls:hover,
+.canvas-bare-controls:focus-within {
+  opacity: 1;
+}
+.canvas-bare-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+.canvas-bare-controls button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .canvas-bare-controls {
+    opacity: 0.8;
+  }
+  .canvas-bare-controls button {
+    width: 44px;
+    height: 44px;
+  }
+}

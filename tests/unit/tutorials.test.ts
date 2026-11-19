@@ -68,7 +68,7 @@ const influence = (p: Project, nodeId: string, userId: string) =>
   });
 
 test('the three walkthroughs: counted steps and the order of the phases', () => {
-  assert.deepEqual([lastStep('basics'), lastStep('people'), lastStep('collab')], [12, 5, 4]);
+  assert.deepEqual([lastStep('basics'), lastStep('people'), lastStep('collab')], [13, 5, 4]);
   assert.deepEqual(TUTORIALS.basics.phases, [
     'tutPhaseTour',
     'explore',
@@ -78,7 +78,7 @@ test('the three walkthroughs: counted steps and the order of the phases', () => 
   ]);
   assert.deepEqual(
     TUTORIALS.basics.steps.map((s) => s.phase),
-    [0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 4, 4, 4]
+    [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 4, 4, 4]
   );
   assert.equal(TUTORIALS.basics.next?.id, 'people');
   assert.equal(TUTORIALS.people.next?.id, 'collab');
@@ -93,7 +93,14 @@ test('basics: a step that explains waits, whatever the document already shows', 
     relation: 'support',
     title: 'Oma',
   });
-  for (const step of [BASICS.tourTree, BASICS.tourLeft, BASICS.tourInspector, BASICS.readResult, BASICS.done])
+  for (const step of [
+    BASICS.tourTree,
+    BASICS.tourLeft,
+    BASICS.tourInspector,
+    BASICS.tourZones,
+    BASICS.readResult,
+    BASICS.done,
+  ])
     assert.equal(advance(start('basics', { step }), facts(withReason)).step, step);
 });
 

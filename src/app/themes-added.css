@@ -508,7 +508,8 @@ body[data-theme='grove'] :is(.topbar, .toolbar, .sidepanel, .app-footer) {
   fill: url(#groveLeaf2);
 }
 
-/* The grove itself, behind the tree and fixed to the window: a tree line at the foot, birches at the sides. */
+/* The grove itself, seen from inside it, behind the tree and fixed to the window: a canopy overhead, trunks from
+   top to bottom, ferns and grass at the foot, birches at the sides. */
 .grove-scenery {
   position: absolute;
   inset: 0;
@@ -516,13 +517,27 @@ body[data-theme='grove'] :is(.topbar, .toolbar, .sidepanel, .app-footer) {
   pointer-events: none;
   contain: strict;
 }
-.grove-treeline {
+.grove-trunks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.grove-ground {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   width: 100%;
-  height: min(46%, 380px);
+  height: min(22%, 150px);
+}
+.grove-canopy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: min(34%, 260px);
 }
 .grove-birch {
   position: absolute;
