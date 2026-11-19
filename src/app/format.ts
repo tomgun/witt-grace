@@ -1,5 +1,7 @@
 // Number formatting for the review notation: "75%/+5", signed balances, and "—" for missing (never 0).
-export const signed = (value: number): string => (value > 0 ? `+${value}` : String(value));
+import { fig } from './numberFormat.ts';
+
+export const signed = (value: number): string => fig(value > 0 ? `+${value}` : String(value));
 export const EM_DASH = '—';
 export const balanceText = (balance: number | null): string =>
   balance === null ? EM_DASH : signed(Math.round(balance * 10) / 10);

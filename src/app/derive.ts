@@ -20,25 +20,26 @@ import {
   viewpointSpread,
 } from '../domain/index.ts';
 import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
+import { fig } from './numberFormat.ts';
 import type { MessageKey, Translator } from '../lib/i18n/i18n.ts';
 import type { Layers, ViewState } from './view.ts';
 
 export const EM_DASH = '—';
 /** The prototype's `signed`: a plus sign for positives, otherwise the plain JS number. */
-export const signed = (value: number): string => (value > 0 ? `+${value}` : String(value));
+export const signed = (value: number): string => fig(value > 0 ? `+${value}` : String(value));
 
 /** Visible balance text `S = 2I − 100` with `digits` decimals and an explicit sign; `—` when null. */
 export function balanceText(internal: number | null | undefined, digits = 1): string {
   const value = argumentBalance(internal ?? null);
   if (value === null) return EM_DASH;
   const rounded = Number(value.toFixed(digits));
-  return (rounded > 0 ? '+' : '') + rounded.toFixed(digits);
+  return fig((rounded > 0 ? '+' : '') + rounded.toFixed(digits));
 }
 export function balanceDeltaText(internalDelta: number | null | undefined, digits = 1): string {
   if (internalDelta === null || internalDelta === undefined || !Number.isFinite(internalDelta))
     return EM_DASH;
   const rounded = Number((2 * internalDelta).toFixed(digits));
-  return (rounded > 0 ? '+' : '') + rounded.toFixed(digits);
+  return fig((rounded > 0 ? '+' : '') + rounded.toFixed(digits));
 }
 /** A derived result exists only for index-assessable nodes with at least one scored contribution. */
 export const derivedResult = (node: Node, result: NodeScore | undefined | null): boolean =>
@@ -48,7 +49,7 @@ export const derivedResult = (node: Node, result: NodeScore | undefined | null):
   (result.contributions ?? []).some((item) => !item.missing);
 /** A computed credence as a percentage (anchored versions: a rated claim's result is a credence, 0–100 %). */
 export const credencePercentText = (internal: number | null | undefined, digits = 1): string =>
-  internal == null ? EM_DASH : `${internal.toFixed(digits)} %`;
+  internal == null ? EM_DASH : fig(`${internal.toFixed(digits)} %`);
 /** One internal value of a node in the form its result has: a percentage for a credence, else a signed balance. */
 export const valueText = (
   result: NodeScore | undefined | null,
@@ -192,7 +193,7 @@ export interface AssessmentSnapshot {
   filtered: boolean;
 }
 const fmt = (num: number): string =>
-  Number.isInteger(num) ? String(num) : Number(num.toFixed(1)).toString();
+  fig(Number.isInteger(num) ? String(num) : Number(num.toFixed(1)).toString());
 
 /** The compact "75%/+3" pair a card shows, with where the numbers came from. Null when nothing applies. */
 export function nodeAssessmentSnapshot(

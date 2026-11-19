@@ -6,6 +6,7 @@ import type { Disagreement } from '../domain/index.ts';
 import type { MessageKey } from '../lib/i18n/i18n.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
+import { fig } from './numberFormat.ts';
 
 const STATUS_KEYS: Partial<Record<NonNullable<Disagreement['status']>, MessageKey>> = {
   contradictory: 'influenceStatusContradictory',
@@ -51,9 +52,7 @@ export function ReviewLensDialog({
     setSelection([...next]);
   };
   const spreadText = (r: Disagreement) =>
-    `${t(r.kind === 'credence' ? 'lensCredence' : 'lensInfluence')} · ${t('lensRange')}: ${r.rawSpread.toFixed(
-      r.rawSpread % 1 ? 1 : 0
-    )} ${r.units} · ${r.count} ${t('examplePeople')}`;
+    `${t(r.kind === 'credence' ? 'lensCredence' : 'lensInfluence')} · ${t('lensRange')}: ${fig(r.rawSpread.toFixed(r.rawSpread % 1 ? 1 : 0))} ${r.units} · ${r.count} ${t('examplePeople')}`;
   const distribution = (r: Disagreement) =>
     t('influenceDistribution', {
       positive: r.positive ?? 0,
@@ -156,7 +155,7 @@ export function ReviewLensDialog({
                       {c.a} + {c.b}
                     </strong>
                     <small>
-                      {t('lensMeanDifference')}: {(c.distance ?? 0).toFixed(1)} / 100 · {c.shared}{' '}
+                      {t('lensMeanDifference')}: {fig((c.distance ?? 0).toFixed(1))} / 100 · {c.shared}{' '}
                       {t('lensShared')}
                     </small>
                   </div>

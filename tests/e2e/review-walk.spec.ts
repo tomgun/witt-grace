@@ -250,12 +250,12 @@ test('assessment round, review lens, people and a vote round', async ({ page }, 
   await page.locator('#confirmAccept').click();
   await expect(page.locator('#voteRoundStatus')).toHaveText('Äänestyskierros päättyi');
   const swimResult = page.locator('#voteResults .vote-result-row', { hasText: 'Uimahalliin' });
-  await expect(swimResult.locator('span')).toHaveText('60.0/100');
+  await expect(swimResult.locator('span')).toHaveText('60,0/100');
   await expect(swimResult.locator('small')).toHaveText(
-    '2 äänestäjää; yhteispaino 2; painotettu summa 120.0.'
+    '2 äänestäjää; yhteispaino 2; painotettu summa 120,0.'
   );
   const homeResult = page.locator('#voteResults .vote-result-row', { hasText: 'Kotona' });
-  await expect(homeResult.locator('span')).toHaveText('55.0/100');
+  await expect(homeResult.locator('span')).toHaveText('55,0/100');
   await expect(page.locator('#voteResults .vote-by-person')).toContainText('Nelli: Kotona · 90/100');
   await expect(page.locator('#voteAuditRows p')).toHaveCount(6);
   await expect(page.locator('#voteAuditRows p').first()).toContainText('Kierros alkoi · Omistaja');

@@ -24,6 +24,7 @@ import { canEdit, enterEvaluate } from './actions.ts';
 import { loadAssessmentPass, passStore, saveAssessmentPass } from './assessmentPass.ts';
 import type { AssessmentPass } from './assessmentPass.ts';
 import { credencePercentText, hasScoringReasons, signed } from './derive.ts';
+import { fig } from './numberFormat.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
 interface Inputs {
@@ -467,7 +468,8 @@ function AssessmentRound({ onClose }: { onClose: () => void }) {
                         <ul id="assessmentTopReasons">
                           {ownReasons.map((c) => (
                             <li key={c.id}>
-                              {(c.impact ?? 0) < 0 ? '−' : '+'} {c.title} ({(c.magnitude ?? 0).toFixed(1)})
+                              {(c.impact ?? 0) < 0 ? '−' : '+'} {c.title} (
+                              {fig((c.magnitude ?? 0).toFixed(1))})
                             </li>
                           ))}
                         </ul>

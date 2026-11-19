@@ -49,7 +49,7 @@ test('start, add a reason with +, review it in Punnitse and read the balance', a
     .locator('.meta-assessment .meta-value');
   await expect(chip).toHaveText('100%/+5');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText('+50.0');
+  await expect(page.getByTestId('score-balance')).toContainText('+50,0');
   await expect(page.locator('.node.is-root .meta-index .meta-value')).toHaveText('+50');
   await page.reload();
   await page.locator('#btnHomeContinue').click();
@@ -67,7 +67,7 @@ test('a second unreviewed reason makes the balance incomplete (†), not zero', 
   const pair = page.locator('.node', { hasText: 'Laatu on heikko' }).locator('.meta-assessment .meta-value');
   await expect(pair).toHaveText('—/—');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText('+50.0 †');
+  await expect(page.getByTestId('score-balance')).toContainText('+50,0 †');
 });
 
 test('zones toggle with Alt+1..4, the dock with Alt+V, and the file menu exports JSON', async ({
@@ -257,7 +257,7 @@ test('a new document computes from the whole tree; the calculation method switch
   // Nobody has rated the claim: it reads the net of its one reason, on the plus side, and says what it passes up.
   await claim.click();
   await expect(page.locator('label[for="nodeConfidence"]')).toContainText('Oma uskottavuusarvio');
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+33\.3Perustelutulos/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+33,3Perustelutulos/);
   await expect(page.getByTestId('net-note')).toHaveText(
     'Kukaan ei ole arvioinut tämän väitteen uskottavuutta, joten luku on sen perustelujen nettotulos. Väite välittää ylöspäin 33 % merkittävyydestään.'
   );
@@ -267,10 +267,10 @@ test('a new document computes from the whole tree; the calculation method switch
   await expect(page.getByTestId('credence-note')).toHaveText(
     'Arviosi on lähtötaso, jota tämän väitteen perustelut siirtävät.'
   );
-  await expect(page.getByTestId('score-balance')).toContainText(/^93\.3 %Laskettu uskottavuus 0–100 %/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^93,3 %Laskettu uskottavuus 0–100 %/);
   await expect(claimCard.locator('.meta-index .meta-value')).toHaveText('93 %');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+42\.7Perustelutulos/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+42,7Perustelutulos/);
 
   const openAssessMenu = async () => {
     if (!(await page.locator('#assessmentMenu[open]').count()))
@@ -293,11 +293,11 @@ test('a new document computes from the whole tree; the calculation method switch
   await expect(page.getByTestId('scoring-note')).toHaveText(
     'Arvioitu väite välittää oman arvionsa sellaisenaan. Perusteluista lasketaan vain arvioimattomat väitteet, vaihtoehdot ja pääväite.'
   );
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+41\.9Perustelutulos/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+41,9Perustelutulos/);
   await expect(claimCard.locator('.meta-index .meta-value')).toHaveText('(93 %)');
   await expect(claimCard.locator('.meta-index')).toContainText('laskettu');
   await outlineClaim.click();
-  await expect(page.getByTestId('score-derived')).toHaveText('Perusteluista laskettuna93.3 %');
+  await expect(page.getByTestId('score-derived')).toHaveText('Perusteluista laskettuna93,3 %');
   await expect(page.getByTestId('credence-note')).toHaveText(
     'Tässä laskentatavassa arviosi on väitteen tulos sellaisenaan. Perustelut näkyvät erittelyssä, mutta eivät muuta tulosta.'
   );
@@ -314,4 +314,24 @@ test('a new document computes from the whole tree; the calculation method switch
   await openAssessMenu();
   await expect(select).toHaveValue('anchored-reasons-v1');
   await expect(page.locator('#scoringSelect option')).toHaveCount(2);
+});
+
+/**
+ * must: figures follow the language: in Finnish a decimal comma and a true minus, in English a point and the same
+ *       minus, switched together with the words (WG-045, owner 2026-11-19, S-15)
+ * red-against: the figures left in the style of the language the page was opened in, a hyphen for the minus
+ */
+test('figures follow the language: 50,0 in Finnish, 50.0 in English, a true minus in both', async ({
+  page,
+}) => {
+  await addNamed(page, '#btnOppose', 'Maksaa liikaa');
+  await page.locator('#btnWorkflowEvaluate').click();
+  await review(page, '100', '-5');
+  await expect(page.locator('#inspector')).toContainText('−5 / 5');
+  await selectRoot(page);
+  await expect(page.getByTestId('score-balance')).toContainText('−50,0');
+  await openSettings(page);
+  await page.locator('#localeSelect').selectOption('en');
+  await expect(page.locator('#btnWorkflowEvaluate')).toHaveText('Evaluate');
+  await expect(page.getByTestId('score-balance')).toContainText('−50.0');
 });

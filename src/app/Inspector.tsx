@@ -67,6 +67,7 @@ import { scoringText } from './scoringText.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import { LAYER_PRESETS } from './view.ts';
+import { fig } from './numberFormat.ts';
 
 let inspectorAdvancedOpen = false;
 let inspectorMoreOpen = false;
@@ -1271,7 +1272,7 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
                     ? '0'
                     : effective.net
                       ? t('baseUnratedDerived')
-                      : `${effective.base.toFixed(1)} %`}
+                      : fig(`${effective.base.toFixed(1)} %`)}
               </strong>
             </div>
             {effective?.derived !== undefined ? (
@@ -1357,8 +1358,8 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
                           ? t('personalIncomplete')
                           : t('scoreContributionDetail', {
                               impact: signed(item.impact ?? 0),
-                              strength: (item.strength ?? 0).toFixed(1),
-                              magnitude: (item.magnitude ?? 0).toFixed(2),
+                              strength: fig((item.strength ?? 0).toFixed(1)),
+                              magnitude: fig((item.magnitude ?? 0).toFixed(2)),
                             })}
                       </small>
                       {mine && !item.missing ? (

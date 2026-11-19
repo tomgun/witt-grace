@@ -41,7 +41,7 @@ test('reuse a reason under a second option with independent ratings', async ({ p
     .locator('.node', { hasText: 'Saamme perheen yhteistä aikaa' })
     .locator('.meta-assessment .meta-value');
   await expect(uses.nth(0)).toHaveText('70%/+4');
-  await expect(uses.nth(1)).toHaveText('90%/-3');
+  await expect(uses.nth(1)).toHaveText('90%/−3');
 
   // The library card shows the concept with two connections; selecting it lists both uses with their pairs.
   await page.locator('#btnRepeatTab').click();
@@ -53,7 +53,7 @@ test('reuse a reason under a second option with independent ratings', async ({ p
   await expect(useRows.nth(0)).toContainText('Uimahalli');
   await expect(useRows.nth(0)).toContainText('70%/+4');
   await expect(useRows.nth(1)).toContainText('Luontoretki');
-  await expect(useRows.nth(1)).toContainText('90%/-3');
+  await expect(useRows.nth(1)).toContainText('90%/−3');
 
   // A reason created in the pane attaches to the selected node (Uimahalli) through the inspector.
   await page.locator('#btnOutlineTab').click();

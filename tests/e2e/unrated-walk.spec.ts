@@ -26,7 +26,7 @@ test('an unrated note, a "no effect" review and the fine scale', async ({ page }
   await expect(page.getByTestId('unrated-note')).toBeVisible();
   await expect(page.getByTestId('review-credence')).toHaveCount(0);
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+28\.6Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+28,6Perustelu/);
 
   await note.locator('.node-title').click();
   await page.getByTestId('node-unrated').uncheck();
@@ -41,7 +41,7 @@ test('an unrated note, a "no effect" review and the fine scale', async ({ page }
   await expect(child).toHaveClass(/under-unrated/);
   await expect(page.getByTestId('abstain-branch')).toBeVisible();
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+28\.6Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+28,6Perustelu/);
   await page.locator('[data-testid^="outline-"]', { hasText: 'Muutti pois 2019' }).click();
   await page.locator('#viewport').focus();
   await page.keyboard.press('Delete');
@@ -55,7 +55,7 @@ test('an unrated note, a "no effect" review and the fine scale', async ({ page }
   await expect(influence).toHaveAttribute('step', '0.1');
   await influence.fill('0.3');
   await influence.blur();
-  await expect(page.locator('#inspector')).toContainText('+0.3 / 5');
+  await expect(page.locator('#inspector')).toContainText('+0,3 / 5');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+31\.5Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+31,5Perustelu/);
 });

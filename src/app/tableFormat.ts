@@ -14,6 +14,7 @@ import {
   signed,
 } from './derive.ts';
 import type { DeriveContext } from './derive.ts';
+import { fig } from './numberFormat.ts';
 
 /** The relation column: root type by kind, group, option, else the displayed (assessed) direction. */
 export function tableRelationName(ctx: DeriveContext, t: Translator, node: Node): string {
@@ -192,7 +193,7 @@ export function detailEvaluationLines(
   const excluded = node.kind === 'decision' || node.kind === 'group';
   const meanOf = () => {
     const mean = lens.filtered ? lens.credence.get(node.id)?.mean : baseConfidence(project, node).base;
-    return mean === null || mean === undefined ? EM_DASH : mean.toFixed(1);
+    return mean === null || mean === undefined ? EM_DASH : fig(mean.toFixed(1));
   };
   const lines = [
     excluded

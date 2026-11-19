@@ -20,7 +20,7 @@ test('a reason is muted for a what-if and brought back', async ({ page }, testIn
   await addNamed(page, '#btnOppose', 'Maksaa liikaa');
   await reviewSelected(page, '100', '-2');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^0\.0Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^0,0Perustelu/);
   const stored = await page.evaluate(() => window.localStorage.getItem('witt-project-v3'));
 
   const card = page.locator('#nodesLayer .node', { hasText: 'Maksaa liikaa' });
@@ -32,13 +32,13 @@ test('a reason is muted for a what-if and brought back', async ({ page }, testIn
   await expect(card).toHaveClass(/muted-node/);
   await expect(page.locator('#muteBannerLabel')).toContainText('mykistettyjä perusteluja 1');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText(/^\+28\.6Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^\+28,6Perustelu/);
   expect(await page.evaluate(() => window.localStorage.getItem('witt-project-v3'))).toBe(stored);
 
   await card.getByTestId('node-muted').click();
   await expect(card).not.toHaveClass(/muted-node/);
   await expect(page.locator('#muteBanner')).toHaveCount(0);
-  await expect(page.getByTestId('score-balance')).toContainText(/^0\.0Perustelu/);
+  await expect(page.getByTestId('score-balance')).toContainText(/^0,0Perustelu/);
 
   await card.locator('.node-title').click({ button: 'right' });
   await page.locator('#nodeContextMenu button', { hasText: 'Mykistä laskennasta (kokeilu)' }).click();

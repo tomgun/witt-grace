@@ -7,9 +7,10 @@ import type { Node, Scores, VoteWeighting } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
 import { canEdit, isOwner } from './actions.ts';
 import { resultText } from './derive.ts';
+import { fig } from './numberFormat.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
-const scoreText = (score: number | null): string => (score === null ? '—' : `${score.toFixed(1)}/100`);
+const scoreText = (score: number | null): string => (score === null ? '—' : fig(`${score.toFixed(1)}/100`));
 
 export function VoteDialog({
   open,
@@ -316,7 +317,7 @@ function VoteRound({ onClose, scores }: { onClose: () => void; scores: Scores })
                           {t('voteResultDetails', {
                             count: row.preferenceVoters,
                             weight: row.preferenceTotalPower,
-                            sum: row.weightedSum.toFixed(1),
+                            sum: fig(row.weightedSum.toFixed(1)),
                           })}
                         </small>
                       </div>
@@ -370,7 +371,7 @@ function VoteRound({ onClose, scores }: { onClose: () => void; scores: Scores })
                             {
                               count: score.preferenceVoters,
                               weight: score.preferenceTotalPower,
-                              sum: score.weightedSum.toFixed(1),
+                              sum: fig(score.weightedSum.toFixed(1)),
                             }
                           )}`}
                         </p>

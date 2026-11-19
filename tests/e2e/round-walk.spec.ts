@@ -43,7 +43,7 @@ test('the round goes from the reasons to the claim and marks a rating whose reas
   await expect(page.locator('#assessmentSubtreeChanged')).toBeVisible();
   await expect(page.locator('#assessmentEarlier')).toHaveText('Aiempi arviosi: 70 %');
   await expect(page.locator('#assessmentWithReasons')).toHaveText('Perustelujesi kanssa laskettuna: 85 %');
-  await expect(page.locator('#assessmentTopReasons li')).toHaveText(['+ Pilotti onnistui (2.0)']);
+  await expect(page.locator('#assessmentTopReasons li')).toHaveText(['+ Pilotti onnistui (2,0)']);
   await expect(page.locator('#assessmentGroupResult')).toHaveCount(0);
   await page.locator('#assessmentShowGroup').check();
   await expect(page.locator('#assessmentGroupResult')).toHaveText('Ryhmän laskettu tulos: 85 %');

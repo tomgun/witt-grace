@@ -64,7 +64,7 @@ test('Punnitse: ratings first, the rest on request, a result that says whose it 
   await selectRoot(page);
   // Rating switched to the person's own view; the box says so and reads the balance.
   await expect(page.getByTestId('score-whose')).toHaveText('Oma tulos · Minä');
-  await expect(page.getByTestId('score-balance')).toContainText('+50.0');
+  await expect(page.getByTestId('score-balance')).toContainText('+50,0');
   await expect(page.getByTestId('score-reading')).toHaveText('kallistuu puolesta');
   await expect(page.locator('#btnResultPersonal')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('#btnResultShared').click();
@@ -80,6 +80,6 @@ test('Punnitse: ratings first, the rest on request, a result that says whose it 
   // An opposing reason left unrated: the result is incomplete, said in words beside the †.
   await addNamed(page, '#btnOppose', 'Maksaa liikaa');
   await selectRoot(page);
-  await expect(page.getByTestId('score-balance')).toContainText('+50.0 †');
+  await expect(page.getByTestId('score-balance')).toContainText('+50,0 †');
   await expect(page.getByTestId('score-reading')).toHaveText('kallistuu puolesta · keskeneräinen');
 });
