@@ -1,4 +1,4 @@
-// The home screen (UI_INVENTORY S-01): every button, the current-work card and the warnings.
+// The home screen (UI_INVENTORY S-01): one main action, three groups of others, and the warnings.
 import { dismissInviteForGood, dismissInviteForNow, useTutorialInvite } from './Tutorial.tsx';
 import { useEffect, useRef } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
@@ -113,6 +113,7 @@ export function Home() {
                   id="btnHomeContinue"
                   data-testid="home-continue"
                   ref={continueRef}
+                  title={card.saved ? `${card.browserSaveLabel}: ${card.browserSave}` : undefined}
                   onClick={continueWork}
                 >
                   {card.title ? t('homeContinueNamed', { title: card.title }) : t('homeContinue')}
@@ -129,62 +130,49 @@ export function Home() {
                 {t('homeNew')}
               </button>
             </div>
-            <div className="home-other-actions home-primary-options" role="group" aria-label={t('homeNew')}>
-              <button
-                type="button"
-                id="btnHomeOpen"
-                onClick={() => window.dispatchEvent(new CustomEvent('witt-open-file'))}
-              >
-                {t('homeOpen')}
-              </button>
-              <button type="button" id="btnHomeCollab" onClick={() => store.openDialog('collab')}>
-                {t('collabHome')}
-              </button>
-              <button type="button" id="btnHomeDemo" onClick={() => store.openDialog('examples')}>
-                {t('homeDemo')}
-              </button>
-              <button
-                type="button"
-                id="btnHomeTutorial"
-                onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial'))}
-              >
-                {t('tutorialStart')}
-              </button>
-            </div>
-            <details className="home-extra-menu">
-              <summary>{t('homeMore')}</summary>
-              <div className="home-other-actions home-extra-options">
+            {/* Three small groups by what the person came to do (owner 2026-11-19, S-15): fewer things to weigh at
+                once, and nothing here that needs an open document (importing and exporting additions lives in the
+                document's own menus). */}
+            <div className="home-groups">
+              <div className="home-other-actions home-group" role="group" aria-labelledby="homeGroupOpen">
+                <span className="home-group-label" id="homeGroupOpen">
+                  {t('homeGroupOpen')}
+                </span>
+                <button
+                  type="button"
+                  id="btnHomeOpen"
+                  onClick={() => window.dispatchEvent(new CustomEvent('witt-open-file'))}
+                >
+                  {t('homeOpen')}
+                </button>
                 <button type="button" id="btnHomeLibrary" onClick={() => store.openDialog('library')}>
                   {t('documentLibrary')}
                 </button>
-                <button type="button" id="btnHomeAI" onClick={() => store.openDialog('aiDraft')}>
-                  {t('newWithAI')}
+              </div>
+              <div className="home-other-actions home-group" role="group" aria-labelledby="homeGroupLearn">
+                <span className="home-group-label" id="homeGroupLearn">
+                  {t('homeGroupLearn')}
+                </span>
+                <button
+                  type="button"
+                  id="btnHomeTutorial"
+                  onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial'))}
+                >
+                  {t('tutorialStart')}
                 </button>
-                <button type="button" id="btnHomeAIReview" onClick={() => store.openDialog('aiReview')}>
-                  {t('aiProposalMenu')}
+                <button type="button" id="btnHomeDemo" onClick={() => store.openDialog('examples')}>
+                  {t('homeDemo')}
                 </button>
               </div>
-            </details>
-            {card.saved ? (
-              <section className="home-workspace" id="homeCurrentWork" aria-labelledby="homeSavedHeading">
-                <h2 id="homeSavedHeading">{t('homeSavedHeading')}</h2>
-                <strong id="homeCurrentTitle">{card.title}</strong>
-                <dl>
-                  <div>
-                    <dt id="homeBrowserSaveLabel">{card.browserSaveLabel}</dt>
-                    <dd id="homeBrowserSave">{card.browserSave}</dd>
-                  </div>
-                  <div>
-                    <dt>{t('homeOpenLabel')}</dt>
-                    <dd id="homeLatestOpen">{card.latestOpen}</dd>
-                  </div>
-                  <div>
-                    <dt>{t('homeExportLabel')}</dt>
-                    <dd id="homeLatestExport">{card.latestExport}</dd>
-                  </div>
-                </dl>
-              </section>
-            ) : null}
+              <div className="home-other-actions home-group" role="group" aria-labelledby="homeGroupTogether">
+                <span className="home-group-label" id="homeGroupTogether">
+                  {t('homeGroupTogether')}
+                </span>
+                <button type="button" id="btnHomeCollab" onClick={() => store.openDialog('collab')}>
+                  {t('collabHome')}
+                </button>
+              </div>
+            </div>
             {card.showUnreadableWarning ? (
               <p id="homeSaveWarning" className="home-save-warning">
                 {t('homeUnreadableWarning')}

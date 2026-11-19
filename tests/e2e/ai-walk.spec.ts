@@ -140,8 +140,12 @@ test('AI draft, AI results, proposal report and File → Avaa JSON routing', asy
     /^# WITT \/ GRACE: existing-document contribution request/
   );
   await expect(page.locator('#aiReviewPromptPreview')).toHaveValue(/ASSESS ONLY:/);
+  // One goal at a time (S-15, 2026-11-19): the task's own button leads on to importing the answer.
+  await page.locator('#tabProposalExport').click();
   await expect(page.locator('#contributionExporterList .contribution-exporter')).toHaveCount(1);
-  await page.locator('#aiReviewDialog summary', { hasText: '2. Tarkista ja tuo' }).click();
+  await page.locator('#tabProposalAI').click();
+  await page.locator('#btnProposalToImport').click();
+  await expect(page.locator('#tabProposalImport')).toHaveAttribute('aria-selected', 'true');
   await page.locator('#aiReviewPaste').fill('{ "format": "witt-contribution-v2", ');
   await page.locator('#btnAIReviewImport').click();
   const report = page.locator('#importReportDialog');

@@ -84,6 +84,15 @@ function defaultsFor(staged: Staged | null): {
 }
 /** The prototype keeps the task select's value across openings within a session. */
 let lastTask: ContributionTask = 'extend';
+/** The three things the dialog is for; one is shown at a time, and the last one chosen is remembered. */
+const GOALS = ['ai', 'import', 'export'] as const;
+type Goal = (typeof GOALS)[number];
+const GOAL_LABEL = { ai: 'proposalTabAI', import: 'proposalTabImport', export: 'proposalTabExport' } as const;
+const GOAL_TAB = { ai: 'tabProposalAI', import: 'tabProposalImport', export: 'tabProposalExport' } as const;
+let lastGoal: Goal = 'ai';
+function rememberGoal(goal: Goal): void {
+  lastGoal = goal;
+}
 /** A proposal arriving from File → Avaa JSON, consumed by the dialog when it mounts. */
 let pendingProposal: Staged | null = null;
 
@@ -121,6 +130,11 @@ export function AiReviewDialog() {
   const store = getStore();
   const { project, language } = state;
   const [task, setTask] = useState<ContributionTask>(lastTask);
+  const [goal, setGoalState] = useState<Goal>(lastGoal);
+  const setGoal = (next: Goal) => {
+    rememberGoal(next);
+    setGoalState(next);
+  };
   const [taskStatus, setTaskStatus] = useState('');
   const [paste, setPaste] = useState('');
   const [status, setStatus] = useState('');
@@ -483,10 +497,43 @@ export function AiReviewDialog() {
       testId="ai-review-dialog"
       className="action-dialog ai-review-dialog"
     >
-      <p>{t('contributionIntro')}</p>
-      <div className="ai-flow-explainer">{t('aiProposalExplainer')}</div>
-      <details className="ai-proposal-step" open>
-        <summary>{t('aiProposalStep1')}</summary>
+      <p className="proposal-intro">{t('contributionIntro')}</p>
+      <h3 className="proposal-choose" id="proposalChoose">
+        {t('proposalChoose')}
+      </h3>
+      <div className="proposal-tabs" role="tablist" aria-labelledby="proposalChoose">
+        {GOALS.map((g, i) => (
+          <button
+            key={g}
+            type="button"
+            role="tab"
+            id={GOAL_TAB[g]}
+            aria-selected={goal === g}
+            aria-controls={`proposalPanel-${g}`}
+            tabIndex={goal === g ? 0 : -1}
+            className="proposal-tab"
+            onClick={() => setGoal(g)}
+            onKeyDown={(e) => {
+              const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+              if (!step) return;
+              e.preventDefault();
+              const next = GOALS[(i + step + GOALS.length) % GOALS.length]!;
+              setGoal(next);
+              document.getElementById(GOAL_TAB[next])?.focus();
+            }}
+          >
+            {t(GOAL_LABEL[g])}
+          </button>
+        ))}
+      </div>
+      <section
+        className="proposal-panel"
+        role="tabpanel"
+        id="proposalPanel-ai"
+        aria-labelledby="tabProposalAI"
+        hidden={goal !== 'ai'}
+      >
+        <p className="proposal-help">{t('proposalAiHelp')}</p>
         <label htmlFor="aiReviewMode">{t('contributionTask')}</label>
         <select
           id="aiReviewMode"
@@ -526,7 +573,7 @@ export function AiReviewDialog() {
             ref={previewArea}
             readOnly
             rows={8}
-            aria-label="AI-tehtävän koko sisältö"
+            aria-label={t('aiTaskPreview')}
             value={taskText}
           />
         </details>
@@ -547,15 +594,30 @@ export function AiReviewDialog() {
             {t('aiTaskDownloadSchema')}
           </button>
         </details>
-      </details>
-      <details className="ai-proposal-step">
-        <summary>{t('aiProposalStep2')}</summary>
+        <div className="dialog-actions">
+          <button
+            id="btnProposalToImport"
+            type="button"
+            className="btn quiet"
+            onClick={() => setGoal('import')}
+          >
+            {t('proposalToImport')}
+          </button>
+        </div>
+      </section>
+      <section
+        className="proposal-panel"
+        role="tabpanel"
+        id="proposalPanel-import"
+        aria-labelledby="tabProposalImport"
+        hidden={goal !== 'import'}
+      >
+        <p className="proposal-help">{t('proposalImportHelp')}</p>
         <label htmlFor="aiReviewPaste">{t('contributionPaste')}</label>
         <textarea
           id="aiReviewPaste"
-          rows={4}
+          rows={5}
           style={{ width: '100%' }}
-          placeholder='{ "format": "witt-contribution-v2", ... }'
           value={paste}
           onChange={(e) => setPaste(e.target.value)}
         />
@@ -588,22 +650,25 @@ export function AiReviewDialog() {
           >
             {t('previewChanges')}
           </button>
-          <button id="btnAIReviewClose" type="button" className="btn quiet" onClick={close}>
-            {t('close')}
-          </button>
         </div>
         <p id="aiReviewStatus" role="status" aria-live="polite">
           {status}
         </p>
-      </details>
-      <details className="ai-proposal-step">
-        <summary>{t('aiProposalStep3')}</summary>
-        <p>{t('contributionMultiExportHelp')}</p>
+      </section>
+      <section
+        className="proposal-panel"
+        role="tabpanel"
+        id="proposalPanel-export"
+        aria-labelledby="tabProposalExport"
+        hidden={goal !== 'export'}
+      >
+        <p className="proposal-help">{t('proposalExportHelp')}</p>
+        <h4 id="proposalExportWho">{t('proposalExportWho')}</h4>
         <div
           id="contributionExporterList"
           className="contribution-participants"
           role="group"
-          aria-label="Vietävät käyttäjät"
+          aria-labelledby="proposalExportWho"
         >
           {people.map((person) => (
             <label key={person.id} className="contribution-exporter">
@@ -622,7 +687,7 @@ export function AiReviewDialog() {
                 }
               />
               <span>{person.name}</span>
-              <small>{`${reviewCount(person.id)} arviota`}</small>
+              <small>{t('proposalReviewCount', { count: reviewCount(person.id) })}</small>
             </label>
           ))}
         </div>
@@ -648,7 +713,12 @@ export function AiReviewDialog() {
         <p id="contributionExportStatus" role="status" aria-live="polite">
           {exportStatus}
         </p>
-      </details>
+      </section>
+      <div className="dialog-actions proposal-close">
+        <button id="btnAIReviewClose" type="button" className="btn quiet" onClick={close}>
+          {t('close')}
+        </button>
+      </div>
     </Modal>
   );
 }
