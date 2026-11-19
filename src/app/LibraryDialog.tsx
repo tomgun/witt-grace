@@ -54,7 +54,9 @@ export function LibraryDialog() {
   const store = getStore();
   const { project, language } = state;
   const [rows, setRows] = useState<LibraryRow[]>([]);
-  const [status, setStatus] = useState(t('libraryLoading'));
+  // What the last action did, or what went wrong; until there is one, the line says how many documents there are.
+  const [message, setStatus] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const refresh = useCallback(async () => {
     const repo = await library();
@@ -64,9 +66,9 @@ export function LibraryDialog() {
       return;
     }
     try {
-      const list = await repo.list();
-      setRows(list);
-      setStatus(`${list.length} ${t('librarySavedCount')}`);
+      // Only the list: re-reading it (on focus, after an action) never wipes what the last action reported.
+      setRows(await repo.list());
+      setLoaded(true);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : String(error));
     }
@@ -74,7 +76,14 @@ export function LibraryDialog() {
   useEffect(() => {
     // The list arrives from IndexedDB asynchronously; the first load is kicked off after mount.
     const timer = setTimeout(() => void refresh(), 0);
-    return () => clearTimeout(timer);
+    // Another window of the app may have changed the library: the list is read again whenever this window gets
+    // the focus back, so there is no "Päivitä" button to understand (owner 2026-11-19, S-15).
+    const onFocus = () => void refresh();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('focus', onFocus);
+    };
   }, [refresh]);
   const close = () => store.openDialog(null);
   const withRepo = async (fn: (repo: Library) => Promise<void>) => {
@@ -84,6 +93,8 @@ export function LibraryDialog() {
       return;
     }
     try {
+      // A new action starts with a clean line: the last one's report is not left standing over this one's result.
+      setStatus(null);
       await fn(repo);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : String(error));
@@ -159,7 +170,11 @@ export function LibraryDialog() {
   const backup = () =>
     withRepo(async (repo) => {
       const bundle = await repo.exportBundle();
-      downloadText('witt-library-backup.json', `${JSON.stringify(bundle, null, 2)}\n`);
+      // Dated, so that two backups in the downloads folder can be told apart.
+      downloadText(
+        `witt-library-backup-${nowIso().slice(0, 10)}.json`,
+        `${JSON.stringify(bundle, null, 2)}\n`
+      );
       setStatus(t('libraryBackupReady', { count: bundle.documents.length }));
     });
   const restore = (file: File) =>
@@ -177,6 +192,13 @@ export function LibraryDialog() {
         setStatus((error instanceof Error && error.message) || t('libraryInvalidBackup'));
       }
     });
+  // The open document's place in the library: not there, there as it is now, or changed since it was saved.
+  const mine = rows.find((row) => row.id === project.id);
+  const currentState = !mine
+    ? 'libraryNotSaved'
+    : mine.updatedAt === project.updatedAt
+      ? 'libraryUpToDate'
+      : 'libraryChanged';
   return (
     <Modal
       open
@@ -186,10 +208,7 @@ export function LibraryDialog() {
       testId="library-dialog"
       className="action-dialog library-dialog"
     >
-      <p>{t('libraryDisclaimer')}</p>
-      <p id="libraryStatus" role="status" aria-live="polite">
-        {status}
-      </p>
+      <p className="library-intro">{t('libraryDisclaimer')}</p>
       <input
         type="file"
         id="libraryBackupInput"
@@ -202,60 +221,118 @@ export function LibraryDialog() {
           if (file) void restore(file);
         }}
       />
+      <section className="library-section library-current" aria-labelledby="libraryCurrentHeading">
+        <h3 id="libraryCurrentHeading">{t('libraryCurrentHeading')}</h3>
+        <div className="library-current-row">
+          <div>
+            <strong id="libraryCurrentTitle">{project.title}</strong>
+            <small id="libraryCurrentState" data-state={currentState}>
+              {t(currentState)}
+            </small>
+          </div>
+          <button
+            type="button"
+            id="btnLibrarySaveCurrent"
+            className={`btn ${currentState === 'libraryUpToDate' ? 'quiet' : 'primary'}`}
+            onClick={() => void saveCurrent()}
+          >
+            {t('librarySaveCurrent')}
+          </button>
+        </div>
+      </section>
+      <section className="library-section" aria-labelledby="libraryListHeading">
+        <h3 id="libraryListHeading">{t('libraryListHeading')}</h3>
+        <p id="libraryStatus" className="library-status" role="status" aria-live="polite">
+          {message ?? (loaded ? `${rows.length} ${t('librarySavedCount')}` : t('libraryLoading'))}
+        </p>
+        <div id="libraryList" className="library-list" role="list">
+          {!rows.length ? <p className="inline-warning">{t('libraryEmpty')}</p> : null}
+          {rows.map((row) => (
+            <div
+              key={row.id}
+              className={`library-entry${row.id === project.id ? ' is-open' : ''}`}
+              role="listitem"
+              data-testid="library-entry"
+            >
+              <div className="library-title">
+                <strong>{row.title}</strong>
+                {row.id === project.id ? (
+                  <span className="library-badge">
+                    {t('libraryCurrent')}
+                    {currentState === 'libraryChanged' ? ` · ${t('libraryUnsavedMark')}` : ''}
+                  </span>
+                ) : null}
+                <small>{`${row.nodeCount} ${t('exampleClaims')} · ${formatWorkspaceTime(t, language, row.savedAt)}`}</small>
+              </div>
+              <div className="library-actions">
+                {row.id !== project.id ? (
+                  <button
+                    type="button"
+                    className="btn quiet"
+                    data-action="open"
+                    onClick={() => void open(row)}
+                  >
+                    {t('libraryOpen')}
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  className="btn quiet"
+                  data-action="rename"
+                  onClick={() => void rename(row)}
+                >
+                  {t('libraryRename')}
+                </button>
+                <button
+                  type="button"
+                  className="btn quiet"
+                  data-action="duplicate"
+                  onClick={() => void duplicate(row)}
+                >
+                  {t('libraryDuplicate')}
+                </button>
+                {row.id !== project.id ? (
+                  <button
+                    type="button"
+                    className="btn quiet danger"
+                    data-action="delete"
+                    onClick={() => void remove(row)}
+                  >
+                    {t('libraryDelete')}
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="library-section" aria-labelledby="libraryBackupHeading">
+        <h3 id="libraryBackupHeading">{t('libraryBackupHeading')}</h3>
+        <p className="library-help">{t('libraryBackupHelp')}</p>
+        <div className="library-backup-actions">
+          <button
+            type="button"
+            id="btnLibraryBackup"
+            className="btn quiet"
+            disabled={!rows.length}
+            onClick={() => void backup()}
+          >
+            {t('libraryBackup')}
+          </button>
+          <button
+            type="button"
+            id="btnLibraryRestore"
+            className="btn quiet"
+            onClick={() => fileRef.current?.click()}
+          >
+            {t('libraryRestore')}
+          </button>
+        </div>
+      </section>
       <div className="dialog-actions">
-        <button
-          type="button"
-          id="btnLibrarySaveCurrent"
-          className="btn primary"
-          onClick={() => void saveCurrent()}
-        >
-          {t('librarySaveCurrent')}
-        </button>
-        <button type="button" id="btnLibraryBackup" className="btn quiet" onClick={() => void backup()}>
-          {t('libraryBackup')}
-        </button>
-        <button
-          type="button"
-          id="btnLibraryRestore"
-          className="btn quiet"
-          onClick={() => fileRef.current?.click()}
-        >
-          {t('libraryRestore')}
-        </button>
-        <button type="button" id="btnLibraryRefresh" className="btn quiet" onClick={() => void refresh()}>
-          {t('libraryRefresh')}
-        </button>
-        <button type="button" id="btnLibraryClose" className="btn primary" onClick={close}>
+        <button type="button" id="btnLibraryClose" className="btn quiet" onClick={close}>
           {t('close')}
         </button>
-      </div>
-      <div id="libraryList" className="library-list" role="list">
-        {!rows.length ? <p className="inline-warning">{t('libraryEmpty')}</p> : null}
-        {rows.map((row) => (
-          <div key={row.id} className="library-entry" role="listitem">
-            <strong>
-              {row.title}
-              {row.id === project.id ? ` · ${t('libraryCurrent')}` : ''}
-            </strong>
-            <small>{`${row.nodeCount} ${t('exampleClaims')} · ${formatWorkspaceTime(t, language, row.savedAt)} · v${row.revision}`}</small>
-            <div className="library-entry-actions">
-              <button type="button" className="btn quiet" onClick={() => void open(row)}>
-                {t('libraryOpen')}
-              </button>
-              <button type="button" className="btn quiet" onClick={() => void rename(row)}>
-                {t('libraryRename')}
-              </button>
-              <button type="button" className="btn quiet" onClick={() => void duplicate(row)}>
-                {t('libraryDuplicate')}
-              </button>
-              {row.id !== project.id ? (
-                <button type="button" className="btn quiet" onClick={() => void remove(row)}>
-                  {t('libraryDelete')}
-                </button>
-              ) : null}
-            </div>
-          </div>
-        ))}
       </div>
     </Modal>
   );

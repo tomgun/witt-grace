@@ -9916,3 +9916,83 @@ body.witt-focus .canvas-quick-controls {
 .tutorial-panel {
   z-index: 76;
 }
+/* ---- Document library (owner 2026-11-19, S-15): the open document, the list, the backup: three sections ---- */
+.library-dialog .library-intro {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+.library-section {
+  margin: 0 0 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.library-section > h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.library-current-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.library-current-row > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.library-current-row small {
+  font-size: 12px;
+  color: var(--subtle);
+}
+.library-current-row small[data-state='libraryChanged'],
+.library-current-row small[data-state='libraryNotSaved'] {
+  color: var(--accent-text);
+  font-weight: 700;
+}
+.library-status {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--subtle);
+}
+.library-dialog .library-list {
+  margin-top: 0;
+  max-height: 34vh;
+}
+.library-entry.is-open {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.library-entry .library-title small {
+  opacity: 1;
+  font-size: 12px;
+  color: var(--subtle);
+}
+.library-badge {
+  justify-self: start;
+  padding: 1px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-text);
+  background: var(--surface);
+}
+.library-entry .btn.danger {
+  color: var(--red);
+}
+.library-help {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+.library-backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
