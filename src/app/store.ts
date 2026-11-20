@@ -89,7 +89,7 @@ export type ModalRequest =
       initial: string;
       resolve: (value: string | null) => void;
     }
-  | { kind: 'notice'; text: string }
+  | { kind: 'notice'; text: string; warning?: string }
   | { kind: 'move'; nodeId: string }
   | { kind: 'links'; nodeId: string; linkId?: string }
   | { kind: 'replace'; description: string; resolve: (choice: ReplaceChoice) => void }
@@ -591,8 +591,9 @@ export function createStore(
         set({ modal: { kind: 'text', heading, prompt, action, initial, resolve } })
       );
     },
-    showMessage(text: string) {
-      set({ modal: { kind: 'notice', text } });
+    /** A message to close; `warning` is shown apart from it, as a caution that must not be read past. */
+    showMessage(text: string, warning?: string) {
+      set({ modal: { kind: 'notice', text, ...(warning ? { warning } : {}) } });
     },
     openModal(modal: ModalRequest) {
       set({ modal });

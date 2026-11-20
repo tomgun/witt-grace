@@ -1,10 +1,10 @@
 /**
- * must: File → "Kopioi linkki asiakirjaan" copies a link that carries the open document and says so; opening the
+ * must: File → "Kopioi linkki asiakirjaan" copies a link that carries the open document and says so, with the caution about link shorteners in a box of its own; opening the
  *       link in a browser with no work opens that document, in a browser with work it asks through the replacement
  *       dialog first; the fragment leaves the address bar; a cut link says it is broken and changes nothing (S-15,
  *       owner 2026-11-20)
  * test: tests/e2e/doc-link-walk.spec.ts (desktop 1440×900 and mobile 390×844)
- * red-against: the link pointing at an empty app, the document replaced without asking, the fragment left in the
+ * red-against: the shortener caution buried as the last sentence of the message, the link pointing at an empty app, the document replaced without asking, the fragment left in the
  *              address so a reload asks again, a cut link opening a blank or half document
  */
 import { readFileSync } from 'node:fs';
@@ -21,6 +21,9 @@ test('a copied document link opens the document elsewhere', async ({ page, conte
   await page.locator('#fileMenu summary').click();
   await page.locator('#btnCopyLink').click();
   await expect(page.getByText(/^Linkki kopioitu \(\d+ merkkiä\)/)).toBeVisible();
+  // The caution about link shorteners stands apart from the message, in its own box.
+  await expect(page.locator('#noticeWarning')).toContainText('Älä käytä linkin lyhennyspalvelua');
+  await expect(page.locator('#noticeText')).not.toContainText('lyhennyspalvelu');
   const link = await page.evaluate(() => navigator.clipboard.readText());
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4173\/#doc=z\.[A-Za-z0-9_-]+$/);
   expect(link.length).toBeLessThan(30000);

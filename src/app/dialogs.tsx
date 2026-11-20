@@ -215,6 +215,12 @@ function NoticeDialog({ request }: { request: Extract<ModalRequest, { kind: 'not
       heading={false}
     >
       <p id="noticeText">{request.text}</p>
+      {request.warning ? (
+        <p id="noticeWarning" className="notice-warning" role="note">
+          <span aria-hidden="true">⚠ </span>
+          {request.warning}
+        </p>
+      ) : null}
       <div className="dialog-actions">
         <button type="button" className="btn primary" id="noticeClose" onClick={() => store.closeModal()}>
           {t('close')}

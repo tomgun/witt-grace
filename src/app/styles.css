@@ -10426,3 +10426,15 @@ dialog#methodDialog {
 .ai-short-request .inspector-note {
   margin: 0;
 }
+
+/* A caution inside a notice, set apart so it is not read past (S-15, 2026-11-20). */
+.notice-warning {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--warn, #b45309);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warn, #b45309) 10%, transparent);
+  font-weight: 600;
+  line-height: 1.45;
+}
