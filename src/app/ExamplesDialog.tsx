@@ -3,6 +3,7 @@
 // ~150 kB of fixtures stay out of the main bundle. Opening one passes the replacement dialog and gets a fresh id.
 import { useEffect, useRef, useState } from 'react';
 import { arranged, parseProject } from '../domain/index.ts';
+import { embedded } from '../lib/embedded.ts';
 import { newId } from '../lib/providers.ts';
 import { enterEvaluate } from './actions.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
@@ -15,6 +16,9 @@ export { EXAMPLES };
 
 /** Fetches one example relative to the page (Vite `base: './'`), so it works under any path and from a folder. */
 export async function fetchExample(entry: ExampleEntry): Promise<unknown> {
+  // A supporter package carries its examples inside the page: a file opened from disk cannot fetch.
+  const carried = embedded().examples[entry.filename];
+  if (carried !== undefined) return carried;
   const response = await fetch(`examples/${entry.filename}`, { cache: 'force-cache' });
   if (!response.ok) throw new Error(`${entry.filename}: HTTP ${response.status}`);
   return response.json();

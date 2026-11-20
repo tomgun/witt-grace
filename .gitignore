@@ -4,6 +4,7 @@ _archive/
 # Build and dependency outputs
 node_modules/
 dist/
+dist-static/
 coverage/
 *.log
 .env

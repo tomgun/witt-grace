@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-20 — `UI_INVENTORY.md` — Owner: supporter packages sold as a goodwill purchase (a static version that works without the site), editions thinker / thoughtful / professional / community / organisation shown in the UI, and a few shortener services named in the link message; S-15: `npm run build:static`, the edition badge, examples carried in the page, the document link hidden on a page opened from disk.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: a link shortener should be warned about clearly, and the link is for sharing a public tree as it stands, a file or a session being the better way to work together; S-15: the caution is its own box (`#noticeWarning`) in the message after copying a document link, and the message says what the link is for.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: could the packed link also be made from the tree being worked on, to send a link straight to a tree (knowing it is not a group session); S-15: File → `#btnCopyLink` copies `<app>#doc=z.<packed document>`, read on start through the same check and replacement dialog as an opened file.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner tried it with ChatGPT: a 62-claim tree came back as a file and the paste link, “suoraa linkkiä wittiin ei tullut”; S-15: the draft link may be packed (`#draft=z.` + base64url zlib), and the brief asks for that form at any size up to a 30 000-character link.

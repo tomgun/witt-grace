@@ -21,9 +21,10 @@
     "proto:dev": "npm --prefix witt-grace-gpt-proto run dev",
     "i18n": "node scripts/generate-locales.ts",
     "build": "vite build",
+    "build:static": "node scripts/build-static.ts",
     "preview": "vite preview",
     "e2e": "playwright test",
-    "e2e:local": "npm run build && playwright test",
+    "e2e:local": "npm run build && npm run build:static && playwright test",
     "e2e:install": "playwright install --with-deps chromium"
   },
   "devDependencies": {

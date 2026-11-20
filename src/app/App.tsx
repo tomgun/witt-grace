@@ -161,7 +161,10 @@ export function App() {
       }
       try {
         await navigator.clipboard.writeText(link);
-        store.showMessage(t('docLinkCopied', { length: link.length }), t('docLinkShortenerWarning'));
+        store.showMessage(
+          `${t('docLinkCopied', { length: link.length })}\n\n${t('docLinkShorteners')}`,
+          t('docLinkShortenerWarning')
+        );
       } catch {
         store.showMessage(t('docLinkCopyFailed'));
       }

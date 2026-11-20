@@ -1,4 +1,5 @@
 // The home screen (UI_INVENTORY S-01): one main action, three groups of others, and the warnings.
+import { EditionBadge } from './EditionBadge.tsx';
 import { dismissInviteForGood, dismissInviteForNow, useTutorialInvite } from './Tutorial.tsx';
 import { useEffect, useRef } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
@@ -48,6 +49,7 @@ export function Home() {
             ⓘ
           </span>
         </button>
+        <EditionBadge />
         <div className="home-nav-actions">
           <LanguageSelect id="homeLocaleSelect" />
           <ThemeSelect id="homeThemeSelect" />

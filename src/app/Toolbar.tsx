@@ -1,5 +1,6 @@
 // The toolbar row: mode, stage, actor, presentation and the five menus, exactly as the prototype lays them out
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
+import { servedOverWeb } from '../lib/embedded.ts';
 import type { ReactNode } from 'react';
 import { SCORING_OFFERED, childrenOf, isAiProfile } from '../domain/index.ts';
 import type { ScoringVersion } from '../domain/index.ts';
@@ -227,9 +228,11 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             >
               {t('saveFile')}
             </Item>
-            <Item id="btnCopyLink" onClick={() => window.dispatchEvent(new CustomEvent('witt-copy-link'))}>
-              {t('docLinkCopy')}
-            </Item>
+            {servedOverWeb(window.location.protocol) ? (
+              <Item id="btnCopyLink" onClick={() => window.dispatchEvent(new CustomEvent('witt-copy-link'))}>
+                {t('docLinkCopy')}
+              </Item>
+            ) : null}
             <Item id="btnExportVisual" onClick={() => store.openDialog('visualExport')}>
               {t('exportVisual')}
             </Item>

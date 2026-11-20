@@ -23,7 +23,9 @@ test('a copied document link opens the document elsewhere', async ({ page, conte
   await expect(page.getByText(/^Linkki kopioitu \(\d+ merkkiä\)/)).toBeVisible();
   // The caution about link shorteners stands apart from the message, in its own box.
   await expect(page.locator('#noticeWarning')).toContainText('Älä käytä linkin lyhennyspalvelua');
-  await expect(page.locator('#noticeText')).not.toContainText('lyhennyspalvelu');
+  // The message names a few shorteners for someone who has never used one; the caution is not inside it.
+  await expect(page.locator('#noticeText')).toContainText('TinyURL, Bitly tai is.gd');
+  await expect(page.locator('#noticeText')).not.toContainText('Älä käytä');
   const link = await page.evaluate(() => navigator.clipboard.readText());
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4173\/#doc=z\.[A-Za-z0-9_-]+$/);
   expect(link.length).toBeLessThan(30000);

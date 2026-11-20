@@ -50,6 +50,8 @@ jobs:
       - run: npm ci
       - name: build
         run: npm run build
+      - name: build the supporter packages (the browser walks open one from disk)
+        run: npm run build:static
       - name: install Chromium
         run: npx playwright install --with-deps chromium
       - name: browser walks (desktop 1440×900 and mobile 390×844, keyboard first)

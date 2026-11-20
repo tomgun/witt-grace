@@ -10438,3 +10438,43 @@ dialog#methodDialog {
   font-weight: 600;
   line-height: 1.45;
 }
+
+/* A notice may have paragraphs (S-15, 2026-11-20). */
+#noticeText {
+  white-space: pre-line;
+}
+/* The supporter edition's name beside the logo: quiet, readable in a screen recording. */
+.edition-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
+  padding: 2px 9px;
+  border: 1px solid color-mix(in srgb, var(--primary, #5251bd) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary, #5251bd) 9%, transparent);
+  color: var(--text, inherit);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: default;
+}
+.edition-badge[data-edition='organisation'],
+.edition-badge[data-edition='community'] {
+  border-color: color-mix(in srgb, #b8860b 70%, transparent);
+  background: color-mix(in srgb, #d4a017 14%, transparent);
+}
+.home-nav .edition-badge {
+  margin-left: -6px;
+  margin-right: auto;
+}
+.topbar > .edition-badge {
+  margin-left: 0;
+  flex-shrink: 0;
+}
+@media (max-width: 900px) {
+  .topbar > .edition-badge {
+    display: none;
+  }
+}

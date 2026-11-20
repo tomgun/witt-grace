@@ -1,0 +1,36 @@
+WITT · GRACE supporter edition licence
+DRAFT of {{DATE}}: not yet reviewed; the final text may differ.
+
+Copyright (c) Tomas Günther. All rights reserved.
+
+This package ("the Software": witt.html and the files delivered with it,
+edition "{{EDITION}}", version {{VERSION}}) is licensed, not sold.
+
+1. What you may do
+   You may use the Software, for any purpose including commercial work, on
+   any number of devices:
+   - editions "thinker", "thoughtful" and "professional": you personally;
+   - editions "community" and "organisation": the members or staff of the
+     one community or organisation that obtained it.
+   You may keep backup copies for that use. The documents you create with the
+   Software are yours.
+
+2. What you may not do
+   You may not, without written permission from the copyright holder:
+   - give, publish, host or otherwise distribute the Software or copies of
+     it to others outside the use described in section 1;
+   - sell, rent, sublicense or otherwise charge for the Software;
+   - distribute or sell modified versions of the Software, or works made
+     from its code.
+   You may change your own copy for your own use.
+
+3. No warranty
+   The Software is provided "as is", without warranty of any kind. To the
+   extent the law allows, the copyright holder is not liable for any damage
+   or loss arising from its use, including loss of data. Nothing in this
+   licence limits rights that the law of your country gives you as a consumer
+   and that cannot be waived.
+
+4. Ending
+   This licence ends if you break it; you must then stop using the Software
+   and delete your copies.

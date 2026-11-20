@@ -1,4 +1,5 @@
 // The header: home, brand/about, document title, zone toggles, language and theme (inv-panels §C).
+import { EditionBadge } from './EditionBadge.tsx';
 import type { Mode } from '../domain/index.ts';
 import { APPEARANCES, getStore, useAppState, useTranslator } from './store.ts';
 import type { Appearance, Zone } from './store.ts';
@@ -134,6 +135,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
           <small>GRACE Method ⓘ</small>
         </button>
       </div>
+      <EditionBadge />
       <div className="doc-header">
         <label className="visually-hidden" htmlFor="projectTitle">
           {t('docName')}
