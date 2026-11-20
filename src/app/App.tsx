@@ -47,6 +47,7 @@ import { ViewDock } from './ViewDock.tsx';
 import { VoteDialog } from './VoteDialog.tsx';
 import { ZONES } from './view.ts';
 import { readInviteOnStart } from './collab.ts';
+import { readDraftLink } from './AiDraftDialog.tsx';
 
 export const APP_VERSION = '0.2.0-dev';
 
@@ -63,6 +64,13 @@ export function App() {
   // Body state the prototype's CSS keys on.
   // An invite link in the address bar, or this tab's session before a reload (WG-030).
   useEffect(() => readInviteOnStart(), []);
+  // A link an AI gave the person: a draft carried in the address, or the paste step (S-15, 2026-11-20).
+  useEffect(() => {
+    const read = () => void readDraftLink();
+    read();
+    window.addEventListener('hashchange', read);
+    return () => window.removeEventListener('hashchange', read);
+  }, []);
 
   useEffect(() => {
     const body = document.body;

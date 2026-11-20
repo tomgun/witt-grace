@@ -9,9 +9,12 @@ import {
   SCORING_VERSION,
   draftSummary,
   draftToProject,
+  DRAFT_IMPORT_FRAGMENT,
   buildDraftPrompt,
+  draftFromLink,
   isAiProfile,
   parseAiDraft,
+  unfenced,
 } from '../domain/index.ts';
 import type { AiDraft, Mode } from '../domain/index.ts';
 import { downloadText } from '../lib/files.ts';
@@ -33,6 +36,8 @@ let lastTopic = '';
 let lastContext = '';
 /** A draft arriving from File → Avaa JSON, consumed by the dialog when it mounts. */
 let pendingDraft: Staged | null = null;
+/** The step the dialog opens on next: the paste step when the person arrives by the link an AI gave them. */
+let pendingStep: 'prompt' | 'import' = 'prompt';
 
 /** The prototype's `previewDraft` after the preflight: the whole draft is built once before any preview. */
 function stageDraft(parsed: unknown, sourceName: string): Staged | null {
@@ -64,6 +69,39 @@ export function stageDraftFromFile(parsed: unknown, sourceName: string): void {
   getStore().openDialog('aiDraft');
 }
 
+/**
+ * The address an AI gave the person (owner 2026-11-20, S-15): `#draft=<JSON>` carries the draft into the preview,
+ * `#ai-import` opens the paste step. The fragment leaves the address bar at once; the draft is untrusted and goes
+ * through the same preflight and preview as a pasted reply. Returns whether the fragment was one of the two.
+ */
+export function readDraftLink(): boolean {
+  const hash = window.location.hash;
+  const text = draftFromLink(hash);
+  if (text === null && hash !== DRAFT_IMPORT_FRAGMENT) return false;
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+  if (text === null) {
+    pendingStep = 'import';
+    getStore().openDialog('aiDraft');
+    return true;
+  }
+  const sourceName = 'AI:n linkki';
+  const report = inspectOrReport(text, { expected: 'draft' }, sourceName);
+  if (report.ok) stageDraftFromFile(report.parsed, sourceName);
+  return true;
+}
+
+/** The brief's public address, for the short request; null where an AI could not fetch it (a file opened locally). */
+export function briefUrl(base: string): string | null {
+  try {
+    const url = new URL('ai.txt', base);
+    return url.protocol === 'https:' || url.protocol === 'http:'
+      ? url.href.split('#')[0]!.split('?')[0]!
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 /** The prototype's hard-coded Finnish `#aiDraftPreview` lines. */
 export function draftPreviewLines(draft: AiDraft): string {
   const s = draftSummary(draft);
@@ -88,7 +126,7 @@ export function AiDraftDialog() {
   const t = useTranslator();
   const store = getStore();
   const { project, language } = state;
-  const [step, setStep] = useState<'prompt' | 'import'>('prompt');
+  const [step, setStep] = useState<'prompt' | 'import'>(pendingStep);
   const [mode, setMode] = useState<Mode>(project.mode);
   const [topic, setTopic] = useState(lastTopic);
   const [context, setContext] = useState(lastContext);
@@ -107,7 +145,8 @@ export function AiDraftDialog() {
   const fileInput = useRef<HTMLInputElement>(null);
   useEffect(() => {
     pendingDraft = null;
-    if (!staged) document.getElementById('aiTopic')?.focus();
+    if (!staged) document.getElementById(pendingStep === 'import' ? 'aiDraftPaste' : 'aiTopic')?.focus();
+    pendingStep = 'prompt';
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const task = useMemo(
@@ -126,6 +165,21 @@ export function AiDraftDialog() {
       if (previewDetails.current) previewDetails.current.open = true;
       previewArea.current?.focus();
       previewArea.current?.select();
+      setTaskStatus(t('aiTaskManualCopy'));
+    }
+  };
+  const shortUrl = briefUrl(document.baseURI);
+  const shortRequest = shortUrl
+    ? t(mode === 'decision' ? 'aiShortDecision' : 'aiShortArgument', {
+        topic: topic.trim() || t('aiShortBlank'),
+        url: shortUrl,
+      })
+    : '';
+  const copyShort = async () => {
+    try {
+      await navigator.clipboard.writeText(shortRequest);
+      setTaskStatus(t('aiShortCopied'));
+    } catch {
       setTaskStatus(t('aiTaskManualCopy'));
     }
   };
@@ -344,6 +398,23 @@ export function AiDraftDialog() {
               {t('aiTaskDownloadSame')}
             </button>
           </div>
+          {shortUrl ? (
+            <div className="ai-short-request">
+              <strong>{t('aiShortHeading')}</strong>
+              <p id="aiShortRequest" className="ai-short-text">
+                {shortRequest}
+              </p>
+              <button
+                type="button"
+                id="btnAICopyShort"
+                className="btn quiet"
+                onClick={() => void copyShort()}
+              >
+                {t('aiShortCopy')}
+              </button>
+              <p className="inspector-note">{t('aiShortNote')}</p>
+            </div>
+          ) : null}
           <p id="aiDraftTaskStatus" className="ai-task-status" role="status" aria-live="polite">
             {taskStatus}
           </p>
@@ -419,7 +490,7 @@ export function AiDraftDialog() {
               type="button"
               id="btnAIShowPreview"
               className="btn primary"
-              onClick={() => previewDraft(paste)}
+              onClick={() => previewDraft(unfenced(paste))}
             >
               {t('previewChanges')}
             </button>

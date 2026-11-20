@@ -10405,3 +10405,24 @@ dialog#methodDialog {
     grid-template-columns: 1fr;
   }
 }
+
+/* The short request for an AI that fetches the brief itself (S-15, 2026-11-20). */
+.ai-short-request {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--line, #c9ced6);
+  border-radius: 10px;
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+.ai-short-request .ai-short-text {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86rem;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.ai-short-request .inspector-note {
+  margin: 0;
+}
