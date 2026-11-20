@@ -2,7 +2,9 @@
  * must: Luonnoslehtiö opens from the home screen as a screen of its own (owner 2026-11-20, S-15): a stroke drawn
  *       with the pen is an item of the frame and Kumoa takes it away; a mind map node is written, Tab adds a child
  *       and Enter a sibling, each opened for writing, and their texts can be read without seeing the canvas; a
- *       copied frame keeps the drawing, an empty one does not, and Toista runs through the frames; the sketch is
+ *       node carries comments; a copied frame keeps the drawing, an empty one does not, Toista runs through the
+ *       frames (gliding when asked), a frame has a tab that can be named and the faint previous frame can be
+ *       switched off; the sketch is
  *       there after a reload; nothing of it touches the argument document; ⌂ returns to the home screen
  * test: tests/e2e/sketch-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a stroke lost when the pointer is released, the editor's blur writing the text twice, Tab leaving
@@ -64,6 +66,17 @@ test('drawing, a mind map by the keyboard, frames, and the sketch kept over a re
   await editor.press('Escape');
   await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 6 kohdetta');
 
+  // A node carries comments, as a card of the tree does: the selected node's are listed under the sheet.
+  const comments = page.locator('#sketchComments');
+  await expect(comments.locator('h2')).toHaveText('Solmun kommentit: Kaupunki');
+  await expect(comments).toContainText('Ei vielä kommentteja.');
+  await expect(page.locator('#btnSketchComment')).toBeDisabled();
+  await page.locator('#sketchCommentInput').fill('Mikä kaupunki?');
+  await page.locator('#sketchCommentInput').press('Enter');
+  await expect(comments.locator('li')).toHaveText(['Mikä kaupunki?×']);
+  await expect(page.locator('#sketchCommentInput')).toHaveValue('');
+  await expect(page.locator('#sketchTexts > li').nth(2)).toContainText('Mikä kaupunki?');
+
   // Frames: a copy keeps the drawing, an empty one does not; playing runs through them.
   await expect(page.locator('#sketchFrameOf')).toHaveText('Ruutu 1/1');
   await expect(page.locator('#btnSketchPlay')).toBeDisabled();
@@ -79,6 +92,24 @@ test('drawing, a mind map by the keyboard, frames, and the sketch kept over a re
   await page.locator('#btnSketchPlay').click();
   await expect(page.locator('#btnSketchPlay')).toHaveText('Toista');
 
+  // Frames as pages: each has a tab, a tab can be named, and a press on it goes there. The faint previous frame
+  // and the gliding are switches under the sheet.
+  const tabs = page.locator('#sketchFrameTabs .sketch-frame-tab');
+  await expect(tabs).toHaveCount(3);
+  await tabs.nth(0).click();
+  await expect(page.locator('#sketchFrameOf')).toHaveText('Ruutu 1/3');
+  await page.locator('#sketchFrameName').fill('Ideat');
+  await page.locator('#sketchFrameName').press('Enter');
+  await expect(tabs).toHaveText(['Ideat', '2', '3']);
+  await expect(tabs.nth(0)).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#sketchOnion')).toBeChecked();
+  await page.locator('#sketchOnion').uncheck();
+  await page.locator('#sketchTween').check();
+  await page.locator('#btnSketchPlay').click();
+  await expect(page.locator('#sketchFrameOf')).toHaveText('Ruutu 2/3');
+  await page.locator('#btnSketchPlay').click();
+  await tabs.nth(0).click();
+
   // Kept in this browser under its own key; the argument document's keys are as they were.
   const keys = await page.evaluate(() => Object.keys(window.localStorage).sort());
   expect(keys).toContain('witt-sketch-v1');
@@ -86,7 +117,9 @@ test('drawing, a mind map by the keyboard, frames, and the sketch kept over a re
   await page.reload();
   await page.locator('#btnHomeSketch').click();
   await expect(page.locator('#sketchFrameOf')).toHaveText('Ruutu 1/3');
-  await expect(page.locator('#sketchTexts li')).toHaveText(['Kesäloma', 'Mökki', 'Kaupunki']);
+  await expect(page.locator('#sketchTexts > li')).toHaveText(['Kesäloma', 'Mökki', 'KaupunkiMikä kaupunki?']);
+  await expect(page.locator('#sketchFrameTabs .sketch-frame-tab').first()).toHaveText('Ideat');
+  await expect(page.locator('#sketchTween')).toBeChecked();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)
   ).toBe(true);

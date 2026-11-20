@@ -11,6 +11,7 @@ import {
   SKETCH_SIZES,
   SKETCH_WIDTH,
   addChildNode,
+  addComment,
   addElement,
   addFrame,
   blankSketch,
@@ -21,13 +22,17 @@ import {
   nodeTextOffset,
   parentNodeId,
   parseSketch,
+  removeComment,
   removeElements,
   removeFrame,
   restyle,
   serializeSketch,
   setFps,
+  setFrameName,
   setText,
+  setTween,
   textBounds,
+  tweenElements,
 } from '../domain/sketch.ts';
 import type { Sketch, SketchElement, TextElement } from '../domain/sketch.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
@@ -174,6 +179,19 @@ function draw(ctx: CanvasRenderingContext2D, elements: readonly SketchElement[],
           y += nodeTextOffset.y;
         }
         el.text.split('\n').forEach((line, i) => ctx.fillText(line, x, y + i * SKETCH_FONT_SIZE * 1.3 + 3));
+        if (el.type === 'node' && el.comments?.length) {
+          // How many comments the node has, on its corner as on a card of the tree.
+          ctx.beginPath();
+          ctx.arc(box.x + box.w, box.y, 11, 0, Math.PI * 2);
+          ctx.fillStyle = '#5251bd';
+          ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `bold 13px ui-monospace, Menlo, Consolas, monospace`;
+          ctx.textAlign = 'center';
+          ctx.fillText(String(el.comments.length), box.x + box.w, box.y - 6);
+          ctx.textAlign = 'start';
+          ctx.font = FONT;
+        }
         break;
       }
     }
@@ -195,6 +213,10 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   const [preview, setPreview] = useState<Sketch | null>(null);
   const [onion, setOnion] = useState(true);
   const [playing, setPlaying] = useState(false);
+  /** While playing with gliding: how far (0…1) the picture is from the frame in view towards the next. */
+  const [glide, setGlide] = useState(0);
+  const startFrame = useRef(0);
+  const [comment, setComment] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const history = useRef<{ past: Sketch[]; future: Sketch[] }>({ past: [], future: [] });
   // How many steps there are to undo and redo: the buttons read these, the steps themselves stay in the ref.
@@ -258,7 +280,10 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, SKETCH_WIDTH, SKETCH_HEIGHT);
     if (onion && !playing && at > 0) draw(ctx, shown.frames[at - 1]?.elements ?? [], 0.18);
-    draw(ctx, elements, 1);
+    if (playing && sketch.tween) {
+      const next = shown.frames[(at + 1) % shown.frames.length]?.elements ?? [];
+      draw(ctx, tweenElements(elements, next, glide), 1);
+    } else draw(ctx, elements, 1);
     if (playing) return;
     ctx.save();
     ctx.strokeStyle = '#5251bd';
@@ -270,17 +295,25 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
       if (b) ctx.strokeRect(b.x - 6, b.y - 6, b.w + 12, b.h + 12);
     }
     ctx.restore();
-  }, [shown, at, elements, selected, onion, playing]);
+  }, [shown, at, elements, selected, onion, playing, glide, sketch.tween]);
 
-  // Playing the frames: one after another at the sketch's speed, until stopped.
+  // Playing the frames from the one in view: one after another at the sketch's speed, until stopped. With gliding
+  // on, the picture is drawn many times a second and `glide` says how far it is on the way to the next frame.
   useEffect(() => {
     if (!playing) return;
-    const timer = window.setInterval(
-      () => setFrame((f) => (f + 1) % sketch.frames.length),
-      1000 / sketch.fps
-    );
-    return () => window.clearInterval(timer);
-  }, [playing, sketch.fps, sketch.frames.length]);
+    const count = sketch.frames.length;
+    const started = performance.now();
+    const first = startFrame.current;
+    let handle = 0;
+    const tick = () => {
+      const steps = ((performance.now() - started) / 1000) * sketch.fps;
+      setFrame((first + Math.floor(steps)) % count);
+      if (sketch.tween) setGlide(steps - Math.floor(steps));
+      handle = window.requestAnimationFrame(tick);
+    };
+    handle = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(handle);
+  }, [playing, sketch.fps, sketch.frames.length, sketch.tween]);
 
   const point = (event: { clientX: number; clientY: number }) => {
     const rect = (canvasRef.current as HTMLCanvasElement).getBoundingClientRect();
@@ -316,7 +349,10 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
         history.current.past.pop();
         touch();
         setSketch(next);
-        setSelected([]);
+        // A child that was not written after all: back on the node it was being added to.
+        const parent = parentNodeId(sketch.frames[at]?.elements ?? [], id);
+        setSelected(parent ? [parent] : []);
+        canvasRef.current?.focus();
         return;
       }
     } else next = setText(sketch, at, id, text);
@@ -520,7 +556,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     setFrame(Math.max(0, Math.min(sketch.frames.length - 1, next)));
   };
   const newFrame = (copy: boolean) => {
-    const next = addFrame(sketch, at, newId(), copy ? { newId } : null);
+    const next = addFrame(sketch, at, newId(), copy);
     if (next === sketch) return;
     commit(next);
     setSelected([]);
@@ -572,6 +608,9 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   const texts = elements.filter(
     (e): e is TextElement => (e.type === 'text' || e.type === 'node') && !!e.text
   );
+  const only = selected.length === 1 ? elements.find((e) => e.id === selected[0]) : undefined;
+  /** The node whose comments are shown: the one selected node, while nothing is being written or played. */
+  const commented = only?.type === 'node' && !editing && !playing ? only : null;
   const nodeSelected =
     selected.length === 1 && elements.find((e) => e.id === selected[0])?.type === 'node' && !editing;
 
@@ -760,9 +799,98 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
           {/* The same texts for a screen reader, which cannot read a canvas. */}
           <ul className="visually-hidden" id="sketchTexts" aria-label={t('sketchTexts')}>
             {texts.map((el) => (
-              <li key={el.id}>{el.text}</li>
+              <li key={el.id}>
+                {el.text}
+                {el.comments?.length ? (
+                  <ul>
+                    {el.comments.map((c) => (
+                      <li key={c.id}>{c.body}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
             ))}
           </ul>
+          {commented ? (
+            <section className="sketch-comments" id="sketchComments" aria-labelledby="sketchCommentsTitle">
+              <h2 id="sketchCommentsTitle">
+                {t('sketchComments')}: <span>{commented.text}</span>
+              </h2>
+              {commented.comments?.length ? (
+                <ul>
+                  {commented.comments.map((c) => (
+                    <li key={c.id}>
+                      <span>{c.body}</span>
+                      <button
+                        type="button"
+                        className="btn icon-btn"
+                        aria-label={`${t('deleteComment')}: ${c.body}`}
+                        title={t('deleteComment')}
+                        onClick={() => commit(removeComment(sketch, at, commented.id, c.id))}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>{t('commentsNone')}</p>
+              )}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  commit(addComment(sketch, at, commented.id, { id: newId(), body: comment }));
+                  setComment('');
+                }}
+              >
+                <input
+                  type="text"
+                  id="sketchCommentInput"
+                  value={comment}
+                  maxLength={SKETCH_LIMITS.text}
+                  placeholder={t('sketchCommentPlaceholder')}
+                  aria-label={t('sketchCommentPlaceholder')}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <button type="submit" className="btn quiet" id="btnSketchComment" disabled={!comment.trim()}>
+                  {t('addComment')}
+                </button>
+              </form>
+            </section>
+          ) : null}
+          {/* The frames by name or number: pages to jump between as well as pictures to play. */}
+          <div className="sketch-frame-tabs" id="sketchFrameTabs" role="group" aria-label={t('sketchFrames')}>
+            {sketch.frames.map((f, i) => (
+              <button
+                key={f.id}
+                type="button"
+                className={`sketch-frame-tab${i === at ? ' active' : ''}`}
+                aria-pressed={i === at}
+                aria-label={f.name ? undefined : t('sketchFrameTab', { n: i + 1 })}
+                disabled={playing}
+                onClick={() => goToFrame(i)}
+              >
+                {f.name ?? i + 1}
+              </button>
+            ))}
+            <input
+              type="text"
+              id="sketchFrameName"
+              key={sketch.frames[at]?.id}
+              defaultValue={sketch.frames[at]?.name ?? ''}
+              maxLength={SKETCH_LIMITS.frameName}
+              placeholder={t('sketchFrameName')}
+              aria-label={t('sketchFrameName')}
+              disabled={playing}
+              onBlur={(e) => {
+                if (e.target.value.trim() !== (sketch.frames[at]?.name ?? ''))
+                  commit(setFrameName(sketch, at, e.target.value));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') e.currentTarget.blur();
+              }}
+            />
+          </div>
           <div className="sketch-frames" role="group" aria-label={t('sketchFrames')}>
             <button
               type="button"
@@ -824,6 +952,8 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
               aria-pressed={playing}
               onClick={() => {
                 setSelected([]);
+                startFrame.current = at;
+                setGlide(0);
                 setPlaying(!playing);
               }}
             >
@@ -842,6 +972,15 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
                   </option>
                 ))}
               </select>
+            </label>
+            <label className="sketch-check">
+              <input
+                type="checkbox"
+                id="sketchTween"
+                checked={!!sketch.tween}
+                onChange={(e) => commit(setTween(sketch, e.target.checked))}
+              />
+              <span>{t('sketchTween')}</span>
             </label>
             <label className="sketch-check">
               <input

@@ -10768,3 +10768,84 @@ body.witt-focus .canvas-quick-controls {
     font-size: 12px;
   }
 }
+
+/* Luonnoslehtiö: a node's comments and the frames as named pages (owner 2026-11-20). */
+.sketch-comments {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 10px 12px;
+  max-width: 720px;
+}
+.sketch-comments h2 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+.sketch-comments h2 span {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+.sketch-comments ul {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.sketch-comments li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.sketch-comments p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.sketch-comments form {
+  display: flex;
+  gap: 8px;
+}
+.sketch-comments input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 9px;
+}
+.sketch-frame-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.sketch-frame-tab {
+  min-width: 34px;
+  min-height: 32px;
+  max-width: 180px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sketch-frame-tab.active {
+  border-color: var(--accent);
+  background: var(--accent-soft, #ecebff);
+  color: var(--accent-text);
+}
+.sketch-frame-tabs input {
+  width: 150px;
+  padding: 6px 9px;
+  font-size: 12px;
+}

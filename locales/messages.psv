@@ -1301,3 +1301,8 @@ sketchNodeHint|Solmu valittuna: Sarkain lisää alisolmun, Enter sisarsolmun, F2
 sketchInvalid|Tiedosto ei ole WITT-lehtiö tai se on vioittunut ({reason}).|Die Datei ist kein WITT-Skizzenblock oder beschädigt ({reason}).|The file is not a WITT sketch, or it is damaged ({reason}).|El archivo no es un boceto de WITT o está dañado ({reason}).|Le fichier n’est pas un croquis WITT ou il est endommagé ({reason}).|Файл не является наброском WITT или повреждён ({reason}).|该文件不是 WITT 草图，或已损坏（{reason}）。|このファイルは WITT のスケッチではないか、破損しています（{reason}）。|이 파일은 WITT 스케치가 아니거나 손상되었습니다({reason}).
 sketchTexts|Ruudun tekstit|Texte dieses Bildes|Texts in this frame|Textos de este fotograma|Textes de cette image|Тексты этого кадра|此帧中的文字|このフレームのテキスト|이 프레임의 텍스트
 sketchTextPrompt|Kirjoita teksti|Text eingeben|Type the text|Escribe el texto|Saisissez le texte|Введите текст|输入文字|テキストを入力|텍스트 입력
+sketchComments|Solmun kommentit|Kommentare zum Knoten|Comments on the node|Comentarios del nodo|Commentaires du nœud|Комментарии к узлу|节点评论|ノードのコメント|노드 댓글
+sketchFrameName|Ruudun nimi|Name des Bildes|Frame name|Nombre del fotograma|Nom de l’image|Название кадра|帧名称|フレーム名|프레임 이름
+sketchFrameTab|Ruutu {n}|Bild {n}|Frame {n}|Fotograma {n}|Image {n}|Кадр {n}|第 {n} 帧|フレーム {n}|프레임 {n}
+sketchTween|Liu’uta ruudusta toiseen|Zwischen den Bildern gleiten|Glide between frames|Deslizar entre fotogramas|Glisser d’une image à l’autre|Плавный переход между кадрами|帧间平滑过渡|フレーム間をなめらかに動かす|프레임 사이를 부드럽게 이동
+sketchCommentPlaceholder|Kysymys, huomio tai tarkennus|Frage, Hinweis oder Ergänzung|Question, note or clarification|Pregunta, nota o aclaración|Question, remarque ou précision|Вопрос, заметка или уточнение|问题、备注或说明|質問、メモ、補足|질문, 메모 또는 보충

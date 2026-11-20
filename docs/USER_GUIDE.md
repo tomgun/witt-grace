@@ -208,10 +208,11 @@ The settings are in five sections. Each section's heading says what is set in it
 
 - **Tools** on the left: select and move, pen, line, arrow, rectangle, ellipse, text, mind map node and erase. Below them eight colours, the line width and *Täytä muodot* (fill shapes). While something is selected, changing the colour or width changes the selection.
 - **A mind map by the keyboard**: press the sheet with the node tool and write the topic. **Tab** adds a child to the selected node, **Enter** a sibling, **F2** edits the text and the arrow keys move it. The lines follow the nodes when you move them.
-- **Frames** under the sheet: *+ Tyhjä ruutu* (empty) or *+ Kopio ruudusta* (a copy), the previous frame shows faintly underneath, and *Toista* plays the frames at the chosen speed.
+- **Comments**: while one node is selected, its comments are listed under the sheet and you can add one. The node's corner shows how many it has.
+- **Frames** under the sheet: *+ Tyhjä ruutu* (empty) or *+ Kopio ruudusta* (a copy). Frames serve two uses. *As pages*: every frame has a tab, which you can name in *Ruudun nimi*, and a press goes to it. *As an animation*: *Toista* plays the frames at the chosen speed, and *Liu’uta ruudusta toiseen* (glide between frames) moves what you moved in a copied frame smoothly from one place to the next. *Näytä edellinen ruutu haaleana* (show the previous frame faintly) is an aid for drawing; untick it when you use the frames as pages.
 - **Saving**: the sketch is saved in this browser, apart from your documents. *Tallenna tiedostoksi* writes a file that *Avaa lehtiö…* reads back, and *Vie kuvaksi (PNG)* saves the frame in view as a picture.
 
-The sketchpad is not yet part of the argument tree or of a collaboration session, and an animation cannot be exported as one file.
+Gliding recognises a thing only from a frame to its copy: something drawn again does not glide. The sketchpad is not yet part of the argument tree or of a collaboration session, and an animation cannot be exported as one file.
 
 ## 7. Files and sharing
 

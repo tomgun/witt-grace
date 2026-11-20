@@ -20,7 +20,15 @@ export const SKETCH_COLORS = [
 ] as const;
 export const SKETCH_SIZES = [2, 4, 8] as const;
 export const SKETCH_FONT_SIZE = 20;
-export const SKETCH_LIMITS = { frames: 120, elements: 2000, points: 4000, text: 500, bytes: 5_000_000 };
+export const SKETCH_LIMITS = {
+  frames: 120,
+  elements: 2000,
+  points: 4000,
+  text: 500,
+  comments: 50,
+  frameName: 40,
+  bytes: 5_000_000,
+};
 
 interface Styled {
   id: string;
@@ -56,6 +64,12 @@ export interface TextElement extends Styled {
   x: number;
   y: number;
   text: string;
+  /** A node's comments, as on a card of the argument tree: questions and notes that are not the node's text. */
+  comments?: SketchComment[];
+}
+export interface SketchComment {
+  id: string;
+  body: string;
 }
 /** A mind map link: drawn between two nodes of the same frame wherever they are moved. */
 export interface LinkElement extends Styled {
@@ -66,6 +80,8 @@ export interface LinkElement extends Styled {
 export type SketchElement = PenElement | LineElement | BoxElement | TextElement | LinkElement;
 export interface SketchFrame {
   id: string;
+  /** The person's own name for the frame, when the frames are used as pages rather than as an animation. */
+  name?: string;
   elements: SketchElement[];
 }
 export interface Sketch {
@@ -73,6 +89,8 @@ export interface Sketch {
   version: typeof SKETCH_VERSION;
   /** Frames per second when the frames are played. */
   fps: number;
+  /** Played with gliding: what is in two consecutive frames moves from its place in one to its place in the next. */
+  tween?: boolean;
   frames: SketchFrame[];
 }
 export interface Bounds {
@@ -390,29 +408,14 @@ export function parentNodeId(elements: readonly SketchElement[], nodeId: string)
 }
 
 // ---- frames -----------------------------------------------------------------------------------------------------
-/** A new frame after the given one: empty, or a copy of it (`ids` gives each copied element its new id). */
-export function addFrame(
-  sketch: Sketch,
-  after: number,
-  frameId: string,
-  copy: { newId: () => string } | null
-): Sketch {
+/**
+ * A new frame after the given one: empty, or a copy of it. A copied element keeps its id (ids are unique within a
+ * frame, not across frames): that is how the same thing is recognised in the next frame when the frames are played
+ * with gliding in between.
+ */
+export function addFrame(sketch: Sketch, after: number, frameId: string, copy: boolean): Sketch {
   if (sketch.frames.length >= SKETCH_LIMITS.frames) return sketch;
-  let elements: SketchElement[] = [];
-  if (copy) {
-    const source = sketch.frames[after]?.elements ?? [];
-    const renamed = new Map(source.map((e) => [e.id, copy.newId()]));
-    elements = source.map((e) =>
-      e.type === 'link'
-        ? {
-            ...e,
-            id: renamed.get(e.id) as string,
-            from: renamed.get(e.from) ?? e.from,
-            to: renamed.get(e.to) ?? e.to,
-          }
-        : { ...e, id: renamed.get(e.id) as string }
-    );
-  }
+  const elements: SketchElement[] = copy ? [...(sketch.frames[after]?.elements ?? [])] : [];
   const frames = [...sketch.frames];
   frames.splice(after + 1, 0, { id: frameId, elements });
   return { ...sketch, frames };
@@ -422,6 +425,85 @@ export function addFrame(
 export function removeFrame(sketch: Sketch, frame: number): Sketch {
   if (sketch.frames.length <= 1) return withFrame(sketch, 0, () => []);
   return { ...sketch, frames: sketch.frames.filter((_, i) => i !== frame) };
+}
+
+/** Names a frame; an empty name takes the name away and the frame goes by its number again. */
+export function setFrameName(sketch: Sketch, frame: number, name: string): Sketch {
+  const clean = name.replace(/\s+/g, ' ').trim().slice(0, SKETCH_LIMITS.frameName);
+  return {
+    ...sketch,
+    frames: sketch.frames.map((f, i) => {
+      if (i !== frame) return f;
+      const rest = { ...f };
+      delete rest.name;
+      return clean ? { ...rest, name: clean } : rest;
+    }),
+  };
+}
+
+/** Adds a comment to a node; an empty one, or one past the limit, changes nothing. */
+export function addComment(sketch: Sketch, frame: number, nodeId: string, comment: SketchComment): Sketch {
+  const body = comment.body.replace(/\r/g, '').trim().slice(0, SKETCH_LIMITS.text);
+  const target = sketch.frames[frame]?.elements.find((e) => e.id === nodeId);
+  if (!body || target?.type !== 'node' || (target.comments?.length ?? 0) >= SKETCH_LIMITS.comments)
+    return sketch;
+  return withFrame(sketch, frame, (elements) =>
+    elements.map((e) =>
+      e === target ? { ...target, comments: [...(target.comments ?? []), { id: comment.id, body }] } : e
+    )
+  );
+}
+export function removeComment(sketch: Sketch, frame: number, nodeId: string, commentId: string): Sketch {
+  return withFrame(sketch, frame, (elements) =>
+    elements.map((e) => {
+      if (e.id !== nodeId || e.type !== 'node' || !e.comments) return e;
+      const comments = e.comments.filter((c) => c.id !== commentId);
+      const rest = { ...e };
+      delete rest.comments;
+      return comments.length ? { ...rest, comments } : rest;
+    })
+  );
+}
+
+export function setTween(sketch: Sketch, tween: boolean): Sketch {
+  const rest = { ...sketch };
+  delete rest.tween;
+  return tween ? { ...rest, tween: true } : rest;
+}
+
+const lerp = (a: number, b: number, t: number) => Math.round((a + (b - a) * t) * 10) / 10;
+/**
+ * The frame in between: every element of `from` that is also in `to` (the same id and kind) is drawn `t` of the way
+ * (0…1) from its place and size in one to those in the other. A stroke glides when it has as many points in both.
+ * What is only in `from` stays as it is until the next frame takes over; what is only in `to` appears then.
+ */
+export function tweenElements(
+  from: readonly SketchElement[],
+  to: readonly SketchElement[],
+  t: number
+): SketchElement[] {
+  const next = new Map(to.map((e) => [e.id, e]));
+  return from.map((a) => {
+    const b = next.get(a.id);
+    if (!b) return a;
+    if (a.type === 'pen' && b.type === 'pen')
+      return a.points.length === b.points.length
+        ? { ...a, points: a.points.map((v, i) => lerp(v, b.points[i] as number, t)) }
+        : a;
+    if ((a.type === 'line' || a.type === 'arrow') && (b.type === 'line' || b.type === 'arrow'))
+      return {
+        ...a,
+        x1: lerp(a.x1, b.x1, t),
+        y1: lerp(a.y1, b.y1, t),
+        x2: lerp(a.x2, b.x2, t),
+        y2: lerp(a.y2, b.y2, t),
+      };
+    if ((a.type === 'rect' || a.type === 'ellipse') && (b.type === 'rect' || b.type === 'ellipse'))
+      return { ...a, x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), w: lerp(a.w, b.w, t), h: lerp(a.h, b.h, t) };
+    if ((a.type === 'text' || a.type === 'node') && (b.type === 'text' || b.type === 'node'))
+      return { ...a, x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) };
+    return a;
+  });
 }
 
 export const setFps = (sketch: Sketch, fps: number): Sketch => ({
@@ -492,7 +574,29 @@ function parseElement(raw: unknown, path: string): SketchElement | string {
     case 'node':
       if (!xy(['x', 'y'])) return `${path}: coordinates`;
       if (typeof raw.text !== 'string' || raw.text.length > SKETCH_LIMITS.text) return `${path}.text`;
-      return { ...base, type, x: raw.x as number, y: raw.y as number, text: raw.text };
+      if (raw.comments === undefined)
+        return { ...base, type, x: raw.x as number, y: raw.y as number, text: raw.text };
+      {
+        const list = raw.comments;
+        if (type !== 'node' || !Array.isArray(list) || !list.length || list.length > SKETCH_LIMITS.comments)
+          return `${path}.comments`;
+        const comments: SketchComment[] = [];
+        for (const [c, item] of list.entries()) {
+          if (
+            !isObject(item) ||
+            typeof item.id !== 'string' ||
+            !item.id ||
+            item.id.length > 80 ||
+            comments.some((x) => x.id === item.id) ||
+            typeof item.body !== 'string' ||
+            !item.body ||
+            item.body.length > SKETCH_LIMITS.text
+          )
+            return `${path}.comments[${c}]`;
+          comments.push({ id: item.id, body: item.body });
+        }
+        return { ...base, type, x: raw.x as number, y: raw.y as number, text: raw.text, comments };
+      }
     case 'link':
       if (typeof raw.from !== 'string' || typeof raw.to !== 'string') return `${path}: ends`;
       return { ...base, type, from: raw.from, to: raw.to };
@@ -513,6 +617,7 @@ export function parseSketch(text: string): SketchParse {
   if (!isObject(raw) || raw.format !== SKETCH_FORMAT) return { ok: false, reason: 'format' };
   if (raw.version !== SKETCH_VERSION) return { ok: false, reason: 'version' };
   if (!num(raw.fps, 1, 24)) return { ok: false, reason: 'fps' };
+  if (raw.tween !== undefined && raw.tween !== true) return { ok: false, reason: 'tween' };
   if (!Array.isArray(raw.frames) || raw.frames.length < 1 || raw.frames.length > SKETCH_LIMITS.frames)
     return { ok: false, reason: 'frames' };
   const frames: SketchFrame[] = [];
@@ -537,10 +642,19 @@ export function parseSketch(text: string): SketchParse {
     for (const [e, element] of elements.entries())
       if (element.type === 'link' && !linkEnds(element, elements))
         return { ok: false, reason: `${at}.elements[${e}]: ends` };
-    frames.push({ id: frame.id, elements });
+    if (frame.name === undefined) frames.push({ id: frame.id, elements });
+    else if (typeof frame.name === 'string' && frame.name && frame.name.length <= SKETCH_LIMITS.frameName)
+      frames.push({ id: frame.id, name: frame.name, elements });
+    else return { ok: false, reason: `${at}.name` };
   }
   return {
     ok: true,
-    sketch: { format: SKETCH_FORMAT, version: SKETCH_VERSION, fps: Math.round(raw.fps), frames },
+    sketch: {
+      format: SKETCH_FORMAT,
+      version: SKETCH_VERSION,
+      fps: Math.round(raw.fps),
+      ...(raw.tween ? { tween: true as const } : {}),
+      frames,
+    },
   };
 }

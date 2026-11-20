@@ -208,10 +208,11 @@ Asetukset ovat viidessä osiossa. Jokaisen osion otsikkorivi kertoo, mitä siin�
 
 - **Työkalut** vasemmalla: Valitse ja siirrä, Kynä, Viiva, Nuoli, Suorakulmio, Ellipsi, Teksti, Ajatuskartan solmu ja Pyyhi. Alla kahdeksan väriä, viivan paksuus ja **Täytä muodot**. Kun jotain on valittuna, värin tai paksuuden vaihto muuttaa valittua.
 - **Ajatuskartta näppäimistöllä**: paina solmutyökalulla lehtiötä ja kirjoita aihe. **Sarkain** lisää valitulle solmulle alisolmun, **Enter** sisarsolmun, **F2** muokkaa tekstiä ja nuolinäppäimet siirtävät. Viivat seuraavat solmuja, kun siirrät niitä.
-- **Ruudut** lehtiön alla: **+ Tyhjä ruutu** tai **+ Kopio ruudusta**, edellinen ruutu näkyy haaleana pohjana, ja **Toista** näyttää ruudut peräkkäin valitulla nopeudella.
+- **Kommentit**: kun yksi solmu on valittuna, sen kommentit näkyvät lehtiön alla ja voit lisätä uuden. Solmun kulmassa näkyy kommenttien määrä.
+- **Ruudut** lehtiön alla: **+ Tyhjä ruutu** tai **+ Kopio ruudusta**. Ruutuja voi käyttää kahdella tavalla. *Sivuina*: jokaisella ruudulla on välilehti, jonka voi nimetä kentässä **Ruudun nimi**, ja painallus vie ruutuun. *Animaationa*: **Toista** näyttää ruudut peräkkäin valitulla nopeudella, ja **Liu’uta ruudusta toiseen** liikuttaa kopioidussa ruudussa siirtämäsi kohteet pehmeästi paikasta toiseen. **Näytä edellinen ruutu haaleana** on piirtämisen apu; ota ruksi pois, kun käytät ruutuja sivuina.
 - **Tallennus**: lehtiö tallentuu tähän selaimeen erillään asiakirjoistasi. **Tallenna tiedostoksi** tekee tiedoston, jonka **Avaa lehtiö…** lukee takaisin, ja **Vie kuvaksi (PNG)** tallentaa näkyvän ruudun kuvana.
 
-Lehtiö ei vielä ole osa argumenttipuuta eikä yhteistyösessiota, eikä animaatiota voi viedä yhtenä tiedostona.
+Liu’utus tunnistaa kohteen vain ruudusta kopioituun ruutuun: uudelleen piirretty kohde ei liu’u. Lehtiö ei vielä ole osa argumenttipuuta eikä yhteistyösessiota, eikä animaatiota voi viedä yhtenä tiedostona.
 
 ## 7. Tiedostot ja jakaminen
 

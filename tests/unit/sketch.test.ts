@@ -2,12 +2,14 @@
  * must: the sketchpad's model (owner 2026-11-20, S-15): an element is hit on its stroke, a filled shape and a text
  *       also inside, and the topmost one wins; moving moves every kind and a link follows its nodes; removing a
  *       node removes its links; a child node is placed right of its parent, below the parent's lowest child, and
- *       linked; a copied frame gets new ids and its links point at the copies; the last frame is emptied instead of
- *       removed; a file round-trips, and a file with an unknown type, a colour outside the palette, an odd point
+ *       linked; a copied frame keeps its elements' ids, and between two frames an element with the same id glides
+ *       from its place to the next while one without a partner stays; a node carries comments and a frame a name;
+ *       the last frame is emptied instead of removed; a file round-trips, and a file with an unknown type, a colour outside the palette, an odd point
  *       list, a duplicate id, a link to a missing node or too many frames is refused with the place named
  * test: tests/unit/sketch.test.ts
  * red-against: an empty rectangle swallowing presses meant for what is inside it, a link left pointing at a
- *              deleted node, a copied frame's link still pointing into the frame it was copied from, a sibling
+ *              deleted node, a glide that moves a stroke whose point count differs (a scramble), an empty comment
+ *              stored, a sibling
  *              placed on top of the first child, a hostile file with a million points accepted
  */
 import assert from 'node:assert/strict';
@@ -15,6 +17,7 @@ import { test } from 'node:test';
 import {
   SKETCH_LIMITS,
   addChildNode,
+  addComment,
   addElement,
   addFrame,
   blankSketch,
@@ -23,13 +26,17 @@ import {
   moveElements,
   parentNodeId,
   parseSketch,
+  removeComment,
   removeElements,
   removeFrame,
   restyle,
   serializeSketch,
   setFps,
+  setFrameName,
   setText,
+  setTween,
   textBounds,
+  tweenElements,
 } from '../../src/domain/sketch.ts';
 import type { Sketch, SketchElement } from '../../src/domain/sketch.ts';
 
@@ -159,7 +166,7 @@ test('a mind map grows to the right: children below one another, each linked to 
   assert.equal(addChildNode(plain, 0, 't', { node: 'n', link: 'l' }, ''), plain);
 });
 
-test('frames: a copy has ids of its own, the last frame is emptied, the speed stays within 1–24', () => {
+test('frames: a copy keeps the ids, the last frame is emptied, the speed stays within 1–24', () => {
   let s = build(node('a', 0, 0, 'A'), node('b', 300, 0, 'B'), {
     ...style,
     type: 'link',
@@ -167,19 +174,20 @@ test('frames: a copy has ids of its own, the last frame is emptied, the speed st
     from: 'a',
     to: 'b',
   });
-  let n = 0;
-  s = addFrame(s, 0, 'f2', { newId: () => `n${++n}` });
+  s = addFrame(s, 0, 'f2', true);
   assert.deepEqual(
     s.frames.map((f) => f.id),
     ['f1', 'f2']
   );
+  // The copy keeps the elements' ids: the same thing is recognised in the next frame.
   assert.deepEqual(
     els(s, 1).map((e) => e.id),
-    ['n1', 'n2', 'n3']
+    ['a', 'b', 'l']
   );
-  const link = els(s, 1)[2] as { from: string; to: string };
-  assert.deepEqual([link.from, link.to], ['n1', 'n2']);
-  s = addFrame(s, 0, 'f3', null);
+  // Moving it in one frame leaves the other as it was.
+  s = moveElements(s, 1, ['a'], 50, 0);
+  assert.deepEqual([(els(s, 0)[0] as { x: number }).x, (els(s, 1)[0] as { x: number }).x], [0, 50]);
+  s = addFrame(s, 0, 'f3', false);
   assert.deepEqual(
     s.frames.map((f) => [f.id, f.elements.length]),
     [
@@ -209,7 +217,7 @@ test('a file round-trips; a file that is not a sketch is refused and the place i
     ),
     0,
     'f2',
-    null
+    false
   );
   const parsed = parseSketch(serializeSketch(s));
   assert.deepEqual(parsed, { ok: true, sketch: s });
@@ -280,5 +288,79 @@ test('a file round-trips; a file that is not a sketch is refused and the place i
   assert.equal(
     reason(() => {}, ' '.repeat(SKETCH_LIMITS.bytes + 1)),
     'size'
+  );
+});
+
+test('gliding between frames: the same id moves part of the way; no partner, no move', () => {
+  const from: SketchElement[] = [
+    { ...style, type: 'rect', id: 'r', x: 0, y: 0, w: 100, h: 50, fill: null },
+    { ...style, type: 'pen', id: 'p', points: [0, 0, 10, 10] },
+    { ...style, type: 'pen', id: 'q', points: [0, 0, 10, 10] },
+    node('n', 100, 100, 'A'),
+    { ...style, type: 'line', id: 'gone', x1: 0, y1: 0, x2: 5, y2: 5 },
+  ];
+  const to: SketchElement[] = [
+    { ...style, type: 'rect', id: 'r', x: 200, y: 100, w: 300, h: 50, fill: null },
+    { ...style, type: 'pen', id: 'p', points: [100, 0, 110, 10] },
+    { ...style, type: 'pen', id: 'q', points: [0, 0, 10, 10, 20, 20] },
+    node('n', 100, 300, 'A'),
+    { ...style, type: 'ellipse', id: 'new', x: 0, y: 0, w: 5, h: 5, fill: null },
+  ];
+  const mid = tweenElements(from, to, 0.25);
+  assert.deepEqual(mid[0], { ...style, type: 'rect', id: 'r', x: 50, y: 25, w: 150, h: 50, fill: null });
+  assert.deepEqual((mid[1] as { points: number[] }).points, [25, 0, 35, 10]);
+  assert.equal(mid[2], from[2], 'a stroke with another number of points is not scrambled');
+  assert.equal((mid[3] as { y: number }).y, 150);
+  assert.equal(mid[4], from[4]);
+  assert.equal(mid.length, 5, 'what is only in the next frame appears with it');
+  assert.deepEqual(tweenElements(from, to, 0), [from[0], from[1], from[2], from[3], from[4]]);
+});
+
+test('comments on a node, a name for a frame, gliding kept in the file', () => {
+  let s = build(node('n', 0, 0, 'Aihe'), { ...style, type: 'text', id: 't', x: 0, y: 100, text: 'x' });
+  s = addComment(s, 0, 'n', { id: 'c1', body: '  Onko tämä varmaa?  ' });
+  assert.equal(addComment(s, 0, 'n', { id: 'c2', body: '   ' }), s, 'an empty comment is not stored');
+  assert.equal(addComment(s, 0, 't', { id: 'c2', body: 'x' }), s, 'only a node carries comments');
+  s = addComment(s, 0, 'n', { id: 'c2', body: 'Lähde?' });
+  assert.deepEqual((els(s)[0] as { comments: unknown }).comments, [
+    { id: 'c1', body: 'Onko tämä varmaa?' },
+    { id: 'c2', body: 'Lähde?' },
+  ]);
+  s = setTween(setFrameName(s, 0, '  Ideat   ja  riskit '), true);
+  assert.equal(s.frames[0]!.name, 'Ideat ja riskit');
+  assert.deepEqual(parseSketch(serializeSketch(s)), { ok: true, sketch: s });
+  // Taking the last comment, the name and the gliding away leaves no empty fields behind.
+  let bare = removeComment(removeComment(s, 0, 'n', 'c1'), 0, 'n', 'c2');
+  bare = setTween(setFrameName(bare, 0, ''), false);
+  assert.equal('comments' in els(bare)[0]!, false);
+  assert.equal('name' in bare.frames[0]!, false);
+  assert.equal('tween' in bare, false);
+
+  const refuse = (
+    change: (raw: {
+      tween?: unknown;
+      frames: { name?: unknown; elements: { comments?: unknown }[] }[];
+    }) => void
+  ) => {
+    const raw = JSON.parse(serializeSketch(s));
+    change(raw);
+    const result = parseSketch(JSON.stringify(raw));
+    return result.ok ? 'accepted' : result.reason;
+  };
+  assert.equal(
+    refuse((r) => (r.frames[0]!.elements[0]!.comments = [{ id: 'c', body: '' }])),
+    'frames[0].elements[0].comments[0]'
+  );
+  assert.equal(
+    refuse((r) => (r.frames[0]!.elements[1]!.comments = [{ id: 'c', body: 'x' }])),
+    'frames[0].elements[1].comments'
+  );
+  assert.equal(
+    refuse((r) => (r.frames[0]!.name = 'x'.repeat(SKETCH_LIMITS.frameName + 1))),
+    'frames[0].name'
+  );
+  assert.equal(
+    refuse((r) => (r.tween = 'yes')),
+    'tween'
   );
 });
