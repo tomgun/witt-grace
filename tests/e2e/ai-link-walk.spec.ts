@@ -2,13 +2,14 @@
  * must: the site serves `ai.txt`, the brief an AI fetches; the draft dialog offers a short request that names that
  *       address and the topic; a link `#draft=<JSON>` opens the draft's preview (nothing is installed before
  *       "Avaa"), a broken one opens the import report, `#ai-import` opens the paste step, and in each case the
- *       fragment leaves the address bar; a reply pasted with its Markdown fence is previewed (S-15, owner
+ *       fragment leaves the address bar; a packed link (`#draft=z.<base64url zlib>`) opens the same preview; a reply pasted with its Markdown fence is previewed (S-15, owner
  *       2026-11-20)
  * test: tests/e2e/ai-link-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: ai.txt missing from the build, the short request without the address, a draft link installing the
  *              document without the preview, the fragment left in the address so a reload imports again, a fenced
  *              paste refused as Markdown
  */
+import { deflateSync } from 'node:zlib';
 import { expect, test } from '@playwright/test';
 import { DRAFT_EXAMPLE } from '../../src/domain/index.ts';
 
@@ -46,6 +47,22 @@ test('a draft link opens the preview, and only "Avaa" installs it', async ({ pag
   await page.locator('#btnDraftApply').click();
   await expect(page.getByTestId('app')).toBeVisible();
   await expect(page.locator('#projectTitle')).toHaveValue('Linkistä tuotu päätös');
+});
+
+test('a packed draft link opens the preview; a packed link that is not zlib data says so', async ({
+  page,
+}) => {
+  const packed = deflateSync(Buffer.from(DRAFT, 'utf8')).toString('base64url');
+  await page.goto('/#draft=z.' + packed);
+  await expect(page.getByTestId('ai-draft-preview-dialog')).toBeVisible();
+  await expect(page.locator('#aiDraftPreview')).toContainText('Linkistä tuotu päätös');
+  expect(new URL(page.url()).hash).toBe('');
+  await page.goto('/');
+  await page.goto('/#draft=z.bm90IHpsaWI');
+  await expect(page.getByTestId('import-report-dialog')).toBeVisible();
+  await expect(page.getByTestId('import-report-dialog')).toContainText(
+    'Linkin pakattua sisältöä ei voitu purkaa.'
+  );
 });
 
 test('a broken draft link says what is wrong; a fenced paste is previewed', async ({ page }) => {

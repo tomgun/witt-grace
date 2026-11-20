@@ -116,6 +116,7 @@ export {
   draftFromLink,
   unfenced,
   DRAFT_LINK_LIMIT,
+  DRAFT_LINK_PACKED,
   DRAFT_LINK_PREFIX,
   DRAFT_IMPORT_FRAGMENT,
 } from './ai/draft.ts';

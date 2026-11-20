@@ -753,8 +753,12 @@ export function buildDraftPrompt({
   ].join('\n\n');
 }
 
-/** The longest draft JSON an AI is asked to carry in a link; a longer one comes as a file or a code block. */
-export const DRAFT_LINK_LIMIT = 8000;
+/** The longest whole link an AI is asked to give; a larger document comes as a file or a code block only. */
+export const DRAFT_LINK_LIMIT = 30000;
+/** The longest JSON an AI without a code tool is asked to percent-encode by itself. */
+export const DRAFT_PLAIN_LINK_LIMIT = 2000;
+/** Marks a packed link payload: base64url of the zlib-compressed JSON (JSON itself never starts with it). */
+export const DRAFT_LINK_PACKED = 'z.';
 /** The address fragments WITT reads on start: a draft carried in the link, and the paste step opened directly. */
 export const DRAFT_LINK_PREFIX = '#draft=';
 export const DRAFT_IMPORT_FRAGMENT = '#ai-import';
@@ -784,12 +788,22 @@ export function buildFetchedBrief({ siteUrl = '' }: { siteUrl?: string } = {}): 
     [
       'HOW TO RETURN IT. Do every step you can, in this order:',
       '1. The JSON itself: an attached downloadable .witt.json file if you can create one, otherwise ONE fenced json code block.',
-      '2. A link that opens the document in WITT: ' +
+      '2. A link that opens the document straight in WITT. Give it whenever you can run code, and build it with code, never by hand; a broken link is worse than none. Show it as a Markdown link, not as bare text. Two forms:',
+      '   a) Packed (preferred, for a document of any size): ' +
         site +
         DRAFT_LINK_PREFIX +
-        ' followed by the minified JSON percent-encoded as UTF-8 (JavaScript encodeURIComponent, Python urllib.parse.quote with safe=""). Give this link only if the minified JSON is under ' +
+        DRAFT_LINK_PACKED +
+        ' followed by the base64url text of the zlib-compressed UTF-8 minified JSON. Python: "' +
+        DRAFT_LINK_PACKED +
+        '" + base64.urlsafe_b64encode(zlib.compress(json.dumps(doc, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), 9)).decode("ascii"). Leave the link out only if the whole link would be longer than ' +
         DRAFT_LINK_LIMIT +
-        ' characters and you can encode it exactly (use a code tool if you have one); a broken link is worse than none. Show it as a Markdown link, not as bare text.',
+        ' characters.',
+      '   b) Plain (only when you cannot run code and the minified JSON is under ' +
+        DRAFT_PLAIN_LINK_LIMIT +
+        ' characters): ' +
+        site +
+        DRAFT_LINK_PREFIX +
+        ' followed by the minified JSON percent-encoded as UTF-8.',
       "3. One or two sentences in the user's language: the link opens a preview in WITT and nothing is added until they accept it; if there is no link or it does not work, they open " +
         site +
         DRAFT_IMPORT_FRAGMENT +
@@ -806,7 +820,7 @@ export function unfenced(text: string): string {
 }
 
 /**
- * The JSON text a draft link carries, or null when the fragment is not a draft link. Untrusted: the caller runs it
+ * The text a draft link carries (JSON, or a payload starting with DRAFT_LINK_PACKED for the caller to unpack), or null when the fragment is not a draft link. Untrusted: the caller runs it
  * through the import preflight and the preview like a pasted reply. An AI's encoding may be imperfect, so a
  * fragment that does not decode is taken as written.
  */

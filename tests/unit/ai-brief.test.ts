@@ -4,14 +4,18 @@
  *       link `<site>#draft=<percent-encoded JSON>` only under the length limit, and `<site>#ai-import` for pasting;
  *       a draft link's JSON is read back exactly (non-ASCII included), a fragment that does not decode is taken as
  *       written, any other fragment is not a draft link; a reply pasted inside a Markdown fence loses only the
- *       fence (S-15, owner 2026-11-20)
+ *       fence; a packed link payload (base64url of zlib data) unpacks to the same text, and one that is not zlib
+ *       data or unpacks past the cap is refused (S-15, owner 2026-11-20)
  * test: tests/unit/ai-brief.test.ts
  * red-against: the brief naming v2 or a fixed language, the link built without the site address, a draft link
  *              decoded as Latin-1 so ä breaks, a malformed % making the link throw, `#join=` read as a draft,
- *              the fence stripper eating JSON that merely contains backticks
+ *              the fence stripper eating JSON that merely contains backticks, a packed payload read as Latin-1,
+ *              the cap checked only after everything is unpacked
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { deflateSync } from 'node:zlib';
+import { inflateBase64Url } from '../../src/lib/inflate.ts';
 import {
   DRAFT_EXAMPLE,
   buildDraftPrompt,
@@ -26,8 +30,11 @@ test('the fetched brief carries the format, the shared rules and the way back', 
   assert.equal(brief.split('witt-ai-draft-v2').length, 1);
   assert.equal(brief.includes('Return the document in language'), false);
   assert.ok(brief.includes('Write the document in the language the user writes in.'));
-  assert.ok(brief.includes('https://example.org/witt/#draft= followed by'));
-  assert.ok(brief.includes('under 8000 characters'));
+  assert.ok(
+    brief.includes('https://example.org/witt/#draft=z. followed by the base64url text of the zlib-compressed')
+  );
+  assert.ok(brief.includes('longer than 30000 characters'));
+  assert.ok(brief.includes('under 2000 characters): https://example.org/witt/#draft= followed by'));
   assert.ok(brief.includes('https://example.org/witt/#ai-import'));
   assert.equal(brief.includes('WITT_URL'), false);
   // The method rules are the copied task's, word for word.
@@ -63,4 +70,19 @@ test('only a surrounding Markdown fence is removed', () => {
   assert.equal(unfenced('  ```\n{"a":1}\n```  \n'), '{"a":1}');
   assert.equal(unfenced('{"a":"``` inside"}'), '{"a":"``` inside"}');
   assert.equal(unfenced('{"a":1}'), '{"a":1}');
+});
+
+test('a packed link payload unpacks to its text; rubbish and oversize are refused', async () => {
+  const json = JSON.stringify({ ...DRAFT_EXAMPLE, title: 'Etätyö vai lähityö? 日本語' });
+  const packed = deflateSync(Buffer.from(json, 'utf8'), { level: 9 });
+  assert.equal(await inflateBase64Url(packed.toString('base64url'), 5_000_000), json);
+  assert.equal(await inflateBase64Url(packed.toString('base64'), 5_000_000), json);
+  assert.equal(
+    draftFromLink('#draft=z.' + packed.toString('base64url')),
+    'z.' + packed.toString('base64url')
+  );
+  await assert.rejects(inflateBase64Url('bm90IHpsaWI', 5_000_000));
+  await assert.rejects(inflateBase64Url('***', 5_000_000));
+  const bomb = deflateSync(Buffer.alloc(200_000, 0x20)).toString('base64url');
+  await assert.rejects(inflateBase64Url(bomb, 100_000), /TOO_LARGE/);
 });

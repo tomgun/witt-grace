@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-20 — `UI_INVENTORY.md` — Owner tried it with ChatGPT: a 62-claim tree came back as a file and the paste link, “suoraa linkkiä wittiin ei tullut”; S-15: the draft link may be packed (`#draft=z.` + base64url zlib), and the brief asks for that form at any size up to a 30 000-character link.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: could one say to an AI “luo minulle päätöspuu aiheesta x, URL” so that it fetches the task from the site, returns the JSON and a direct link for importing it, or carries the JSON in the link; S-15: the site serves `ai.txt`, the draft dialog offers a short request naming it, and the address fragments `#draft=<JSON>` (preview) and `#ai-import` (paste step) are read on start; a pasted reply may keep its Markdown fence.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: the home screen's “Tutustu menetelmään” could tell about the benefits and the method and sell the idea; now it is the same screen as in the tool, with shortcuts; S-15: a method introduction dialog behind the home screen's two method links.
 - 2026-11-19 — `UI_INVENTORY.md` — Owner: closing a sub-tree makes the main claim jump to the left edge; why does four directions not work in the reading view; S-15: the pressed card stays in place when a branch is closed or opened, and the reading view lays the tree out in four directions.

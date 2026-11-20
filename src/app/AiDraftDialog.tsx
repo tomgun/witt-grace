@@ -10,6 +10,7 @@ import {
   draftSummary,
   draftToProject,
   DRAFT_IMPORT_FRAGMENT,
+  DRAFT_LINK_PACKED,
   buildDraftPrompt,
   draftFromLink,
   isAiProfile,
@@ -18,6 +19,7 @@ import {
 } from '../domain/index.ts';
 import type { AiDraft, Mode } from '../domain/index.ts';
 import { downloadText } from '../lib/files.ts';
+import { inflateBase64Url } from '../lib/inflate.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import { Modal } from './dialogs.tsx';
 import {
@@ -85,8 +87,24 @@ export function readDraftLink(): boolean {
     return true;
   }
   const sourceName = 'AI:n linkki';
-  const report = inspectOrReport(text, { expected: 'draft' }, sourceName);
-  if (report.ok) stageDraftFromFile(report.parsed, sourceName);
+  const stage = (json: string) => {
+    const report = inspectOrReport(json, { expected: 'draft' }, sourceName);
+    if (report.ok) stageDraftFromFile(report.parsed, sourceName);
+  };
+  if (!text.startsWith(DRAFT_LINK_PACKED)) stage(text);
+  else
+    void inflateBase64Url(text.slice(DRAFT_LINK_PACKED.length), FILE_SIZE_LIMIT).then(stage, () =>
+      showImportReport(
+        singleIssueReport(
+          'draft',
+          DRAFT_FORMAT_NAME,
+          'LINK',
+          'Linkin pakattua sisältöä ei voitu purkaa.',
+          'Pyydä AI:lta JSON tiedostona tai koodilohkona ja tuo se kohdasta Avaa AI:n vastaus.'
+        ),
+        sourceName
+      )
+    );
   return true;
 }
 
