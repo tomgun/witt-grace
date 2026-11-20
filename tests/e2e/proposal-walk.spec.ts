@@ -97,3 +97,44 @@ test('importing and exporting additions: one goal at a time', async ({ page }) =
   await expect(page.locator('#tabProposalExport')).toHaveAttribute('aria-selected', 'true');
   expect(await shown()).toEqual(['proposalPanel-export']);
 });
+
+/**
+ * must: the home screen's "Tutustu menetelmään" and "Tietoa menetelmästä" open the method's introduction, not the
+ *       tool's help: benefits first, then how it works, what it suits and what it does not promise, no keyboard
+ *       shortcuts; it fits the screen's width; its first button starts the walkthrough (S-15, owner 2026-11-20)
+ * red-against: the link still opening the help dialog with its shortcut table, the introduction without a way to
+ *              start, the text spilling sideways on a phone
+ */
+test('"Tutustu menetelmään" introduces the method and leads to the walkthrough', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
+  for (const link of ['#btnHomeAbout', '#btnHomeHelp']) {
+    await page.locator(link).click();
+    await expect(page.locator('#methodDialog')).toBeVisible();
+    await page.locator('#btnMethodClose').click();
+    await expect(page.locator('#methodDialog')).toHaveCount(0);
+  }
+  await page.locator('#btnHomeHelp').click();
+  const dialog = page.locator('#methodDialog');
+  await expect(dialog.locator('h2')).toHaveText('GRACE-menetelmä: tee ajattelusta näkyvää');
+  await expect(dialog.locator('h3')).toHaveText([
+    'Mitä saat',
+    'Näin se toimii',
+    'Mihin se sopii',
+    'Mitä se ei lupaa',
+  ]);
+  await expect(dialog.locator('.method-gains li')).toHaveCount(4);
+  await expect(dialog.locator('.method-stages li strong')).toHaveText([
+    'Kartoita',
+    'Punnitse',
+    'Päätä yhdessä',
+  ]);
+  await expect(dialog).toContainText('Puuttuva arvio ei ole nolla');
+  await expect(dialog.locator('kbd')).toHaveCount(0);
+  await expect(page.locator('#helpDialog')).toHaveCount(0);
+  expect(await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  await page.locator('#btnMethodTutorial').click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator('#tutorialPanel')).toBeVisible();
+});

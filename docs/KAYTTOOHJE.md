@@ -19,7 +19,7 @@ Niistä lasketaan **Perustelutulos −100…+100**, jossa 0 on neutraali. Sanall
 
 ## 2. Aloittaminen
 
-**Aloitussivu** avautuu aina ensin (ja ⌂-painikkeesta yläpalkista). Siinä ovat kieli- ja ulkoasuvalinnat, **Tietoa menetelmästä** (lyhenteiden selitykset) ja painikkeet:
+**Aloitussivu** avautuu aina ensin (ja ⌂-painikkeesta yläpalkista). Siinä ovat kieli- ja ulkoasuvalinnat, **Tietoa menetelmästä** ja sivun alareunan **Tutustu menetelmään** (molemmat avaavat menetelmän esittelyn: mitä siitä saa, miten se toimii kolmessa vaiheessa ja kahdella kysymyksellä, mihin se sopii ja mitä se ei lupaa; esittelystä voi aloittaa opastuksen tai avata esimerkin; lyhenteiden selitykset saa WITT-logosta) ja painikkeet:
 
 - **Jatka edellistä työtä** – näkyy, kun selaimessa on luettava tallennus; avaa sen työtilaan.
 - **+ Luo uusi asiakirja** – avaa **Uusi työ** -ikkunan: *Tyhjä argumenttipuu* (ensisijainen), *Tyhjä päätöspuu* tai *Luo uusi puu AI:n avulla*. Tyhjä asiakirja avautuu puunäkymässä pääväitteen otsikko valittuna muokattavaksi: kirjoita väite ja paina `Enter`. Jos sinulla on työ auki, uuden aloittaminen kysyy vahvistuksen ja korvaa nykyisen työn.

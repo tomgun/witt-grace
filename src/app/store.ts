@@ -69,6 +69,7 @@ export type DialogName =
   | 'help'
   | 'examples'
   | 'about'
+  | 'method'
   | 'newWork'
   | 'aiDraft'
   | 'aiReview'

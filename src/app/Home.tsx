@@ -55,7 +55,7 @@ export function Home() {
             type="button"
             className="btn quiet"
             id="btnHomeAbout"
-            onClick={() => store.openDialog('about')}
+            onClick={() => store.openDialog('method')}
           >
             {t('homeAbout')}
           </button>
@@ -228,7 +228,7 @@ export function Home() {
           <span>
             <b>{t('methodName')}</b> <span>{t('homeMethodNote')}</span>
           </span>
-          <button type="button" id="btnHomeHelp" onClick={() => store.openDialog('help')}>
+          <button type="button" id="btnHomeHelp" onClick={() => store.openDialog('method')}>
             {t('homeLearn')}
           </button>
         </div>

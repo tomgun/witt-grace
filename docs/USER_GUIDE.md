@@ -19,7 +19,7 @@ From these the **argument balance −100…+100** (*Perustelutulos*) is computed
 
 ## 2. Starting
 
-The **home screen** (*Aloitussivu*) always opens first (and from the ⌂ button in the top bar). It has the language and theme selects, *Tietoa menetelmästä* (about the method and the acronyms) and these actions:
+The **home screen** (*Aloitussivu*) always opens first (and from the ⌂ button in the top bar). It has the language and theme selects, *Tietoa menetelmästä* and, at the foot of the page, *Tutustu menetelmään* (both open the method's introduction: what it gives, how it works in three stages and two questions, what it suits and what it does not promise, with buttons to start the walkthrough or open an example; the acronyms are behind the WITT logo) and these actions:
 
 - *Jatka edellistä työtä* (continue) – shown when the browser holds a readable save; opens it in the workspace.
 - *+ Luo uusi asiakirja* (new document) – opens *Uusi työ*: *Tyhjä argumenttipuu* (blank argument tree), *Tyhjä päätöspuu* (blank decision tree) or *Luo uusi puu AI:n avulla* (new tree with AI). With work open, starting anew asks first and replaces the current work.
