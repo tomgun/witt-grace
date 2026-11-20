@@ -146,7 +146,22 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
     'Punnitse ja päätä GRACE-menetelmällä',
   ]);
   await expect(method.locator('.home-uses li').first()).toContainText('Arvioita ei tarvita.');
-  // The example beside the lead is a tree: the reasons' own reasons are cards under them, without an arrow.
+  // The example beside the lead takes turns between five walks of life; a press on a dot picks one and it stays.
+  const visual = page.locator('.home-visual');
+  await expect(visual.locator('.visual-dots button')).toHaveCount(5);
+  await visual.locator('.visual-dots button').nth(4).click();
+  await expect(page.locator('#homeScenarioName')).toHaveText('Perhe');
+  await expect(visual.locator('.visual-root')).toContainText('Hankitaanko perheeseen koira?');
+  await expect(visual.locator('.visual-leaves .visual-node strong')).toHaveText([
+    'Koko perhe ulkoilee enemmän',
+    'Isovanhemmat voivat hoitaa lomilla',
+  ]);
+  // A picture, not content: hidden from a screen reader and out of the tab order.
+  await expect(visual).toHaveAttribute('aria-hidden', 'true');
+  expect(await visual.locator('button:not([tabindex="-1"])').count()).toBe(0);
+  await visual.locator('.visual-dots button').nth(0).click();
+  await expect(page.locator('#homeScenarioName')).toHaveText('Yritys');
+  // The example is a tree: the reasons' own reasons are cards under them, without an arrow.
   await expect(page.locator('.home-visual .visual-leaves .visual-node strong')).toHaveText([
     'Varhainen palaute auttaa parantamaan tuotetta',
     'Testataan tärkeimmät oletukset ensin',

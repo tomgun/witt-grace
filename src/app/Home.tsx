@@ -1,10 +1,39 @@
 // The home screen (UI_INVENTORY S-01): one main action, three groups of others, and the warnings.
 import { EditionBadge } from './EditionBadge.tsx';
 import { dismissInviteForGood, dismissInviteForNow, useTutorialInvite } from './Tutorial.tsx';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
 import { homeCard } from '../lib/workspaceMeta.ts';
+import type { MessageKey } from '../lib/i18n/catalog.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
+
+interface Scenario {
+  label: MessageKey;
+  root: MessageKey;
+  pro: MessageKey;
+  proWhy: MessageKey;
+  con: MessageKey;
+  conWhy: MessageKey;
+}
+/** The home screen's example trees: one size, five walks of life (owner 2026-11-20, S-15). All synthetic. */
+const SCENARIOS: readonly Scenario[] = [
+  {
+    label: 'homeScenarioLabel1',
+    root: 'homeCanvasRoot',
+    pro: 'homeCanvasForTitle',
+    proWhy: 'homeCanvasForDetail',
+    con: 'homeCanvasAgainstTitle',
+    conWhy: 'homeCanvasAgainstDetail',
+  },
+  ...([2, 3, 4, 5] as const).map((n): Scenario => ({
+    label: `homeScenarioLabel${n}`,
+    root: `homeScenario${n}Root`,
+    pro: `homeScenario${n}For`,
+    proWhy: `homeScenario${n}ForDetail`,
+    con: `homeScenario${n}Against`,
+    conWhy: `homeScenario${n}AgainstDetail`,
+  })),
+];
 
 export function Home() {
   const state = useAppState();
@@ -26,6 +55,15 @@ export function Home() {
   }, []);
   const continueWork = () => store.setHome(false);
   const invite = useTutorialInvite();
+  const [scenario, setScenario] = useState(0);
+  const [picked, setPicked] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  useEffect(() => {
+    if (picked || hovering || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => setScenario((i) => (i + 1) % SCENARIOS.length), 8000);
+    return () => window.clearInterval(timer);
+  }, [picked, hovering]);
+  const shown = SCENARIOS[scenario] as Scenario;
   // The method is told on the page itself (owner 2026-11-20, S-15): the links take the reader to it.
   const toMethod = () => {
     const heading = document.getElementById('homeMethodTitle');
@@ -218,32 +256,60 @@ export function Home() {
             ) : null}
             <p className="home-privacy">{t('homePrivacy')}</p>
           </div>
-          <div className="home-visual" aria-hidden="true">
-            <span className="visual-kicker">{t('homeCanvasLabel')}</span>
-            <div className="visual-root">
-              <span className="visual-mini-icon">◇</span> <span>{t('homeCanvasRoot')}</span>
+          {/* A picture of the tool, not content: hidden from a screen reader, its dots not in the tab order. Five
+              small scenarios take turns (owner 2026-11-20, S-15): slowly, not at all when motion is to be reduced,
+              and never again once the reader has picked one or while the pointer rests on the picture. */}
+          <div
+            className="home-visual"
+            aria-hidden="true"
+            data-scenario={scenario + 1}
+            onPointerEnter={() => setHovering(true)}
+            onPointerLeave={() => setHovering(false)}
+          >
+            <span className="visual-kicker">
+              {t('homeCanvasLabel')} · <span id="homeScenarioName">{t(shown.label)}</span>
+            </span>
+            <div className="visual-scenario" key={scenario}>
+              <div className="visual-root">
+                <span className="visual-mini-icon">◇</span> <span>{t(shown.root)}</span>
+              </div>
+              <div className="visual-branches">
+                <div className="visual-node supporting">
+                  <small>{t('homeCanvasFor')}</small>
+                  <strong>{t(shown.pro)}</strong>
+                </div>
+                <div className="visual-node opposing">
+                  <small>{t('homeCanvasAgainst')}</small>
+                  <strong>{t(shown.con)}</strong>
+                </div>
+              </div>
+              {/* The reasons' own reasons as cards of their own, as in the real tree (owner 2026-11-20: the lines
+                  inside the cards "ei näytä tutulta"). The catalog's older texts begin with an arrow that is dropped. */}
+              <div className="visual-leaves">
+                <div className="visual-node leaf supporting">
+                  <small>{t('homeCanvasFor')}</small>
+                  <strong>{t(shown.proWhy).replace(/^↳\s*/, '')}</strong>
+                </div>
+                <div className="visual-node leaf opposing">
+                  <small>{t('homeCanvasAgainst')}</small>
+                  <strong>{t(shown.conWhy).replace(/^↳\s*/, '')}</strong>
+                </div>
+              </div>
             </div>
-            <div className="visual-branches">
-              <div className="visual-node supporting">
-                <small>{t('homeCanvasFor')}</small>
-                <strong>{t('homeCanvasForTitle')}</strong>
-              </div>
-              <div className="visual-node opposing">
-                <small>{t('homeCanvasAgainst')}</small>
-                <strong>{t('homeCanvasAgainstTitle')}</strong>
-              </div>
-            </div>
-            {/* The reasons' own reasons as cards of their own, as in the real tree (owner 2026-11-20: the lines
-                inside the cards "ei näytä tutulta"). The catalog's texts begin with an arrow that is dropped. */}
-            <div className="visual-leaves">
-              <div className="visual-node leaf supporting">
-                <small>{t('homeCanvasFor')}</small>
-                <strong>{t('homeCanvasForDetail').replace(/^↳\s*/, '')}</strong>
-              </div>
-              <div className="visual-node leaf opposing">
-                <small>{t('homeCanvasAgainst')}</small>
-                <strong>{t('homeCanvasAgainstDetail').replace(/^↳\s*/, '')}</strong>
-              </div>
+            <div className="visual-dots">
+              {SCENARIOS.map((item, i) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  tabIndex={-1}
+                  className={i === scenario ? 'active' : ''}
+                  title={t('homeScenarioPick', { name: t(item.label) })}
+                  onClick={() => {
+                    setScenario(i);
+                    setPicked(true);
+                  }}
+                />
+              ))}
             </div>
             <div className="visual-footer">
               <span className="visual-dot" /> <span>{t('homeCanvasSteps')}</span>
