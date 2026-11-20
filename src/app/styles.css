@@ -10849,3 +10849,66 @@ body.witt-focus .canvas-quick-controls {
   padding: 6px 9px;
   font-size: 12px;
 }
+
+/* The home screen's example as a real tree, and the two ways to use the tool (owner 2026-11-20, S-15). */
+.home-visual .visual-node {
+  min-height: 0;
+}
+.visual-leaves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  position: relative;
+  z-index: 1;
+  padding-top: 16px;
+}
+.visual-leaves .visual-node {
+  margin: 0 12px;
+  padding: 11px 12px;
+}
+.visual-leaves .visual-node::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -20px;
+  height: 16px;
+  width: 2px;
+  background: var(--border);
+}
+.visual-leaves .visual-node strong {
+  font-size: 12px;
+  font-weight: 650;
+}
+.home-uses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.home-uses li {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--subtle);
+}
+.home-uses strong {
+  font-size: 16px;
+  color: var(--ink);
+}
+@media (max-width: 600px) {
+  .home-uses {
+    grid-template-columns: 1fr;
+  }
+  .visual-leaves .visual-node {
+    margin: 0 4px;
+  }
+}

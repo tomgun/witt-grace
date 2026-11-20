@@ -134,10 +134,22 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   }
   await expect(heading).toHaveText('GRACE-menetelmä: tee ajattelusta näkyvää');
   await expect(method.locator('h3')).toHaveText([
+    'Kaksi tapaa käyttää',
     'Mitä saat',
     'Näin se toimii',
     'Mihin se sopii',
     'Mitä se ei lupaa',
+  ]);
+  // The plain tree first, the method's weighing and deciding second: one need not rate to use the tool.
+  await expect(method.locator('.home-uses li strong')).toHaveText([
+    'Jäsennä ajatteluasi',
+    'Punnitse ja päätä GRACE-menetelmällä',
+  ]);
+  await expect(method.locator('.home-uses li').first()).toContainText('Arvioita ei tarvita.');
+  // The example beside the lead is a tree: the reasons' own reasons are cards under them, without an arrow.
+  await expect(page.locator('.home-visual .visual-leaves .visual-node strong')).toHaveText([
+    'Varhainen palaute auttaa parantamaan tuotetta',
+    'Testataan tärkeimmät oletukset ensin',
   ]);
   await expect(method.locator('.method-gains li')).toHaveCount(4);
   await expect(method.locator('.home-features li h4')).toHaveText(['Kartoita', 'Punnitse', 'Päätä yhdessä']);

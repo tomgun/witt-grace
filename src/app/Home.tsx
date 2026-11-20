@@ -227,12 +227,22 @@ export function Home() {
               <div className="visual-node supporting">
                 <small>{t('homeCanvasFor')}</small>
                 <strong>{t('homeCanvasForTitle')}</strong>
-                <span className="visual-node-child">{t('homeCanvasForDetail')}</span>
               </div>
               <div className="visual-node opposing">
                 <small>{t('homeCanvasAgainst')}</small>
                 <strong>{t('homeCanvasAgainstTitle')}</strong>
-                <span className="visual-node-child">{t('homeCanvasAgainstDetail')}</span>
+              </div>
+            </div>
+            {/* The reasons' own reasons as cards of their own, as in the real tree (owner 2026-11-20: the lines
+                inside the cards "ei näytä tutulta"). The catalog's texts begin with an arrow that is dropped. */}
+            <div className="visual-leaves">
+              <div className="visual-node leaf supporting">
+                <small>{t('homeCanvasFor')}</small>
+                <strong>{t('homeCanvasForDetail').replace(/^↳\s*/, '')}</strong>
+              </div>
+              <div className="visual-node leaf opposing">
+                <small>{t('homeCanvasAgainst')}</small>
+                <strong>{t('homeCanvasAgainstDetail').replace(/^↳\s*/, '')}</strong>
               </div>
             </div>
             <div className="visual-footer">
@@ -245,6 +255,17 @@ export function Home() {
             {t('methodTitle')}
           </h2>
           <p className="method-lead">{t('methodLead')}</p>
+          <h3>{t('homeUseHeading')}</h3>
+          <ul className="home-uses">
+            <li>
+              <strong>{t('homeUseMapT')}</strong>
+              <span>{t('homeUseMap')}</span>
+            </li>
+            <li>
+              <strong>{t('homeUseGraceT')}</strong>
+              <span>{t('homeUseGrace')}</span>
+            </li>
+          </ul>
           <h3>{t('methodGainHeading')}</h3>
           <ul className="method-gains">
             {gains.map(([title, text]) => (

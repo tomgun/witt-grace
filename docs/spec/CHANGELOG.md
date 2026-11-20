@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-20 — `UI_INVENTORY.md` — Owner: the home example's sub-reasons as cards (`.visual-leaves`), and `ul.home-uses` (two ways to use the tool) at the top of the method section.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: in the sketchpad, comments on mind map nodes, named frame tabs and gliding between frames; the `witt-sketch` file gains the optional `tween`, `frames[].name` and a node's `comments[]`, and a copied frame keeps its elements' ids.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: a sketchpad (free drawing, diagrams, mind map, frames) as a screen of its own with its own file format `witt-sketch` v1 and storage key `witt-sketch-v1`; a fourth group on the home screen. The GRACE document format is not touched.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner's decision: the product's name is WITT, GRACE is the method's and stays described on the pages; the supporter packages are named `witt-<version>-<edition>` (were `witt-grace-…`).
