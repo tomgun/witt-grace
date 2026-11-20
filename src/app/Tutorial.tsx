@@ -100,6 +100,7 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
     furthest: 0,
     supportId: null,
     opposeId: null,
+    optionId: null,
     secondUserId: null,
     messShown: false,
     collabOpened: false,
@@ -113,7 +114,7 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
     return;
   }
   if (!(await store.prepareReplacement(tr('newDocumentConfirm')))) return;
-  const doc = blankProject('argument');
+  const doc = blankProject(id === 'decision' ? 'decision' : 'argument');
   const root = doc.nodes[0] as Node;
   const project: Project = {
     ...doc,
@@ -142,7 +143,17 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
     return;
   }
   if (id === 'decision') {
-    // An argument document on purpose: changing its type is the walkthrough's first thing to do.
+    // A decision from the start, with two options in place: the person adds the third (owner 2026-11-20).
+    for (const title of ['tutDecisionOptionA', 'tutDecisionOptionB'] as const)
+      store.dispatch({
+        type: 'node.add',
+        id: newId(),
+        parentId: root.id,
+        relation: 'option',
+        title: tr(title),
+      });
+    store.select(root.id);
+    store.requestFit();
     store.setView({ presentation: 'tree', workflow: 'explore', layers: { ...LAYER_PRESETS.text } });
     showPanels();
     update({ position: null, tutorial: { ...base, id, rootId: root.id, firstUserId: store.get().actorId } });
@@ -305,8 +316,10 @@ function anchors(run: TutorialRun, state: AppState): string[] {
     // Arranging is in the view settings: their button first, then the button inside once they are open.
     if (run.step === BASICS.arrange) list.push(state.view.dockHidden ? '#btnViewSettings' : '#btnLayout');
   } else if (run.id === 'decision') {
-    if (run.step === DECISION.intro || run.step === DECISION.switchType) list.push('#docTypeMenu');
-    if (run.step === DECISION.addOptions) list.push('#btnOption', cardSelector(run.rootId));
+    if (run.step === DECISION.intro) list.push('#docTypeMenu', cardSelector(run.rootId));
+    if (run.step === DECISION.addOption)
+      list.push(`${cardSelector(run.rootId)} .node-add.option`, '#btnOption', cardSelector(run.rootId));
+    if (run.step === DECISION.nameOption) list.push(cardSelector(run.optionId));
     if (run.step === DECISION.addReason) list.push('.node[data-relation="option"]');
     if (run.step === DECISION.rateReason)
       list.push(
@@ -376,10 +389,22 @@ function showTarget(): void {
   }
   if (current.id === 'decision') {
     const { step } = current;
-    if (step === DECISION.intro || step === DECISION.switchType)
-      document.getElementById('modeDecision')?.focus();
-    else if (step === DECISION.addOptions) store.select(current.rootId);
-    else if (step === DECISION.addReason) {
+    if (step === DECISION.intro) store.select(current.rootId);
+    else if (step === DECISION.addOption) {
+      // The button adds to the selected card: the question is selected, and on a narrow screen, where the callout
+      // covers the tree, the option is added directly (as the basics walkthrough does with a reason).
+      store.select(current.rootId);
+      const action = document.querySelector<HTMLButtonElement>(
+        `${cardSelector(current.rootId)} .node-add.option`
+      );
+      if (narrow() || !action?.getClientRects().length) addNode('option', current.rootId);
+      else action.focus({ preventScroll: true });
+    } else if (step === DECISION.nameOption) {
+      if (current.optionId) {
+        store.select(current.optionId);
+        startInlineEdit(current.optionId);
+      }
+    } else if (step === DECISION.addReason) {
       const option = store.get().project.nodes.find((n) => n.kind === 'option');
       if (option) store.select(option.id);
     } else if (step === DECISION.rateReason) {
@@ -448,7 +473,7 @@ export function Tutorial() {
   const { tutorial, position } = useTutorial();
   const store = getStore();
   const visible = !!tutorial && !state.home && !state.dialog && !state.modal;
-  const panelRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Launched from the home screen and the Apua menu; a store subscription advances the steps.
   useEffect(() => {
@@ -538,7 +563,7 @@ export function Tutorial() {
     state.inlineEditId,
   ]);
 
-  if (!visible || !tutorial) return <aside id="tutorialPanel" className="tutorial-panel" hidden />;
+  if (!visible || !tutorial) return <div id="tutorialPanel" className="tutorial-panel" hidden />;
 
   const def = TUTORIALS[tutorial.id];
   const end = lastStep(tutorial.id);
@@ -602,7 +627,7 @@ export function Tutorial() {
     update({ position: clampToWindow(panel, rect.left + delta[0], rect.top + delta[1]) });
   };
   return (
-    <aside
+    <div
       id="tutorialPanel"
       ref={panelRef}
       className="tutorial-panel"
@@ -696,6 +721,6 @@ export function Tutorial() {
           {tr(complete ? 'tutorialDone' : 'tutNext')}
         </button>
       </div>
-    </aside>
+    </div>
   );
 }

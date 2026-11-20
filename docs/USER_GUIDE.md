@@ -19,7 +19,7 @@ From these the **argument balance −100…+100** (*Perustelutulos*) is computed
 
 ## 2. Starting
 
-The **home screen** (*Aloitussivu*) always opens first (and from the ⌂ button in the top bar). It has the language and theme selects, *Tietoa menetelmästä* and, at the foot of the page, *Tutustu menetelmään* (both open the method's introduction: what it gives, how it works in three stages and two questions, what it suits and what it does not promise, with buttons to start the walkthrough or open an example; the acronyms are behind the WITT logo) and these actions:
+The **home screen** (*Aloitussivu*) always opens first (and from the ⌂ button in the top bar). It has the language and theme selects, *Tietoa menetelmästä* and, under the lead, *Tutustu menetelmään* (both take you to the method's introduction further down the same page: what you get, how it works, what it suits and what it does not promise; it ends with *Aloita opastus* and *Kokeile esimerkkiä*). The line under the lead says whom the tool is for: on your own or together, for individuals, families, teams, communities and organisations and these actions:
 
 - *Jatka edellistä työtä* (continue) – shown when the browser holds a readable save; opens it in the workspace.
 - *+ Luo uusi asiakirja* (new document) – opens *Uusi työ*: *Tyhjä argumenttipuu* (blank argument tree), *Tyhjä päätöspuu* (blank decision tree) or *Luo uusi puu AI:n avulla* (new tree with AI). With work open, starting anew asks first and replaces the current work.
@@ -40,11 +40,13 @@ When the browser holds unfinished work, the main button is *Jatka: <title>* (con
 **Walkthroughs.** When the app opens, the home screen asks whether to take the walkthrough: *Aloita opastus* (start), *Ei nyt* (not now; asked again next time) or *Älä kysy enää* (don't ask again). The walkthroughs are always in the Help menu, and there are four:
 
 - *Opastettu harjoitus* (the basics, 16 steps): you start by doing, adding and wording a supporting and an opposing reason with the card's own buttons (*Kartoita*); then three steps show the left panel, the right panel and the panel toggles of the top bar (*Tutustu*; passed on a narrow screen); you switch to *Punnitse*, rate both reasons and hear what the assessment round is; you read the main claim's result (*Tulos*); you open the table, return to the tree and arrange a deliberately untidy tree (*Näkymät*). Every panel is shown when a walkthrough starts.
-- *Opastus: päätös vaihtoehtojen välillä* (deciding between options): change the document's type with the switch beside the title, add two options, give one a reason and rate it, and see where the options are compared and voted on.
+- *Opastus: päätös vaihtoehtojen välillä* (deciding between options): a decision document opens (*Where shall we go for the summer holiday?*) with two options in place. You add a third and name it (the walkthrough offers a name if you would rather not invent one), give one option a reason and rate it, and see where the options are compared and voted on.
 - *Opastus: useampi arvioija* (several assessors): add a second local assessor, rate the same reason as them and see where the views are compared.
 - *Opastus: yhteistyö verkossa* (working together online): where a session starts, how others join and what is left when it ends. This one uses your open document and replaces nothing.
 
 The instruction sits beside the part of the interface it talks about with an arrow pointing at it; the target is ringed. A step that asks you to do something moves on by itself when it is done; *Seuraava* (next) always moves on. *← Edellinen* (previous) and the phase chips of the instruction take you back to earlier steps, also when the walkthrough is finished; a step looked at again waits for *Seuraava*. *Näytä kohde* (show target) performs or focuses the step, × closes, and the ⠿ handle moves the instruction. The first two use a practice document (your current work is offered for saving first).
+
+**A language in the address.** `?lang=en` after the site's address (`de`, `es`, `fr`, `ru`, `zh-Hans`, `ja`, `ko`, `fi`) opens the page in that language for that visit, which is handy in a link to someone else. It does not change the language you have chosen yourself.
 
 ## 3. Mapping
 
@@ -275,6 +277,8 @@ Shortcuts never capture keys inside text fields. Help → *Pikanäppäimet* (`?`
 | `Alt` + arrows | Pan the view |
 | `Ctrl/Cmd+Enter` (assessment round) | Save and next |
 | Arrows (on a ⠿ handle) | Move the view-settings or practice panel by 24 px |
+
+**Without a mouse.** In the workspace the first Tab stop is *Siirry sisältöön* (skip to content): it appears when it has the focus and moves the focus past the two rows of controls to the selected card, or to the table's search field. A screen reader reads the document's name as the page's heading and the toolbar and the view settings as named regions; the table lists every claim in reading order with its ratings as text.
 
 ## 9. Privacy
 

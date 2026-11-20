@@ -369,91 +369,6 @@ function AboutDialog() {
 /** What the method is for and how it works, for someone who has not used it yet (owner 2026-11-20, S-15): the home
  * screen's "Tutustu menetelmään" used to open the tool's own help with its shortcuts. Benefits first, then the
  * three stages and the two questions, where it fits and what it does not promise, and a way to start. */
-function MethodDialog() {
-  const t = useTranslator();
-  const store = getStore();
-  const close = () => store.openDialog(null);
-  const gains = [
-    ['methodGain1T', 'methodGain1'],
-    ['methodGain2T', 'methodGain2'],
-    ['methodGain3T', 'methodGain3'],
-    ['methodGain4T', 'methodGain4'],
-  ] as const;
-  const stages = [
-    ['homeStageMap', 'homeExplore'],
-    ['homeStageEvaluate', 'homeEvaluate'],
-    ['homeStageDecide', 'homeDecide'],
-  ] as const;
-  return (
-    <Modal
-      open
-      onClose={close}
-      title={t('methodTitle')}
-      id="methodDialog"
-      testId="method-dialog"
-      className="action-dialog method-dialog"
-    >
-      <p className="method-lead">{t('methodLead')}</p>
-      <section aria-labelledby="methodGainHeading">
-        <h3 id="methodGainHeading">{t('methodGainHeading')}</h3>
-        <ul className="method-gains">
-          {gains.map(([title, text]) => (
-            <li key={title}>
-              <strong>{t(title)}</strong>
-              <span>{t(text)}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section aria-labelledby="methodHowHeading">
-        <h3 id="methodHowHeading">{t('methodHowHeading')}</h3>
-        <ol className="method-stages">
-          {stages.map(([title, text], i) => (
-            <li key={title}>
-              <span className="feature-number" aria-hidden="true">{`0${i + 1}`}</span>
-              <strong>{t(title)}</strong>
-              <span>{t(text)}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="method-questions">{t('methodTwoQuestions')}</p>
-      </section>
-      <section aria-labelledby="methodFitHeading">
-        <h3 id="methodFitHeading">{t('methodFitHeading')}</h3>
-        <p>{t('methodFit')}</p>
-      </section>
-      <section aria-labelledby="methodNotHeading">
-        <h3 id="methodNotHeading">{t('methodNotHeading')}</h3>
-        <p>{t('methodNot')}</p>
-      </section>
-      <p className="method-privacy">{t('methodPrivacy')}</p>
-      <div className="dialog-actions">
-        <button
-          type="button"
-          className="btn primary"
-          id="btnMethodTutorial"
-          onClick={() => {
-            close();
-            window.dispatchEvent(new CustomEvent('witt-tutorial'));
-          }}
-        >
-          {t('tutInviteStart')}
-        </button>
-        <button
-          type="button"
-          className="btn quiet"
-          id="btnMethodDemo"
-          onClick={() => store.openDialog('examples')}
-        >
-          {t('homeDemo')}
-        </button>
-        <button type="button" className="btn quiet" id="btnMethodClose" onClick={close}>
-          {t('close')}
-        </button>
-      </div>
-    </Modal>
-  );
-}
 function PlaceholderDialog({ name }: { name: string }) {
   const t = useTranslator();
   const store = getStore();
@@ -485,7 +400,6 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
       <ExamplesDialog />
       {state.dialog === 'newWork' ? <NewWorkDialog /> : null}
       {state.dialog === 'about' ? <AboutDialog /> : null}
-      {state.dialog === 'method' ? <MethodDialog /> : null}
       {state.dialog === 'help' ? <HelpDialog onShortcutsChanged={onShortcutsChanged} /> : null}
       {state.dialog === 'library' ? <LibraryDialog /> : null}
       {state.dialog === 'visualExport' ? <VisualExportDialog frame={frame} /> : null}
@@ -499,7 +413,6 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
       ![
         'newWork',
         'about',
-        'method',
         'help',
         'people',
         'vote',

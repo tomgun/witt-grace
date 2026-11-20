@@ -60,7 +60,8 @@ export const TUTORIALS: Record<TutorialId, TutorialDef> = {
     ],
     next: { id: 'decision', label: 'tutNextDecision' },
   },
-  // The other type of document: the same building and weighing, under options instead of one claim.
+  // The other type of document: the same building and weighing, under options instead of one claim. It opens as a
+  // decision with two options in place, so the first thing to do is to add a third (owner 2026-11-20).
   decision: {
     title: 'tutMenuDecision',
     phases: ['tutPhaseOptions', 'evaluate', 'tutPhaseCompare'],
@@ -124,8 +125,8 @@ export const BASICS = {
 } as const;
 export const DECISION = {
   intro: 0,
-  switchType: 1,
-  addOptions: 2,
+  addOption: 1,
+  nameOption: 2,
   addReason: 3,
   rateReason: 4,
   compare: 5,
@@ -144,6 +145,8 @@ export interface TutorialRun {
   rootId: string;
   supportId: string | null;
   opposeId: string | null;
+  /** `decision`: the option the person added to the two the practice document starts with. */
+  optionId: string | null;
   /** `people`: who was rating when it began, and the assessor added during it. */
   firstUserId: string;
   secondUserId: string | null;
@@ -165,7 +168,9 @@ export interface TutorialFacts {
 }
 
 /** The titles a new reason carries until it is written (commands.ts); a step asks for the person's own words. */
-const UNNAMED = ['Puoltava argumentti', 'Vastustava argumentti'];
+const UNNAMED = ['Puoltava argumentti', 'Vastustava argumentti', 'Uusi päätösvaihtoehto'];
+/** The options the decision practice starts with: the person adds one more to them. */
+export const DECISION_GIVEN_OPTIONS = 2;
 
 const rated = (project: Project, nodeId: string | null, userId: string): boolean =>
   !!nodeId &&
@@ -216,10 +221,15 @@ function advanceFrom(run: TutorialRun, facts: TutorialFacts): TutorialRun {
       next = { ...next, step: BASICS.arrange };
   } else if (run.id === 'decision') {
     const options = project.nodes.filter((n) => n.kind === 'option');
-    if (next.step === DECISION.switchType && project.mode === 'decision')
-      next = { ...next, step: DECISION.addOptions };
-    if (next.step === DECISION.addOptions && options.length >= 2)
-      next = { ...next, step: DECISION.addReason };
+    if (next.step === DECISION.addOption) {
+      // The practice document is a decision with two options already: the third one is the person's.
+      const added = options[DECISION_GIVEN_OPTIONS];
+      if (added) next = { ...next, optionId: added.id, step: DECISION.nameOption };
+    }
+    if (next.step === DECISION.nameOption && next.optionId) {
+      const node = project.nodes.find((n) => n.id === next.optionId);
+      if (node && !UNNAMED.includes(node.title)) next = { ...next, step: DECISION.addReason };
+    }
     if (next.step === DECISION.addReason) {
       // A reason directly under an option: the one that will be rated in the next step.
       const reason = project.nodes.find(

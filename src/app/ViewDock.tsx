@@ -270,6 +270,7 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
       id="viewDock"
       ref={ref}
       className={`view-dock${view.dockCollapsed ? ' is-collapsed' : ''}`}
+      role="region"
       aria-label={t('viewSettingsButton')}
       style={pos ? { left: pos.left, top: pos.top } : undefined}
       data-testid="view-dock"

@@ -745,7 +745,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     const preview = previewHandlers(node.id, '.node-title', store.setClaimPreview);
     const dragging = state.draggingLibraryReason;
     return (
-      <article
+      <div
         key={node.id}
         className={classes.join(' ')}
         data-id={node.id}
@@ -996,7 +996,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             }}
           />
         ) : null}
-      </article>
+      </div>
     );
   };
 

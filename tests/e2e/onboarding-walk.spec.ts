@@ -402,11 +402,12 @@ test('the walkthrough for working together online points at the menu and waits f
 });
 
 /**
- * must: the walkthrough for a decision starts from an argument document, has its type changed with the switch beside
- *       the title, two options added, a reason put under one and rated, and then shows where the options are
- *       compared and where the vote is; each step is passed only by what it asks for (owner 2026-11-19, S-15)
- * red-against: the type step passed without the type changing, one option counted as a choice, the comparison
- *              pointed at while another card is selected
+ * must: the walkthrough for a decision opens a decision document with a question and two options in place; the
+ *       person adds a third and names it (the step offers a name), puts a reason under an option and rates it, and
+ *       is then shown where the options are compared and where the vote is; each step is passed only by what it
+ *       asks for (owner 2026-11-19 and 2026-11-20, S-15)
+ * red-against: the practice opening as an argument document, the two given options counted as the person's, the
+ *              unnamed option counted as named, the comparison pointed at while another card is selected
  */
 test('the walkthrough for a decision follows what is done', async ({ page }, testInfo) => {
   test.skip(
@@ -419,21 +420,35 @@ test('the walkthrough for a decision follows what is done', async ({ page }, tes
   await page.locator('#replaceForget').click();
   const panel = page.locator('#tutorialPanel');
   const progress = page.locator('#tutorialProgress');
+  const text = page.locator('#tutorialText');
   await expect(panel).toHaveAttribute('data-tutorial', 'decision');
   await expect(progress).toHaveText('Vaihe 1/7');
-  await expect(page.locator('#modeArgument')).toHaveAttribute('aria-pressed', 'true');
+  // A decision from the start: the question and two options are there.
+  await expect(page.locator('#modeDecision')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.node.is-root .node-title')).toHaveText('Minne lähdemme kesälomalle?');
+  await expect(page.locator('.node[data-relation="option"] .node-title')).toHaveText([
+    'Mökki järven rannalla',
+    'Kaupunkiloma',
+  ]);
+  await expect(text).toContainText('Tämä asiakirja on tyyppiä Päätös');
   await expect(page.locator('#docTypeMenu')).toHaveClass(/tutorial-highlight/);
   await page.locator('#tutorialNext').click();
-  await expect(progress).toHaveText('Vaihe 2/7');
 
-  await page.locator('#modeDecision').click();
-  await expect(page.locator('#modeDecision')).toHaveAttribute('aria-pressed', 'true');
-  await expect(progress).toHaveText('Vaihe 3/7');
+  await expect(progress).toHaveText('Vaihe 2/7');
+  await expect(text).toContainText('Lisää kolmas');
   await expect(page.locator('#btnOption')).toHaveClass(/tutorial-highlight/);
-  await addNamed(page, '#btnOption', 'Neljä päivää');
+  // "Näytä kohde" selects the question and focuses its own + Päätösvaihtoehto button.
+  await page.locator('#tutorialTarget').click();
+  await expect(page.locator('.node.is-root .node-add.option')).toBeFocused();
+  await page.keyboard.press('Enter');
+  const editor = page.locator('.node-inline-editor');
+  await expect(editor).toBeFocused();
+  // Added but not named: the step that asks for a name offers one.
   await expect(progress).toHaveText('Vaihe 3/7');
-  await page.locator('.node.is-root .node-title').click();
-  await addNamed(page, '#btnOption', 'Viisi päivää');
+  await expect(text).toContainText('kirjoita vaikka: Vaellus tunturissa');
+  await editor.fill('Vaellus tunturissa');
+  await editor.press('Enter');
+  await expect(page.locator('.node[data-relation="option"]')).toHaveCount(3);
   await expect(progress).toHaveText('Vaihe 4/7');
 
   await page.locator('#tutorialTarget').click();

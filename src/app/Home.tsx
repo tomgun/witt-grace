@@ -26,8 +26,26 @@ export function Home() {
   }, []);
   const continueWork = () => store.setHome(false);
   const invite = useTutorialInvite();
+  // The method is told on the page itself (owner 2026-11-20, S-15): the links take the reader to it.
+  const toMethod = () => {
+    const heading = document.getElementById('homeMethodTitle');
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    heading?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+    heading?.focus({ preventScroll: true });
+  };
+  const gains = [
+    ['methodGain1T', 'methodGain1'],
+    ['methodGain2T', 'methodGain2'],
+    ['methodGain3T', 'methodGain3'],
+    ['methodGain4T', 'methodGain4'],
+  ] as const;
+  const stages = [
+    ['homeStageMap', 'homeExplore'],
+    ['homeStageEvaluate', 'homeEvaluate'],
+    ['homeStageDecide', 'homeDecide'],
+  ] as const;
   return (
-    <section id="homeScreen" className="home-screen" aria-labelledby="homeTitle" data-testid="home">
+    <div id="homeScreen" className="home-screen" data-testid="home">
       <nav className="home-nav" aria-label="WITT">
         <button
           type="button"
@@ -53,12 +71,7 @@ export function Home() {
         <div className="home-nav-actions">
           <LanguageSelect id="homeLocaleSelect" />
           <ThemeSelect id="homeThemeSelect" />
-          <button
-            type="button"
-            className="btn quiet"
-            id="btnHomeAbout"
-            onClick={() => store.openDialog('method')}
-          >
+          <button type="button" className="btn quiet" id="btnHomeAbout" onClick={toMethod}>
             {t('homeAbout')}
           </button>
         </div>
@@ -72,6 +85,12 @@ export function Home() {
               <span className="home-hero-line accent">{t('homeHeroSecond')}</span>
             </h1>
             <p className="home-lead">{t('homeLead')}</p>
+            <p className="home-audience">{t('homeAudience')}</p>
+            <p className="home-method-link">
+              <button type="button" id="btnHomeHelp" onClick={toMethod}>
+                {t('homeLearn')} <span aria-hidden="true">↓</span>
+              </button>
+            </p>
             {invite ? (
               // Asked, not imposed (owner 2026-11-19, S-15): a card on the page, three plain answers, and where to
               // find the walkthroughs later, so that saying no costs nothing.
@@ -209,32 +228,62 @@ export function Home() {
             </div>
           </div>
         </div>
-        <div className="home-features" aria-label={t('homeStagesLabel')}>
-          <article>
-            <span className="feature-number">01</span>
-            <h2>{t('homeStageMap')}</h2>
-            <p>{t('homeExplore')}</p>
-          </article>
-          <article>
-            <span className="feature-number">02</span>
-            <h2>{t('homeStageEvaluate')}</h2>
-            <p>{t('homeEvaluate')}</p>
-          </article>
-          <article>
-            <span className="feature-number">03</span>
-            <h2>{t('homeStageDecide')}</h2>
-            <p>{t('homeDecide')}</p>
-          </article>
-        </div>
-        <div className="home-bottom">
-          <span>
-            <b>{t('methodName')}</b> <span>{t('homeMethodNote')}</span>
-          </span>
-          <button type="button" id="btnHomeHelp" onClick={() => store.openDialog('method')}>
-            {t('homeLearn')}
-          </button>
-        </div>
+        <section className="home-method" id="homeMethod" aria-labelledby="homeMethodTitle">
+          <h2 id="homeMethodTitle" tabIndex={-1}>
+            {t('methodTitle')}
+          </h2>
+          <p className="method-lead">{t('methodLead')}</p>
+          <h3>{t('methodGainHeading')}</h3>
+          <ul className="method-gains">
+            {gains.map(([title, text]) => (
+              <li key={title}>
+                <strong>{t(title)}</strong>
+                <span>{t(text)}</span>
+              </li>
+            ))}
+          </ul>
+          <h3 id="homeStagesHeading">{t('methodHowHeading')}</h3>
+          <ol className="home-features" aria-labelledby="homeStagesHeading">
+            {stages.map(([title, text], i) => (
+              <li key={title}>
+                <span className="feature-number" aria-hidden="true">{`0${i + 1}`}</span>
+                <h4>{t(title)}</h4>
+                <p>{t(text)}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="method-questions">{t('methodTwoQuestions')}</p>
+          <div className="method-pair">
+            <div>
+              <h3>{t('methodFitHeading')}</h3>
+              <p>{t('methodFit')}</p>
+            </div>
+            <div>
+              <h3>{t('methodNotHeading')}</h3>
+              <p>{t('methodNot')}</p>
+            </div>
+          </div>
+          <p className="method-privacy">{t('methodPrivacy')}</p>
+          <div className="home-method-actions">
+            <button
+              type="button"
+              className="btn primary"
+              id="btnMethodTutorial"
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-tutorial'))}
+            >
+              {t('tutInviteStart')}
+            </button>
+            <button
+              type="button"
+              className="btn quiet"
+              id="btnMethodDemo"
+              onClick={() => store.openDialog('examples')}
+            >
+              {t('homeDemo')}
+            </button>
+          </div>
+        </section>
       </main>
-    </section>
+    </div>
   );
 }

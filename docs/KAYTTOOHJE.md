@@ -19,7 +19,7 @@ Niistä lasketaan **Perustelutulos −100…+100**, jossa 0 on neutraali. Sanall
 
 ## 2. Aloittaminen
 
-**Aloitussivu** avautuu aina ensin (ja ⌂-painikkeesta yläpalkista). Siinä ovat kieli- ja ulkoasuvalinnat, **Tietoa menetelmästä** ja sivun alareunan **Tutustu menetelmään** (molemmat avaavat menetelmän esittelyn: mitä siitä saa, miten se toimii kolmessa vaiheessa ja kahdella kysymyksellä, mihin se sopii ja mitä se ei lupaa; esittelystä voi aloittaa opastuksen tai avata esimerkin; lyhenteiden selitykset saa WITT-logosta) ja painikkeet:
+**Aloitussivu** avautuu aina ensin (ja ⌂-painikkeesta yläpalkista). Siinä ovat kieli- ja ulkoasuvalinnat, **Tietoa menetelmästä** ja johdantotekstin alla **Tutustu menetelmään** (molemmat vievät samalla sivulla alempana olevaan menetelmän esittelyyn: mitä siitä saa, miten se toimii, mihin se sopii ja mitä se ei lupaa; esittelyn lopussa ovat **Aloita opastus** ja **Kokeile esimerkkiä**). Johdannon alla lukee myös, kenelle työkalu on: yksin tai yhdessä, yksilöille, perheille, tiimeille, yhteisöille ja organisaatioille ja painikkeet:
 
 - **Jatka edellistä työtä** – näkyy, kun selaimessa on luettava tallennus; avaa sen työtilaan.
 - **+ Luo uusi asiakirja** – avaa **Uusi työ** -ikkunan: *Tyhjä argumenttipuu* (ensisijainen), *Tyhjä päätöspuu* tai *Luo uusi puu AI:n avulla*. Tyhjä asiakirja avautuu puunäkymässä pääväitteen otsikko valittuna muokattavaksi: kirjoita väite ja paina `Enter`. Jos sinulla on työ auki, uuden aloittaminen kysyy vahvistuksen ja korvaa nykyisen työn.
@@ -40,11 +40,13 @@ Kun selaimessa on keskeneräinen työ, pääpainike on **Jatka: <asiakirjan nimi
 **Opastukset.** Kun avaat sovelluksen, aloitussivu kysyy, käydäänkö opastus läpi: **Aloita opastus**, **Ei nyt** (kysytään seuraavalla kerralla uudelleen) tai **Älä kysy enää**. Opastukset löytyvät aina Apua-valikosta, ja niitä on neljä:
 
 - **Opastettu harjoitus** (perusteet, 16 vaihetta): aloitat tekemällä, eli lisäät ja kirjoitat puoltavan ja vastustavan perustelun kortin omilla painikkeilla (*Kartoita*); sitten kolme vaihetta esittelee vasemman paneelin, oikean paneelin ja yläpalkin paneelipainikkeet (*Tutustu*; kapealla näytöllä ne ohitetaan); vaihdat Punnitse-vaiheeseen, arvioit molemmat perustelut ja kuulet, mikä arviointikierros on (*Punnitse*); luet pääväitteen tuloksen (*Tulos*); avaat taulukon, palaat puuhun ja järjestät tahallaan sekoitetun puun (*Näkymät*). Opastuksen alkaessa kaikki paneelit näytetään.
-- **Opastus: päätös vaihtoehtojen välillä**: vaihdat asiakirjan tyypin nimen vieressä olevasta kytkimestä, lisäät kaksi vaihtoehtoa, annat yhdelle perustelun ja arvioit sen, ja näet, missä vaihtoehtoja verrataan ja mistä äänestetään.
+- **Opastus: päätös vaihtoehtojen välillä**: avautuu valmis päätösasiakirja (*Minne lähdemme kesälomalle?*), jossa on jo kaksi vaihtoehtoa. Lisäät kolmannen ja nimeät sen (opastus ehdottaa nimeä, jos et halua keksiä), annat yhdelle vaihtoehdolle perustelun ja arvioit sen, ja näet, missä vaihtoehtoja verrataan ja mistä äänestys löytyy.
 - **Opastus: useampi arvioija**: lisäät toisen paikallisen arvioijan, arvioit saman perustelun hänen nimissään ja näet, missä näkökulmia verrataan.
 - **Opastus: yhteistyö verkossa**: mistä yhteistyö aloitetaan, miten muut liittyvät ja mitä jää, kun se päätetään. Tämä opastus käyttää avointa asiakirjaasi eikä korvaa sitä.
 
 Ohje asettuu sen käyttöliittymän osan viereen, josta se puhuu, ja nuoli osoittaa kohteeseen; kohde on kehystetty. Vaihe, joka pyytää tekemään jotain, etenee itsestään, kun se on tehty; **Seuraava** vie aina eteenpäin. **← Edellinen** ja ohjeen vaihemerkit (Kartoita, Tutustu, Punnitse…) vievät takaisin aiempiin vaiheisiin, myös kun opastus on valmis; uudelleen katsottu vaihe odottaa painiketta Seuraava. **Näytä kohde** tekee tai kohdistaa vaiheen, × sulkee, ja ⠿-kahvasta ohjeen voi siirtää. Kaksi ensimmäistä opastusta käyttävät harjoitusasiakirjaa (nykyinen työ kysytään ensin talteen).
+
+**Kieli osoitteessa.** Sivuston osoitteen perään kirjoitettu `?lang=en` (`de`, `es`, `fr`, `ru`, `zh-Hans`, `ja`, `ko`, `fi`) avaa sivun sillä kielellä sen käynnin ajaksi, mikä on kätevää, kun lähetät linkin jollekulle. Se ei muuta itse valitsemaasi kieltä.
 
 ## 3. Kartoittaminen
 
@@ -275,6 +277,8 @@ Pikanäppäimet eivät kaappaa näppäimiä tekstikentissä. Apua → **Pikanäp
 | `Alt` + nuolet | Siirrä näkymää |
 | `Ctrl/Cmd+Enter` (arviointikierros) | Tallenna ja seuraava |
 | Nuolet (⠿-kahva) | Siirrä Näkymäasetukset- tai harjoituspaneelia 24 px |
+
+**Ilman hiirtä.** Työtilassa ensimmäinen sarkainpysähdys on **Siirry sisältöön**: se tulee näkyviin, kun kohdistus on siinä, ja vie kohdistuksen kahden ohjainrivin ohi valittuun korttiin tai taulukon hakukenttään. Ruudunlukija lukee asiakirjan nimen sivun otsikkona ja työkalurivin ja näkymäasetukset nimettyinä alueina; taulukko luettelee jokaisen väitteen lukujärjestyksessä arvioineen tekstinä.
 
 ## 9. Yksityisyys
 

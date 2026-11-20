@@ -99,42 +99,45 @@ test('importing and exporting additions: one goal at a time', async ({ page }) =
 });
 
 /**
- * must: the home screen's "Tutustu menetelmään" and "Tietoa menetelmästä" open the method's introduction, not the
- *       tool's help: benefits first, then how it works, what it suits and what it does not promise, no keyboard
- *       shortcuts; it fits the screen's width; its first button starts the walkthrough (S-15, owner 2026-11-20)
- * red-against: the link still opening the help dialog with its shortcut table, the introduction without a way to
- *              start, the text spilling sideways on a phone
+ * must: the method is told on the home screen itself (owner 2026-11-20, S-15): "Tutustu menetelmään" under the
+ *       lead and "Tietoa menetelmästä" in the top row take the reader to the section and its heading gets the
+ *       focus; the section tells benefits first, then how it works, what it suits and what it does not promise,
+ *       without keyboard shortcuts; the lead says whom the tool is for, alone or together; the page does not spill
+ *       sideways; the section's first button starts the walkthrough
+ * red-against: the link opening a dialog (or the help with its shortcut table) instead of the page's own text, the
+ *              introduction without a way to start, the text spilling sideways on a phone, the brand lines without
+ *              working together
  */
-test('"Tutustu menetelmään" introduces the method and leads to the walkthrough', async ({ page }) => {
+test('the home screen tells the method itself and leads to the walkthrough', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => window.localStorage.clear());
   await page.reload();
+  await expect(page.locator('.home-audience')).toHaveText(
+    'Yksin tai yhdessä: yksilöille, perheille, tiimeille, yhteisöille ja organisaatioille.'
+  );
+  const method = page.locator('#homeMethod');
+  const heading = page.locator('#homeMethodTitle');
   for (const link of ['#btnHomeAbout', '#btnHomeHelp']) {
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.locator(link).click();
-    await expect(page.locator('#methodDialog')).toBeVisible();
-    await page.locator('#btnMethodClose').click();
-    await expect(page.locator('#methodDialog')).toHaveCount(0);
+    await expect(heading).toBeFocused();
+    await expect(heading).toBeInViewport();
+    await expect(page.locator('dialog[open]')).toHaveCount(0);
   }
-  await page.locator('#btnHomeHelp').click();
-  const dialog = page.locator('#methodDialog');
-  await expect(dialog.locator('h2')).toHaveText('GRACE-menetelmä: tee ajattelusta näkyvää');
-  await expect(dialog.locator('h3')).toHaveText([
+  await expect(heading).toHaveText('GRACE-menetelmä: tee ajattelusta näkyvää');
+  await expect(method.locator('h3')).toHaveText([
     'Mitä saat',
     'Näin se toimii',
     'Mihin se sopii',
     'Mitä se ei lupaa',
   ]);
-  await expect(dialog.locator('.method-gains li')).toHaveCount(4);
-  await expect(dialog.locator('.method-stages li strong')).toHaveText([
-    'Kartoita',
-    'Punnitse',
-    'Päätä yhdessä',
-  ]);
-  await expect(dialog).toContainText('Puuttuva arvio ei ole nolla');
-  await expect(dialog.locator('kbd')).toHaveCount(0);
-  await expect(page.locator('#helpDialog')).toHaveCount(0);
-  expect(await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  await expect(method.locator('.method-gains li')).toHaveCount(4);
+  await expect(method.locator('.home-features li h4')).toHaveText(['Kartoita', 'Punnitse', 'Päätä yhdessä']);
+  await expect(method).toContainText('Puuttuva arvio ei ole nolla');
+  await expect(method.locator('kbd')).toHaveCount(0);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)
+  ).toBe(true);
   await page.locator('#btnMethodTutorial').click();
-  await expect(dialog).toHaveCount(0);
   await expect(page.locator('#tutorialPanel')).toBeVisible();
 });

@@ -34,7 +34,11 @@ const chunks = output.filter((file) => file.type === 'chunk');
 const assets = output.filter((file) => file.type === 'asset');
 const html = assets.find((file) => file.fileName === 'index.html');
 const styles = assets.filter((file) => file.fileName.endsWith('.css'));
-const strays = assets.filter((file) => file !== html && !styles.includes(file) && file.fileName !== 'ai.txt');
+// Files of the published site only: the AI brief and what search engines read.
+const SITE_ONLY = ['ai.txt', 'robots.txt', 'sitemap.xml'];
+const strays = assets.filter(
+  (file) => file !== html && !styles.includes(file) && !SITE_ONLY.includes(file.fileName)
+);
 if (chunks.length !== 1 || !html || styles.length !== 1 || strays.length) {
   console.error(
     `build-static: expected one script, one stylesheet and index.html; got ${chunks.length} scripts, ` +

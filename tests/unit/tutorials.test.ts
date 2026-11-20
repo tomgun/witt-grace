@@ -51,6 +51,7 @@ const start = (id: TutorialRun['id'], over: Partial<TutorialRun> = {}): Tutorial
   rootId: 'T',
   supportId: null,
   opposeId: null,
+  optionId: null,
   firstUserId: 'u1',
   secondUserId: null,
   messShown: false,
@@ -185,15 +186,21 @@ test('going back to a step looks at it again: the document no longer moves it on
   assert.equal(advance(front, facts(p)).step, BASICS.addOppose);
 });
 
-test('decision: the type, two options, a reason under an option, its rating', () => {
-  let r = start('decision', { step: DECISION.switchType });
-  assert.equal(advance(r, facts(blank)).step, DECISION.switchType);
-  let p = run(blank, { type: 'project.setMode', mode: 'decision' });
+test('decision: a third option beside the two given ones, its name, a reason under an option, its rating', () => {
+  // The practice document is a decision with two options in place (owner 2026-11-20).
+  let p = run(
+    blank,
+    { type: 'project.setMode', mode: 'decision' },
+    { type: 'node.add', id: 'O1', parentId: 'T', relation: 'option', title: 'Mökki järven rannalla' },
+    { type: 'node.add', id: 'O2', parentId: 'T', relation: 'option', title: 'Kaupunkiloma' }
+  );
+  let r = start('decision', { step: DECISION.addOption });
+  assert.equal(advance(r, facts(p)).step, DECISION.addOption, 'the given options are not the person’s');
+  p = run(p, { type: 'node.add', id: 'O3', parentId: 'T', relation: 'option' });
   r = advance(r, facts(p));
-  assert.equal(r.step, DECISION.addOptions);
-  p = run(p, { type: 'node.add', id: 'O1', parentId: 'T', relation: 'option', title: 'Neljä päivää' });
-  assert.equal(advance(r, facts(p)).step, DECISION.addOptions, 'one option is not a choice');
-  p = run(p, { type: 'node.add', id: 'O2', parentId: 'T', relation: 'option', title: 'Viisi päivää' });
+  assert.deepEqual([r.step, r.optionId], [DECISION.nameOption, 'O3']);
+  assert.equal(advance(r, facts(p)).step, DECISION.nameOption, 'the default title is not a name');
+  p = run(p, { type: 'node.edit', id: 'O3', title: 'Vaellus tunturissa' });
   r = advance(r, facts(p));
   assert.equal(r.step, DECISION.addReason);
   p = run(p, {

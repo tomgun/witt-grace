@@ -12,6 +12,8 @@ import {
 } from '../domain/index.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
 import { DOC_LINK_LIMIT, DOC_LINK_PREFIX, buildDocLink, readDocLink } from '../lib/inflate.ts';
+import { DEFAULT_LANGUAGE } from '../lib/i18n/i18n.ts';
+import { applyPageHead } from '../lib/pageHead.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import { recordEvent } from '../lib/workspaceMeta.ts';
 import {
@@ -77,13 +79,19 @@ export function App() {
     const body = document.body;
     body.dataset.theme = state.appearance;
     document.documentElement.lang = state.language;
+    applyPageHead(document, window.location, {
+      title: t('seoTitle'),
+      description: t('seoDescription'),
+      language: state.language,
+      defaultLanguage: DEFAULT_LANGUAGE,
+    });
     body.classList.toggle('home-active', state.home);
     body.classList.toggle('witt-focus', state.focusOnly && !state.home);
     for (const zone of ZONES) {
       body.classList.toggle(`zone-${zone}-hidden`, !zones[zone]);
       body.classList.toggle(`zone-${zone}-visible`, zones[zone]);
     }
-  }, [state.appearance, state.language, state.home, state.focusOnly, zones]);
+  }, [state.appearance, state.language, state.home, state.focusOnly, zones, t]);
 
   // File flows (also reachable from the home screen and Ctrl/Cmd+S).
   useEffect(() => {

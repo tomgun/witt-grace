@@ -106,6 +106,24 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   };
   return (
     <header className="topbar" data-testid="topbar">
+      {/* First in the tab order, seen only with the focus on it: past the two rows of controls to the selected card
+          or the table (accessibility check 2026-11-20, S-15). */}
+      <button
+        type="button"
+        className="skip-link"
+        id="btnSkipToContent"
+        onClick={() =>
+          // The selected card of the tree, or the table's search field: the main area itself is not made
+          // focusable, because a press on a card's text would then move the focus to it and away from the card.
+          document
+            .querySelector<HTMLElement>('#nodesLayer .node.selected, #tableSearch')
+            ?.focus({ preventScroll: false })
+        }
+      >
+        {t('skipToContent')}
+      </button>
+      {/* The page's heading for a screen reader: the workspace has no visible one (accessibility check 2026-11-20). */}
+      <h1 className="visually-hidden" id="workspaceHeading">{`WITT: ${state.project.title}`}</h1>
       <div className="brand" aria-label="WITT">
         <button
           type="button"

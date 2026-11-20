@@ -11,6 +11,7 @@ import {
 } from '../domain/index.ts';
 import type { Command, ImportReport, Mode, Project, RejectReason } from '../domain/index.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
+import { languageFromSearch } from '../lib/pageHead.ts';
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import {
@@ -69,7 +70,6 @@ export type DialogName =
   | 'help'
   | 'examples'
   | 'about'
-  | 'method'
   | 'newWork'
   | 'aiDraft'
   | 'aiReview'
@@ -210,11 +210,18 @@ export function createStore(
   const loaded = loadProject(store);
   const initialProject = loaded.ok ? withOfferedScoring(loaded.project) : blankProject('argument');
   const savedLanguage = readPreference(store, LOCALE_KEY);
+  // An address may name its language (`?lang=en`, the form the sitemap lists): it wins for this visit and is not
+  // stored, so the person's own choice comes back on the bare address.
+  const askedLanguage = typeof window === 'undefined' ? null : languageFromSearch(window.location.search);
   let state: AppState = {
     project: initialProject,
     selectedId: (rootNode(initialProject) as { id: string }).id,
     actorId: restoreActor(store, initialProject),
-    language: isLanguage(savedLanguage) ? savedLanguage : DEFAULT_LANGUAGE,
+    language: isLanguage(askedLanguage)
+      ? askedLanguage
+      : isLanguage(savedLanguage)
+        ? savedLanguage
+        : DEFAULT_LANGUAGE,
     messages: FI,
     appearance: effectiveAppearance(store, initialProject),
     view: readView(store, width),

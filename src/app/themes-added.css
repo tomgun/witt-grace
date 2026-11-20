@@ -117,7 +117,7 @@ body[data-theme='terminal'] .edge-oppose {
 body[data-theme='terminal'] .home-screen {
   background: radial-gradient(ellipse at 50% 30%, #062a12, #010702 75%);
 }
-body[data-theme='terminal'] :is(.home-visual, .home-features article, .visual-root, .visual-node) {
+body[data-theme='terminal'] :is(.home-visual, .home-features li, .visual-root, .visual-node) {
   background: var(--surface);
   border-color: var(--border);
   border-radius: 0;
@@ -176,7 +176,7 @@ body[data-theme='ascii']
     .node-collapse,
     .node-delete,
     .home-visual,
-    .home-features article
+    .home-features li
   ) {
   border-radius: 0;
   box-shadow: none;
@@ -331,7 +331,7 @@ body[data-theme='comic']
     .node-add,
     .node-collapse,
     .home-visual,
-    .home-features article,
+    .home-features li,
     .visual-root,
     .visual-node
   ) {

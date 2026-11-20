@@ -313,7 +313,7 @@ export function TableView({ frame }: { frame: Frame }) {
       evaluate && node.kind !== 'decision' && node.kind !== 'group' ? mobileMetrics(ctx, t, node) : null;
     const detail = expanded ? assessmentDetails(project, node.id) : null;
     return (
-      <article
+      <div
         key={node.id}
         className={`mobile-card${state.selectedId === node.id ? ' is-selected' : ''}`}
         role="listitem"
@@ -366,7 +366,7 @@ export function TableView({ frame }: { frame: Frame }) {
             ) : null}
           </div>
         ) : null}
-      </article>
+      </div>
     );
   };
 

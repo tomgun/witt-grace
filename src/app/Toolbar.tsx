@@ -103,6 +103,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
     <>
       <div
         className="toolbar witt-simplified-toolbar"
+        role="region"
         aria-label={t('toolbarEditGroup')}
         data-testid="toolbar"
       >

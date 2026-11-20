@@ -8,7 +8,19 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' wss:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
     />
-    <title>WITT · GRACE</title>
+    <title>WITT – argumenttipuu ja päätöstyökalu · GRACE-menetelmä</title>
+    <meta
+      name="description"
+      content="Ilmainen selaintyökalu: pura väite tai päätös perusteluiksi, arvioi niiden uskottavuus ja vaikutus ja katso, mihin perustelut kallistuvat. Yksin tai yhdessä, ilman kirjautumista; työ pysyy omassa selaimessasi."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WITT" />
+    <meta property="og:title" content="WITT – argumenttipuu ja päätöstyökalu · GRACE-menetelmä" />
+    <meta
+      property="og:description"
+      content="Ilmainen selaintyökalu: pura väite tai päätös perusteluiksi, arvioi niiden uskottavuus ja vaikutus ja katso, mihin perustelut kallistuvat. Yksin tai yhdessä, ilman kirjautumista; työ pysyy omassa selaimessasi."
+    />
+    <!-- site-head -->
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%235251bd'/%3E%3Cpath d='M8 9l4 14 4-9 4 9 4-14' fill='none' stroke='white' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E"
@@ -16,6 +28,21 @@
   </head>
   <body data-theme="light">
     <div id="app"></div>
+    <noscript>
+      <h1>WITT – GRACE-menetelmä</h1>
+      <p>
+        WITT on selaimessa toimiva työkalu argumenttipuille ja päätöksille: pura väite tai päätös
+        perusteluiksi, arvioi jokaisen perustelun uskottavuus (0–100 %) ja vaikutus (−5…+5) ja katso, mihin
+        perustelut kallistuvat. Yksin tai yhdessä: yksilöille, perheille, tiimeille, yhteisöille ja
+        organisaatioille. Työkalu tarvitsee JavaScriptin; ota se käyttöön selaimessasi.
+      </p>
+      <p lang="en">
+        WITT is a browser tool for argument trees and decisions, built on the GRACE Method: break a claim or a
+        decision into reasons, rate each reason's credence (0–100 %) and influence (−5…+5), and see where the
+        reasons lean. On your own or together: for individuals, families, teams, communities and
+        organisations. The tool needs JavaScript; please enable it in your browser.
+      </p>
+    </noscript>
     <script type="module" src="/src/app/main.tsx"></script>
   </body>
 </html>
