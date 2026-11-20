@@ -227,6 +227,9 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             >
               {t('saveFile')}
             </Item>
+            <Item id="btnCopyLink" onClick={() => window.dispatchEvent(new CustomEvent('witt-copy-link'))}>
+              {t('docLinkCopy')}
+            </Item>
             <Item id="btnExportVisual" onClick={() => store.openDialog('visualExport')}>
               {t('exportVisual')}
             </Item>

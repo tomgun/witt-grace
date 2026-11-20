@@ -11,6 +11,7 @@ import {
   starterToProject,
 } from '../domain/index.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
+import { DOC_LINK_LIMIT, DOC_LINK_PREFIX, buildDocLink, readDocLink } from '../lib/inflate.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import { recordEvent } from '../lib/workspaceMeta.ts';
 import {
@@ -89,7 +90,9 @@ export function App() {
     // The prototype's `openFile` (inv-ai-contrib §0.4): one preflight, then the route the file's format names.
     const openFile = async () => {
       const picked = await pickTextFile();
-      if (!picked) return;
+      if (picked) await openText(picked);
+    };
+    const openText = async (picked: { text: string; name: string }) => {
       try {
         if (textByteLength(picked.text) > FILE_SIZE_LIMIT) {
           store.showMessage(t('importTooLarge'));
@@ -148,10 +151,45 @@ export function App() {
       recordEvent(window.localStorage, 'lastExportedJson', filename, current.id, nowIso());
       store.notify({ kind: 'info', text: t('savedFile') });
     };
+    // A link that carries the whole document (owner 2026-11-20, S-15): made here, copied by the person's press.
+    const copyLink = async () => {
+      const json = JSON.stringify(JSON.parse(serializeProjectFile(store.get().project)));
+      const link = await buildDocLink(window.location.href, json);
+      if (link.length > DOC_LINK_LIMIT) {
+        store.showMessage(t('docLinkTooLarge', { length: link.length, limit: DOC_LINK_LIMIT }));
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(link);
+        store.showMessage(t('docLinkCopied', { length: link.length }));
+      } catch {
+        store.showMessage(t('docLinkCopyFailed'));
+      }
+    };
+    // Arriving by such a link: the fragment leaves the address at once, and the document goes through the same
+    // check and replacement dialog as an opened file.
+    const readLink = async () => {
+      const hash = window.location.hash;
+      if (!hash.startsWith(DOC_LINK_PREFIX)) return;
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      try {
+        const text = await readDocLink(hash, FILE_SIZE_LIMIT);
+        if (text !== null) await openText({ text, name: t('docLinkSource') });
+      } catch {
+        store.showMessage(t('docLinkBroken'));
+      }
+    };
     const onOpen = () => void openFile();
+    const onCopyLink = () => void copyLink();
+    const onHash = () => void readLink();
+    void readLink();
+    window.addEventListener('hashchange', onHash);
+    window.addEventListener('witt-copy-link', onCopyLink);
     window.addEventListener('witt-open-file', onOpen);
     window.addEventListener('witt-save-file', saveFile);
     return () => {
+      window.removeEventListener('hashchange', onHash);
+      window.removeEventListener('witt-copy-link', onCopyLink);
       window.removeEventListener('witt-open-file', onOpen);
       window.removeEventListener('witt-save-file', saveFile);
     };
