@@ -1,6 +1,6 @@
 // Builds the supporter packages (owner 2026-11-20): for each edition one self-contained `witt.html` that opens
 // from a disk without the site, with the examples and fonts inside and the edition's name shown beside the logo,
-// zipped with a README and the licence. Usage: npm run build:static  →  dist-static/witt-grace-<version>-<edition>.zip
+// zipped with a README and the licence. Usage: npm run build:static  →  dist-static/witt-<version>-<edition>.zip
 // Exit codes: 0 built · 1 the build did not have the expected shape.
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -61,7 +61,7 @@ const fill = (template: string, edition: string) =>
     .replaceAll('{{VERSION}}', version)
     .replaceAll('{{DATE}}', when.toISOString().slice(0, 10));
 for (const edition of EDITIONS) {
-  const name = `witt-grace-${version}-${edition}`;
+  const name = `witt-${version}-${edition}`;
   const files = [
     {
       name: 'witt.html',

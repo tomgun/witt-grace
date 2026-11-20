@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-20 — `UI_INVENTORY.md` — Owner's decision: the product's name is WITT, GRACE is the method's and stays described on the pages; the supporter packages are named `witt-<version>-<edition>` (were `witt-grace-…`).
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: a version number in About / the Apua menu so a file can be compared with the site (S-15): `#aboutVersion`, `#btnAboutMenu`, `version.json`; the footer's version read from `package.json`.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner's notes on the first impression (S-15): the method's introduction moves from the dialog `#methodDialog` onto the home screen (`#homeMethod`), the audience line `homeAudience`, the bottom row `.home-bottom` removed; the decision walkthrough opens a decision document with two options and asks for a third; page title, description, `?lang=`, robots.txt, sitemap.xml and og.png for search engines; accessibility fixes (workspace `h1`, named regions, `#btnSkipToContent`, cards as `div`, 24 px card buttons).
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: supporter packages sold as a goodwill purchase (a static version that works without the site), editions thinker / thoughtful / professional / community / organisation shown in the UI, and a few shortener services named in the link message; S-15: `npm run build:static`, the edition badge, examples carried in the page, the document link hidden on a page opened from disk.

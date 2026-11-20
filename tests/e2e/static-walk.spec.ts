@@ -15,7 +15,7 @@ import { expect, test } from '@playwright/test';
 import { ensureTree } from './helpers.ts';
 
 const version = (JSON.parse(readFileSync('package.json', 'utf8')) as { version: string }).version;
-const file = resolve(`dist-static/witt-grace-${version}-professional/witt.html`);
+const file = resolve(`dist-static/witt-${version}-professional/witt.html`);
 
 test('the package opens from disk, with its badge and its examples', async ({ page }) => {
   expect(existsSync(file), 'run `npm run build:static` before the browser walks').toBe(true);
