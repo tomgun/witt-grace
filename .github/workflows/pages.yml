@@ -37,7 +37,7 @@ jobs:
           # The frozen prototype is kept out of search results: only the published copy is marked, not its source.
           sed -i 's|<head>|<head><meta name="robots" content="noindex" />|' _site/proto/index.html
           touch _site/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
   deploy:
