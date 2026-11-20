@@ -153,9 +153,10 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
         title: tr(title),
       });
     store.select(root.id);
-    store.requestFit();
     store.setView({ presentation: 'tree', workflow: 'explore', layers: { ...LAYER_PRESETS.text } });
     showPanels();
+    // Last, once the panels have taken their room: the whole small tree in sight.
+    store.requestFit();
     update({ position: null, tutorial: { ...base, id, rootId: root.id, firstUserId: store.get().actorId } });
     return;
   }
@@ -316,9 +317,12 @@ function anchors(run: TutorialRun, state: AppState): string[] {
     // Arranging is in the view settings: their button first, then the button inside once they are open.
     if (run.step === BASICS.arrange) list.push(state.view.dockHidden ? '#btnViewSettings' : '#btnLayout');
   } else if (run.id === 'decision') {
-    if (run.step === DECISION.intro) list.push('#docTypeMenu', cardSelector(run.rootId));
+    // The callout stands beside the question, not over it; the type switch gets the ring too.
+    if (run.step === DECISION.intro) list.push(cardSelector(run.rootId), '#docTypeMenu');
+    // The button that carries the words of the step comes first: the callout stands beside it and leaves the
+    // tree in sight; the question card's own button (a bare asterisk) gets the ring as well.
     if (run.step === DECISION.addOption)
-      list.push(`${cardSelector(run.rootId)} .node-add.option`, '#btnOption', cardSelector(run.rootId));
+      list.push('#btnOption', `${cardSelector(run.rootId)} .node-add.option`, cardSelector(run.rootId));
     if (run.step === DECISION.nameOption) list.push(cardSelector(run.optionId));
     if (run.step === DECISION.addReason) list.push('.node[data-relation="option"]');
     if (run.step === DECISION.rateReason)

@@ -14,6 +14,7 @@ import { downloadText, pickTextFile } from '../lib/files.ts';
 import { DOC_LINK_LIMIT, DOC_LINK_PREFIX, buildDocLink, readDocLink } from '../lib/inflate.ts';
 import { DEFAULT_LANGUAGE } from '../lib/i18n/i18n.ts';
 import { applyPageHead } from '../lib/pageHead.ts';
+import { VERSION } from '../lib/version.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import { recordEvent } from '../lib/workspaceMeta.ts';
 import {
@@ -51,8 +52,6 @@ import { VoteDialog } from './VoteDialog.tsx';
 import { ZONES } from './view.ts';
 import { readInviteOnStart } from './collab.ts';
 import { readDraftLink } from './AiDraftDialog.tsx';
-
-export const APP_VERSION = '0.2.0-dev';
 
 export function App() {
   const state = useAppState();
@@ -418,7 +417,7 @@ export function App() {
       ) : null}
       <footer className="app-footer">
         <span>
-          WITT <b>{APP_VERSION}</b>
+          WITT <b>{VERSION}</b>
         </span>
         {/* The saving state lives here, out of the way but always in sight (owner 2026-11-19, S-15): quiet when all is
             well, red when a save failed. The Tiedosto menu's line is the one screen readers hear. */}

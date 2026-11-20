@@ -48,6 +48,8 @@ Ohje asettuu sen käyttöliittymän osan viereen, josta se puhuu, ja nuoli osoit
 
 **Kieli osoitteessa.** Sivuston osoitteen perään kirjoitettu `?lang=en` (`de`, `es`, `fr`, `ru`, `zh-Hans`, `ja`, `ko`, `fi`) avaa sivun sillä kielellä sen käynnin ajaksi, mikä on kätevää, kun lähetät linkin jollekulle. Se ei muuta itse valitsemaasi kieltä.
 
+**Mikä versio minulla on?** Logosta (ja työtilassa valikosta **Apua → Tietoa ja versio**) avautuva ikkuna näyttää versionumeron ja koontipäivän. Jos käytät tiedostona toimivaa tukipakettia, vertaa numeroa verkkosivuston samaan ikkunaan: siellä on uusin versio.
+
 ## 3. Kartoittaminen
 
 Työtilassa on yläpalkki (asiakirjan nimi ja tyyppi; ↶ Kumoa ja ↷ Tee uudelleen, neljä paneelipainiketta ja niiden jälkeen ⛶ Vain puu, ? ohje ja pikanäppäimet, ⚙ asetukset: kieli ja ulkoasuteema), työkalurivi (TYÖVAIHE Kartoita/Punnitse, arvioijan valitsin, Puu/Taulukko, Näkymäasetukset ja valikot **Tiedosto**, **Muokkaa**, **Arviointi**, **Näkymä**, **Apua**), vasen paneeli (TYÖTILA: välilehdet **Puurakenne** ja **Yhteydet ja perustelut** sekä LISÄÄ VALITTUUN SOLMUUN), keskellä puu kortteina ja oikealla VALITTU SOLMU / **Muokkaa väitettä**. Alapalkki **Rakenne** (`Alt+4`) on oletuksena piilossa.

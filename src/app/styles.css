@@ -10549,3 +10549,9 @@ body.witt-focus .canvas-quick-controls {
 .skip-link:focus {
   top: 8px;
 }
+
+/* The version line of the About dialog (S-15, 2026-11-20). */
+.about-version {
+  font-size: 12px !important;
+  color: var(--muted) !important;
+}

@@ -35,7 +35,7 @@ const assets = output.filter((file) => file.type === 'asset');
 const html = assets.find((file) => file.fileName === 'index.html');
 const styles = assets.filter((file) => file.fileName.endsWith('.css'));
 // Files of the published site only: the AI brief and what search engines read.
-const SITE_ONLY = ['ai.txt', 'robots.txt', 'sitemap.xml'];
+const SITE_ONLY = ['ai.txt', 'robots.txt', 'sitemap.xml', 'version.json'];
 const strays = assets.filter(
   (file) => file !== html && !styles.includes(file) && !SITE_ONLY.includes(file.fileName)
 );

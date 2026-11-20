@@ -530,6 +530,13 @@ export function createStore(
     },
     setLanguage(language: Language) {
       writePreference(store, LOCALE_KEY, language);
+      // The person's own choice now stands: a language named in the address (`?lang=`) no longer applies, so it
+      // is taken out of the address and a reload keeps the choice.
+      if (typeof window !== 'undefined' && languageFromSearch(window.location.search) !== null) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('lang');
+        window.history.replaceState(null, '', url);
+      }
       set({ language });
       void loadMessages(language).then((messages) => {
         if (state.language === language) set({ messages });

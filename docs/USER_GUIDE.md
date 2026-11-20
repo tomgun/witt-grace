@@ -48,6 +48,8 @@ The instruction sits beside the part of the interface it talks about with an arr
 
 **A language in the address.** `?lang=en` after the site's address (`de`, `es`, `fr`, `ru`, `zh-Hans`, `ja`, `ko`, `fi`) opens the page in that language for that visit, which is handy in a link to someone else. It does not change the language you have chosen yourself.
 
+**Which version do I have?** The dialog that opens from the logo (and, in the workspace, from *Apua → Tietoa ja versio*) shows the version number and the day it was built. If you use a supporter package that runs from a file, compare the number with the same dialog on the website: the site has the newest version.
+
 ## 3. Mapping
 
 The workspace has the top bar (document title and type, ↶ undo and ↷ redo, four panel toggles followed by ⛶ tree only, ? help and shortcuts, ⚙ settings: language and theme), the toolbar (*TYÖVAIHE* *Kartoita*/*Punnitse*, the person select, *Puu*/*Taulukko*, *Näkymäasetukset* and the menus *Tiedosto*, *Muokkaa*, *Arviointi*, *Näkymä*, *Apua* = File, Edit, Assessment, View, Help), the left panel (tabs *Puurakenne* = outline and *Yhteydet ja perustelut* = connections and reasons, plus *LISÄÄ VALITTUUN SOLMUUN* = add to selected node), the tree as cards in the centre and on the right *VALITTU SOLMU* / *Muokkaa väitettä* (the inspector). The bottom bar *Rakenne* (`Alt+4`) is hidden by default.

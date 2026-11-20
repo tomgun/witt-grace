@@ -38,7 +38,9 @@ Mikä toimii eri tavalla kuin verkkosivulla
 
 Päivitykset
   Uusi versio on uusi tiedosto. Tallenna työsi tiedostoiksi ja avaa ne uudessa
-  versiossa.
+  versiossa. Tämän tiedoston versio näkyy logosta avautuvassa Tietoa-ikkunassa
+  (ja valikosta Apua > Tietoa ja versio); verkkosivuston sama ikkuna näyttää
+  uusimman version.
 
 Lisenssi: katso LICENSE.txt.
 
@@ -77,6 +79,8 @@ What works differently from the website
 
 Updates
   A new version is a new file. Save your work as files and open them in the
-  new version.
+  new version. This file's version is shown in the About dialog that opens from
+  the logo (and from Help > About and version); the same dialog on the website
+  shows the newest version.
 
 Licence: see LICENSE.txt.

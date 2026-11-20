@@ -75,3 +75,13 @@ test('the language of an address and the canonical address', () => {
     null
   );
 });
+
+test('version.json names the version and the day of the build', async () => {
+  const { versionJson, VERSION, BUILT } = await import('../../src/lib/version.ts');
+  assert.equal(
+    versionJson('1.2.3', '2026-11-20'),
+    '{\n  "name": "WITT",\n  "version": "1.2.3",\n  "built": "2026-11-20"\n}\n'
+  );
+  // Outside a build nothing is written in.
+  assert.deepEqual([VERSION, BUILT], ['dev', 'dev']);
+});

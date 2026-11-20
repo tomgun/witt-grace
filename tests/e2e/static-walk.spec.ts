@@ -29,6 +29,12 @@ test('the package opens from disk, with its badge and its examples', async ({ pa
   await page.goto(pathToFileURL(file).href);
   await expect(page.getByTestId('home')).toBeVisible();
   await expect(page.getByTestId('edition-badge')).toHaveText('♥ Ammattilainen');
+  // The About dialog says which version the file is and where the newest one's number is found.
+  await page.locator('#btnHomeLogo').click();
+  await expect(page.locator('#aboutVersion')).toContainText(`Versio ${version} · koottu 20`);
+  await expect(page.locator('#aboutVersion')).toContainText('Ammattilainen');
+  await expect(page.locator('#aboutDialog')).toContainText('Uusimman version numeron näet verkkosivuston');
+  await page.locator('#btnAboutDone').click();
   await page.locator('#btnHomeDemo').click();
   await page.locator('#examplesDialog button[data-example], #examplesDialog .example-card').first().click();
   await expect(page.getByTestId('app')).toBeVisible();

@@ -9,6 +9,9 @@ import type { Frame } from './projection.ts';
 import { HelpDialog } from './HelpDialog.tsx';
 import { LinksDialog } from './LinksDialog.tsx';
 import { ReplaceDialog } from './ReplaceDialog.tsx';
+import { EditionBadge } from './EditionBadge.tsx';
+import { embedded } from '../lib/embedded.ts';
+import { BUILT, VERSION } from '../lib/version.ts';
 import { ExamplesDialog } from './ExamplesDialog.tsx';
 import { LibraryDialog } from './LibraryDialog.tsx';
 import { VisualExportDialog } from './VisualExportDialog.tsx';
@@ -353,6 +356,11 @@ function AboutDialog() {
       <p className="about-slogan">
         <span>{t('homeHeroFirst')}</span> <span>{t('homeHeroSecond')}</span>
       </p>
+      {/* Which version this is, so a copy on a disk can be compared with the site (owner 2026-11-20, S-15). */}
+      <p className="about-version" id="aboutVersion">
+        {t('aboutVersion', { version: VERSION, date: BUILT })} <EditionBadge />
+      </p>
+      {embedded().edition ? <p className="about-version">{t('aboutVersionPackage')}</p> : null}
       <div className="dialog-actions">
         <button
           type="button"
@@ -366,9 +374,6 @@ function AboutDialog() {
     </Modal>
   );
 }
-/** What the method is for and how it works, for someone who has not used it yet (owner 2026-11-20, S-15): the home
- * screen's "Tutustu menetelmään" used to open the tool's own help with its shortcuts. Benefits first, then the
- * three stages and the two questions, where it fits and what it does not promise, and a way to start. */
 function PlaceholderDialog({ name }: { name: string }) {
   const t = useTranslator();
   const store = getStore();

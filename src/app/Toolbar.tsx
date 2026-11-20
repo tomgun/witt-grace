@@ -468,6 +468,9 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             >
               {t('shortcutsButton')}
             </Item>
+            <Item id="btnAboutMenu" onClick={() => store.openDialog('about')}>
+              {t('aboutMenu')}
+            </Item>
           </Menu>
         </div>
       </div>
