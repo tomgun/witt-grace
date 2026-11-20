@@ -202,6 +202,17 @@ Asetukset ovat viidessä osiossa. Jokaisen osion otsikkorivi kertoo, mitä siin�
 
 **Ulkoasuteemat**: ☀ Vaalea, ☾ Tumma, ▤ Paperi, ✦ Tähtikartta, ◇ Hologrammi, ❧ Käsikirjoitus, ❧ Sulkakynä, ◆ Yövärit, ▮ Terminaali (vihreää tekstiä mustalla kuin vanhassa päätteessä), # ASCII (kortit ja puun viivat piirretään merkeistä) ✎ Sarjakuva (käsin piirretyn näköinen xkcd-tyyli) ja 🌳 Lehto (aamu koivulehdossa: valoisa metsä sisältä päin nähtynä: lehvistö yläpuolella, korkeat rungot ja koivut, saniaisia juurella; pääväite on vaaleanvihreässä lehvistössä ja perustelut riippuvat sen alla oksina, puoltavat vihreinä ja vastustavat katkoviivaisina pihlajanpunaisina; lehdet, linnut, valossa leijuva siitepöly ja oksilla kulkevat pienet eläimet liikkuvat taustalla; valitse näkymäasetuksista suunnaksi ↓ Ylhäältä alas, niin oksat riippuvat alaspäin; liike loppuu, kun järjestelmäsi pyytää vähemmän liikettä, ja suurissa puissa ja puhelimella lehto on rauhallisempi). Kolme ensimmäistä tallentuvat asiakirjaan (ja kulkevat tiedoston mukana), muut ovat selainkohtaisia. **Kieli**: suomi, saksa, englanti, espanja, ranska, venäjä, kiina (yksinkertaistettu), japani ja korea; vaihtuu heti ja muistetaan selaimessa.
 
+### Luonnoslehtiö
+
+**Luonnoslehtiö** on vapaa piirtoalusta argumenttipuun rinnalla: töhertelyyn, kaavioihin, ajatuskarttoihin ja pieniin animaatioihin. Se avautuu aloitussivulta (**Luonnostele → Luonnoslehtiö**) ja työtilan valikosta **Näkymä → Luonnoslehtiö**; ⌂ palaa aloitussivulle.
+
+- **Työkalut** vasemmalla: Valitse ja siirrä, Kynä, Viiva, Nuoli, Suorakulmio, Ellipsi, Teksti, Ajatuskartan solmu ja Pyyhi. Alla kahdeksan väriä, viivan paksuus ja **Täytä muodot**. Kun jotain on valittuna, värin tai paksuuden vaihto muuttaa valittua.
+- **Ajatuskartta näppäimistöllä**: paina solmutyökalulla lehtiötä ja kirjoita aihe. **Sarkain** lisää valitulle solmulle alisolmun, **Enter** sisarsolmun, **F2** muokkaa tekstiä ja nuolinäppäimet siirtävät. Viivat seuraavat solmuja, kun siirrät niitä.
+- **Ruudut** lehtiön alla: **+ Tyhjä ruutu** tai **+ Kopio ruudusta**, edellinen ruutu näkyy haaleana pohjana, ja **Toista** näyttää ruudut peräkkäin valitulla nopeudella.
+- **Tallennus**: lehtiö tallentuu tähän selaimeen erillään asiakirjoistasi. **Tallenna tiedostoksi** tekee tiedoston, jonka **Avaa lehtiö…** lukee takaisin, ja **Vie kuvaksi (PNG)** tallentaa näkyvän ruudun kuvana.
+
+Lehtiö ei vielä ole osa argumenttipuuta eikä yhteistyösessiota, eikä animaatiota voi viedä yhtenä tiedostona.
+
 ## 7. Tiedostot ja jakaminen
 
 **Asiakirjan tyyppi** (Argumentointi tutkii yhtä väitettä, Päätös vertaa vaihtoehtoja) valitaan asiakirjan nimen vieressä olevasta kytkimestä; molemmat vaihtoehdot ovat näkyvissä. Harjoitusesimerkkien korteissa lukee, kumpaa tyyppiä ne ovat.

@@ -1263,3 +1263,41 @@ skipToContent|Siirry sisältöön|Zum Inhalt springen|Skip to content|Saltar al 
 aboutVersion|Versio {version} · koottu {date}|Version {version} · erstellt am {date}|Version {version} · built {date}|Versión {version} · compilada el {date}|Version {version} · compilée le {date}|Версия {version} · сборка от {date}|版本 {version} · 构建于 {date}|バージョン {version} · ビルド日 {date}|버전 {version} · 빌드 {date}
 aboutVersionPackage|Tämä on tiedostona toimiva tukipaketti. Uusimman version numeron näet verkkosivuston tästä samasta ikkunasta.|Dies ist ein Unterstützerpaket, das als Datei läuft. Die Nummer der neuesten Version steht im selben Fenster auf der Website.|This is a supporter package that runs from a file. The newest version's number is shown in this same dialog on the website.|Este es un paquete de apoyo que funciona desde un archivo. El número de la versión más reciente aparece en esta misma ventana del sitio web.|Ceci est un paquet de soutien qui fonctionne depuis un fichier. Le numéro de la dernière version figure dans cette même fenêtre sur le site web.|Это пакет поддержки, работающий из файла. Номер последней версии показан в этом же окне на сайте.|这是从文件运行的支持者版本。最新版本号可在网站的同一窗口中查看。|これはファイルから動く支援者パッケージです。最新バージョンの番号は、ウェブサイトの同じウィンドウで確認できます。|파일로 실행되는 후원자 패키지입니다. 최신 버전 번호는 웹사이트의 같은 창에서 볼 수 있습니다.
 aboutMenu|Tietoa ja versio|Info und Version|About and version|Acerca de y versión|À propos et version|О программе и версия|关于与版本|情報とバージョン|정보 및 버전
+sketchTitle|Luonnoslehtiö|Skizzenblock|Sketchpad|Bloc de bocetos|Carnet de croquis|Блокнот для набросков|草图本|スケッチパッド|스케치패드
+homeGroupSketch|Luonnostele|Skizzieren|Sketch|Bocetar|Esquisser|Наброски|草图|スケッチ|스케치
+sketchIntro|Piirrä vapaasti, tee kaavio tai ajatuskartta. Lehtiö on erillään argumenttipuusta ja tallentuu tähän selaimeen.|Zeichne frei, erstelle ein Diagramm oder eine Mindmap. Der Block ist vom Argumentbaum getrennt und wird in diesem Browser gespeichert.|Draw freely, make a diagram or a mind map. The sketchpad is separate from the argument tree and is saved in this browser.|Dibuja libremente, haz un diagrama o un mapa mental. El bloc es independiente del árbol de argumentos y se guarda en este navegador.|Dessinez librement, faites un schéma ou une carte mentale. Le carnet est séparé de l’arbre d’arguments et s’enregistre dans ce navigateur.|Рисуйте свободно, сделайте схему или интеллект-карту. Блокнот отделён от дерева аргументов и сохраняется в этом браузере.|自由绘画，制作图表或思维导图。草图本与论证树分开，保存在此浏览器中。|自由に描いたり、図やマインドマップを作ったりできます。スケッチパッドは議論ツリーとは別で、このブラウザーに保存されます。|자유롭게 그리거나 도표, 마인드맵을 만드세요. 스케치패드는 논증 트리와 별개이며 이 브라우저에 저장됩니다.
+sketchTools|Työkalut|Werkzeuge|Tools|Herramientas|Outils|Инструменты|工具|ツール|도구
+sketchToolSelect|Valitse ja siirrä|Auswählen und verschieben|Select and move|Seleccionar y mover|Sélectionner et déplacer|Выбрать и переместить|选择并移动|選択して移動|선택 및 이동
+sketchToolPen|Kynä|Stift|Pen|Lápiz|Crayon|Карандаш|画笔|ペン|펜
+sketchToolLine|Viiva|Linie|Line|Línea|Ligne|Линия|直线|直線|선
+sketchToolArrow|Nuoli|Pfeil|Arrow|Flecha|Flèche|Стрелка|箭头|矢印|화살표
+sketchToolRect|Suorakulmio|Rechteck|Rectangle|Rectángulo|Rectangle|Прямоугольник|矩形|四角形|사각형
+sketchToolEllipse|Ellipsi|Ellipse|Ellipse|Elipse|Ellipse|Эллипс|椭圆|楕円|타원
+sketchToolText|Teksti|Text|Text|Texto|Texte|Текст|文字|テキスト|텍스트
+sketchToolNode|Ajatuskartan solmu|Mindmap-Knoten|Mind map node|Nodo de mapa mental|Nœud de carte mentale|Узел интеллект-карты|思维导图节点|マインドマップのノード|마인드맵 노드
+sketchToolEraser|Pyyhi|Radieren|Erase|Borrar|Gommer|Ластик|擦除|消しゴム|지우개
+sketchColor|Väri|Farbe|Colour|Color|Couleur|Цвет|颜色|色|색
+sketchColorN|Väri {n}|Farbe {n}|Colour {n}|Color {n}|Couleur {n}|Цвет {n}|颜色 {n}|色 {n}|색 {n}
+sketchSize|Viivan paksuus|Strichstärke|Line width|Grosor de línea|Épaisseur du trait|Толщина линии|线条粗细|線の太さ|선 굵기
+sketchFill|Täytä muodot|Formen füllen|Fill shapes|Rellenar formas|Remplir les formes|Заливать фигуры|填充形状|図形を塗りつぶす|도형 채우기
+sketchFrames|Ruudut|Bilder|Frames|Fotogramas|Images|Кадры|帧|フレーム|프레임
+sketchFrameOf|Ruutu {current}/{total}|Bild {current}/{total}|Frame {current}/{total}|Fotograma {current}/{total}|Image {current}/{total}|Кадр {current}/{total}|第 {current}/{total} 帧|フレーム {current}/{total}|프레임 {current}/{total}
+sketchFramePrev|Edellinen ruutu|Vorheriges Bild|Previous frame|Fotograma anterior|Image précédente|Предыдущий кадр|上一帧|前のフレーム|이전 프레임
+sketchFrameNext|Seuraava ruutu|Nächstes Bild|Next frame|Fotograma siguiente|Image suivante|Следующий кадр|下一帧|次のフレーム|다음 프레임
+sketchFrameAdd|+ Tyhjä ruutu|+ Leeres Bild|+ Empty frame|+ Fotograma vacío|+ Image vide|+ Пустой кадр|+ 空白帧|+ 空のフレーム|+ 빈 프레임
+sketchFrameCopy|+ Kopio ruudusta|+ Kopie des Bildes|+ Copy of frame|+ Copia del fotograma|+ Copie de l’image|+ Копия кадра|+ 复制此帧|+ フレームを複製|+ 프레임 복사
+sketchFrameDelete|Poista ruutu|Bild löschen|Delete frame|Eliminar fotograma|Supprimer l’image|Удалить кадр|删除帧|フレームを削除|프레임 삭제
+sketchPlay|Toista|Abspielen|Play|Reproducir|Lire|Воспроизвести|播放|再生|재생
+sketchStop|Pysäytä|Anhalten|Stop|Detener|Arrêter|Остановить|停止|停止|정지
+sketchFps|Ruutua sekunnissa|Bilder pro Sekunde|Frames per second|Fotogramas por segundo|Images par seconde|Кадров в секунду|每秒帧数|1 秒あたりのフレーム数|초당 프레임
+sketchOnion|Näytä edellinen ruutu haaleana|Vorheriges Bild blass anzeigen|Show the previous frame faintly|Mostrar el fotograma anterior atenuado|Afficher l’image précédente en transparence|Показывать предыдущий кадр бледно|淡显上一帧|前のフレームを薄く表示|이전 프레임을 흐리게 표시
+sketchOpen|Avaa lehtiö…|Block öffnen…|Open a sketch…|Abrir un boceto…|Ouvrir un croquis…|Открыть набросок…|打开草图…|スケッチを開く…|스케치 열기…
+sketchSave|Tallenna tiedostoksi|Als Datei speichern|Save as a file|Guardar como archivo|Enregistrer dans un fichier|Сохранить в файл|保存为文件|ファイルに保存|파일로 저장
+sketchExport|Vie kuvaksi (PNG)|Als Bild exportieren (PNG)|Export as a picture (PNG)|Exportar como imagen (PNG)|Exporter en image (PNG)|Экспорт в картинку (PNG)|导出为图片 (PNG)|画像として書き出す (PNG)|이미지로 내보내기 (PNG)
+sketchClear|Tyhjennä ruutu|Bild leeren|Clear the frame|Vaciar el fotograma|Vider l’image|Очистить кадр|清空此帧|フレームを消去|프레임 비우기
+sketchDeleteSelected|Poista valittu|Auswahl löschen|Delete selected|Eliminar lo seleccionado|Supprimer la sélection|Удалить выбранное|删除所选|選択を削除|선택 항목 삭제
+sketchCanvas|Piirtoalue, {count} kohdetta|Zeichenfläche, {count} Elemente|Drawing area, {count} items|Área de dibujo, {count} elementos|Zone de dessin, {count} éléments|Область рисования, объектов: {count}|绘图区，{count} 个对象|描画エリア、{count} 個の要素|그리기 영역, 항목 {count}개
+sketchNodeHint|Solmu valittuna: Sarkain lisää alisolmun, Enter sisarsolmun, F2 muokkaa tekstiä, nuolet siirtävät.|Knoten ausgewählt: Tab fügt einen Unterknoten hinzu, Enter einen Geschwisterknoten, F2 bearbeitet den Text, die Pfeiltasten verschieben.|Node selected: Tab adds a child, Enter a sibling, F2 edits the text, the arrow keys move it.|Nodo seleccionado: Tab añade un hijo, Intro un hermano, F2 edita el texto, las flechas lo mueven.|Nœud sélectionné : Tab ajoute un enfant, Entrée un frère, F2 modifie le texte, les flèches le déplacent.|Узел выбран: Tab добавляет дочерний узел, Enter — соседний, F2 редактирует текст, стрелки перемещают.|已选中节点：Tab 添加子节点，Enter 添加同级节点，F2 编辑文字，方向键移动。|ノードを選択中: Tab で子ノード、Enter で兄弟ノードを追加、F2 でテキストを編集、矢印キーで移動します。|노드 선택됨: Tab은 하위 노드, Enter는 형제 노드 추가, F2는 텍스트 편집, 화살표 키는 이동입니다.
+sketchInvalid|Tiedosto ei ole WITT-lehtiö tai se on vioittunut ({reason}).|Die Datei ist kein WITT-Skizzenblock oder beschädigt ({reason}).|The file is not a WITT sketch, or it is damaged ({reason}).|El archivo no es un boceto de WITT o está dañado ({reason}).|Le fichier n’est pas un croquis WITT ou il est endommagé ({reason}).|Файл не является наброском WITT или повреждён ({reason}).|该文件不是 WITT 草图，或已损坏（{reason}）。|このファイルは WITT のスケッチではないか、破損しています（{reason}）。|이 파일은 WITT 스케치가 아니거나 손상되었습니다({reason}).
+sketchTexts|Ruudun tekstit|Texte dieses Bildes|Texts in this frame|Textos de este fotograma|Textes de cette image|Тексты этого кадра|此帧中的文字|このフレームのテキスト|이 프레임의 텍스트
+sketchTextPrompt|Kirjoita teksti|Text eingeben|Type the text|Escribe el texto|Saisissez le texte|Введите текст|输入文字|テキストを入力|텍스트 입력

@@ -202,6 +202,17 @@ The settings are in five sections. Each section's heading says what is set in it
 
 **Themes**: Light, Dark, Paper, Star map, Hologram, Manuscript, Quill pen, Night colours, Terminal (green on black like an old terminal), ASCII (cards and tree lines drawn from characters) Comic (hand-drawn, xkcd-like) and Grove (a morning in a birch grove: a light forest seen from inside: a canopy overhead, tall trunks and birches, ferns at the foot; the main claim in a pale green crown and its reasons hanging below as branches, supporting ones green and opposing ones dashed rowan red; leaves, birds, pollen floating in the light and small animals walking the branches move in the background; choose ↓ top-down in the view settings and the branches droop; the motion stops when your system asks for reduced motion, and large trees and phones get a calmer grove). The first three are saved in the document (and travel with the file); the others are per browser. **Languages**: Finnish, German, English, Spanish, French, Russian, Simplified Chinese, Japanese and Korean; switching is immediate and remembered.
 
+### The sketchpad
+
+*Luonnoslehtiö* is a free drawing sheet beside the argument tree: for doodling, diagrams, mind maps and small animations. It opens from the home screen (*Luonnostele → Luonnoslehtiö*) and from *Näkymä → Luonnoslehtiö* in the workspace; ⌂ returns to the home screen.
+
+- **Tools** on the left: select and move, pen, line, arrow, rectangle, ellipse, text, mind map node and erase. Below them eight colours, the line width and *Täytä muodot* (fill shapes). While something is selected, changing the colour or width changes the selection.
+- **A mind map by the keyboard**: press the sheet with the node tool and write the topic. **Tab** adds a child to the selected node, **Enter** a sibling, **F2** edits the text and the arrow keys move it. The lines follow the nodes when you move them.
+- **Frames** under the sheet: *+ Tyhjä ruutu* (empty) or *+ Kopio ruudusta* (a copy), the previous frame shows faintly underneath, and *Toista* plays the frames at the chosen speed.
+- **Saving**: the sketch is saved in this browser, apart from your documents. *Tallenna tiedostoksi* writes a file that *Avaa lehtiö…* reads back, and *Vie kuvaksi (PNG)* saves the frame in view as a picture.
+
+The sketchpad is not yet part of the argument tree or of a collaboration session, and an animation cannot be exported as one file.
+
 ## 7. Files and sharing
 
 **The document's type** (*Argumentointi* examines one claim, *Päätös* compares options) is chosen with the switch beside the document's title; both choices are in sight. The example cards say which type each example is.

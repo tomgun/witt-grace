@@ -10555,3 +10555,216 @@ body.witt-focus .canvas-quick-controls {
   font-size: 12px !important;
   color: var(--muted) !important;
 }
+
+/* ---- Luonnoslehtiö (S-15, 2026-11-20): a sheet, a column of tools, a row for the frames ---- */
+.sketchpad {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+}
+.sketch-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.sketch-bar h1 {
+  font-size: 17px;
+  margin: 0;
+  color: var(--ink);
+}
+.sketch-bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+}
+.sketch-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px 16px;
+  align-items: start;
+}
+.sketch-tools {
+  display: grid;
+  gap: 6px;
+}
+.sketch-tool {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 36px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+.sketch-tool > span {
+  width: 18px;
+  text-align: center;
+  font-size: 15px;
+}
+.sketch-tool small {
+  font-size: 12px;
+  font-weight: 650;
+}
+.sketch-tool.active {
+  border-color: var(--accent);
+  background: var(--accent-soft, #ecebff);
+  color: var(--accent-text);
+}
+.sketch-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+.sketch-swatch {
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0;
+}
+.sketch-swatch.active {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+.sketch-field,
+.sketch-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--subtle);
+}
+.sketch-tools .sketch-field {
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.sketch-field select {
+  padding: 5px 8px;
+}
+.sketch-check input {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.sketch-stage {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+.sketch-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--subtle);
+  min-height: 18px;
+}
+.sketch-sheet {
+  position: relative;
+  max-width: min(100%, calc((100vh - 230px) * 1.6));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 22px #0000000f;
+}
+.sketch-sheet canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: crosshair;
+}
+.sketch-sheet canvas[data-tool='select'] {
+  cursor: default;
+}
+.sketch-sheet canvas:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+.sketch-text-editor {
+  position: absolute;
+  min-width: 180px;
+  max-width: 60%;
+  padding: 6px 8px;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2430;
+  font:
+    15px ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+  resize: none;
+  z-index: 2;
+}
+.sketch-frames {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.sketch-frames #sketchFrameOf {
+  min-width: 78px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+@media (max-width: 760px) {
+  .sketch-main {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+  .sketch-tools {
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  }
+  .sketch-tool {
+    justify-content: center;
+    min-height: 44px;
+    padding: 4px;
+  }
+  .sketch-tool small {
+    display: none;
+  }
+  .sketch-swatches,
+  .sketch-tools .sketch-field,
+  .sketch-tools .sketch-check,
+  .sketch-tools > .btn {
+    grid-column: 1 / -1;
+  }
+  .sketch-swatches {
+    grid-template-columns: repeat(8, 1fr);
+    margin-top: 2px;
+  }
+  .sketch-swatch {
+    height: 34px;
+  }
+  .sketch-sheet {
+    max-width: 100%;
+  }
+  .sketch-bar {
+    flex-wrap: wrap;
+    padding: 8px 10px;
+  }
+  .sketch-bar-actions {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+  .sketch-bar-actions .btn {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+}

@@ -1,5 +1,5 @@
 // The shell: body classes, zones, keyboard, home/workspace switch, bottom zone, footer and the dialog hosts.
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import {
   SCORING_VERSION,
   arranged,
@@ -53,6 +53,8 @@ import { ZONES } from './view.ts';
 import { readInviteOnStart } from './collab.ts';
 import { readDraftLink } from './AiDraftDialog.tsx';
 
+const Sketchpad = lazy(() => import('./Sketchpad.tsx'));
+
 export function App() {
   const state = useAppState();
   const t = useTranslator();
@@ -60,6 +62,14 @@ export function App() {
   const { project, view, zones } = state;
   const frame = useFrame(state);
   const [shortcutsVersion, setShortcutsVersion] = useState(0);
+  // Luonnoslehtiö (S-15, 2026-11-20): a screen of its own, opened from the home screen and the Näkymä menu; its
+  // code is fetched when it is first opened.
+  const [sketching, setSketching] = useState(false);
+  useEffect(() => {
+    const open = () => setSketching(true);
+    window.addEventListener('witt-sketch', open);
+    return () => window.removeEventListener('witt-sketch', open);
+  }, []);
   const shortcuts = useMemo(() => readShortcuts(window.localStorage), [shortcutsVersion]); // eslint-disable-line react-hooks/exhaustive-deps
   const selected = project.nodes.find((n) => n.id === state.selectedId);
 
@@ -327,6 +337,13 @@ export function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [store, shortcuts]);
 
+  if (sketching) {
+    return (
+      <Suspense fallback={null}>
+        <Sketchpad onClose={() => setSketching(false)} />
+      </Suspense>
+    );
+  }
   if (state.home) {
     return (
       <>

@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-20 — `UI_INVENTORY.md`, `SECURITY_AND_PRIVACY.md` scope note in S-15 — Owner: a sketchpad (free drawing, diagrams, mind map, frames) as a screen of its own with its own file format `witt-sketch` v1 and storage key `witt-sketch-v1`; a fourth group on the home screen. The GRACE document format is not touched.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner's decision: the product's name is WITT, GRACE is the method's and stays described on the pages; the supporter packages are named `witt-<version>-<edition>` (were `witt-grace-…`).
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: a version number in About / the Apua menu so a file can be compared with the site (S-15): `#aboutVersion`, `#btnAboutMenu`, `version.json`; the footer's version read from `package.json`.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner's notes on the first impression (S-15): the method's introduction moves from the dialog `#methodDialog` onto the home screen (`#homeMethod`), the audience line `homeAudience`, the bottom row `.home-bottom` removed; the decision walkthrough opens a decision document with two options and asks for a third; page title, description, `?lang=`, robots.txt, sitemap.xml and og.png for search engines; accessibility fixes (workspace `h1`, named regions, `#btnSkipToContent`, cards as `div`, 24 px card buttons).

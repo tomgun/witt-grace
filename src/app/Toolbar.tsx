@@ -434,6 +434,9 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
               />
               <span>{t('showAuthors')}</span>
             </label>
+            <Item id="btnSketchMenu" onClick={() => window.dispatchEvent(new CustomEvent('witt-sketch'))}>
+              {t('sketchTitle')}
+            </Item>
           </Menu>
           <Menu id="helpMenu" label={t('toolbarHelpGroup')}>
             <Item id="btnDemo" onClick={() => store.openDialog('examples')}>
