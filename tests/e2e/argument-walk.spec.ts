@@ -194,6 +194,7 @@ test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browse
     ['ascii', '# ASCII'],
     ['comic', '✎ Sarjakuva'],
     ['grove', '🌳 Lehto'],
+    ['obsidian', '◼ Obsidiaani'],
   ] as const) {
     await openSettings(page);
     await page.locator('#themeSelect').selectOption(id);
@@ -204,8 +205,8 @@ test('the added themes Terminaali, ASCII and Sarjakuva apply, persist per browse
     await expect(page.locator('#edgePaths path.edge')).toHaveCount(id === 'ascii' ? 0 : 1);
   }
   await page.reload();
-  await expect(page.locator('body')).toHaveAttribute('data-theme', 'grove');
-  expect(await page.evaluate(() => localStorage.getItem('witt-appearance-v1'))).toBe('grove');
+  await expect(page.locator('body')).toHaveAttribute('data-theme', 'obsidian');
+  expect(await page.evaluate(() => localStorage.getItem('witt-appearance-v1'))).toBe('obsidian');
 });
 
 test('an unassessed slider reads —; saving one axis saves the other as shown, as one undo step', async ({

@@ -796,3 +796,125 @@ body[data-theme='grove'] .node.weak-reason {
   opacity: 1;
   border-style: dashed;
 }
+
+/* ---- ◼ Obsidiaani (obsidian, owner 2026-11-21): crisp white text on black, hairline edges, no shadows or glow,
+   and one accent, gold, kept for the selection, the primary action and the brand mark. Serif headings over a
+   grotesk body; the fonts are the system's own (nothing is fetched). ---- */
+body[data-theme='obsidian'] {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --surface-secondary: #181818;
+  --panel: #0d0d0d;
+  --canvas: #070707;
+  --ink: #ffffff;
+  --muted: #a6a6a6;
+  --subtle: #c8c8c8;
+  --border: #2c2c2c;
+  --accent: #d4af37;
+  --accent-soft: #241d0a;
+  --accent-text: #ecd078;
+  --green: #7ad6a2;
+  --green-bg: #0e2318;
+  --red: #f2907f;
+  --red-bg: #2b1512;
+  --option: #93b9ff;
+  --option-bg: #101c33;
+  --grid: #151515;
+  --shadow: none;
+  --input: #0d0d0d;
+  font-family: 'Space Grotesk', 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body[data-theme='obsidian'] :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+body[data-theme='obsidian'] :is(h1, h2, h3, .brand strong, .home-brand, dialog h2) {
+  font-family: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+body[data-theme='obsidian'] .home-hero h1 .accent {
+  color: var(--accent);
+}
+body[data-theme='obsidian'] :is(.topbar, .toolbar, .app-footer, .sidepanel, .inspector-panel, .table-header) {
+  background: var(--panel);
+  border-color: var(--border);
+  box-shadow: none;
+}
+body[data-theme='obsidian']
+  :is(
+    .btn,
+    .node,
+    dialog,
+    .view-dock,
+    .zoom-controls,
+    .mode-switch,
+    .mode-switch button,
+    .left-panel-tabs button,
+    .repeat-card,
+    input,
+    select,
+    textarea,
+    .zone-controls,
+    .zone-toggle,
+    .meta-chip,
+    .node-add,
+    .node-collapse,
+    .node-delete,
+    .home-visual,
+    .home-features li,
+    .visual-root,
+    .visual-node
+  ) {
+  border-radius: 2px;
+  box-shadow: none;
+}
+body[data-theme='obsidian'] .btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0a0a0a;
+}
+body[data-theme='obsidian'] #viewport {
+  background-image: none;
+}
+body[data-theme='obsidian'] .home-screen {
+  background: var(--bg);
+}
+body[data-theme='obsidian'] .node[data-relation] {
+  background: var(--surface);
+  border: 1px solid #666666;
+}
+body[data-theme='obsidian'] .node[data-relation='support'] {
+  border-top-color: var(--green);
+}
+body[data-theme='obsidian'] .node[data-relation='oppose'] {
+  border-top-color: var(--red);
+}
+body[data-theme='obsidian'] .node[data-relation='option'] {
+  border-top-color: var(--option);
+}
+body[data-theme='obsidian'] .node.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+body[data-theme='obsidian'] .node-title {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+body[data-theme='obsidian'] .node-tag {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+body[data-theme='obsidian'] .edge-support {
+  stroke: #7ad6a2;
+}
+body[data-theme='obsidian'] .edge-oppose {
+  stroke: #f2907f;
+}
+body[data-theme='obsidian'] .edge-option {
+  stroke: #93b9ff;
+}

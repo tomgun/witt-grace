@@ -131,6 +131,7 @@ test('every theme: muted, subtle, supporting and opposing text reach 4.5:1 on it
     'light',
     'manuscript-book',
     'manuscript-pen',
+    'obsidian',
     'paper',
     'terminal',
   ]);

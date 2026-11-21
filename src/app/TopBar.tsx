@@ -30,6 +30,7 @@ export const APPEARANCE_KEYS: Record<Appearance, MessageKey> = {
   ascii: 'asciiTheme',
   comic: 'comicTheme',
   grove: 'groveTheme',
+  obsidian: 'obsidianTheme',
 };
 export const ACRONYMS =
   'WITT = Web Interactive Thinking Tool · GRACE = Günther’s Reflective Argumentation & Collaborative Evaluation Method';
