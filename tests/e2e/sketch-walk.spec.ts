@@ -1,24 +1,34 @@
 /**
- * must: Luonnoslehtiö opens from the home screen as a screen of its own (owner 2026-11-20, S-15): a stroke drawn
+ * must: Luonnoslehtiö opens from the tool's Näkymä menu as a screen of its own and is not offered on the home
+ *       screen (owner 2026-11-20 and 2026-11-21, S-15); a text is written into a rectangle by a double-click and
+ *       stays the rectangle's own, a double-click on the bare sheet writes a free text, and a press on the sheet
+ *       takes what was being written; a stroke drawn
  *       with the pen is an item of the frame and Kumoa takes it away; a mind map node is written, Tab adds a child
  *       and Enter a sibling, each opened for writing, and their texts can be read without seeing the canvas; a
  *       node carries comments; a copied frame keeps the drawing, an empty one does not, Toista runs through the
  *       frames (gliding when asked), a frame has a tab that can be named and the faint previous frame can be
  *       switched off; the sketch is
- *       there after a reload; nothing of it touches the argument document; ⌂ returns to the home screen
+ *       there after a reload; nothing of it touches the argument document; ← returns to the workspace
  * test: tests/e2e/sketch-walk.spec.ts (desktop 1440×900 and mobile 390×844)
- * red-against: a stroke lost when the pointer is released, the editor's blur writing the text twice, Tab leaving
+ * red-against: a double-click inside an empty rectangle doing nothing (its middle is not a hit), a press on the
+ *              sheet leaving the editor open, the box deleted when its text is emptied, a stroke lost when the pointer is released, the editor's blur writing the text twice, Tab leaving
  *              the canvas instead of adding a child, the sketch stored in the argument document's key, a reload
  *              opening an empty sheet
  */
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { startBlank } from './helpers.ts';
+
+async function openSketchpad(page: Page): Promise<void> {
+  await page.locator('#viewMenu > summary').click();
+  await page.locator('#btnSketchMenu').click();
+  await expect(page.getByTestId('sketchpad')).toBeVisible();
+}
 
 test('drawing, a mind map by the keyboard, frames, and the sketch kept over a reload', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => window.localStorage.clear());
-  await page.reload();
+  await startBlank(page, 'argument');
   const projectBefore = await page.evaluate(() => JSON.stringify(Object.keys(window.localStorage).sort()));
-  await page.locator('#btnHomeSketch').click();
+  await openSketchpad(page);
   const pad = page.getByTestId('sketchpad');
   await expect(pad).toBeVisible();
   await expect(pad.locator('h1')).toHaveText('Luonnoslehtiö');
@@ -115,7 +125,8 @@ test('drawing, a mind map by the keyboard, frames, and the sketch kept over a re
   expect(keys).toContain('witt-sketch-v1');
   expect(JSON.stringify(keys.filter((k) => k !== 'witt-sketch-v1'))).toBe(projectBefore);
   await page.reload();
-  await page.locator('#btnHomeSketch').click();
+  if (await page.getByTestId('home').count()) await page.locator('#btnHomeContinue').click();
+  await openSketchpad(page);
   await expect(page.locator('#sketchFrameOf')).toHaveText('Ruutu 1/3');
   await expect(page.locator('#sketchTexts > li')).toHaveText(['Kesäloma', 'Mökki', 'KaupunkiMikä kaupunki?']);
   await expect(page.locator('#sketchFrameTabs .sketch-frame-tab').first()).toHaveText('Ideat');
@@ -124,5 +135,66 @@ test('drawing, a mind map by the keyboard, frames, and the sketch kept over a re
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)
   ).toBe(true);
   await page.locator('#btnSketchBack').click();
+  await expect(page.getByTestId('app')).toBeVisible();
+});
+
+test('writing: into a box, freely on the sheet, and a press on the sheet takes the text', async ({
+  page,
+}) => {
+  await startBlank(page, 'argument');
+  await page.locator('#btnBackHome').click();
   await expect(page.getByTestId('home')).toBeVisible();
+  await expect(page.locator('#btnHomeSketch')).toHaveCount(0);
+  await page.locator('#btnHomeContinue').click();
+  await openSketchpad(page);
+  const pad = page.getByTestId('sketchpad');
+  const canvas = page.locator('#sketchCanvas');
+  const editor = page.locator('#sketchTextEditor');
+  const texts = page.locator('#sketchTexts > li');
+  const box = (await canvas.boundingBox())!;
+  const at = (fx: number, fy: number) => [box.x + box.width * fx, box.y + box.height * fy] as const;
+
+  await pad.locator('.sketch-tool[data-tool="rect"]').click();
+  await page.mouse.move(...at(0.2, 0.2));
+  await page.mouse.down();
+  await page.mouse.move(...at(0.5, 0.5), { steps: 4 });
+  await page.mouse.up();
+  await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 1 kohdetta');
+
+  // The middle of an empty rectangle: a double-click writes into it, and the text is the rectangle's own.
+  await pad.locator('.sketch-tool[data-tool="select"]').click();
+  await page.mouse.dblclick(...at(0.35, 0.35));
+  await expect(editor).toBeFocused();
+  await editor.fill('Asiakas');
+  // A press elsewhere on the sheet takes the text and starts nothing new.
+  await page.mouse.click(...at(0.8, 0.8));
+  await expect(editor).toHaveCount(0);
+  await expect(texts).toHaveText(['Asiakas']);
+  await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 1 kohdetta');
+
+  // The text tool pressed inside the box edits the same text; emptied, the box stays.
+  await pad.locator('.sketch-tool[data-tool="text"]').click();
+  await page.mouse.click(...at(0.3, 0.3));
+  await expect(editor).toHaveValue('Asiakas');
+  await editor.fill('');
+  await editor.press('Control+Enter');
+  await expect(texts).toHaveCount(0);
+  await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 1 kohdetta');
+  // Enter on the selected box writes into it from the keyboard.
+  await expect(canvas).toBeFocused();
+  await page.keyboard.press('Enter');
+  await editor.fill('Tilaus');
+  await editor.press('Control+Enter');
+  await expect(texts).toHaveText(['Tilaus']);
+
+  // A double-click on the bare sheet with the selection tool: a free text of its own.
+  await pad.locator('.sketch-tool[data-tool="select"]').click();
+  await page.mouse.dblclick(...at(0.7, 0.3));
+  await expect(editor).toBeFocused();
+  await editor.fill('Huomio');
+  await page.mouse.click(...at(0.8, 0.8));
+  await expect(texts).toHaveText(['Tilaus', 'Huomio']);
+  await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 2 kohdetta');
+  await page.locator('#btnSketchUndo').click();
+  await expect(texts).toHaveText(['Tilaus']);
 });

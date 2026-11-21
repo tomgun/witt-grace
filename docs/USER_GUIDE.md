@@ -204,9 +204,10 @@ The settings are in five sections. Each section's heading says what is set in it
 
 ### The sketchpad
 
-*Luonnoslehtiö* is a free drawing sheet beside the argument tree: for doodling, diagrams, mind maps and small animations. It opens from the home screen (*Luonnostele → Luonnoslehtiö*) and from *Näkymä → Luonnoslehtiö* in the workspace; ⌂ returns to the home screen.
+*Luonnoslehtiö* is a free drawing sheet beside the argument tree: for doodling, diagrams, mind maps and small animations. It opens from *Näkymä → Luonnoslehtiö* in the workspace, and ← returns to the workspace.
 
 - **Tools** on the left: select and move, pen, line, arrow, rectangle, ellipse, text, mind map node and erase. Below them eight colours, the line width and *Täytä muodot* (fill shapes). While something is selected, changing the colour or width changes the selection.
+- **Text**: double-click a rectangle or an ellipse and write; the text sits in the middle of the shape and moves with it. A double-click on an empty spot (with the selection tool) or a press with the *Teksti* tool makes a free text. A press elsewhere on the sheet or **Ctrl+Enter** takes the text, **Esc** cancels. **Enter** on a selected shape also edits its text.
 - **A mind map by the keyboard**: press the sheet with the node tool and write the topic. **Tab** adds a child to the selected node, **Enter** a sibling, **F2** edits the text and the arrow keys move it. The lines follow the nodes when you move them.
 - **Comments**: while one node is selected, its comments are listed under the sheet and you can add one. The node's corner shows how many it has.
 - **Frames** under the sheet: *+ Tyhjä ruutu* (empty) or *+ Kopio ruudusta* (a copy). Frames serve two uses. *As pages*: every frame has a tab, which you can name in *Ruudun nimi*, and a press goes to it. *As an animation*: *Toista* plays the frames at the chosen speed, and *Liu’uta ruudusta toiseen* (glide between frames) moves what you moved in a copied frame smoothly from one place to the next. *Näytä edellinen ruutu haaleana* (show the previous frame faintly) is an aid for drawing; untick it when you use the frames as pages.

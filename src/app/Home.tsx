@@ -223,18 +223,6 @@ export function Home() {
                   {t('homeDemo')}
                 </button>
               </div>
-              <div className="home-other-actions home-group" role="group" aria-labelledby="homeGroupSketch">
-                <span className="home-group-label" id="homeGroupSketch">
-                  {t('homeGroupSketch')}
-                </span>
-                <button
-                  type="button"
-                  id="btnHomeSketch"
-                  onClick={() => window.dispatchEvent(new CustomEvent('witt-sketch'))}
-                >
-                  {t('sketchTitle')}
-                </button>
-              </div>
               <div className="home-other-actions home-group" role="group" aria-labelledby="homeGroupTogether">
                 <span className="home-group-label" id="homeGroupTogether">
                   {t('homeGroupTogether')}

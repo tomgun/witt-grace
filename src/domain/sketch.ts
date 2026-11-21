@@ -57,6 +57,8 @@ export interface BoxElement extends Styled {
   h: number;
   /** Index into SKETCH_COLORS, or null for no fill. */
   fill: number | null;
+  /** What is written in the box, drawn centred in it; absent when nothing is. */
+  text?: string;
 }
 export interface TextElement extends Styled {
   /** `node` is a mind map node: the same text with a frame round it, and links may end at it. */
@@ -336,8 +338,36 @@ export function moveElements(
 export function setText(sketch: Sketch, frame: number, id: string, text: string): Sketch {
   const clean = text.replace(/\r/g, '').slice(0, SKETCH_LIMITS.text);
   return withFrame(sketch, frame, (elements) =>
-    elements.map((e) => (e.id === id && (e.type === 'text' || e.type === 'node') ? { ...e, text: clean } : e))
+    elements.map((e) => {
+      if (e.id !== id) return e;
+      if (e.type === 'text' || e.type === 'node') return { ...e, text: clean };
+      if (e.type !== 'rect' && e.type !== 'ellipse') return e;
+      // A box with nothing written in it carries no text at all.
+      const box: BoxElement = { ...e };
+      if (clean.trim()) box.text = clean;
+      else delete box.text;
+      return box;
+    })
   );
+}
+
+/**
+ * The topmost rectangle or ellipse whose area holds the point, filled or not: where a text written "into a box"
+ * goes. (`elementAt` reaches an empty box only at its outline, so that what is inside it can be pressed.)
+ */
+export function boxAt(elements: readonly SketchElement[], x: number, y: number): BoxElement | null {
+  for (let i = elements.length - 1; i >= 0; i -= 1) {
+    const el = elements[i] as SketchElement;
+    if (el.type !== 'rect' && el.type !== 'ellipse') continue;
+    const b = elementBounds(el, elements) as Bounds;
+    if (b.w === 0 || b.h === 0) continue;
+    const inside =
+      el.type === 'rect'
+        ? x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h
+        : ((x - b.x - b.w / 2) / (b.w / 2)) ** 2 + ((y - b.y - b.h / 2) / (b.h / 2)) ** 2 <= 1;
+    if (inside) return el;
+  }
+  return null;
 }
 
 export function restyle(
@@ -560,6 +590,8 @@ function parseElement(raw: unknown, path: string): SketchElement | string {
       const fill = raw.fill ?? null;
       if (fill !== null && !(Number.isInteger(fill) && num(fill, 0, SKETCH_COLORS.length - 1)))
         return `${path}.fill`;
+      if (raw.text !== undefined && !(typeof raw.text === 'string' && raw.text.length <= SKETCH_LIMITS.text))
+        return `${path}.text`;
       return {
         ...base,
         type,
@@ -568,6 +600,7 @@ function parseElement(raw: unknown, path: string): SketchElement | string {
         w: raw.w as number,
         h: raw.h as number,
         fill,
+        ...(raw.text ? { text: raw.text } : {}),
       };
     }
     case 'text':

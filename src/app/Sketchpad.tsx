@@ -31,10 +31,11 @@ import {
   setFrameName,
   setText,
   setTween,
+  boxAt,
   textBounds,
   tweenElements,
 } from '../domain/sketch.ts';
-import type { Sketch, SketchElement, TextElement } from '../domain/sketch.ts';
+import type { BoxElement, Sketch, SketchElement, TextElement } from '../domain/sketch.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
 import type { MessageKey } from '../lib/i18n/catalog.ts';
 import { newId } from '../lib/providers.ts';
@@ -158,6 +159,23 @@ function draw(ctx: CanvasRenderingContext2D, elements: readonly SketchElement[],
           ctx.globalAlpha = alpha;
         }
         ctx.stroke();
+        if (el.text) {
+          // What is written in a box sits in its middle, line by line.
+          const lines = el.text.split('\n');
+          const step = SKETCH_FONT_SIZE * 1.3;
+          const left = Math.min(el.x, el.x + el.w);
+          const top = Math.min(el.y, el.y + el.h);
+          ctx.fillStyle = color;
+          ctx.textAlign = 'center';
+          lines.forEach((line, i) =>
+            ctx.fillText(
+              line,
+              left + Math.abs(el.w) / 2,
+              top + Math.abs(el.h) / 2 - (lines.length * step) / 2 + i * step + 3
+            )
+          );
+          ctx.textAlign = 'start';
+        }
         break;
       }
       case 'text':
@@ -341,6 +359,14 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     setEditing(null);
     const current = sketch.frames[at]?.elements.find((e) => e.id === id);
     let next = sketch;
+    if (current?.type === 'rect' || current?.type === 'ellipse') {
+      // A box keeps standing whatever is written in it; an emptied text only takes the writing away.
+      next = setText(sketch, at, id, text);
+      if (JSON.stringify(next) !== JSON.stringify(sketch)) commit(next);
+      setSelected([id]);
+      canvasRef.current?.focus();
+      return;
+    }
     if (!text.trim()) {
       // A text that was never written is not left behind as an empty frame.
       next = removeElements(sketch, at, [id]);
@@ -380,8 +406,26 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     setEditing({ id: ids.node, created: true });
   };
 
+  /** A new text or node at the point, open for writing; one that is left empty is taken away again. */
+  const writeAt = (type: 'text' | 'node', x: number, y: number) => {
+    const element: TextElement = { id: newId(), color, size, type, x, y, text: '' };
+    const next = addElement(sketch, at, element);
+    if (next === sketch) return;
+    history.current.past.push(sketch);
+    history.current.future = [];
+    touch();
+    setSketch(next);
+    setSelected([element.id]);
+    setEditing({ id: element.id, created: true });
+  };
+
   const onPointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    if (event.button !== 0 || playing || editing) return;
+    if (event.button !== 0 || playing) return;
+    if (editing) {
+      // A press on the sheet takes what was written: the canvas takes the focus, and the editor's blur finishes.
+      event.currentTarget.focus({ preventScroll: true });
+      return;
+    }
     const { x, y } = point(event);
     event.currentTarget.setPointerCapture(event.pointerId);
     event.currentTarget.focus({ preventScroll: true });
@@ -410,15 +454,12 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
       return;
     }
     if (tool === 'text' || tool === 'node') {
-      const element: TextElement = { ...style, type: tool, x, y, text: '' };
-      const next = addElement(sketch, at, element);
-      if (next === sketch) return;
-      history.current.past.push(sketch);
-      history.current.future = [];
-      touch();
-      setSketch(next);
-      setSelected([element.id]);
-      setEditing({ id: element.id, created: true });
+      // Into a box when the press is inside one; a text of its own anywhere else.
+      const box = tool === 'text' ? boxAt(elements, x, y) : null;
+      if (box) {
+        setSelected([box.id]);
+        setEditing({ id: box.id, created: false });
+      } else writeAt(tool, x, y);
       return;
     }
     const element: SketchElement =
@@ -528,6 +569,13 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     } else if (only && (only.type === 'node' || only.type === 'text') && key === 'F2') {
       event.preventDefault();
       setEditing({ id: only.id, created: false });
+    } else if (
+      only &&
+      (only.type === 'rect' || only.type === 'ellipse') &&
+      (key === 'F2' || key === 'Enter')
+    ) {
+      event.preventDefault();
+      setEditing({ id: only.id, created: false });
     } else if (only?.type === 'node' && key === 'Tab' && !event.shiftKey) {
       event.preventDefault();
       growMindMap(only.id, 'child');
@@ -541,10 +589,22 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   const onDoubleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const { x, y } = point(event);
     const hit = elementAt(elements, x, y);
+    if (playing || editing) return;
     if (hit && (hit.type === 'text' || hit.type === 'node')) {
       setSelected([hit.id]);
       setEditing({ id: hit.id, created: false });
+      return;
     }
+    // Into a box: the text is the box's own and moves with it.
+    const box = hit?.type === 'rect' || hit?.type === 'ellipse' ? hit : boxAt(elements, x, y);
+    if (box) {
+      setSelected([box.id]);
+      setEditing({ id: box.id, created: false });
+      return;
+    }
+    if (hit || tool !== 'select') return;
+    // On the bare sheet with the selection tool: a free text where the press was.
+    writeAt('text', x, y);
   };
 
   const pickStyle = (style: { color?: number; size?: number; fill?: number | null }) => {
@@ -601,12 +661,26 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   };
 
   const editingElement = editing ? elements.find((e) => e.id === editing.id) : undefined;
-  const editorPlace =
-    editingElement && (editingElement.type === 'text' || editingElement.type === 'node')
+  const editorPlace = !editingElement
+    ? null
+    : editingElement.type === 'text' || editingElement.type === 'node'
       ? textBounds(editingElement)
-      : null;
+      : editingElement.type === 'rect' || editingElement.type === 'ellipse'
+        ? {
+            x: Math.min(editingElement.x, editingElement.x + editingElement.w) + 8,
+            y:
+              Math.min(editingElement.y, editingElement.y + editingElement.h) +
+              Math.abs(editingElement.h) / 2 -
+              18,
+          }
+        : null;
+  const editingText =
+    editingElement && 'text' in editingElement && typeof editingElement.text === 'string'
+      ? editingElement.text
+      : '';
   const texts = elements.filter(
-    (e): e is TextElement => (e.type === 'text' || e.type === 'node') && !!e.text
+    (e): e is TextElement | (BoxElement & { text: string }) =>
+      (e.type === 'text' || e.type === 'node' || e.type === 'rect' || e.type === 'ellipse') && !!e.text
   );
   const only = selected.length === 1 ? elements.find((e) => e.id === selected[0]) : undefined;
   /** The node whose comments are shown: the one selected node, while nothing is being written or played. */
@@ -621,11 +695,11 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
           type="button"
           className="btn icon-btn"
           id="btnSketchBack"
-          aria-label={t('homeBack')}
-          title={t('homeBack')}
+          aria-label={t('sketchBack')}
+          title={t('sketchBack')}
           onClick={onClose}
         >
-          ⌂
+          ←
         </button>
         <h1>{t('sketchTitle')}</h1>
         <div className="sketch-bar-actions">
@@ -771,10 +845,10 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
                 id="sketchTextEditor"
                 className="sketch-text-editor"
                 aria-label={t('sketchTextPrompt')}
-                defaultValue={(editingElement as TextElement).text}
+                defaultValue={editingText}
                 autoFocus
                 maxLength={SKETCH_LIMITS.text}
-                rows={Math.max(1, (editingElement as TextElement).text.split('\n').length)}
+                rows={Math.max(1, editingText.split('\n').length)}
                 style={{
                   left: `${(editorPlace.x / SKETCH_WIDTH) * 100}%`,
                   top: `${(editorPlace.y / SKETCH_HEIGHT) * 100}%`,
@@ -784,7 +858,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
                   const node = editingElement?.type === 'node';
                   if (e.key === 'Escape') {
                     e.preventDefault();
-                    finishEditing(editing.created ? '' : (editingElement as TextElement).text);
+                    finishEditing(editing.created ? '' : editingText);
                   } else if (e.key === 'Enter' && (node ? !e.shiftKey : e.ctrlKey || e.metaKey)) {
                     e.preventDefault();
                     finishEditing(e.currentTarget.value);
@@ -801,7 +875,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
             {texts.map((el) => (
               <li key={el.id}>
                 {el.text}
-                {el.comments?.length ? (
+                {el.type === 'node' && el.comments?.length ? (
                   <ul>
                     {el.comments.map((c) => (
                       <li key={c.id}>{c.body}</li>

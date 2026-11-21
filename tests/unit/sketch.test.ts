@@ -4,12 +4,15 @@
  *       node removes its links; a child node is placed right of its parent, below the parent's lowest child, and
  *       linked; a copied frame keeps its elements' ids, and between two frames an element with the same id glides
  *       from its place to the next while one without a partner stays; a node carries comments and a frame a name;
+ *       a rectangle or an ellipse carries a text of its own, found by a point anywhere inside it, and emptying the
+ *       text leaves the box (owner 2026-11-21);
  *       the last frame is emptied instead of removed; a file round-trips, and a file with an unknown type, a colour outside the palette, an odd point
  *       list, a duplicate id, a link to a missing node or too many frames is refused with the place named
  * test: tests/unit/sketch.test.ts
  * red-against: an empty rectangle swallowing presses meant for what is inside it, a link left pointing at a
  *              deleted node, a glide that moves a stroke whose point count differs (a scramble), an empty comment
- *              stored, a sibling
+ *              stored, an emptied box text deleting the box, a box text over the limit accepted from a file, a
+ *              sibling
  *              placed on top of the first child, a hostile file with a million points accepted
  */
 import assert from 'node:assert/strict';
@@ -21,6 +24,7 @@ import {
   addElement,
   addFrame,
   blankSketch,
+  boxAt,
   elementAt,
   linkEnds,
   moveElements,
@@ -363,4 +367,43 @@ test('comments on a node, a name for a frame, gliding kept in the file', () => {
     refuse((r) => (r.tween = 'yes')),
     'tween'
   );
+});
+
+test('a text written into a box: found anywhere inside it, kept in the file, emptied without losing the box', () => {
+  const rect: SketchElement = { ...style, type: 'rect', id: 'r', x: 100, y: 100, w: 200, h: 100, fill: null };
+  const oval: SketchElement = {
+    ...style,
+    type: 'ellipse',
+    id: 'o',
+    x: 400,
+    y: 100,
+    w: 200,
+    h: 100,
+    fill: null,
+  };
+  const sketch = build(rect, oval, node('n', 700, 100, 'Solmu'));
+  // The middle of an empty rectangle is not a hit for selecting, but it is where its text goes.
+  assert.equal(elementAt(els(sketch), 200, 150), null);
+  assert.equal(boxAt(els(sketch), 200, 150)?.id, 'r');
+  assert.equal(boxAt(els(sketch), 500, 150)?.id, 'o');
+  // The corner of an ellipse's bounds is outside the ellipse; a node is not a box.
+  assert.equal(boxAt(els(sketch), 402, 102), null);
+  assert.equal(boxAt(els(sketch), 710, 110), null);
+  assert.equal(boxAt(els(sketch), 50, 50), null);
+
+  const written = setText(sketch, 0, 'r', 'Asiakas\r\ntilaa');
+  assert.deepEqual(els(written)[0], { ...rect, text: 'Asiakas\ntilaa' });
+  const parsed = parseSketch(serializeSketch(written));
+  assert.equal(parsed.ok, true);
+  if (parsed.ok) assert.deepEqual(parsed.sketch, written);
+
+  const emptied = setText(written, 0, 'r', '  ');
+  assert.deepEqual(els(emptied)[0], rect);
+  assert.equal('text' in els(emptied)[0]!, false);
+
+  const hostile = JSON.parse(serializeSketch(written)) as { frames: { elements: { text?: unknown }[] }[] };
+  hostile.frames[0]!.elements[0]!.text = 'x'.repeat(SKETCH_LIMITS.text + 1);
+  assert.deepEqual(parseSketch(JSON.stringify(hostile)), { ok: false, reason: 'frames[0].elements[0].text' });
+  hostile.frames[0]!.elements[0]!.text = 7;
+  assert.deepEqual(parseSketch(JSON.stringify(hostile)), { ok: false, reason: 'frames[0].elements[0].text' });
 });

@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-21 — `UI_INVENTORY.md` — Owner: text written into the sketchpad's boxes and freely by a double-click; the sketchpad leaves the home screen (`#btnHomeSketch` removed) and opens from the Näkymä menu only.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: the home example rotates between five scenarios (`homeScenario…` texts, `.visual-dots`).
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: the home example's sub-reasons as cards (`.visual-leaves`), and `ul.home-uses` (two ways to use the tool) at the top of the method section.
 - 2026-11-20 — `UI_INVENTORY.md` — Owner: in the sketchpad, comments on mind map nodes, named frame tabs and gliding between frames; the `witt-sketch` file gains the optional `tween`, `frames[].name` and a node's `comments[]`, and a copied frame keeps its elements' ids.

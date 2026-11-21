@@ -13,7 +13,7 @@
 import { expect, test } from '@playwright/test';
 import { startBlank } from './helpers.ts';
 
-test('the home screen: one main action, four groups, nothing that needs an open document', async ({
+test('the home screen: one main action, three groups, nothing that needs an open document', async ({
   page,
 }) => {
   await startBlank(page, 'argument');
@@ -23,12 +23,11 @@ test('the home screen: one main action, four groups, nothing that needs an open 
   await expect(home).toBeVisible();
   await expect(page.locator('#btnHomeContinue')).toBeVisible();
   const groups = page.locator('.home-groups .home-group');
-  // Luonnostele came with the sketchpad (S-15, 2026-11-20).
-  await expect(groups).toHaveCount(4);
+  // The sketchpad is opened from the tool's Näkymä menu, not from here (owner 2026-11-21).
+  await expect(groups).toHaveCount(3);
   await expect(groups.nth(0)).toHaveAccessibleName('Avaa');
   await expect(groups.nth(1)).toHaveAccessibleName('Opettele');
-  await expect(groups.nth(2)).toHaveAccessibleName('Luonnostele');
-  await expect(groups.nth(3)).toHaveAccessibleName('Yhdessä');
+  await expect(groups.nth(2)).toHaveAccessibleName('Yhdessä');
   expect(
     await groups
       .nth(0)
@@ -44,12 +43,6 @@ test('the home screen: one main action, four groups, nothing that needs an open 
   expect(
     await groups
       .nth(2)
-      .locator('button')
-      .evaluateAll((els) => els.map((e) => e.id))
-  ).toEqual(['btnHomeSketch']);
-  expect(
-    await groups
-      .nth(3)
       .locator('button')
       .evaluateAll((els) => els.map((e) => e.id))
   ).toEqual(['btnHomeCollab']);

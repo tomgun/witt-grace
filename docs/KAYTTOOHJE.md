@@ -204,9 +204,10 @@ Asetukset ovat viidessä osiossa. Jokaisen osion otsikkorivi kertoo, mitä siin�
 
 ### Luonnoslehtiö
 
-**Luonnoslehtiö** on vapaa piirtoalusta argumenttipuun rinnalla: töhertelyyn, kaavioihin, ajatuskarttoihin ja pieniin animaatioihin. Se avautuu aloitussivulta (**Luonnostele → Luonnoslehtiö**) ja työtilan valikosta **Näkymä → Luonnoslehtiö**; ⌂ palaa aloitussivulle.
+**Luonnoslehtiö** on vapaa piirtoalusta argumenttipuun rinnalla: töhertelyyn, kaavioihin, ajatuskarttoihin ja pieniin animaatioihin. Se avautuu työtilan valikosta **Näkymä → Luonnoslehtiö**, ja ← palaa työtilaan.
 
 - **Työkalut** vasemmalla: Valitse ja siirrä, Kynä, Viiva, Nuoli, Suorakulmio, Ellipsi, Teksti, Ajatuskartan solmu ja Pyyhi. Alla kahdeksan väriä, viivan paksuus ja **Täytä muodot**. Kun jotain on valittuna, värin tai paksuuden vaihto muuttaa valittua.
+- **Teksti**: kaksoisnapsauta suorakulmiota tai ellipsiä ja kirjoita; teksti asettuu muodon keskelle ja kulkee sen mukana. Kaksoisnapsautus tyhjään kohtaan (valintatyökalulla) tai painallus **Teksti**-työkalulla tekee vapaan tekstin. Painallus muualle lehtiöön tai **Ctrl+Enter** hyväksyy tekstin, **Esc** peruu. Valitun muodon tekstiä voi muokata myös **Enterillä**.
 - **Ajatuskartta näppäimistöllä**: paina solmutyökalulla lehtiötä ja kirjoita aihe. **Sarkain** lisää valitulle solmulle alisolmun, **Enter** sisarsolmun, **F2** muokkaa tekstiä ja nuolinäppäimet siirtävät. Viivat seuraavat solmuja, kun siirrät niitä.
 - **Kommentit**: kun yksi solmu on valittuna, sen kommentit näkyvät lehtiön alla ja voit lisätä uuden. Solmun kulmassa näkyy kommenttien määrä.
 - **Ruudut** lehtiön alla: **+ Tyhjä ruutu** tai **+ Kopio ruudusta**. Ruutuja voi käyttää kahdella tavalla. *Sivuina*: jokaisella ruudulla on välilehti, jonka voi nimetä kentässä **Ruudun nimi**, ja painallus vie ruutuun. *Animaationa*: **Toista** näyttää ruudut peräkkäin valitulla nopeudella, ja **Liu’uta ruudusta toiseen** liikuttaa kopioidussa ruudussa siirtämäsi kohteet pehmeästi paikasta toiseen. **Näytä edellinen ruutu haaleana** on piirtämisen apu; ota ruksi pois, kun käytät ruutuja sivuina.
