@@ -10979,3 +10979,35 @@ body.witt-focus .canvas-quick-controls {
     min-height: 0;
   }
 }
+
+/* The shared sketchpad of a collaboration session (owner 2026-11-21). */
+.sketch-which {
+  display: inline-flex;
+  gap: 4px;
+}
+.sketch-which .btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  font-weight: 700;
+}
+.sketch-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--muted);
+}
+.sketch-people li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sketch-person-pen {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}

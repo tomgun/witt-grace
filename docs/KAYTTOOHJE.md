@@ -213,7 +213,9 @@ Asetukset ovat viidessä osiossa. Jokaisen osion otsikkorivi kertoo, mitä siin�
 - **Ruudut** lehtiön alla: **+ Tyhjä ruutu** tai **+ Kopio ruudusta**. Ruutuja voi käyttää kahdella tavalla. *Sivuina*: jokaisella ruudulla on välilehti, jonka voi nimetä kentässä **Ruudun nimi**, ja painallus vie ruutuun. *Animaationa*: **Toista** näyttää ruudut peräkkäin valitulla nopeudella, ja **Liu’uta ruudusta toiseen** liikuttaa kopioidussa ruudussa siirtämäsi kohteet pehmeästi paikasta toiseen. **Näytä edellinen ruutu haaleana** on piirtämisen apu; ota ruksi pois, kun käytät ruutuja sivuina.
 - **Tallennus**: lehtiö tallentuu tähän selaimeen erillään asiakirjoistasi. **Tallenna tiedostoksi** tekee tiedoston, jonka **Avaa lehtiö…** lukee takaisin, ja **Vie kuvaksi (PNG)** tallentaa näkyvän ruudun kuvana.
 
-Liu’utus tunnistaa kohteen vain ruudusta kopioituun ruutuun: uudelleen piirretty kohde ei liu’u. Lehtiö ei vielä ole osa argumenttipuuta eikä yhteistyösessiota, eikä animaatiota voi viedä yhtenä tiedostona.
+Liu’utus tunnistaa kohteen vain ruudusta kopioituun ruutuun: uudelleen piirretty kohde ei liu’u. Lehtiö ei vielä ole osa argumenttipuuta, eikä animaatiota voi viedä yhtenä tiedostona.
+
+**Piirtäminen yhdessä.** Kun yhteistyö on käynnissä (**Tiedosto → Yhteistyö**), lehtiö avautuu **yhteiselle lehtiölle**, johon kaikki osallistujat piirtävät yhtä aikaa. Yhteinen lehtiö alkaa aina tyhjänä: oma lehtiösi ei lähde kenellekään, ja pääset siihen painikkeesta **Oma lehtiö**. Jokainen saa aluksi oman kynän värin, ja nimet väreineen näkyvät lehtiön yläpuolella; väriä saa vaihtaa. **Kumoa** ei ole käytössä yhteisellä lehtiöllä, ja vain kutsuja voi avata siihen tiedoston. Jos kaksi muuttaa samaa kohdetta yhtä aikaa, jälkimmäinen muutos jää voimaan. Kun yhteistyö päättyy, yhteinen lehtiö jää jokaisen selaimeen nimellä **Yhteinen lehtiö (kopio)** oman lehtiön rinnalle. Kopio säilyy, kunnes seuraava yhteistyö alkaa: tallenna se tiedostoksi, jos haluat pitää sen.
 
 ## 7. Tiedostot ja jakaminen
 

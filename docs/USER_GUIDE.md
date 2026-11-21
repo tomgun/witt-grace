@@ -213,7 +213,9 @@ The settings are in five sections. Each section's heading says what is set in it
 - **Frames** under the sheet: *+ Tyhjä ruutu* (empty) or *+ Kopio ruudusta* (a copy). Frames serve two uses. *As pages*: every frame has a tab, which you can name in *Ruudun nimi*, and a press goes to it. *As an animation*: *Toista* plays the frames at the chosen speed, and *Liu’uta ruudusta toiseen* (glide between frames) moves what you moved in a copied frame smoothly from one place to the next. *Näytä edellinen ruutu haaleana* (show the previous frame faintly) is an aid for drawing; untick it when you use the frames as pages.
 - **Saving**: the sketch is saved in this browser, apart from your documents. *Tallenna tiedostoksi* writes a file that *Avaa lehtiö…* reads back, and *Vie kuvaksi (PNG)* saves the frame in view as a picture.
 
-Gliding recognises a thing only from a frame to its copy: something drawn again does not glide. The sketchpad is not yet part of the argument tree or of a collaboration session, and an animation cannot be exported as one file.
+Gliding recognises a thing only from a frame to its copy: something drawn again does not glide. The sketchpad is not yet part of the argument tree, and an animation cannot be exported as one file.
+
+**Drawing together.** While a collaboration is on (*Tiedosto → Yhteistyö*), the sketchpad opens on the **shared sketchpad** (*Yhteinen lehtiö*), which everyone in the session draws on at the same time. It always starts empty: your own sketchpad is not sent to anyone, and *Oma lehtiö* takes you to it. Each person starts with a pen colour of their own, and the names with their colours are listed above the sheet; the colour can be changed. *Kumoa* is off on the shared sketchpad, and only the host can open a file onto it. When two people change the same thing at once, the later change stands. When the collaboration ends, the shared sketchpad stays in each browser as *Yhteinen lehtiö (kopio)* beside the person's own. The copy is kept until the next collaboration starts: save it as a file if you want to keep it.
 
 ## 7. Files and sharing
 

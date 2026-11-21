@@ -74,6 +74,7 @@ function PrivacyNote({ signal, turn }: { signal: Signal; turn: string[] | null }
     <div className="inspector-note collab-privacy" id="collabPrivacy">
       <p>{t('collabPrivacyStore')}</p>
       <p>{t('collabPrivacyPeers')}</p>
+      <p>{t('collabPrivacySketch')}</p>
       <p>
         {signal.strategy === 'nostr'
           ? t('collabPrivacyNostr')

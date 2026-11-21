@@ -552,7 +552,8 @@ const num = (v: unknown, min: number, max: number): v is number =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
 const FAR = 100_000;
 
-function parseElement(raw: unknown, path: string): SketchElement | string {
+/** One element as it comes from a file or from another person in a session: the element, or the place that is wrong. */
+export function parseElement(raw: unknown, path: string): SketchElement | string {
   if (!isObject(raw)) return `${path}: not an object`;
   const { id, color, size, type } = raw;
   if (typeof id !== 'string' || !id || id.length > 80) return `${path}.id`;

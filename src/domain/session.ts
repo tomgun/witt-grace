@@ -6,6 +6,10 @@
 import { SCHEMA_VERSION, isAiProfile, sameName } from './model.ts';
 import type { Project } from './model.ts';
 import type { Command, CommandType } from './commands.ts';
+import { parseSketch } from './sketch.ts';
+import type { Sketch } from './sketch.ts';
+import { parseSketchOps } from './sketchOps.ts';
+import type { SketchOp } from './sketchOps.ts';
 
 /** 2 since 2026-11-18: a session may carry a document scored with a calculation method that a protocol-1 build
  * cannot parse, so such a build is told "different version" at the door instead of failing on the first snapshot. */
@@ -212,6 +216,8 @@ export type ToHost =
     }
   | { t: 'ready' }
   | { t: 'propose'; id: string; command: Command }
+  /** Changes to the session's shared sketchpad (owner 2026-11-21); the sender has applied them already. */
+  | { t: 'sketch'; ops: SketchOp[] }
   | { t: 'resync' }
   | { t: 'bye' };
 /** Host → participant. */
@@ -239,6 +245,9 @@ export type ToPeer =
     }
   | { t: 'reject'; id: string; reason: RejectReason; detail?: string }
   | { t: 'snapshot'; seq: number; project: Project; digest: string }
+  /** Sketchpad changes in the host's order (the sender's own come back too), and the whole sketchpad. */
+  | { t: 'sketch'; seq: number; ops: SketchOp[] }
+  | { t: 'sketchpad'; seq: number; sketch: Sketch }
   | { t: 'roster'; people: Person[] }
   | { t: 'end'; reason: EndReason };
 
@@ -350,6 +359,10 @@ export function parseToHost(raw: string): Parsed<ToHost> {
       return isString(m.id) && isCommand(m.command)
         ? { ok: true, message: { t: 'propose', id: m.id, command: m.command } }
         : bad;
+    case 'sketch': {
+      const ops = parseSketchOps(m.ops);
+      return ops ? { ok: true, message: { t: 'sketch', ops } } : bad;
+    }
     case 'ready':
     case 'resync':
     case 'bye':
@@ -449,6 +462,17 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
       return isCount(m.seq) && isDocument(m.project) && isString(m.digest, 16)
         ? { ok: true, message: { t: 'snapshot', seq: m.seq, project: m.project, digest: m.digest } }
         : bad;
+    case 'sketch': {
+      const ops = isCount(m.seq) ? parseSketchOps(m.ops) : null;
+      return ops ? { ok: true, message: { t: 'sketch', seq: m.seq as number, ops } } : bad;
+    }
+    case 'sketchpad': {
+      // The whole sketchpad is read as a sketch file is: nothing of it is taken on trust.
+      const parsed = isCount(m.seq) && isObject(m.sketch) ? parseSketch(JSON.stringify(m.sketch)) : null;
+      return parsed?.ok
+        ? { ok: true, message: { t: 'sketchpad', seq: m.seq as number, sketch: parsed.sketch } }
+        : bad;
+    }
     case 'roster': {
       if (!Array.isArray(m.people) || m.people.length > MAX_SEATS + 1) return bad;
       const people = m.people.filter(

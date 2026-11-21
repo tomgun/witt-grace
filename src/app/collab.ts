@@ -12,6 +12,7 @@ import { joinSession, startHost } from '../lib/p2p/session.ts';
 import type { CollabClock, EndCause, HostRecord } from '../lib/p2p/session.ts';
 import { trysteroConnector } from '../lib/p2p/trystero.ts';
 import type { TurnServer } from '../lib/p2p/trystero.ts';
+import { clearSharedSketch, sharedSketchPort } from './sketchStore.ts';
 import { blankProject, getStore } from './store.ts';
 
 /** Per browser: the connection the host chose last (`nostr`, or relay URLs separated by spaces). */
@@ -224,6 +225,7 @@ export async function join(invite: Invite, given: Given = {}) {
   try {
     const session = await joinSession({
       port: store.collabPort(),
+      sketch: sharedSketchPort,
       connect: connect(),
       invite,
       ...given,
@@ -296,8 +298,11 @@ const keepRecord = (record: HostRecord | null) => {
 async function host(signal: Signal, resume?: HostRecord): Promise<boolean> {
   const store = getStore();
   try {
+    // A new session starts on an empty shared sketchpad; one continued after a reload keeps the one it had.
+    if (!resume) clearSharedSketch();
     const session = await startHost({
       port: store.collabPort(),
+      sketch: sharedSketchPort,
       connect: connect(),
       signal,
       hostUserId: store.get().actorId,

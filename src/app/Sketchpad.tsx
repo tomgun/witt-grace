@@ -2,7 +2,7 @@
 // fixed sheet, apart from the argument tree. The model and every change are in domain/sketch.ts; this module draws
 // the frame on a canvas, turns pointer and key input into those changes, keeps undo history and saves the sketch
 // to this browser (`witt-sketch-v1`). A sketch leaves the browser only as a file or a picture the person saves.
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   SKETCH_COLORS,
   SKETCH_FONT_SIZE,
@@ -14,7 +14,6 @@ import {
   addComment,
   addElement,
   addFrame,
-  blankSketch,
   elementAt,
   elementBounds,
   linkEnds,
@@ -38,10 +37,13 @@ import {
 import type { BoxElement, Sketch, SketchElement, TextElement } from '../domain/sketch.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
 import type { MessageKey } from '../lib/i18n/catalog.ts';
+import { applySketchOps, diffSketch } from '../domain/sketchOps.ts';
 import { newId } from '../lib/providers.ts';
-import { useTranslator } from './store.ts';
+import { hasDrawing, ownSketch, sharedSketch } from './sketchStore.ts';
+import { getStore, useAppState, useTranslator } from './store.ts';
 
-const STORAGE_KEY = 'witt-sketch-v1';
+/** The pen a person starts with on the shared sketchpad, by their place in the session; white is left out. */
+const seatColor = (place: number): number => Math.max(0, place) % (SKETCH_COLORS.length - 1);
 const TOOLS = ['select', 'pen', 'line', 'arrow', 'rect', 'ellipse', 'text', 'node', 'eraser'] as const;
 type Tool = (typeof TOOLS)[number];
 const TOOL_LABEL: Record<Tool, MessageKey> = {
@@ -78,17 +80,6 @@ const TOOL_KEY: Record<string, Tool> = {
   x: 'eraser',
 };
 const FONT = `${SKETCH_FONT_SIZE}px ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace`;
-
-function loadSaved(): Sketch {
-  try {
-    const text = window.localStorage.getItem(STORAGE_KEY);
-    const parsed = text ? parseSketch(text) : null;
-    if (parsed?.ok) return parsed.sketch;
-  } catch {
-    // storage blocked: the sketch lives for this visit only
-  }
-  return blankSketch(newId());
-}
 
 function draw(ctx: CanvasRenderingContext2D, elements: readonly SketchElement[], alpha: number): void {
   ctx.save();
@@ -219,14 +210,24 @@ function draw(ctx: CanvasRenderingContext2D, elements: readonly SketchElement[],
 
 export default function Sketchpad({ onClose }: { onClose: () => void }) {
   const t = useTranslator();
-  const [sketch, setSketch] = useState<Sketch>(loadSaved);
+  const { collab } = useAppState();
+  /** A session is on: the shared sketchpad is drawn on by everyone in it. */
+  const live = collab?.phase === 'active' || collab?.phase === 'reconnecting';
+  const place = collab ? collab.people.findIndex((p) => p.userId === collab.selfUserId) : -1;
+  const [which, setWhich] = useState<'own' | 'shared'>(live ? 'shared' : 'own');
+  const pad = which === 'shared' ? sharedSketch : ownSketch;
+  const sketch = useSyncExternalStore(pad.subscribe, pad.get);
+  const sharing = which === 'shared' && live;
+  /** Waiting for the host to come back: what was drawn now would be lost when it does. */
+  const waiting = sharing && collab?.phase === 'reconnecting';
+  const copyKept = hasDrawing(useSyncExternalStore(sharedSketch.subscribe, sharedSketch.get));
   const [frame, setFrame] = useState(0);
   const [tool, setTool] = useState<Tool>('pen');
-  const [color, setColor] = useState(0);
+  const [color, setColor] = useState(() => (live ? seatColor(place) : 0));
   const [size, setSize] = useState<number>(SKETCH_SIZES[1]);
   const [fill, setFill] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
-  const [editing, setEditing] = useState<{ id: string; created: boolean } | null>(null);
+  const [editingState, setEditing] = useState<{ id: string; created: boolean } | null>(null);
   /** What is on screen while a gesture is under way; it becomes the sketch (one undo step) when the gesture ends. */
   const [preview, setPreview] = useState<Sketch | null>(null);
   const [onion, setOnion] = useState(true);
@@ -252,19 +253,49 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   const shown = preview ?? sketch;
   const at = Math.min(frame, shown.frames.length - 1);
   const elements = useMemo(() => shown.frames[at]?.elements ?? [], [shown, at]);
+  // What is being written may be removed by someone else in a session: then nothing is being written.
+  const editing = editingState && elements.some((e) => e.id === editingState.id) ? editingState : null;
 
-  const commit = useCallback(
-    (next: Sketch) => {
-      if (next === sketch) return;
+  /**
+   * This person's change, from `base` to `next`. It is taken as the operations that make it, so that on a shared
+   * sketchpad it lands on top of what others have drawn meanwhile and is told to the session.
+   */
+  const setSketch = (next: Sketch, base: Sketch = sketch) => {
+    const ops = diffSketch(base, next);
+    if (!ops.length) return;
+    const current = pad.get();
+    pad.set(current === base ? next : applySketchOps(current, ops));
+    if (!sharing) return;
+    const sent = getStore().collabLink()?.session.sketched(ops) ?? true;
+    if (!sent) setMessage(t('sketchTooLarge'));
+  };
+  /** The same, as a step that Kumoa takes back (on the person's own sketchpad). */
+  const commit = (next: Sketch, base: Sketch = sketch) => {
+    if (next === base) return;
+    if (!sharing) {
       history.current.past.push(sketch);
       if (history.current.past.length > 100) history.current.past.shift();
       history.current.future = [];
-      setSketch(next);
       touch();
-    },
-    [sketch]
-  );
+    }
+    setSketch(next, base);
+  };
+  const choose = (next: 'own' | 'shared') => {
+    if (next === which) return;
+    // Each sketchpad has its own steps to undo; they are not carried from one to the other.
+    history.current = { past: [], future: [] };
+    touch();
+    setPreview(null);
+    setEditing(null);
+    setSelected([]);
+    setFrame(0);
+    setPlaying(false);
+    setMessage(null);
+    if (next === 'shared' && live) setColor(seatColor(place));
+    setWhich(next);
+  };
   const undo = () => {
+    if (sharing) return;
     const previous = history.current.past.pop();
     if (!previous) return;
     history.current.future.push(sketch);
@@ -273,6 +304,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     touch();
   };
   const redo = () => {
+    if (sharing) return;
     const next = history.current.future.pop();
     if (!next) return;
     history.current.past.push(sketch);
@@ -280,15 +312,6 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     setSelected([]);
     touch();
   };
-
-  // Saved to this browser on every change; a full or blocked storage leaves the sketch in memory.
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, serializeSketch(sketch));
-    } catch {
-      // nothing to do: the person can still save a file
-    }
-  }, [sketch]);
 
   // The frame on the canvas: the sheet, the previous frame faintly, the elements, the selection.
   useEffect(() => {
@@ -401,7 +424,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     history.current.past.push(from);
     history.current.future = [];
     touch();
-    setSketch(next);
+    setSketch(next, from);
     setSelected([ids.node]);
     setEditing({ id: ids.node, created: true });
   };
@@ -420,7 +443,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   };
 
   const onPointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    if (event.button !== 0 || playing) return;
+    if (event.button !== 0 || playing || waiting) return;
     if (editing) {
       // A press on the sheet takes what was written: the canvas takes the focus, and the editor's blur finishes.
       event.currentTarget.focus({ preventScroll: true });
@@ -529,7 +552,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
       if (made && made.type !== 'pen' && (!b || (b.w < 3 && b.h < 3))) next = g.base;
     }
     setPreview(null);
-    commit(next);
+    commit(next, g.base);
   };
 
   const removeSelected = () => {
@@ -539,7 +562,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLCanvasElement>) => {
-    if (editing || playing) return;
+    if (editing || playing || waiting) return;
     const mod = event.ctrlKey || event.metaKey;
     const key = event.key;
     if (mod && key.toLowerCase() === 'z') {
@@ -589,7 +612,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
   const onDoubleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const { x, y } = point(event);
     const hit = elementAt(elements, x, y);
-    if (playing || editing) return;
+    if (playing || editing || waiting) return;
     if (hit && (hit.type === 'text' || hit.type === 'node')) {
       setSelected([hit.id]);
       setEditing({ id: hit.id, created: false });
@@ -637,7 +660,13 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
       return;
     }
     setMessage(null);
-    commit(parsed.sketch);
+    if (sharing) {
+      // A file opened onto the shared sketchpad replaces it for everyone; only the host may.
+      const link = getStore().collabLink();
+      if (link?.role !== 'host') return;
+      pad.set(parsed.sketch);
+      link.session.sketchReplaced();
+    } else commit(parsed.sketch);
     setSelected([]);
     setFrame(0);
   };
@@ -702,12 +731,34 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
           ←
         </button>
         <h1>{t('sketchTitle')}</h1>
+        {live || copyKept ? (
+          <div className="sketch-which" role="group" aria-label={t('sketchWhich')}>
+            <button
+              type="button"
+              className="btn quiet"
+              id="btnSketchOwn"
+              aria-pressed={which === 'own'}
+              onClick={() => choose('own')}
+            >
+              {t('sketchOwn')}
+            </button>
+            <button
+              type="button"
+              className="btn quiet"
+              id="btnSketchShared"
+              aria-pressed={which === 'shared'}
+              onClick={() => choose('shared')}
+            >
+              {t(live ? 'sketchShared' : 'sketchSharedCopy')}
+            </button>
+          </div>
+        ) : null}
         <div className="sketch-bar-actions">
           <button
             type="button"
             className="btn quiet"
             id="btnSketchUndo"
-            disabled={!steps.past}
+            disabled={sharing || !steps.past}
             onClick={undo}
           >
             {t('undo')}
@@ -716,12 +767,19 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
             type="button"
             className="btn quiet"
             id="btnSketchRedo"
-            disabled={!steps.future}
+            disabled={sharing || !steps.future}
             onClick={redo}
           >
             {t('redo')}
           </button>
-          <button type="button" className="btn quiet" id="btnSketchOpen" onClick={() => void openFile()}>
+          <button
+            type="button"
+            className="btn quiet"
+            id="btnSketchOpen"
+            disabled={sharing && collab?.role !== 'host'}
+            title={sharing && collab?.role !== 'host' ? t('sketchOpenHostOnly') : undefined}
+            onClick={() => void openFile()}
+          >
             {t('sketchOpen')}
           </button>
           <button
@@ -816,8 +874,31 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
         </div>
         <div className="sketch-stage">
           <p className="sketch-hint" id="sketchHint" role="status">
-            {message ?? (nodeSelected ? t('sketchNodeHint') : t('sketchIntro'))}
+            {message ??
+              (waiting
+                ? t('sketchReconnecting')
+                : nodeSelected
+                  ? t('sketchNodeHint')
+                  : sharing
+                    ? t('sketchSharedHint')
+                    : which === 'shared'
+                      ? t('sketchCopyHint')
+                      : t('sketchIntro'))}
           </p>
+          {sharing && collab ? (
+            <ul className="sketch-people" id="sketchPeople" aria-label={t('sketchPens')}>
+              {collab.people.map((person, i) => (
+                <li key={person.userId}>
+                  <span
+                    className="sketch-person-pen"
+                    style={{ background: SKETCH_COLORS[seatColor(i)] }}
+                    aria-hidden="true"
+                  />
+                  {person.name}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <div className="sketch-sheet">
             <canvas
               ref={canvasRef}

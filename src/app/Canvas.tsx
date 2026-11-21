@@ -489,6 +489,9 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       );
       if (result.action === 'select') {
         store.select(result.id);
+        // At once when the card is on the page, so the next key press (a held key, a quick hand) starts from it and
+        // not from the card just left; again after the frame for a card that is only now drawn.
+        focusCard(result.id);
         requestAnimationFrame(() => focusCard(result.id));
       } else if (result.action === 'expand' || result.action === 'collapse') {
         setSubtreeCollapsed(result.id, result.action === 'collapse');
