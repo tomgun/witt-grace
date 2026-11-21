@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-21 — `UI_INVENTORY.md` — Owner: the Obsidiaani theme's fonts may ship with the app; S-15: Cormorant Garamond and Space Grotesk (OFL) bundled like Comic Neue.
 - 2026-11-21 — `UI_INVENTORY.md` — Owner: a futuristic theme with crisp text on black; S-15: a thirteenth per-browser skin `obsidian` ◼ Obsidiaani (black, white ink, hairline edges, gold as the one accent, no shadows or glow).
 - 2026-11-21 — `UI_INVENTORY.md`, `SECURITY_AND_PRIVACY.md` — Owner: sketching together in a collaboration: a shared sketchpad that starts empty, a pen colour per person, a copy kept apart from the person's own (`witt-sketch-session-v1`); the session gains the messages `sketch` and `sketchpad` and its protocol number stays 2 (no users yet).
 - 2026-11-21 — `UI_INVENTORY.md` — Owner: text written into the sketchpad's boxes and freely by a double-click; the sketchpad leaves the home screen (`#btnHomeSketch` removed) and opens from the Näkymä menu only.

@@ -797,9 +797,52 @@ body[data-theme='grove'] .node.weak-reason {
   border-style: dashed;
 }
 
+/* Cormorant Garamond and Space Grotesk (SIL Open Font License 1.1, see fonts/CormorantGaramond-OFL.txt and
+   fonts/SpaceGrotesk-OFL.txt) ship with the app so the Obsidiaani theme looks the same everywhere; the browser loads
+   each file only when the theme is on and a text needs it. Space Grotesk has no Cyrillic: Russian body text falls
+   back to the system's grotesk, as Chinese, Japanese and Korean do for both. */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-latin-700-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-cyrillic-700-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/space-grotesk-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/space-grotesk-latin-700-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ---- ◼ Obsidiaani (obsidian, owner 2026-11-21): crisp white text on black, hairline edges, no shadows or glow,
    and one accent, gold, kept for the selection, the primary action and the brand mark. Serif headings over a
-   grotesk body; the fonts are the system's own (nothing is fetched). ---- */
+   grotesk body, both bundled above (nothing is fetched from another host). ---- */
 body[data-theme='obsidian'] {
   color-scheme: dark;
   --bg: #0a0a0a;
@@ -831,10 +874,15 @@ body[data-theme='obsidian'] {
 body[data-theme='obsidian'] :is(button, input, select, textarea) {
   font-family: inherit;
 }
-body[data-theme='obsidian'] :is(h1, h2, h3, .brand strong, .home-brand, dialog h2) {
+body[data-theme='obsidian'] :is(h1, h2, .brand strong, .home-brand, dialog h2) {
   font-family: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
   font-weight: 700;
   letter-spacing: 0;
+}
+/* Small print beside the serif brand stays in the body's grotesk: a 12 px serif is not crisp. */
+body[data-theme='obsidian'] :is(.brand, .home-brand) small {
+  font-family: 'Space Grotesk', 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400;
 }
 body[data-theme='obsidian'] .home-hero h1 .accent {
   color: var(--accent);
