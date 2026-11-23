@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-23 — `UI_INVENTORY.md` — Owner: the home backdrop (himmeli) larger and hung from another place, and its points can be taken hold of and swung, simulated as masses and rods so that the neighbours give and not the whole tree. S-15.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner's plan (WG-059): one person has one stable id in every diagram of a project. S-15: a known name reuses the person's id, `#projectPeople` in the people dialog adds a person of another diagram as they are, a rename reaches every diagram; the document format is unchanged.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner: a restrained animated backdrop on the home screen, made of an argument tree. S-15: `canvas#homeBackdrop`, a slowly turning wire-mesh tree; still with reduced motion and on phones.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner: undo works in the open diagram only, and a listed change history lets one go back and forward; a project may have several sketchpads, an empty one is not saved, and an attached project brings its sketchpads. S-15: per-diagram undo with the project's structure as its own steps, `#historyDialog` (`#btnHistoryTop`, `#btnHistory`), `#btnNoticeRestore`; `sketches[]` in the `witt-project` file (replaces the single `sketch` recorded earlier the same day, never released).
