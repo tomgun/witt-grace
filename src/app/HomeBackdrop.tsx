@@ -30,11 +30,10 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     let body = bodyAtRest(mesh);
     const tokens = getComputedStyle(document.body);
     const token = (name: string, fallback: string) => tokens.getPropertyValue(name).trim() || fallback;
-    const colour: Record<MeshStance | 'tie', string> = {
+    const colour: Record<MeshStance, string> = {
       root: token('--accent', '#6b5cff'),
       support: token('--green', '#2f9c58'),
       oppose: token('--red', '#c2495a'),
-      tie: token('--muted', '#8190a7'),
     };
     let width = 0;
     let height = 0;
@@ -82,7 +81,6 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
         ctx.lineTo(to.x, to.y);
         ctx.stroke();
       };
-      for (const [a, b] of mesh.ties) line(a, b, colour.tie, 0.13, 1);
       mesh.nodes.forEach((node, i) => {
         if (node.parent >= 0) line(i, node.parent, colour[node.stance], 0.26, 1.2);
       });

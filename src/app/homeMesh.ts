@@ -13,10 +13,10 @@ export interface MeshNode {
   parent: number;
   depth: number;
 }
+/** A tree and nothing else (owner 2026-11-24): every point but the main claim has one line, to its own claim.
+ * There are no lines between siblings, which would make it read as a net and not as an argument tree. */
 export interface Mesh {
   nodes: MeshNode[];
-  /** Pairs of node indices between siblings: the faint lines that make the tree read as a mesh. */
-  ties: [number, number][];
 }
 
 /** mulberry32: a small seeded generator, so the backdrop is the same tree on every visit. */
@@ -44,7 +44,6 @@ const LEVELS = [
 export function buildMesh(seed = 7): Mesh {
   const random = seeded(seed);
   const nodes: MeshNode[] = [{ x: 0, y: -0.78, z: 0, stance: 'root', parent: -1, depth: 0 }];
-  const ties: [number, number][] = [];
   const grow = (parent: number, depth: number) => {
     const level = LEVELS[depth];
     if (!level) return;
@@ -63,11 +62,10 @@ export function buildMesh(seed = 7): Mesh {
         depth: depth + 1,
       });
     }
-    for (let i = 0; i < level.children; i++) ties.push([first + i, first + ((i + 1) % level.children)]);
     for (let i = 0; i < level.children; i++) grow(first + i, depth + 1);
   };
   grow(0, 0);
-  return { nodes, ties };
+  return { nodes };
 }
 
 export interface Projected {
@@ -146,8 +144,8 @@ export function nearestPoint(points: readonly Projected[], x: number, y: number,
 
 // ---- The himmeli as a body (owner 2026-11-23: “ikään kuin fysiikkamallinnettuna… ettei koko rakennelma liiku
 // vaan dynaamisesti noodin viereisistä”) -------------------------------------------------------------------------
-// Every point is a small mass. A branch is a rod between a reason and its claim, a tie a softer rod between
-// siblings; each point is also drawn gently back to its own place, so the shape returns. The main claim is
+// Every point is a small mass. A branch is a rod between a reason and its claim; each point is also drawn
+// gently back to its own place, so the shape returns. The main claim is
 // fixed: the tree hangs from it. A held point goes where the hand takes it and pulls its neighbours through the
 // rods; let go, the pull runs out through the tree and dies away. Verlet integration: a point's speed is the
 // difference between where it is and where it was.
@@ -174,7 +172,6 @@ export const BODY_STEP_MS = 16;
 const KEEP = 0.94; // of a point's speed, per step
 const HOME = 0.012; // of the way back to its own place, per step
 const ROD = 0.5; // how much of a branch's stretch is taken up per pass
-const TIE = 0.12; // the same for a tie between siblings
 const PASSES = 3;
 /** A held point is never taken farther than this from its own place (model units). */
 export const HOLD_REACH = 1.1;
@@ -237,7 +234,6 @@ export function bodyStep(mesh: Mesh, body: Body, ms: number, hold: Hold | null =
       mesh.nodes.forEach((node, i) => {
         if (node.parent >= 0) rod(next, node.parent, i, ROD);
       });
-      for (const [a, b] of mesh.ties) rod(next, a, b, TIE);
       pin(next);
     }
     before = now;

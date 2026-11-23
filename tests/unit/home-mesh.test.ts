@@ -1,15 +1,15 @@
 /**
  * must: the home screen's backdrop is an argument tree in space (owner 2026-11-23, WG-062, S-15): the same tree on
  *       every visit (seeded), one main claim on top with five reasons, three under each and two under those (51
- *       points), every reason below its parent and tied to it, each either supporting or opposing, siblings tied
- *       in a ring; a point is turned about the vertical axis and projected with perspective, nearer being larger,
+ *       points), every reason below its parent and joined to it alone (owner 2026-11-24: no lines between
+ *       siblings, so it reads as an argument tree and not as a net), each either supporting or opposing; a point is turned about the vertical axis and projected with perspective, nearer being larger,
  *       and a screen point is taken back into the model at a given depth; the tree is a body of masses and rods
  *       (owner, same day): at rest it stays at rest, a held point goes with the hand and pulls its children most,
  *       its parent a little and a far branch hardly at all, the main claim never moves, the hand has a reach, and
  *       let go the tree swings back and settles
  * test: tests/unit/home-mesh.test.ts
- * red-against: Math.random in the layout (another tree on every render), a reason drawn above its claim, a ring
- *              tie reaching into another family, perspective inverted (far points drawn larger), the whole tree
+ * red-against: Math.random in the layout (another tree on every render), a reason drawn above its claim, a line
+ *              between siblings (a net, not a tree), perspective inverted (far points drawn larger), the whole tree
  *              moving as one stiff piece when a point is pulled, a release that never settles or explodes, a point
  *              dragged off to infinity, the tree torn off the claim it hangs from
  */
@@ -60,13 +60,12 @@ test('the tree: 1 + 5 + 15 + 30 points, the same every time, reasons below their
   for (const node of mesh.nodes) assert.ok(Math.hypot(node.x, node.z) < 1.4 && Math.abs(node.y) < 1.4);
 });
 
-test('ring ties join siblings only, one per sibling', () => {
+test('a tree and nothing else: one line per point, to its own claim, and none between siblings', () => {
   const mesh = buildMesh();
-  assert.equal(mesh.ties.length, 50);
-  for (const [a, b] of mesh.ties) {
-    assert.notEqual(a, b);
-    assert.equal(mesh.nodes[a]!.parent, mesh.nodes[b]!.parent);
-  }
+  assert.deepEqual(Object.keys(mesh), ['nodes']);
+  // Fifty lines for fifty-one points: every point but the main claim has exactly one, upwards.
+  assert.equal(mesh.nodes.filter((n) => n.parent >= 0).length, 50);
+  assert.equal(mesh.nodes.filter((n) => n.parent === -1).length, 1);
 });
 
 test('projection: the centre stays put, a turn moves x into depth, nearer is larger', () => {

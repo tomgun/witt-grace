@@ -23,46 +23,74 @@ export interface Scenario {
 
 const FOR = 'homeCanvasFor';
 const AGAINST = 'homeCanvasAgainst';
-/** An argument tree: a reason for with a reason for it, a reason against with a reason against that. */
+const child = (stance: 'for' | 'against', title: MessageKey): ScenarioNode =>
+  stance === 'for' ? { tag: FOR, tone: 'supporting', title } : { tag: AGAINST, tone: 'opposing', title };
+/**
+ * An argument tree: a reason for the claim and a reason against it, each with a reason of its own. A reason's
+ * reason speaks for or against that reason, and both happen (owner 2026-11-24): a reason for the claim can have
+ * a reason against it, and a reason against the claim one that backs it up.
+ */
 const argument = (
   label: MessageKey,
   root: MessageKey,
   pro: MessageKey,
-  proWhy: MessageKey,
+  proChild: ScenarioNode,
   con: MessageKey,
-  conWhy: MessageKey
+  conChild: ScenarioNode
 ): Scenario => ({
   label,
   root,
   branches: [
-    { tag: FOR, tone: 'supporting', title: pro, children: [{ tag: FOR, tone: 'supporting', title: proWhy }] },
-    {
-      tag: AGAINST,
-      tone: 'opposing',
-      title: con,
-      children: [{ tag: AGAINST, tone: 'opposing', title: conWhy }],
-    },
+    { tag: FOR, tone: 'supporting', title: pro, children: [proChild] },
+    { tag: AGAINST, tone: 'opposing', title: con, children: [conChild] },
   ],
 });
 
 export const SCENARIOS: readonly Scenario[] = [
+  // Business: the reason for is backed up; the reason against is answered.
   argument(
     'homeScenarioLabel1',
     'homeCanvasRoot',
     'homeCanvasForTitle',
-    'homeCanvasForDetail',
+    child('for', 'homeCanvasForDetail'),
     'homeCanvasAgainstTitle',
-    'homeCanvasAgainstDetail'
+    child('against', 'homeCanvasAgainstDetail')
   ),
-  ...([2, 3, 4, 5] as const).map((n) =>
-    argument(
-      `homeScenarioLabel${n}`,
-      `homeScenario${n}Root`,
-      `homeScenario${n}For`,
-      `homeScenario${n}ForDetail`,
-      `homeScenario${n}Against`,
-      `homeScenario${n}AgainstDetail`
-    )
+  // Council: the reason for is questioned; the reason against is backed up.
+  argument(
+    'homeScenarioLabel2',
+    'homeScenario2Root',
+    'homeScenario2For',
+    child('against', 'homeScenario2ForDetail'),
+    'homeScenario2Against',
+    child('for', 'homeScenario2AgainstDetail')
+  ),
+  // Sports club: both reasons are questioned.
+  argument(
+    'homeScenarioLabel3',
+    'homeScenario3Root',
+    'homeScenario3For',
+    child('against', 'homeScenario3ForDetail'),
+    'homeScenario3Against',
+    child('against', 'homeScenario3AgainstDetail')
+  ),
+  // School: both reasons are backed up.
+  argument(
+    'homeScenarioLabel4',
+    'homeScenario4Root',
+    'homeScenario4For',
+    child('for', 'homeScenario4ForDetail'),
+    'homeScenario4Against',
+    child('for', 'homeScenario4AgainstDetail')
+  ),
+  // Family: the reason for is backed up; the reason against is answered.
+  argument(
+    'homeScenarioLabel5',
+    'homeScenario5Root',
+    'homeScenario5For',
+    child('for', 'homeScenario5ForDetail'),
+    'homeScenario5Against',
+    child('against', 'homeScenario5AgainstDetail')
   ),
   // A decision: two options, each with a reason for it and one against it.
   {
