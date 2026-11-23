@@ -70,10 +70,15 @@ function CopyBlock({
 
 function PrivacyNote({ signal, turn }: { signal: Signal; turn: string[] | null }) {
   const t = useTranslator();
+  const diagrams = useAppState().workbook.documents.length;
   return (
     <div className="inspector-note collab-privacy" id="collabPrivacy">
       <p>{t('collabPrivacyStore')}</p>
       <p>{t('collabPrivacyPeers')}</p>
+      {/* A project of several diagrams is shared whole (WG-063): said where the session is started. */}
+      {diagrams > 1 ? (
+        <p id="collabPrivacyProject">{t('collabPrivacyProject', { count: diagrams })}</p>
+      ) : null}
       <p>{t('collabPrivacySketch')}</p>
       <p>
         {signal.strategy === 'nostr'

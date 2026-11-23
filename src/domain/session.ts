@@ -215,7 +215,8 @@ export type ToHost =
       proof?: string;
     }
   | { t: 'ready' }
-  | { t: 'propose'; id: string; command: Command }
+  /** `doc`: the diagram the command is for, by id; absent: the session's first diagram (WG-063). */
+  | { t: 'propose'; id: string; command: Command; doc?: string }
   /** Changes to the session's shared sketchpad (owner 2026-11-21); the sender has applied them already. */
   | { t: 'sketch'; ops: SketchOp[] }
   | { t: 'resync' }
@@ -233,6 +234,8 @@ export type ToPeer =
       seq: number;
       project: Project;
       digest: string;
+      /** The project's other shared diagrams (WG-063): `project` is the one shown when the session began. */
+      others?: { project: Project; digest: string }[];
     }
   | {
       t: 'commit';
@@ -242,6 +245,8 @@ export type ToPeer =
       actorId: string;
       digest: string;
       proposal?: string;
+      /** The diagram the command changed, by id; absent: the session's first diagram. `digest` is that diagram's. */
+      doc?: string;
     }
   | { t: 'reject'; id: string; reason: RejectReason; detail?: string }
   | { t: 'snapshot'; seq: number; project: Project; digest: string }
@@ -313,6 +318,12 @@ const isCommand = (v: unknown): v is Command =>
 /** A document is checked by `parseProject` where it is adopted; here only its outline. */
 const isDocument = (v: unknown): v is Project =>
   isObject(v) && Array.isArray(v.nodes) && Array.isArray(v.users);
+/** How many diagrams a session shares at most: a project's own limit. */
+export const MAX_SHARED_DOCUMENTS = 50;
+const isOthers = (v: unknown): v is { project: Project; digest: string }[] =>
+  Array.isArray(v) &&
+  v.length < MAX_SHARED_DOCUMENTS &&
+  v.every((o) => isObject(o) && isDocument(o.project) && isString(o.digest, 16));
 
 function decode(raw: string, max: number): Parsed<Record<string, unknown>> {
   if (raw.length > max) return { ok: false, reason: 'too-large' };
@@ -356,8 +367,16 @@ export function parseToHost(raw: string): Parsed<ToHost> {
         },
       };
     case 'propose':
-      return isString(m.id) && isCommand(m.command)
-        ? { ok: true, message: { t: 'propose', id: m.id, command: m.command } }
+      return isString(m.id) && isCommand(m.command) && (m.doc === undefined || isString(m.doc, 200))
+        ? {
+            ok: true,
+            message: {
+              t: 'propose',
+              id: m.id,
+              command: m.command,
+              ...(m.doc !== undefined ? { doc: m.doc as string } : {}),
+            },
+          }
         : bad;
     case 'sketch': {
       const ops = parseSketchOps(m.ops);
@@ -409,7 +428,8 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
         isString(m.hostName, 120) &&
         isCount(m.seq) &&
         isDocument(m.project) &&
-        isString(m.digest, 16)
+        isString(m.digest, 16) &&
+        (m.others === undefined || isOthers(m.others))
         ? {
             ok: true,
             message: {
@@ -421,6 +441,9 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
               seq: m.seq,
               project: m.project,
               digest: m.digest,
+              ...(m.others !== undefined
+                ? { others: m.others.map((o) => ({ project: o.project, digest: o.digest })) }
+                : {}),
             },
           }
         : bad;
@@ -430,7 +453,8 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
         isString(m.now, 40) &&
         isString(m.actorId) &&
         isString(m.digest, 16) &&
-        (m.proposal === undefined || isString(m.proposal))
+        (m.proposal === undefined || isString(m.proposal)) &&
+        (m.doc === undefined || isString(m.doc, 200))
         ? {
             ok: true,
             message: {
@@ -441,6 +465,7 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
               actorId: m.actorId,
               digest: m.digest,
               ...(m.proposal !== undefined ? { proposal: m.proposal as string } : {}),
+              ...(m.doc !== undefined ? { doc: m.doc as string } : {}),
             },
           }
         : bad;

@@ -80,7 +80,6 @@ export function DocTabs() {
             data-mode={diagram.mode}
             title={diagramLabel(diagram)}
             aria-controls="workspaceMain"
-            disabled={locked && index !== activeTab}
             onClick={() => show(index)}
             onDoubleClick={() => void renameDiagram()}
           >

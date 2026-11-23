@@ -3,8 +3,14 @@
  *       nothing, a host's local edit is broadcast, a participant's edit is only proposed, a participant cannot open
  *       another document, the host replacing the same document sends it to everyone, and a participant acts as their
  *       own seat (WG-030)
+ *       a session shares every diagram of the host's project (WG-063): the joiner gets them all and is a person
+ *       of each under one id, a change goes to the diagram it was made in whichever tab each person has open, a
+ *       proposal for a diagram that is not shared is refused, looking at tabs is free while the structure is
+ *       locked, and the joiner's own project is put aside whole in the browser and comes back after the session
  * test: tests/unit/store-collab.test.ts (the real store over the loopback network)
- * red-against: undo after leaving rewinding other people's edits; the participant's dispatch applying locally;
+ * red-against: a change applied to the tab that happens to be shown and not to the diagram it was made in,
+ *              the joiner's own project replaced with nothing kept, a joiner who is a different person in each
+ *              diagram, a participant writing into a diagram the host did not share, undo after leaving rewinding other people's edits; the participant's dispatch applying locally;
  *              store.load bypassing the session; the assessor switcher letting a participant act as the host
  */
 import assert from 'node:assert/strict';
@@ -133,4 +139,129 @@ test('the host keeps no undo history in a session and broadcasts its edits; the 
   guest.dispatch({ type: 'project.setTitle', title: 'Omani' });
   assert.equal(guest.get().project.title, 'Omani', 'after the session the copy is ordinary work');
   assert.equal(guest.get().canUndo, true);
+});
+
+const blank = (id: string, title: string, userId = 'u-host', userName = 'Isäntä') => ({
+  ...createBlankProject({
+    projectId: id,
+    rootId: `${id}-root`,
+    userId,
+    now: '2026-11-11T09:00:00.000Z',
+    userName,
+  }),
+  title,
+});
+/** A host with a project of two diagrams (the second one shown), and a guest with work of their own. */
+async function projectSession() {
+  const hub = new LoopbackHub();
+  const host = createStore({ store: memoryStore(), persistent: false, windowWidth: 1440 });
+  host.load(blank('p-1', 'Päätös'));
+  host.attachTabs([blank('p-2', 'Riskit')]);
+  host.selectTab(0);
+  const hostSession = await startHost({
+    port: host.collabPort(),
+    connect: async () => hub.join('H'),
+    signal: relay,
+    hostUserId: 'u-host',
+    clock: clock('h'),
+  });
+  host.attachCollab({ role: 'host', session: hostSession });
+  const kv = memoryStore();
+  const guest = createStore({ store: kv, persistent: true, windowWidth: 1440 });
+  guest.load(blank('g-1', 'Oma työ', 'u-own', 'Minä'));
+  guest.attachTabs([blank('g-2', 'Oma toinen', 'u-own', 'Minä')]);
+  const parsed = parseInvite(hostSession.status().link as string);
+  assert.ok(parsed.ok);
+  const guestSession = await joinSession({
+    port: guest.collabPort(),
+    connect: async () => hub.join('G'),
+    invite: parsed.invite,
+    name: 'Aino',
+    clock: clock('g'),
+  });
+  guest.attachCollab({ role: 'participant', session: guestSession });
+  await until(hub, () => guestSession.status().phase === 'confirm');
+  guestSession.accept();
+  await settle(hub);
+  const titles = (store: typeof host) => store.get().workbook.documents.map((d) => d.title);
+  return { hub, host, guest, hostSession, guestSession, kv, titles };
+}
+
+test('a session shares every diagram of the project; the joiner is a person of each, under one id', async () => {
+  const { host, guest, titles } = await projectSession();
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+  assert.equal(guest.get().project.id, 'p-1');
+  const ids = guest.get().workbook.documents.map((d) => d.users.find((u) => u.name === 'Aino')?.id);
+  assert.ok(ids[0]);
+  assert.equal(ids[0], ids[1]);
+  assert.equal(JSON.stringify(guest.get().workbook.documents), JSON.stringify(host.get().workbook.documents));
+});
+
+test('a change goes to the diagram it was made in, whichever tab each person has open', async () => {
+  const { hub, host, guest, titles } = await projectSession();
+  // The guest looks at the second diagram and adds a reason there; the host stays on the first.
+  assert.equal(guest.selectTab(1), true);
+  assert.equal(
+    guest.dispatch({ type: 'node.add', id: 'n-g', parentId: 'p-2-root', relation: 'oppose' }),
+    true
+  );
+  await settle(hub);
+  const nodes = (store: typeof host) => store.get().workbook.documents.map((d) => d.nodes.length);
+  assert.deepEqual(nodes(host), [1, 2]);
+  assert.deepEqual(nodes(guest), [1, 2]);
+  assert.equal(host.get().activeTab, 0, 'the host’s shown tab does not move');
+  // The host edits the second diagram without the guest being there.
+  guest.selectTab(0);
+  host.selectTab(1);
+  host.dispatch({ type: 'project.setTitle', title: 'Riskit 2' });
+  await settle(hub);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit 2']);
+  assert.equal(guest.get().activeTab, 0);
+  assert.equal(JSON.stringify(guest.get().workbook.documents), JSON.stringify(host.get().workbook.documents));
+  assert.equal(guest.get().collab?.pending, 0);
+});
+
+test('a proposal for a diagram the session does not share is refused', async () => {
+  const { hub, host, guest, guestSession } = await projectSession();
+  guestSession.propose({ type: 'project.setTitle', title: 'Kaapattu' }, 'no-such-diagram');
+  await settle(hub);
+  assert.equal(guest.get().collab?.pending, 0);
+  assert.match(guest.get().notice?.text ?? '', /./);
+  assert.equal(
+    host.get().workbook.documents.some((d) => d.title === 'Kaapattu'),
+    false
+  );
+});
+
+test('the joiner’s own project is put aside whole and comes back after the session', async () => {
+  const { hub, guest, hostSession, kv, titles } = await projectSession();
+  assert.equal(guest.get().aside, true);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+  // Kept in the browser: a reload in the middle of the session still knows of it.
+  assert.equal(createStore({ store: kv, persistent: true, windowWidth: 1440 }).get().aside, true);
+  // During the session it cannot be brought back over the shared project.
+  assert.equal(guest.restoreOwnProject(), false);
+  await hostSession.close();
+  await settle(hub);
+  assert.equal(guest.get().collab?.phase, 'ended');
+  assert.equal(guest.get().notice?.ownProject, true);
+  // What is open is the guest's copy of the session's project, to save if wanted.
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+  assert.equal(guest.restoreOwnProject(), true);
+  assert.deepEqual(titles(guest), ['Oma työ', 'Oma toinen']);
+  assert.equal(guest.get().activeTab, 1);
+  assert.equal(guest.get().aside, false);
+  // The copy of the session's project is one undo away.
+  guest.undo();
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+});
+
+test('tabs in a session: looking is free, the structure is locked', async () => {
+  const { host, guest } = await projectSession();
+  assert.equal(guest.selectTab(1), true);
+  assert.equal(host.selectTab(1), true);
+  assert.equal(host.attachTabs([blank('p-3', 'Kolmas')]), 0);
+  assert.equal(host.removeTab(1), false);
+  assert.equal(host.moveTab(0, 1), false);
+  assert.equal(host.get().workbook.documents.length, 2);
 });

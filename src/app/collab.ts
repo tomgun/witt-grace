@@ -265,27 +265,16 @@ export async function join(invite: Invite, given: Given = {}) {
     setJoin({ step: 'failed', invite, given, cause: 'unreachable' });
   }
 }
-/** The welcome arrived: ask before replacing the open work (unless it already is this document: a return). */
-async function confirmJoin() {
+/** The welcome arrived: the session's project is shown. Nothing is asked: the person's own project is not
+ * replaced but put aside whole in this browser, and they are told so (owner 2026-11-23, WG-063). */
+function confirmJoin() {
   const store = getStore();
   const link = store.collabLink();
   if (link?.role !== 'participant') return;
-  const status = link.session.status();
   setJoin(null);
-  const doc = status.document;
-  if (doc && doc.id !== store.get().project.id) {
-    const choice = await store.prepareReplacement(
-      store.translate('collabJoinReplace', { host: status.hostName ?? '?', title: doc.title }),
-      doc.id
-    );
-    if (!choice) {
-      await link.session.close();
-      store.clearCollab();
-      return;
-    }
-  }
   link.session.accept();
   store.setHome(false);
+  if (store.get().aside) store.notify({ kind: 'info', text: store.translate('asidePutNotice') });
 }
 
 // ---- hosting ----

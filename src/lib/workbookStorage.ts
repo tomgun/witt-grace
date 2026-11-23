@@ -59,3 +59,47 @@ export function loadWorkbook(store: KeyValueStore, fresh: Project | null, newId:
     return { ok: true, ...restored, stored: stored !== null, ...(reason ? { warning: reason } : {}) };
   return reason ? { ok: false, reason } : { ok: false, empty: true };
 }
+
+// ---- The person's own project, put aside while they are in someone else's session (WG-063, owner 2026-11-23) --
+// Joining a session shows the session's project in place of the person's own. Their own is kept here, whole, and
+// comes back when they ask for it after the session.
+export const ASIDE_KEY = 'witt-workbook-aside-v1';
+
+export const hasAside = (store: KeyValueStore): boolean => {
+  try {
+    return store.getItem(ASIDE_KEY) !== null;
+  } catch {
+    return false;
+  }
+};
+/** Keep `workbook` aside. An earlier one is never written over: it is the person's real work, and what is open
+ * now would be a session's copy. False when it could not be stored. */
+export function putAside(store: KeyValueStore, workbook: Workbook, active: number): boolean {
+  try {
+    if (store.getItem(ASIDE_KEY) !== null) return true;
+    store.setItem(ASIDE_KEY, JSON.stringify({ ...workbookFileObject(workbook), active }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+/** The project that was put aside, or null when there is none or it cannot be read (it is then left there). */
+export function readAside(store: KeyValueStore): { workbook: Workbook; active: number } | null {
+  try {
+    const raw = store.getItem(ASIDE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { active?: unknown };
+    const workbook = parseWorkbook(parsed);
+    const active = typeof parsed.active === 'number' && workbook.documents[parsed.active] ? parsed.active : 0;
+    return { workbook, active };
+  } catch {
+    return null;
+  }
+}
+export function clearAside(store: KeyValueStore): void {
+  try {
+    store.removeItem(ASIDE_KEY);
+  } catch {
+    // nothing to clear
+  }
+}

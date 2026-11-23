@@ -51,7 +51,14 @@ import {
   writePreference,
 } from '../lib/storage.ts';
 import type { KeyValueStore, SaveResult } from '../lib/storage.ts';
-import { loadWorkbook, saveWorkbook } from '../lib/workbookStorage.ts';
+import {
+  clearAside,
+  hasAside,
+  loadWorkbook,
+  putAside,
+  readAside,
+  saveWorkbook,
+} from '../lib/workbookStorage.ts';
 import type { CollabStatus, DocumentPort, HostSession, ParticipantSession } from '../lib/p2p/session.ts';
 import { persist as recordActive } from '../lib/workspaceMeta.ts';
 import { assessorKey, readView, readZones, reviewViewKey, writeView, writeZones } from './view.ts';
@@ -131,6 +138,8 @@ export type ReplaceChoice = 'forget' | 'keep' | null;
 export interface Notice {
   kind: 'error' | 'info';
   text: string;
+  /** The session is over and the person's own project is waiting aside: the notice offers the way back to it. */
+  ownProject?: boolean;
   /** The notice follows a change to the project's structure (a removed tab): its Kumoa takes back that step,
    * whatever diagram is shown, while it is still the newest structure step. */
   restore?: number;
@@ -194,6 +203,8 @@ export interface AppState {
   notice: Notice | null;
   /** Live collaboration (WG-030): the session's status while one is open or just ended; null otherwise. */
   collab: CollabStatus | null;
+  /** The person's own project is put aside in this browser (they joined a session; WG-063). */
+  aside: boolean;
 }
 const REJECT_TEXT: Record<RejectReason, MessageKey> = {
   rate: 'collabRejectRate',
@@ -300,6 +311,7 @@ export function createStore(
     hydrationFailed: storageTrouble !== null,
     notice: storageTrouble !== null ? { kind: 'error', text: storageTrouble } : null,
     collab: null,
+    aside: hasAside(store),
   };
   type Snapshot = { workbook: Workbook; activeTab: number };
   const snapshot = (): Snapshot => ({ workbook: state.workbook, activeTab: state.activeTab });
@@ -514,10 +526,19 @@ export function createStore(
     set({ notice: { kind: 'error', text: tr()('tabsLockedInSession') } });
     return true;
   };
+  /** The session's first diagram (the one shown when it began), and whether a joiner still waits for it. */
+  let sessionFirstId: string | null = null;
+  let joining = false;
   const detachCollab = () => {
+    const wasGuest = collab?.role === 'participant';
     collabUnsubscribe.forEach((u) => u());
     collabUnsubscribe = [];
     collab = null;
+    sessionFirstId = null;
+    joining = false;
+    // What is open now is the person's copy of the session's project; their own waits aside.
+    if (wasGuest && state.aside)
+      set({ notice: { kind: 'info', text: tr()('asideWaiting'), ownProject: true } });
     awaitingNodes.clear();
     history.clear();
     set({ canUndo: false, canRedo: false });
@@ -541,7 +562,7 @@ export function createStore(
           set({ notice: { kind: 'error', text: tr()('collabNotConnected') } });
           return false;
         }
-        collab.session.propose(command);
+        collab.session.propose(command, state.project.id);
         return true;
       }
       try {
@@ -593,20 +614,65 @@ export function createStore(
     },
     /** Live collaboration: how the session reads and changes the document, bypassing the undo history. */
     collabPort(): DocumentPort {
+      const indexOf = (id: string | undefined): number =>
+        state.workbook.documents.findIndex((d) => d.id === (id ?? sessionFirstId ?? state.project.id));
       return {
-        current: () => state.project,
-        apply(command, ctx) {
-          const next = applyCommand(state.project, command, ctx);
-          if (next !== state.project) replace(next);
-          return state.project;
+        current: () => state.workbook.documents[indexOf(undefined)] ?? state.project,
+        // Every diagram of the project is shared, the first one first.
+        documents() {
+          const first = indexOf(undefined);
+          const all = state.workbook.documents;
+          return first <= 0 ? [...all] : [all[first] as Project, ...all.filter((_, i) => i !== first)];
         },
-        adopt(project) {
-          // A diagram the person already has in another tab is shown there, not copied into this one.
-          const tab = state.workbook.documents.findIndex((d) => d.id === project.id);
-          if (tab !== -1 && tab !== state.activeTab)
-            commit(state.workbook, tab, { remember: false, fresh: true });
-          if (project.id === state.project.id) replace(project);
-          else if (!install(project)) replace(project, { fresh: true });
+        document: (id) => state.workbook.documents.find((d) => d.id === id) ?? null,
+        apply(command, ctx, doc) {
+          const index = indexOf(doc);
+          const before = state.workbook.documents[index];
+          if (!before) throw new Error('Kaaviota ei ole jaettu');
+          const next = applyCommand(before, command, ctx);
+          // The shown tab stays shown, whichever diagram changed.
+          if (next !== before)
+            commit(replaceDocument(state.workbook, index, next), state.activeTab, {
+              remember: false,
+              fresh: false,
+            });
+          return next;
+        },
+        adopt(incoming) {
+          const project = withOfferedScoring(incoming);
+          if (joining) {
+            // The first diagram of a session just joined: the session's project takes the place of the person's
+            // own, which is put aside whole (owner 2026-11-23). If it cannot be stored, nothing is replaced and
+            // the session's diagrams come in as tabs beside the person's own.
+            joining = false;
+            sessionFirstId = project.id;
+            const hasWork =
+              state.saveStatus !== 'noServer' ||
+              state.project.nodes.length > 1 ||
+              !isPlainDocument(state.workbook);
+            const safe = !hasWork || putAside(store, state.workbook, state.activeTab);
+            if (safe) {
+              set({ aside: hasAside(store) });
+              commit(workbookOf(project, newId()), 0, { remember: false, fresh: true });
+              set({ home: false });
+              return;
+            }
+          }
+          const index = state.workbook.documents.findIndex((d) => d.id === project.id);
+          if (index !== -1) {
+            commit(replaceDocument(state.workbook, index, project), state.activeTab, {
+              remember: false,
+              fresh: false,
+            });
+            return;
+          }
+          try {
+            // Another diagram of the session: a tab of its own, after the others; the shown tab stays shown.
+            const { workbook } = attachDocuments(state.workbook, [project], newId);
+            commit(workbook, state.activeTab, { remember: false, fresh: false });
+          } catch (error) {
+            refused(error);
+          }
         },
       };
     },
@@ -614,6 +680,9 @@ export function createStore(
     attachCollab(link: CollabLink) {
       detachCollab();
       collab = link;
+      // A host shares from the diagram that is shown; a joiner's first diagram comes with the welcome.
+      sessionFirstId = link.role === 'host' ? state.project.id : null;
+      joining = link.role === 'participant';
       const onStatus = (status: CollabStatus) => {
         set({ collab: status });
         if (status.phase === 'ended' && collab === link) detachCollab();
@@ -704,7 +773,7 @@ export function createStore(
     /** Show another tab. Not an undo step: looking at a diagram changes nothing. */
     selectTab(index: number): boolean {
       if (index === state.activeTab || !state.workbook.documents[index]) return false;
-      if (tabsLocked()) return false;
+      // Looking is local: in a session too everyone shows the tab they want.
       commit(state.workbook, index, { remember: false });
       return true;
     },
@@ -812,6 +881,27 @@ export function createStore(
         fresh: false,
         label: { key: 'historyProjectRename', detail: workbook.title },
       });
+      return true;
+    },
+    /** Back to the person's own project, which was put aside when they joined a session. What is open (their copy
+     * of the session's project) can be brought back with undo. */
+    restoreOwnProject(): boolean {
+      if (collab) {
+        set({ notice: { kind: 'error', text: tr()('collabLeaveFirst') } });
+        return false;
+      }
+      const own = readAside(store);
+      if (!own) {
+        set({ aside: hasAside(store) });
+        return false;
+      }
+      commit(own.workbook, own.active, {
+        fresh: true,
+        whole: true,
+        label: { key: 'historyOwnProject' },
+      });
+      clearAside(store);
+      set({ aside: false, home: false, notice: null });
       return true;
     },
     /** Replace the whole project with an opened one (undo brings the previous project back). */

@@ -37,6 +37,7 @@ import type {
   CommandContext,
   EndReason,
   HostState,
+  Seat,
   Invite,
   Person,
   Project,
@@ -54,10 +55,16 @@ import type { ConnectNetwork, PeerNetwork } from './network.ts';
 
 /** How the controller reads and changes the open document; the app's store implements it. */
 export interface DocumentPort {
+  /** The session's first diagram: the one shown when the session began. People, invites and the roster read it. */
   current(): Project;
-  /** Apply with exactly this context, outside the undo history; throws the domain's refusal. */
-  apply(command: Command, ctx: CommandContext): Project;
-  /** Replace the document with the host's (already validated). */
+  /** Every shared diagram (WG-063), the first one first. */
+  documents(): Project[];
+  /** A shared diagram by id, or null. */
+  document(id: string): Project | null;
+  /** Apply to the diagram `doc` (the first one when absent) with exactly this context, outside the undo history;
+   * throws the domain's refusal. Returns that diagram as it is after. */
+  apply(command: Command, ctx: CommandContext, doc?: string): Project;
+  /** Take a diagram from the host (already validated): in place of the one with its id, else as a new one. */
   adopt(project: Project): void;
 }
 /**
@@ -293,6 +300,8 @@ export async function startHost(options: {
       now: ctx.now,
       actorId: ctx.actorId,
       digest: documentDigest(next),
+      // Which diagram it changed; the first diagram needs no address.
+      ...(next.id !== port.current().id ? { doc: next.id } : {}),
     };
     for (const seat of online())
       send(
@@ -301,10 +310,23 @@ export async function startHost(options: {
       );
   };
   /** The host's own change on behalf of the session (a newcomer's profile). */
-  const commitAsHost = (command: Command) => {
+  const commitAsHost = (command: Command, doc?: string) => {
     const ctx = { now: clock.nowIso(), actorId: hostUserId };
-    const next = port.apply(command, ctx);
+    const next = port.apply(command, ctx, doc);
     broadcastCommit(command, ctx, next);
+  };
+  /** A person who joined is a person of every shared diagram, under the same id (WG-063): the first diagram
+   * first, then the others. A diagram that already has them, or refuses (a namesake), is left as it is. */
+  const seatEverywhere = (seat: Seat) => {
+    for (const diagram of port.documents()) {
+      const command = seatProfileCommand(diagram, seat);
+      if (!command) continue;
+      try {
+        commitAsHost(command, diagram.id);
+      } catch {
+        // That diagram keeps its people; the person can still be added there by hand.
+      }
+    }
   };
 
   const onMessage = async (peerId: string, raw: string) => {
@@ -351,6 +373,14 @@ export async function startHost(options: {
           seq: state.seq,
           project,
           digest: documentDigest(project),
+          ...(port.documents().length > 1
+            ? {
+                others: port
+                  .documents()
+                  .filter((d) => d.id !== project.id)
+                  .map((d) => ({ project: d, digest: documentDigest(d) })),
+              }
+            : {}),
         });
         // A seat that had joined before (the host or the person reloaded) is not asked again and sends no `ready`.
         if (result.seat.joined) sendSketchpad(peerId);
@@ -360,10 +390,9 @@ export async function startHost(options: {
       case 'ready': {
         const seat = seatOfPeer(state, peerId);
         if (!seat || seat.joined) return;
-        const command = seatProfileCommand(port.current(), seat);
         state = replaceSeat(state, { ...seat, joined: true });
         keep();
-        if (command) commitAsHost(command);
+        seatEverywhere(seat);
         sendSketchpad(peerId);
         emitter.notice({ kind: 'joined', name: seat.name });
         publish();
@@ -400,7 +429,12 @@ export async function startHost(options: {
           send(peerId, { t: 'reject', id: message.id, reason: 'rate' });
           return;
         }
-        const project = port.current();
+        // The diagram the proposal is for; one that is not shared is not changed from outside.
+        const project = message.doc === undefined ? port.current() : port.document(message.doc);
+        if (!project) {
+          send(peerId, { t: 'reject', id: message.id, reason: 'forbidden' });
+          return;
+        }
         const name = project.users.find((u) => u.id === seat.userId)?.name ?? seat.name;
         const verdict = authorizeCommand(project, message.command, { ...seat, name }, (wanted) =>
           nameInUse(state, project, wanted, seat.userId)
@@ -412,7 +446,7 @@ export async function startHost(options: {
         const ctx = { now: clock.nowIso(), actorId: seat.userId };
         let next: Project;
         try {
-          next = port.apply(verdict.command, ctx);
+          next = port.apply(verdict.command, ctx, project.id);
         } catch (error) {
           const detail = (error instanceof Error ? error.message : String(error)).slice(0, 500);
           send(peerId, { t: 'reject', id: message.id, reason: 'refused', detail });
@@ -423,8 +457,9 @@ export async function startHost(options: {
       }
       case 'resync': {
         if (!seatOfPeer(state, peerId)) return;
-        const project = port.current();
-        send(peerId, { t: 'snapshot', seq: state.seq, project, digest: documentDigest(project) });
+        // Every shared diagram as it is now, the first one first.
+        for (const project of port.documents())
+          send(peerId, { t: 'snapshot', seq: state.seq, project, digest: documentDigest(project) });
         sendSketchpad(peerId);
         return;
       }
@@ -545,8 +580,9 @@ export async function startHost(options: {
 export interface ParticipantSession extends Common {
   /** After the welcome: the person agreed to replace their open work with the shared document. */
   accept(): void;
-  /** Send a change to the host; it lands when the host commits it. */
-  propose(command: Command): void;
+  /** Send a change to the host, for the diagram `doc` (the first one when absent); it lands when the host
+   * commits it. */
+  propose(command: Command, doc?: string): void;
 }
 
 export async function joinSession(options: {
@@ -578,7 +614,14 @@ export async function joinSession(options: {
   let welcome: Extract<ToPeer, { t: 'welcome' }> | null = null;
   /** Commits that arrive while the person is still deciding whether to join. */
   let buffered: Extract<ToPeer, { t: 'commit' }>[] = [];
-  let awaitingSnapshot = false;
+  /** The shared diagrams, by id, and those whose copy here is waiting for the host's (a snapshot). */
+  const shared = new Set<string>();
+  const awaiting = new Set<string>();
+  let firstId: string | null = null;
+  const askAgain = (ids: Iterable<string>) => {
+    for (const id of ids) awaiting.add(id);
+    sendHost({ t: 'resync' });
+  };
   /** The last sketchpad change taken, in the host's order; `null` until the whole sketchpad has come. */
   let lastSketchSeq: number | null = null;
   const pending = new Set<string>();
@@ -609,44 +652,62 @@ export async function joinSession(options: {
     if (!welcome) void finish(noDirect ? 'no-direct' : 'unreachable');
   }, options.timeoutMs ?? 45_000);
 
-  /** Take the host's document; after the first one it must stay the same document (same id). */
-  const adopt = (raw: Project, digest: string, seq: number, first = false): boolean => {
+  /** Take one of the host's diagrams. `join`: the welcome names the shared diagrams; after that a diagram the
+   * session does not share is not taken. */
+  const adopt = (raw: Project, digest: string, seq: number, join = false): boolean => {
     let project: Project;
     try {
       project = parseProject(raw);
     } catch {
       return false;
     }
-    if (!first && port.current().id !== project.id) return false;
+    if (join) shared.add(project.id);
+    else if (!shared.has(project.id)) return false;
     port.adopt(project);
-    lastSeq = seq;
-    awaitingSnapshot = documentDigest(port.current()) !== digest;
-    if (awaitingSnapshot) sendHost({ t: 'resync' });
+    // Snapshots of several diagrams carry one moment; a later commit must not look like a gap after them.
+    lastSeq = Math.max(lastSeq, seq);
+    const mine = port.document(project.id);
+    if (mine && documentDigest(mine) === digest) awaiting.delete(project.id);
+    else askAgain([project.id]);
     return true;
+  };
+  /** The welcome's diagrams: the first one, then the others. False when one of them does not parse. */
+  const adoptWelcome = (message: Extract<ToPeer, { t: 'welcome' }>): boolean => {
+    shared.clear();
+    awaiting.clear();
+    firstId = String(message.project.id);
+    // A welcome is a new start: the host's count may be lower than before (it reloaded from its last record).
+    lastSeq = message.seq;
+    if (!adopt(message.project, message.digest, message.seq, true)) return false;
+    return (message.others ?? []).every((other) => adopt(other.project, other.digest, message.seq, true));
   };
   const applyCommit = (commit: Extract<ToPeer, { t: 'commit' }>) => {
     if (commit.proposal && pending.delete(commit.proposal)) emitter.set({ pending: pending.size });
-    if (awaitingSnapshot) return;
     const order = commitOrder(lastSeq, commit.seq);
     if (order === 'stale') return;
     if (order === 'gap') {
-      awaitingSnapshot = true;
-      sendHost({ t: 'resync' });
-      return;
-    }
-    try {
-      port.apply(commit.command, { now: commit.now, actorId: commit.actorId });
-    } catch {
-      // The host applied it, so our copy must have drifted; fetch the host's.
-      awaitingSnapshot = true;
-      sendHost({ t: 'resync' });
+      // One was missed, and it is not known for which diagram: all of them again.
+      if (awaiting.size < shared.size) askAgain(shared);
       return;
     }
     lastSeq = commit.seq;
-    if (documentDigest(port.current()) !== commit.digest) {
-      awaitingSnapshot = true;
-      sendHost({ t: 'resync' });
+    const doc = commit.doc ?? firstId;
+    if (doc === null || !shared.has(doc)) {
+      // A diagram this browser does not have: the host's set is asked for.
+      askAgain(shared);
+      return;
     }
+    // A diagram that waits for the host's copy gets this change with that copy, which the host sends after it.
+    if (awaiting.has(doc)) return;
+    let next: Project;
+    try {
+      next = port.apply(commit.command, { now: commit.now, actorId: commit.actorId }, doc);
+    } catch {
+      // The host applied it, so our copy must have drifted; fetch the host's.
+      askAgain([doc]);
+      return;
+    }
+    if (documentDigest(next) !== commit.digest) askAgain([doc]);
   };
   /** The host is gone (closed or reloading): wait for it to come back under the same key, then rejoin. */
   const lostHost = () => {
@@ -700,7 +761,7 @@ export async function joinSession(options: {
         if (emitter.status.phase === 'reconnecting') {
           cancelTimer();
           emitter.set({ phase: 'active' });
-          if (!adopt(message.project, message.digest, message.seq)) await finish('diverged');
+          if (!adoptWelcome(message)) await finish('diverged');
           return;
         }
         if (welcome) return;
@@ -782,7 +843,7 @@ export async function joinSession(options: {
     accept() {
       if (!welcome || emitter.status.phase !== 'confirm') return;
       emitter.set({ phase: 'active' });
-      if (!adopt(welcome.project, welcome.digest, welcome.seq, true)) {
+      if (!adoptWelcome(welcome)) {
         void finish('diverged');
         return;
       }
@@ -805,12 +866,12 @@ export async function joinSession(options: {
       if (hostPeer) for (const m of messages) network.sendTo(hostPeer, m);
       return true;
     },
-    propose(command) {
+    propose(command, doc) {
       if (emitter.status.phase !== 'active') return;
       const id = clock.newId();
       pending.add(id);
       emitter.set({ pending: pending.size });
-      sendHost({ t: 'propose', id, command });
+      sendHost({ t: 'propose', id, command, ...(doc !== undefined && doc !== firstId ? { doc } : {}) });
     },
     async close() {
       sendHost({ t: 'bye' });

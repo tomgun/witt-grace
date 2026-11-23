@@ -238,6 +238,14 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             >
               {t('saveDiagramAlone')}
             </Item>
+            <Item
+              id="btnRestoreOwn"
+              hidden={!state.aside}
+              disabled={inSession}
+              onClick={() => store.restoreOwnProject()}
+            >
+              {t('restoreOwnProject')}
+            </Item>
             <Item id="btnAddDiagram" onClick={addDiagram} disabled={inSession}>
               {t('addDiagram')}
             </Item>

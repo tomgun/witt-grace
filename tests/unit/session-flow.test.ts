@@ -38,6 +38,8 @@ class Doc implements DocumentPort {
     this.project = project;
   }
   current = () => this.project;
+  documents = () => [this.project];
+  document = (id: string) => (id === this.project.id ? this.project : null);
   apply = (command: Command, ctx: CommandContext) =>
     (this.project = applyCommand(this.project, command, ctx));
   adopt = (project: Project) => void (this.project = project);

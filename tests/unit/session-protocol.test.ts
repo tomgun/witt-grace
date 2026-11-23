@@ -9,6 +9,9 @@
  *       rename to a name in a live seat or a live invite is refused, and so is a host's new invite or a rename to a
  *       name in the document; a general join under the name of a document profile (not the host, not an AI, not in
  *       the session, no live link, not removed) continues that profile (WG-030, P2P-02, P2P-03, owner 2026-11-12)
+ *       a proposal and a commit may name the diagram they are for and a welcome may carry the project's other
+ *       diagrams (WG-063): absent they mean the first diagram, and a wrong shape or more than fifty diagrams is
+ *       refused
  * test: tests/unit/session-protocol.test.ts
  * red-against: authorization reading the claimed actor instead of the seat; a comment keeping a forged authorName;
  *              a personal invite taken by a second browser; an unknown token treated as the general one; a missing
@@ -713,4 +716,55 @@ test('unique names and commit order', () => {
   assert.equal(commitOrder(4, 5), 'apply');
   assert.equal(commitOrder(4, 4), 'stale');
   assert.equal(commitOrder(4, 7), 'gap');
+});
+
+test('messages name the diagram they are for: an address is optional, and never a wrong shape (WG-063)', () => {
+  const command = { type: 'project.setTitle', title: 'Uusi' };
+  assert.deepEqual(parseToHost(JSON.stringify({ t: 'propose', id: 'pr-1', command, doc: 'p-2' })), {
+    ok: true,
+    message: { t: 'propose', id: 'pr-1', command, doc: 'p-2' },
+  });
+  assert.deepEqual(parseToHost(JSON.stringify({ t: 'propose', id: 'pr-1', command })), {
+    ok: true,
+    message: { t: 'propose', id: 'pr-1', command },
+  });
+  for (const doc of [7, '', 'x'.repeat(201), null])
+    assert.equal(parseToHost(JSON.stringify({ t: 'propose', id: 'pr-1', command, doc })).ok, false);
+  const commit = {
+    t: 'commit',
+    seq: 3,
+    command,
+    now: '2026-11-24T10:00:00.000Z',
+    actorId: 'u-1',
+    digest: 'abcd',
+  };
+  assert.deepEqual(parseToPeer(JSON.stringify({ ...commit, doc: 'p-2' })), {
+    ok: true,
+    message: { ...commit, doc: 'p-2' },
+  });
+  assert.equal(parseToPeer(JSON.stringify({ ...commit, doc: 7 })).ok, false);
+  const outline = { nodes: [], users: [] };
+  const welcome = {
+    t: 'welcome',
+    userId: 'u-2',
+    name: 'Aino',
+    seat: 'a'.repeat(22),
+    hostName: 'Isäntä',
+    seq: 0,
+    project: outline,
+    digest: 'abcd',
+  };
+  const withOthers = parseToPeer(
+    JSON.stringify({ ...welcome, others: [{ project: outline, digest: 'ef01', extra: 1 }] })
+  );
+  assert.ok(withOthers.ok);
+  assert.deepEqual((withOthers.message as { others?: unknown }).others, [
+    { project: outline, digest: 'ef01' },
+  ]);
+  assert.equal(parseToPeer(JSON.stringify({ ...welcome, others: [{ project: outline }] })).ok, false);
+  assert.equal(parseToPeer(JSON.stringify({ ...welcome, others: 'all' })).ok, false);
+  // At most a project's fifty diagrams: the first one and forty-nine others.
+  const many = (n: number) => Array.from({ length: n }, () => ({ project: outline, digest: 'ef01' }));
+  assert.equal(parseToPeer(JSON.stringify({ ...welcome, others: many(49) })).ok, true);
+  assert.equal(parseToPeer(JSON.stringify({ ...welcome, others: many(50) })).ok, false);
 });

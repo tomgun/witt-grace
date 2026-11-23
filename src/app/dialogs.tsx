@@ -99,6 +99,16 @@ export function NoticeBar() {
       data-testid="notice"
     >
       <span>{notice.text}</span>
+      {notice.ownProject ? (
+        <button
+          type="button"
+          className="btn quiet"
+          id="btnNoticeOwnProject"
+          onClick={() => getStore().restoreOwnProject()}
+        >
+          {t('restoreOwnProject')}
+        </button>
+      ) : null}
       {notice.restore !== undefined ? (
         <button
           type="button"
