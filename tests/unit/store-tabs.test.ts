@@ -14,6 +14,9 @@
  *       only when it is more than one unnamed diagram, and a reload brings back every tab with the newest content
  *       of the shown one; a project has several sketchpads: drawing on one is not a history step, undoing a
  *       diagram edit leaves the drawings, a removed or renamed sketchpad comes back, only drawn ones are stored
+ *       the sketchpads this browser kept apart from the project before 2026-11-23 (`witt-sketch-v1`,
+ *       `witt-sketch-session-v1`) move into the project once when they hold a drawing, and their old entries go
+ *       only when the project is stored
  * test: tests/unit/store-tabs.test.ts
  * red-against: an edit written into the first tab whatever is shown, undo in one tab taking back the newest change
  *              of another (work lost out of sight), Kumoa in one tab removing a tab that was added since, a
@@ -34,7 +37,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createBlankProject, rootNode } from '../../src/domain/index.ts';
 import type { Project } from '../../src/domain/index.ts';
-import { addElement, blankSketch } from '../../src/domain/sketch.ts';
+import { addElement, blankSketch, serializeSketch } from '../../src/domain/sketch.ts';
 import type { Sketch } from '../../src/domain/sketch.ts';
 import { PROJECT_KEY, memoryStore } from '../../src/lib/storage.ts';
 import type { KeyValueStore } from '../../src/lib/storage.ts';
@@ -655,4 +658,34 @@ test('a person renamed in one diagram has the new name in the project’s other 
   store.dispatch({ type: 'user.rename', id: 'u-2', name: 'Noora Virtanen' });
   const names = store.get().workbook.documents.map((d) => d.users.find((u) => u.id === 'u-2')?.name);
   assert.deepEqual(names, ['Noora Virtanen', 'Noora Virtanen']);
+});
+
+test('the old sketchpad of the browser moves into the project once; an empty old one just goes', () => {
+  const kv = memoryStore();
+  kv.setItem('witt-sketch-v1', serializeSketch(drawn('old')));
+  kv.setItem('witt-sketch-session-v1', serializeSketch(blankSketch('f-s')));
+  const first = open(kv).store;
+  assert.deepEqual(
+    first.get().workbook.sketches.map((s) => [s.name, s.sketch.frames[0]?.elements[0]?.id]),
+    [['Oma lehtiö', 'old']]
+  );
+  assert.equal(kv.getItem('witt-sketch-v1'), null);
+  assert.equal(kv.getItem('witt-sketch-session-v1'), null);
+  assert.equal((stored(kv, WORKBOOK_KEY)?.sketches as unknown[]).length, 1);
+  // It is the project's now: a reload has it once, and undo has nothing to take away.
+  assert.equal(first.get().canUndo, false);
+  assert.equal(open(kv).store.get().workbook.sketches.length, 1);
+
+  // A storage that cannot take the project keeps the old entry: the drawing is not lost.
+  const inner = memoryStore();
+  inner.setItem('witt-sketch-v1', serializeSketch(drawn('old')));
+  const full: KeyValueStore = {
+    ...inner,
+    setItem(key, value) {
+      if (key === WORKBOOK_KEY) throw new Error('QuotaExceededError');
+      inner.setItem(key, value);
+    },
+  };
+  assert.equal(open(full).store.get().workbook.sketches.length, 1);
+  assert.notEqual(inner.getItem('witt-sketch-v1'), null);
 });

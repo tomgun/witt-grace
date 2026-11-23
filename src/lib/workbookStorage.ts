@@ -3,7 +3,15 @@
 // written when the tabs or the sketchpads change: a diagram added, removed, moved, the project renamed, another
 // tab shown, a stroke on a project sketchpad (the whole entry is rewritten then; a known cost, see STATUS).
 // A project of one unnamed diagram has no entry here, so such a browser stores exactly what it did before tabs.
-import { isPlainDocument, parseWorkbook, restoreWorkbook, workbookFileObject } from '../domain/index.ts';
+import {
+  addSketch,
+  isPlainDocument,
+  parseSketch,
+  parseWorkbook,
+  restoreWorkbook,
+  sketchHasDrawing,
+  workbookFileObject,
+} from '../domain/index.ts';
 import type { Project, Workbook } from '../domain/index.ts';
 import type { KeyValueStore, SaveResult } from './storage.ts';
 
@@ -102,4 +110,54 @@ export function clearAside(store: KeyValueStore): void {
   } catch {
     // nothing to clear
   }
+}
+
+// ---- The sketchpads kept apart from the project before 2026-11-23 ------------------------------------------
+// Owner 2026-11-23: “lehtiö on osa projektia… ei sessio tarvitse omaa”. The person's own sketchpad and the copy of
+// a session's shared one lived under their own keys; what is drawn on them moves into the project once.
+export const OLD_OWN_SKETCH_KEY = 'witt-sketch-v1';
+export const OLD_SHARED_SKETCH_KEY = 'witt-sketch-session-v1';
+
+/** `workbook` with the old sketchpads that have a drawing as sketchpads of its own, and `forget` to remove the old
+ * entries once that project is stored; null when there is nothing to move (empty or unreadable old entries are
+ * removed at once). One that does not fit (the project is full) stays where it is. */
+export function moveOldSketchpads(
+  store: KeyValueStore,
+  workbook: Workbook,
+  names: { own: string; shared: string },
+  newId: () => string
+): { workbook: Workbook; forget(): void } | null {
+  let next = workbook;
+  const moved: string[] = [];
+  for (const [key, name] of [
+    [OLD_OWN_SKETCH_KEY, names.own],
+    [OLD_SHARED_SKETCH_KEY, names.shared],
+  ] as const) {
+    try {
+      const text = store.getItem(key);
+      if (text === null) continue;
+      const parsed = parseSketch(text);
+      if (!parsed.ok || !sketchHasDrawing(parsed.sketch)) {
+        store.removeItem(key);
+        continue;
+      }
+      next = addSketch(next, newId(), name, parsed.sketch);
+      moved.push(key);
+    } catch {
+      // storage blocked, or the project is full: the old entry stays
+    }
+  }
+  if (!moved.length) return null;
+  return {
+    workbook: next,
+    forget() {
+      for (const key of moved) {
+        try {
+          store.removeItem(key);
+        } catch {
+          // it is moved again next time; nothing is lost
+        }
+      }
+    },
+  };
 }

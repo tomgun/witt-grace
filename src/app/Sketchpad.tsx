@@ -1,7 +1,8 @@
 // Luonnoslehtiö (owner 2026-11-20, UI_INVENTORY S-15): free drawing, diagrams, mind maps and frame animation on one
 // fixed sheet, apart from the argument tree. The model and every change are in domain/sketch.ts; this module draws
-// the frame on a canvas, turns pointer and key input into those changes, keeps undo history and saves the sketch
-// to this browser (`witt-sketch-v1`). A sketch leaves the browser only as a file or a picture the person saves.
+// the frame on a canvas, turns pointer and key input into those changes and keeps undo history. The sketchpads are
+// the project's (owner 2026-11-23: “lehtiö on osa projektia”): kept with it, and in a collaboration drawn on by
+// everyone in the session. Otherwise a sketch leaves the browser only as a file or a picture the person saves.
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   SKETCH_COLORS,
@@ -39,18 +40,11 @@ import { downloadText, pickTextFile } from '../lib/files.ts';
 import type { MessageKey } from '../lib/i18n/catalog.ts';
 import { applySketchOps, diffSketch } from '../domain/sketchOps.ts';
 import { newId } from '../lib/providers.ts';
-import {
-  hasDrawing,
-  ownSketch,
-  projectSheet,
-  projectSheetId,
-  projectSketchPad,
-  sharedSketch,
-} from './sketchStore.ts';
+import { projectSheetId, projectSketchPad } from './sketchStore.ts';
 import type { SketchSheet } from './sketchStore.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
-/** The pen a person starts with on the shared sketchpad, by their place in the session; white is left out. */
+/** The pen a person starts with in a session, by their place in it; white is left out. */
 const seatColor = (place: number): number => Math.max(0, place) % (SKETCH_COLORS.length - 1);
 const TOOLS = ['select', 'pen', 'line', 'arrow', 'rect', 'ellipse', 'text', 'node', 'eraser'] as const;
 type Tool = (typeof TOOLS)[number];
@@ -218,23 +212,29 @@ function draw(ctx: CanvasRenderingContext2D, elements: readonly SketchElement[],
 
 export default function Sketchpad({ onClose, initial }: { onClose: () => void; initial?: SketchSheet }) {
   const t = useTranslator();
-  const { collab, workbook } = useAppState();
-  /** A session is on: the shared sketchpad is drawn on by everyone in it. */
+  const { collab, workbook, project, actorId } = useAppState();
+  /** A session is on: the project's sketchpads are drawn on by everyone in it. */
   const live = collab?.phase === 'active' || collab?.phase === 'reconnecting';
+  const guest = collab?.role === 'participant';
+  /** A reader of a session looks and does not draw. */
+  const reader = guest && project.users.find((u) => u.id === actorId)?.role === 'viewer';
   const place = collab ? collab.people.findIndex((p) => p.userId === collab.selfUserId) : -1;
-  // A session opens on its shared sketchpad; otherwise the sheet asked for, else the project's first sketchpad,
-  // else the person's own.
-  const [which, setWhich] = useState<SketchSheet>(
-    live ? 'shared' : (initial ?? (workbook.sketches[0] ? projectSheet(workbook.sketches[0].id) : 'own'))
+  // The sheet in hand, by the sketchpad's id: the one asked for, else the project's first.
+  const [chosen, setChosen] = useState<string | null>(
+    () => projectSheetId(initial) ?? workbook.sketches[0]?.id ?? null
   );
-  const projectId = projectSheetId(which);
-  const projectEntry = projectId ? workbook.sketches.find((s) => s.id === projectId) : undefined;
-  const pad = which === 'shared' ? sharedSketch : projectId ? projectSketchPad(projectId) : ownSketch;
+  const projectEntry = workbook.sketches.find((s) => s.id === chosen);
+  /** A sketchpad that is on its way: just made here, or asked of the session's host. */
+  const [asked, setAsked] = useState<string | null>(chosen);
+  // It has come: from here on it is a sheet like the others, left when it goes.
+  if (projectEntry && asked === projectEntry.id) setAsked(null);
+  const pad = projectSketchPad(projectEntry ? projectEntry.id : null);
   const sketch = useSyncExternalStore(pad.subscribe, pad.get);
-  const sharing = which === 'shared' && live;
+  const sharing = live && projectEntry !== undefined;
   /** Waiting for the host to come back: what was drawn now would be lost when it does. */
   const waiting = sharing && collab?.phase === 'reconnecting';
-  const copyKept = hasDrawing(useSyncExternalStore(sharedSketch.subscribe, sharedSketch.get));
+  /** Nothing is drawn: no sketchpad in hand, a reader, or the host away. */
+  const locked = waiting || !projectEntry || reader;
   const [frame, setFrame] = useState(0);
   const [tool, setTool] = useState<Tool>('pen');
   const [color, setColor] = useState(() => (live ? seatColor(place) : 0));
@@ -276,11 +276,11 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
    */
   const setSketch = (next: Sketch, base: Sketch = sketch) => {
     const ops = diffSketch(base, next);
-    if (!ops.length) return;
+    if (!ops.length || !projectEntry || reader) return;
     const current = pad.get();
     pad.set(current === base ? next : applySketchOps(current, ops));
     if (!sharing) return;
-    const sent = getStore().collabLink()?.session.sketched(ops) ?? true;
+    const sent = getStore().collabLink()?.session.sketched(projectEntry.id, ops) ?? true;
     if (!sent) setMessage(t('sketchTooLarge'));
   };
   /** The same, as a step that Kumoa takes back (on the person's own sketchpad). */
@@ -294,8 +294,8 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
     }
     setSketch(next, base);
   };
-  const choose = (next: SketchSheet) => {
-    if (next === which) return;
+  const choose = (next: string) => {
+    if (next === chosen) return;
     // Each sketchpad has its own steps to undo; they are not carried from one to the other.
     history.current = { past: [], future: [] };
     touch();
@@ -305,8 +305,7 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
     setFrame(0);
     setPlaying(false);
     setMessage(null);
-    if (next === 'shared' && live) setColor(seatColor(place));
-    setWhich(next);
+    setChosen(next);
   };
   // The project's sketchpads: a new one, a name, removal. The sheet in hand is left when it is gone (removed
   // here, or taken away by the project's undo).
@@ -314,7 +313,9 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
     const id = getStore().addProjectSketch(
       t('sketchDefaultName', { n: getStore().get().workbook.sketches.length + 1 })
     );
-    if (id) choose(projectSheet(id));
+    if (!id) return;
+    setAsked(id);
+    choose(id);
   };
   const renameSheet = async () => {
     if (!projectEntry) return;
@@ -329,15 +330,20 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
   const removeSheet = async () => {
     if (!projectEntry) return;
     if (!(await getStore().askConfirm(t('sketchRemoveConfirm', { name: projectEntry.name })))) return;
-    const id = projectEntry.id;
-    // Leave the sheet first: its undo steps must not reach another sketchpad.
-    choose('own');
-    getStore().removeProjectSketch(id);
+    // Another sheet is taken in hand when this one is gone (below).
+    getStore().removeProjectSketch(projectEntry.id);
   };
-  const sheetGone = projectId !== null && !projectEntry;
+  // The sheet in hand is left when it is gone (removed here or by the host, or taken away by the project's undo):
+  // the project's first sketchpad then, and with none a new one is made, so there is always a sheet to draw on.
+  // A participant's sketchpads come from the host, so there a new one is made only when the person asks.
+  const sheetGone = !projectEntry && (chosen === null || asked !== chosen);
   useEffect(() => {
     if (!sheetGone) return;
-    const timer = setTimeout(() => choose('own'));
+    const timer = setTimeout(() => {
+      const first = getStore().get().workbook.sketches[0];
+      if (first) choose(first.id);
+      else if (!guest) addSheet();
+    });
     return () => clearTimeout(timer);
   });
   const undo = () => {
@@ -489,7 +495,7 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
   };
 
   const onPointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    if (event.button !== 0 || playing || waiting) return;
+    if (event.button !== 0 || playing || locked) return;
     if (editing) {
       // A press on the sheet takes what was written: the canvas takes the focus, and the editor's blur finishes.
       event.currentTarget.focus({ preventScroll: true });
@@ -608,7 +614,7 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLCanvasElement>) => {
-    if (editing || playing || waiting) return;
+    if (editing || playing || locked) return;
     const mod = event.ctrlKey || event.metaKey;
     const key = event.key;
     if (mod && key.toLowerCase() === 'z') {
@@ -658,7 +664,7 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
   const onDoubleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const { x, y } = point(event);
     const hit = elementAt(elements, x, y);
-    if (playing || editing || waiting) return;
+    if (playing || editing || locked) return;
     if (hit && (hit.type === 'text' || hit.type === 'node')) {
       setSelected([hit.id]);
       setEditing({ id: hit.id, created: false });
@@ -706,13 +712,10 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
       return;
     }
     setMessage(null);
-    if (sharing) {
-      // A file opened onto the shared sketchpad replaces it for everyone; only the host may.
-      const link = getStore().collabLink();
-      if (link?.role !== 'host') return;
-      pad.set(parsed.sketch);
-      link.session.sketchReplaced();
-    } else commit(parsed.sketch);
+    if (!projectEntry) return;
+    // In a session a file opened onto a sketchpad replaces it for everyone; only the host may.
+    if (sharing) getStore().replaceProjectSketch(projectEntry.id, parsed.sketch);
+    else commit(parsed.sketch);
     setSelected([]);
     setFrame(0);
   };
@@ -778,24 +781,15 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
         </button>
         <h1>{t('sketchTitle')}</h1>
         <div className="sketch-which" role="group" aria-label={t('sketchWhich')}>
-          <button
-            type="button"
-            className="btn quiet"
-            id="btnSketchOwn"
-            aria-pressed={which === 'own'}
-            onClick={() => choose('own')}
-          >
-            {t('sketchOwn')}
-          </button>
           {workbook.sketches.map((entry) => (
             <button
               key={entry.id}
               type="button"
               className="btn quiet sketch-sheet"
               data-sketch-id={entry.id}
-              aria-pressed={which === projectSheet(entry.id)}
+              aria-pressed={chosen === entry.id}
               title={t('sketchProject')}
-              onClick={() => choose(projectSheet(entry.id))}
+              onClick={() => choose(entry.id)}
             >
               {entry.name}
             </button>
@@ -805,24 +799,14 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
             className="btn quiet"
             id="btnSketchNew"
             title={t('sketchProject')}
+            disabled={reader}
             onClick={addSheet}
           >
             {t('sketchNew')}
           </button>
-          {live || copyKept ? (
-            <button
-              type="button"
-              className="btn quiet"
-              id="btnSketchShared"
-              aria-pressed={which === 'shared'}
-              onClick={() => choose('shared')}
-            >
-              {t(live ? 'sketchShared' : 'sketchSharedCopy')}
-            </button>
-          ) : null}
         </div>
         <div className="sketch-bar-actions">
-          {projectEntry ? (
+          {projectEntry && !guest ? (
             <>
               <button
                 type="button"
@@ -864,8 +848,8 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
             type="button"
             className="btn quiet"
             id="btnSketchOpen"
-            disabled={sharing && collab?.role !== 'host'}
-            title={sharing && collab?.role !== 'host' ? t('sketchOpenHostOnly') : undefined}
+            disabled={!projectEntry || (sharing && guest)}
+            title={sharing && guest ? t('sketchOpenHostOnly') : undefined}
             onClick={() => void openFile()}
           >
             {t('sketchOpen')}
@@ -967,13 +951,13 @@ export default function Sketchpad({ onClose, initial }: { onClose: () => void; i
                 ? t('sketchReconnecting')
                 : nodeSelected
                   ? t('sketchNodeHint')
-                  : sharing
-                    ? t('sketchSharedHint')
-                    : which === 'shared'
-                      ? t('sketchCopyHint')
-                      : projectId
-                        ? t('sketchProjectHint')
-                        : t('sketchIntro'))}
+                  : reader
+                    ? t('sketchReaderHint')
+                    : !projectEntry
+                      ? t('sketchNoneHint')
+                      : sharing
+                        ? t('sketchSharedHint')
+                        : t('sketchProjectHint'))}
           </p>
           {sharing && collab ? (
             <ul className="sketch-people" id="sketchPeople" aria-label={t('sketchPens')}>

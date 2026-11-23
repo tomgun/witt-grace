@@ -10,6 +10,7 @@ import { parseSketch } from './sketch.ts';
 import type { Sketch } from './sketch.ts';
 import { parseSketchOps } from './sketchOps.ts';
 import type { SketchOp } from './sketchOps.ts';
+import { SKETCH_NAME_MAX, WORKBOOK_MAX_SKETCHES } from './workbook.ts';
 
 /** 2 since 2026-11-18: a session may carry a document scored with a calculation method that a protocol-1 build
  * cannot parse, so such a build is told "different version" at the door instead of failing on the first snapshot. */
@@ -219,8 +220,11 @@ export type ToHost =
   | { t: 'propose'; id: string; command: Command; doc?: string }
   /** A new empty diagram for the shared project (WG-063 part 3): the ids are the proposer's, the host makes it. */
   | { t: 'diagram'; id: string; doc: string; root: string; mode: Mode }
-  /** Changes to the session's shared sketchpad (owner 2026-11-21); the sender has applied them already. */
-  | { t: 'sketch'; ops: SketchOp[] }
+  /** Changes to the project's sketchpad `pad` (owner 2026-11-21, 2026-11-23: the project's sketchpads are the
+   * session's); the sender has applied them already. */
+  | { t: 'sketch'; pad: string; ops: SketchOp[] }
+  /** A new empty sketchpad for the shared project (WG-063 part 4): the id is the proposer's, the host makes it. */
+  | { t: 'sketchpad'; id: string; pad: string; name: string }
   | { t: 'resync' }
   | { t: 'bye' };
 /** Host → participant. */
@@ -255,9 +259,12 @@ export type ToPeer =
   /** The shared diagrams, by id and in tab order (WG-063 part 3): sent when one is added, removed, moved, shared
    * or left out. A diagram that is new to the receiver follows as a snapshot. */
   | { t: 'set'; seq: number; order: string[] }
-  /** Sketchpad changes in the host's order (the sender's own come back too), and the whole sketchpad. */
-  | { t: 'sketch'; seq: number; ops: SketchOp[] }
-  | { t: 'sketchpad'; seq: number; sketch: Sketch }
+  /** Changes to the sketchpad `pad` in the host's order (the sender's own come back too); one whole sketchpad
+   * with its name; and the project's sketchpads by id and in order (one not named leaves; one that is new to the
+   * receiver follows whole). The three share one count. */
+  | { t: 'sketch'; seq: number; pad: string; ops: SketchOp[] }
+  | { t: 'sketchpad'; seq: number; pad: string; name: string; sketch: Sketch }
+  | { t: 'sketchset'; seq: number; order: string[] }
   | { t: 'roster'; people: Person[] }
   | { t: 'end'; reason: EndReason };
 
@@ -384,9 +391,13 @@ export function parseToHost(raw: string): Parsed<ToHost> {
           }
         : bad;
     case 'sketch': {
-      const ops = parseSketchOps(m.ops);
-      return ops ? { ok: true, message: { t: 'sketch', ops } } : bad;
+      const ops = isString(m.pad, 200) ? parseSketchOps(m.ops) : null;
+      return ops ? { ok: true, message: { t: 'sketch', pad: m.pad as string, ops } } : bad;
     }
+    case 'sketchpad':
+      return isString(m.id) && isString(m.pad, 200) && isString(m.name, SKETCH_NAME_MAX)
+        ? { ok: true, message: { t: 'sketchpad', id: m.id, pad: m.pad, name: m.name } }
+        : bad;
     case 'diagram':
       return isString(m.id) &&
         isString(m.doc, 200) &&
@@ -509,16 +520,38 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
         ? { ok: true, message: { t: 'set', seq: m.seq, order: m.order as string[] } }
         : bad;
     case 'sketch': {
-      const ops = isCount(m.seq) ? parseSketchOps(m.ops) : null;
-      return ops ? { ok: true, message: { t: 'sketch', seq: m.seq as number, ops } } : bad;
+      const ops = isCount(m.seq) && isString(m.pad, 200) ? parseSketchOps(m.ops) : null;
+      return ops
+        ? { ok: true, message: { t: 'sketch', seq: m.seq as number, pad: m.pad as string, ops } }
+        : bad;
     }
     case 'sketchpad': {
       // The whole sketchpad is read as a sketch file is: nothing of it is taken on trust.
-      const parsed = isCount(m.seq) && isObject(m.sketch) ? parseSketch(JSON.stringify(m.sketch)) : null;
+      const parsed =
+        isCount(m.seq) && isString(m.pad, 200) && isString(m.name, SKETCH_NAME_MAX) && isObject(m.sketch)
+          ? parseSketch(JSON.stringify(m.sketch))
+          : null;
       return parsed?.ok
-        ? { ok: true, message: { t: 'sketchpad', seq: m.seq as number, sketch: parsed.sketch } }
+        ? {
+            ok: true,
+            message: {
+              t: 'sketchpad',
+              seq: m.seq as number,
+              pad: m.pad as string,
+              name: m.name as string,
+              sketch: parsed.sketch,
+            },
+          }
         : bad;
     }
+    case 'sketchset':
+      return isCount(m.seq) &&
+        Array.isArray(m.order) &&
+        m.order.length <= WORKBOOK_MAX_SKETCHES &&
+        m.order.every((id) => isString(id, 200)) &&
+        new Set(m.order).size === m.order.length
+        ? { ok: true, message: { t: 'sketchset', seq: m.seq, order: m.order as string[] } }
+        : bad;
     case 'roster': {
       if (!Array.isArray(m.people) || m.people.length > MAX_SEATS + 1) return bad;
       const people = m.people.filter(

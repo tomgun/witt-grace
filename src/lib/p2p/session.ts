@@ -9,6 +9,7 @@ import {
   SKETCH_LIMITS,
   admit,
   applySketchOps,
+  blankSketch,
   packSketchOps,
   authorizeCommand,
   commitOrder,
@@ -43,6 +44,7 @@ import type {
   Mode,
   Person,
   Project,
+  ProjectSketch,
   RefuseReason,
   RejectReason,
   Sketch,
@@ -76,13 +78,19 @@ export interface DocumentPort {
   reorder(ids: readonly string[]): void;
 }
 /**
- * The session's shared sketchpad (owner 2026-11-21): one sketch that everyone in the session draws on. The app keeps
- * it apart from the person's own sketchpad; the controller reads it for a newcomer and writes others' changes to it.
+ * The project's sketchpads in a session (owner 2026-11-21: everyone draws together; 2026-11-23: “lehtiö on osa
+ * projektia… ei sessio tarvitse omaa”): the controller reads them for a newcomer and writes others' changes to
+ * them. All of them are shared, the empty ones too.
  */
 export interface SketchPort {
-  current(): Sketch;
-  /** Another person's changes, or the whole sketchpad from the host. */
-  set(sketch: Sketch): void;
+  pads(): readonly ProjectSketch[];
+  /** Another person's changes to the sketchpad `id`. */
+  draw(id: string, sketch: Sketch): void;
+  /** A whole sketchpad from the host, or (host) a new one a participant asked for: in place of the one with its
+   * id, else after the others. False when the project cannot take it. */
+  put(pad: ProjectSketch): boolean;
+  /** Participant: the host's sketchpads by id and in order; a session's sketchpad that is not named leaves. */
+  keep(order: readonly string[]): void;
 }
 export interface CollabClock {
   nowIso(): string;
@@ -133,10 +141,10 @@ export type CollabNotice =
 
 interface Common {
   /**
-   * This person changed the shared sketchpad (the port already holds the change): tell the others. `false`: a change
-   * too large to send; a participant's sketchpad is then fetched again from the host.
+   * This person changed the sketchpad `pad` (the port already holds the change): tell the others. `false`: a
+   * change too large to send; a participant's sketchpads are then fetched again from the host.
    */
-  sketched(ops: SketchOp[]): boolean;
+  sketched(pad: string, ops: SketchOp[]): boolean;
   status(): CollabStatus;
   subscribe(listener: (status: CollabStatus) => void): () => void;
   onNotice(listener: (notice: CollabNotice) => void): () => void;
@@ -201,8 +209,10 @@ export interface HostSession extends Common {
   localApplied(command: Command, ctx: CommandContext, next: Project): void;
   /** Called by the store after the host replaced the whole document with a version of the same one. */
   replaced(next: Project): void;
-  /** The host replaced the whole shared sketchpad (opened a file): everyone gets it. */
-  sketchReplaced(): void;
+  /** The project's sketchpads changed here otherwise than by drawing (one added, named, removed, or replaced
+   * whole from a file): everyone is told which there are, and gets those named in `ids` whole (all of them when
+   * absent). */
+  sketchpadsChanged(ids?: readonly string[]): void;
   /** The set of shared diagrams changed here (one added, removed, moved, shared or left out): everyone is told
    * the set, and gets the diagrams that are new to them. */
   structureChanged(): void;
@@ -286,17 +296,30 @@ export async function startHost(options: {
     });
     for (const seat of online()) if (seat.joined) send(seat.peerId as string, { t: 'roster', people });
   };
-  // The shared sketchpad's own order; it starts again when the host reloads, and everyone is sent the whole of it.
+  // The sketchpads' own order; it starts again when the host reloads, and everyone is sent the whole of them.
   let sketchSeq = 0;
   const sketchPort = options.sketch;
-  const sendSketchpad = (peerId: string) => {
-    if (sketchPort) send(peerId, { t: 'sketchpad', seq: sketchSeq, sketch: sketchPort.current() });
+  const sendPad = (peerId: string, pad: ProjectSketch) =>
+    send(peerId, { t: 'sketchpad', seq: sketchSeq, pad: pad.id, name: pad.name || '?', sketch: pad.sketch });
+  /** Which sketchpads there are, then those of `only` (all when absent) whole. */
+  const sendSketchpads = (peerId: string, only?: readonly string[]) => {
+    if (!sketchPort) return;
+    const pads = sketchPort.pads();
+    send(peerId, { t: 'sketchset', seq: sketchSeq, order: pads.map((p) => p.id) });
+    for (const pad of pads) if (!only || only.includes(pad.id)) sendPad(peerId, pad);
   };
-  const broadcastSketch = (ops: SketchOp[]) => {
+  const sketchpadsChanged = (ids?: readonly string[]) => {
+    if (closed) return;
+    sketchSeq += 1;
+    for (const seat of online()) if (seat.joined) sendSketchpads(seat.peerId as string, ids);
+  };
+  const broadcastSketch = (pad: string, ops: SketchOp[]) => {
     sketchSeq += 1;
     for (const seat of online())
-      if (seat.joined) send(seat.peerId as string, { t: 'sketch', seq: sketchSeq, ops });
+      if (seat.joined) send(seat.peerId as string, { t: 'sketch', seq: sketchSeq, pad, ops });
   };
+  /** A reader changes nothing of the project: not its diagrams, not its sketchpads. */
+  const reader = (seat: Seat) => port.current().users.find((u) => u.id === seat.userId)?.role === 'viewer';
   const broadcastCommit = (
     command: Command,
     ctx: CommandContext,
@@ -429,7 +452,7 @@ export async function startHost(options: {
             : {}),
         });
         // A seat that had joined before (the host or the person reloaded) is not asked again and sends no `ready`.
-        if (result.seat.joined) sendSketchpad(peerId);
+        if (result.seat.joined) sendSketchpads(peerId);
         publish();
         return;
       }
@@ -439,7 +462,7 @@ export async function startHost(options: {
         state = replaceSeat(state, { ...seat, joined: true });
         keep();
         seatEverywhere(seat);
-        sendSketchpad(peerId);
+        sendSketchpads(peerId);
         emitter.notice({ kind: 'joined', name: seat.name });
         publish();
         return;
@@ -449,18 +472,41 @@ export async function startHost(options: {
         if (!sketchPort || !seat || !seat.joined) return;
         const rate = spendRate(seat, clock.nowMs());
         state = replaceSeat(state, rate.seat);
-        const before = sketchPort.current();
-        let next = rate.ok ? applySketchOps(before, message.ops) : before;
+        const pad = sketchPort.pads().find((p) => p.id === message.pad);
+        if (!pad) {
+          // A sketchpad that is not there (removed meanwhile): the sender gets the ones there are.
+          sendSketchpads(peerId);
+          return;
+        }
+        const before = pad.sketch;
+        let next = rate.ok && !reader(seat) ? applySketchOps(before, message.ops) : before;
         // The sketchpad stays a sketch that can be saved and sent whole: past the file's size nothing more is taken.
         if (next !== before && serializeSketch(next).length > SKETCH_LIMITS.bytes) next = before;
         if (next === before) {
-          // Nothing of it stands here (a limit, a frame that is gone, too many at once): the sender drew it already,
-          // so it gets the sketchpad as it is.
-          sendSketchpad(peerId);
+          // Nothing of it stands here (a limit, a frame that is gone, too many at once, a reader): the sender drew
+          // it already, so it gets the sketchpad as it is.
+          sendPad(peerId, pad);
           return;
         }
-        sketchPort.set(next);
-        broadcastSketch(message.ops);
+        sketchPort.draw(pad.id, next);
+        broadcastSketch(pad.id, message.ops);
+        return;
+      }
+      case 'sketchpad': {
+        // A new empty sketchpad from a participant (owner 2026-11-23: everyone but a reader may add one).
+        const seat = seatOfPeer(state, peerId);
+        const refuse = (reason: 'not-ready' | 'rate' | 'forbidden' | 'refused') =>
+          send(peerId, { t: 'reject', id: message.id, reason });
+        if (!sketchPort || !seat || !seat.joined) return refuse('not-ready');
+        const rate = spendRate(seat, clock.nowMs());
+        state = replaceSeat(state, rate.seat);
+        if (!rate.ok) return refuse('rate');
+        if (reader(seat)) return refuse('forbidden');
+        const name = message.name.trim();
+        if (!name || sketchPort.pads().some((p) => p.id === message.pad)) return refuse('refused');
+        if (!sketchPort.put({ id: message.pad, name, sketch: blankSketch(clock.newId()) }))
+          return refuse('refused');
+        sketchpadsChanged([message.pad]);
         return;
       }
       case 'propose': {
@@ -540,7 +586,7 @@ export async function startHost(options: {
         send(peerId, { t: 'set', seq: state.seq, order: port.documents().map((d) => d.id) });
         for (const project of port.documents())
           send(peerId, { t: 'snapshot', seq: state.seq, project, digest: documentDigest(project) });
-        sendSketchpad(peerId);
+        sendSketchpads(peerId);
         return;
       }
       case 'bye': {
@@ -634,17 +680,13 @@ export async function startHost(options: {
       keep();
       publish();
     },
-    sketched(ops) {
+    sketched(pad, ops) {
       if (closed || !ops.length) return true;
       // Others hold messages of any size from the host, but a `put` of a whole frame is still cut to pieces.
-      for (const group of packSketchOps(ops, MAX_PEER_MESSAGE - 200)) broadcastSketch(group);
+      for (const group of packSketchOps(ops, MAX_PEER_MESSAGE - 400)) broadcastSketch(pad, group);
       return true;
     },
-    sketchReplaced() {
-      if (closed) return;
-      sketchSeq += 1;
-      for (const seat of online()) if (seat.joined) sendSketchpad(seat.peerId as string);
-    },
+    sketchpadsChanged,
     async close() {
       if (closed) return;
       for (const seat of online()) send(seat.peerId as string, { t: 'end', reason: 'ended' });
@@ -666,6 +708,8 @@ export interface ParticipantSession extends Common {
   propose(command: Command, doc?: string): void;
   /** Ask the host for a new empty diagram with these ids; it arrives in the host's set when the host made it. */
   proposeDiagram(diagram: { doc: string; root: string; mode: Mode }): void;
+  /** Ask the host for a new empty sketchpad with this id and name; it arrives among the host's sketchpads. */
+  proposeSketchpad(sketchpad: { pad: string; name: string }): void;
 }
 
 export async function joinSession(options: {
@@ -705,7 +749,7 @@ export async function joinSession(options: {
     for (const id of ids) awaiting.add(id);
     sendHost({ t: 'resync' });
   };
-  /** The last sketchpad change taken, in the host's order; `null` until the whole sketchpad has come. */
+  /** The last sketchpad change taken, in the host's order; `null` until the host's sketchpads have come. */
   let lastSketchSeq: number | null = null;
   const pending = new Set<string>();
   let finished = false;
@@ -791,6 +835,37 @@ export async function joinSession(options: {
       return;
     }
     if (documentDigest(next) !== commit.digest) askAgain([doc]);
+  };
+  type SketchMessage = Extract<ToPeer, { t: 'sketchset' | 'sketchpad' | 'sketch' }>;
+  /** Sketchpad messages that arrive while the person is still deciding whether to join. */
+  let bufferedSketch: SketchMessage[] = [];
+  const takeSketch = (message: SketchMessage) => {
+    if (emitter.status.phase !== 'active' || !options.sketch) return;
+    switch (message.t) {
+      case 'sketchset':
+        options.sketch.keep(message.order);
+        lastSketchSeq = message.seq;
+        return;
+      case 'sketchpad':
+        options.sketch.put({ id: message.pad, name: message.name, sketch: message.sketch });
+        lastSketchSeq = message.seq;
+        return;
+      case 'sketch': {
+        if (lastSketchSeq === null || message.seq <= lastSketchSeq) return;
+        const pad = options.sketch.pads().find((p) => p.id === message.pad);
+        if (message.seq !== lastSketchSeq + 1 || !pad) {
+          // One was missed, or it is for a sketchpad that is not here: the host's sketchpads again.
+          lastSketchSeq = null;
+          sendHost({ t: 'resync' });
+          return;
+        }
+        // Our own changes come back in the host's order and are applied again: that is what makes everyone's
+        // sketchpad the same when two people changed the same thing.
+        options.sketch.draw(pad.id, applySketchOps(pad.sketch, message.ops));
+        lastSketchSeq = message.seq;
+        return;
+      }
+    }
   };
   /** The host is gone (closed or reloading): wait for it to come back under the same key, then rejoin. */
   const lostHost = () => {
@@ -905,26 +980,14 @@ export async function joinSession(options: {
         if (!adopt(message.project, message.digest, message.seq)) await finish('diverged');
         else port.reorder([...shared]);
         return;
+      case 'sketchset':
       case 'sketchpad':
-        if (emitter.status.phase !== 'active' || !options.sketch) return;
-        options.sketch.set(message.sketch);
-        lastSketchSeq = message.seq;
+      case 'sketch':
+        // A person the host knew already (invited by profile) is sent the sketchpads at once: they wait here
+        // until the person has agreed to join.
+        if (emitter.status.phase === 'confirm') bufferedSketch.push(message);
+        else takeSketch(message);
         return;
-      case 'sketch': {
-        if (emitter.status.phase !== 'active' || !options.sketch || lastSketchSeq === null) return;
-        if (message.seq <= lastSketchSeq) return;
-        if (message.seq !== lastSketchSeq + 1) {
-          // One was missed: the whole sketchpad again.
-          lastSketchSeq = null;
-          sendHost({ t: 'resync' });
-          return;
-        }
-        // Our own changes come back in the host's order and are applied again: that is what makes everyone's
-        // sketchpad the same when two people changed the same thing.
-        options.sketch.set(applySketchOps(options.sketch.current(), message.ops));
-        lastSketchSeq = message.seq;
-        return;
-      }
       case 'roster':
         emitter.set({ people: message.people });
         return;
@@ -958,12 +1021,15 @@ export async function joinSession(options: {
       const early = buffered;
       buffered = [];
       early.forEach(applyCommit);
+      const drawn = bufferedSketch;
+      bufferedSketch = [];
+      drawn.forEach(takeSketch);
       sendHost({ t: 'ready' });
     },
-    sketched(ops) {
+    sketched(pad, ops) {
       if (emitter.status.phase !== 'active' || !ops.length) return true;
-      const messages = packSketchOps(ops, MAX_PEER_MESSAGE - 200).map((group) =>
-        JSON.stringify({ t: 'sketch', ops: group } satisfies ToHost)
+      const messages = packSketchOps(ops, MAX_PEER_MESSAGE - 400).map((group) =>
+        JSON.stringify({ t: 'sketch', pad, ops: group } satisfies ToHost)
       );
       if (messages.some((m) => m.length > MAX_PEER_MESSAGE)) {
         // One element larger than a message: it cannot be shared, so our sketchpad goes back to the host's.
@@ -984,6 +1050,10 @@ export async function joinSession(options: {
     proposeDiagram(diagram) {
       if (emitter.status.phase !== 'active') return;
       sendHost({ t: 'diagram', id: clock.newId(), ...diagram });
+    },
+    proposeSketchpad(sketchpad) {
+      if (emitter.status.phase !== 'active') return;
+      sendHost({ t: 'sketchpad', id: clock.newId(), ...sketchpad });
     },
     async close() {
       sendHost({ t: 'bye' });

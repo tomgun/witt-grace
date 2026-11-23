@@ -10,6 +10,11 @@
  *       changes the structure only by asking the host for a new empty diagram (a reader is refused), a diagram
  *       the host leaves out is never sent and one that was shared leaves the participants, and the joiner's own
  *       project is put aside whole in the browser and comes back after the session
+ *       a session draws on the project's sketchpads (WG-063 part 4, owner 2026-11-23 “lehtiö on osa projektia”):
+ *       the joiner gets the host's sketchpads with their drawings, a stroke reaches the other on the sketchpad it
+ *       was drawn on, a participant gets a new sketchpad by asking the host, only the host names and removes
+ *       them, a reader gets none, the joiner's own sketchpads wait aside with their project, and what the
+ *       session drew stays in the participant's copy when the session is over
  * test: tests/unit/store-collab.test.ts (the real store over the loopback network)
  * red-against: a change applied to the tab that happens to be shown and not to the diagram it was made in,
  *              the joiner's own project replaced with nothing kept, a joiner who is a different person in each
@@ -18,7 +23,9 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createBlankProject, parseInvite } from '../../src/domain/index.ts';
+import { createBlankProject, diffSketch, parseInvite } from '../../src/domain/index.ts';
+import { addElement, blankSketch } from '../../src/domain/sketch.ts';
+import type { Sketch } from '../../src/domain/sketch.ts';
 import { memoryStore } from '../../src/lib/storage.ts';
 import { LoopbackHub } from '../../src/lib/p2p/network.ts';
 import { joinSession, startHost } from '../../src/lib/p2p/session.ts';
@@ -155,14 +162,16 @@ const blank = (id: string, title: string, userId = 'u-host', userName = 'Isänt�
   title,
 });
 /** A host with a project of two diagrams (the second one shown), and a guest with work of their own. */
-async function projectSession() {
+async function projectSession(before: (host: ReturnType<typeof createStore>) => void = () => undefined) {
   const hub = new LoopbackHub();
   const host = createStore({ store: memoryStore(), persistent: false, windowWidth: 1440 });
   host.load(blank('p-1', 'Päätös'));
   host.attachTabs([blank('p-2', 'Riskit')]);
   host.selectTab(0);
+  before(host);
   const hostSession = await startHost({
     port: host.collabPort(),
+    sketch: host.sketchPort(),
     connect: async () => hub.join('H'),
     signal: relay,
     hostUserId: 'u-host',
@@ -177,6 +186,7 @@ async function projectSession() {
   assert.ok(parsed.ok);
   const guestSession = await joinSession({
     port: guest.collabPort(),
+    sketch: guest.sketchPort(),
     connect: async () => hub.join('G'),
     invite: parsed.invite,
     name: 'Aino',
@@ -375,4 +385,123 @@ test('a diagram the host leaves out is never sent, and one that was shared leave
   await hostSession.close();
   await settle(hub);
   assert.deepEqual(host.get().unsharedIds, []);
+});
+
+const stroke = (sketch: Sketch, id: string): Sketch =>
+  addElement(sketch, 0, { id, color: 0, size: 4, type: 'pen', points: [10, 10, 20, 20] });
+/** Draw as the sketchpad screen does: on one's own sheet first, then told to the session. */
+const drawOn = (
+  store: ReturnType<typeof createStore>,
+  session: { sketched(pad: string, ops: ReturnType<typeof diffSketch>): boolean },
+  pad: string,
+  id: string
+) => {
+  const before = store.get().workbook.sketches.find((s) => s.id === pad)?.sketch as Sketch;
+  const next = stroke(before, id);
+  store.drawProjectSketch(pad, next);
+  session.sketched(pad, diffSketch(before, next));
+};
+const pads = (store: ReturnType<typeof createStore>) =>
+  store.get().workbook.sketches.map((s) => [s.name, s.sketch.frames[0]?.elements.map((e) => e.id).join(',')]);
+
+test('a session draws on the project’s sketchpads; a participant asks for a new one, the host names and removes', async () => {
+  let plan = '';
+  const { hub, host, guest, hostSession, guestSession } = await projectSession((h) => {
+    plan = h.addProjectSketch('Suunnitelma') as string;
+    h.drawProjectSketch(plan, stroke(blankSketch('f-1'), 'h0'));
+    h.addProjectSketch('Tyhjä');
+  });
+  // The joiner has the host's sketchpads, the empty one too.
+  assert.deepEqual(pads(guest), [
+    ['Suunnitelma', 'h0'],
+    ['Tyhjä', ''],
+  ]);
+  const empty = guest.get().workbook.sketches[1]?.id as string;
+  drawOn(guest, guestSession, empty, 'g1');
+  drawOn(host, hostSession, plan, 'h1');
+  await settle(hub);
+  const both = [
+    ['Suunnitelma', 'h0,h1'],
+    ['Tyhjä', 'g1'],
+  ];
+  assert.deepEqual(pads(host), both);
+  assert.deepEqual(pads(guest), both);
+
+  // A new sketchpad: the participant asks, the host makes it, both have it under the id that was asked for.
+  const asked = guest.addProjectSketch('Ainon lehtiö') as string;
+  assert.equal(pads(guest).length, 2, 'not made here before the host has made it');
+  await settle(hub);
+  assert.equal(host.get().workbook.sketches[2]?.id, asked);
+  assert.deepEqual(pads(guest), [...both, ['Ainon lehtiö', '']]);
+  // Names and removal are the host's.
+  assert.equal(guest.renameProjectSketch(asked, 'Muu'), false);
+  assert.equal(guest.removeProjectSketch(plan), false);
+  assert.equal(guest.replaceProjectSketch(plan, blankSketch('x')), false);
+  assert.equal(host.renameProjectSketch(asked, 'Yhteinen luonnos'), true);
+  assert.equal(host.removeProjectSketch(empty), true);
+  await settle(hub);
+  assert.deepEqual(pads(guest), [
+    ['Suunnitelma', 'h0,h1'],
+    ['Yhteinen luonnos', ''],
+  ]);
+  // A file the host opens onto a sketchpad replaces it for everyone.
+  assert.equal(host.replaceProjectSketch(plan, stroke(blankSketch('f-9'), 'file')), true);
+  await settle(hub);
+  assert.deepEqual(pads(guest)[0], ['Suunnitelma', 'file']);
+  // No undo history was made of any of it.
+  assert.equal(host.get().canUndo, false);
+
+  // After the session the participant's copy keeps what was drawn.
+  await guestSession.close();
+  await settle(hub);
+  assert.deepEqual(pads(guest)[0], ['Suunnitelma', 'file']);
+});
+
+test('the joiner’s own sketchpads wait aside with their project; a reader gets no new sketchpad', async () => {
+  const hub = new LoopbackHub();
+  const host = createStore({ store: memoryStore(), persistent: false, windowWidth: 1440 });
+  host.load(blank('p-1', 'Päätös'));
+  // Ben is a reader of the document before the session.
+  host.dispatch({ type: 'user.add', id: 'ben', name: 'Ben', role: 'viewer' });
+  const hostSession = await startHost({
+    port: host.collabPort(),
+    sketch: host.sketchPort(),
+    connect: async () => hub.join('H'),
+    signal: relay,
+    hostUserId: 'u-host',
+    clock: clock('h'),
+  });
+  host.attachCollab({ role: 'host', session: hostSession });
+  const kv = memoryStore();
+  const guest = createStore({ store: kv, persistent: true, windowWidth: 1440 });
+  guest.load(blank('g-1', 'Oma työ', 'u-own', 'Minä'));
+  const mine = guest.addProjectSketch('Omat piirrokset') as string;
+  guest.drawProjectSketch(mine, stroke(blankSketch('f-m'), 'm1'));
+  const invite = parseInvite(await hostSession.invite({ userId: 'ben' }, { mode: 'personal' }));
+  assert.ok(invite.ok);
+  const guestSession = await joinSession({
+    port: guest.collabPort(),
+    sketch: guest.sketchPort(),
+    connect: async () => hub.join('G'),
+    invite: invite.invite,
+    clock: clock('g'),
+  });
+  guest.attachCollab({ role: 'participant', session: guestSession });
+  await until(hub, () => guestSession.status().phase === 'confirm');
+  guestSession.accept();
+  await settle(hub);
+  // The session's project has no sketchpad: the person's own is not in it, and is not sent to the host.
+  assert.deepEqual(pads(guest), []);
+  assert.deepEqual(pads(host), []);
+  assert.equal(guest.addProjectSketch('Lukijan'), null);
+  await settle(hub);
+  assert.deepEqual(pads(host), []);
+  // The host makes one: the reader sees it.
+  host.addProjectSketch('Isännän');
+  await settle(hub);
+  assert.deepEqual(pads(guest), [['Isännän', '']]);
+  await guestSession.close();
+  await settle(hub);
+  assert.equal(guest.restoreOwnProject(), true);
+  assert.deepEqual(pads(guest), [['Omat piirrokset', 'm1']]);
 });

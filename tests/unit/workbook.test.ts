@@ -7,14 +7,17 @@
  *       every diagram; a tab never takes a document another tab holds; the browser restore puts the shown
  *       diagram's own autosave into the tab that holds its id, and adds a diagram it does not know as a new tab
  *       (never over a stored one); a tab is called by the document's title, or its question while unnamed; a
- *       project has up to 20 named sketchpads, written to the file only when something is drawn on them, refused
+ *       project has up to 20 named sketchpads, written to the file only when something is drawn on them (an
+ *       empty one does not make a plain document a project), refused
  *       with the place when one does not parse; attaching a whole project brings its sketchpads without
  *       overwriting one; a step in the project's structure keeps the content every diagram and sketchpad has now
  *       one person is one stable id across the project's diagrams: a name the project knows gets the id it has
  *       elsewhere (never an AI viewpoint's, never one this diagram holds under another name), the people of other
  *       diagrams can be added as they are, and a new name reaches every diagram that has the person
  * test: tests/unit/workbook.test.ts
- * red-against: the same person added to a second diagram under a new id (their ratings then read as two people's),
+ *       a session's host sends a sketchpad whole and names the ones there are: it takes the place of the one
+ *       with its id or comes after the others, and of the session's sketchpads one that is not named leaves
+ * red-against: a sketchpad of the person's own dropped because the host did not name it, the same person added to a second diagram under a new id (their ratings then read as two people's),
  *              a rename that leaves the old name in the other diagrams, an AI viewpoint's id given to a person,
  *              an attached diagram overwriting the one with the same id (work lost on attaching a file twice), the
  *              rename map dropped, removing the only diagram leaving an empty project, a move that drops or
@@ -51,6 +54,8 @@ import {
   serializeWorkbookFile,
   workbookFilename,
   workbookOf,
+  putSketch,
+  keepSketches,
 } from '../../src/domain/index.ts';
 import type { Project, ProjectSketch, User, Workbook } from '../../src/domain/index.ts';
 import { addElement, blankSketch } from '../../src/domain/sketch.ts';
@@ -244,11 +249,13 @@ const drawn = (id = 'p1'): Sketch =>
   addElement(blankSketch('f1'), 0, { id, type: 'pen', color: 0, size: 4, points: [10, 10, 40, 40] });
 const pad = (id: string, name: string, sketch: Sketch = drawn()): ProjectSketch => ({ id, name, sketch });
 
-test('sketchpads: several per project, named, drawn on, removed; an empty one makes a project but is not saved', () => {
+test('sketchpads: several per project, named, drawn on, removed; an empty one is not saved and does not make a project', () => {
   const plain = { ...book('a'), title: '' };
   assert.equal(isPlainDocument(plain), true);
   let project = addSketch(plain, 's1', '  Luonnos  ', blankSketch('f1'));
-  assert.equal(isPlainDocument(project), false);
+  // Looking at the sketchpad screen makes an empty sketchpad: the document is still the plain document it was.
+  assert.equal(isPlainDocument(project), true);
+  assert.equal(isPlainDocument(drawSketch(project, 's1', drawn())), false);
   assert.deepEqual(
     project.sketches.map((s) => s.name),
     ['Luonnos']
@@ -407,4 +414,29 @@ test('a new name reaches every diagram that has the person, and leaves a diagram
     renamed.documents[1]
   );
   assert.equal(renamePersonElsewhere(project, 0, 'no-such', 'X', ctx), project);
+});
+
+test('a sketchpad given whole takes the place of its namesake or comes last; the named ones stay, in that order', () => {
+  let project = addSketch({ ...book('a'), title: '' }, 's1', 'Yksi', blankSketch('f1'));
+  project = putSketch(project, { id: 's2', name: ' Kaksi ', sketch: drawn() });
+  project = putSketch(project, { id: 's1', name: 'Uusi nimi', sketch: drawn() });
+  assert.deepEqual(
+    project.sketches.map((s) => [s.id, s.name, s.sketch.frames[0]?.elements.length]),
+    [
+      ['s1', 'Uusi nimi', 1],
+      ['s2', 'Kaksi', 1],
+    ]
+  );
+  project = addSketch(project, 'mine', 'Oma', blankSketch('f3'));
+  // The host names s2 and a new one that has not come yet: s1 leaves, and what is not the session's stays.
+  const kept = keepSketches(project, ['s2', 'later'], new Set(['s1', 's2']));
+  assert.deepEqual(
+    kept.sketches.map((s) => s.id),
+    ['s2', 'mine']
+  );
+  assert.deepEqual(
+    keepSketches(project, ['s2', 's1'], new Set(['s1', 's2'])).sketches.map((s) => s.id),
+    ['s2', 's1', 'mine']
+  );
+  assert.equal(keepSketches(project, ['s1', 's2'], new Set(['s1', 's2'])), project);
 });

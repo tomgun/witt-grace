@@ -8,7 +8,8 @@
  *       node carries comments; a copied frame keeps the drawing, an empty one does not, Toista runs through the
  *       frames (gliding when asked), a frame has a tab that can be named and the faint previous frame can be
  *       switched off; the sketch is
- *       there after a reload; nothing of it touches the argument document; ← returns to the workspace
+ *       there after a reload; it is kept with the project (`witt-workbook-v1`, owner 2026-11-23 “lehtiö on osa
+ *       projektia”) and nothing of it is in the diagram's own autosave; ← returns to the workspace
  * test: tests/e2e/sketch-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a double-click inside an empty rectangle doing nothing (its middle is not a hit), a press on the
  *              sheet leaving the editor open, the box deleted when its text is emptied, a stroke lost when the pointer is released, the editor's blur writing the text twice, Tab leaving
@@ -120,10 +121,13 @@ test('drawing, a mind map by the keyboard, frames, and the sketch kept over a re
   await page.locator('#btnSketchPlay').click();
   await tabs.nth(0).click();
 
-  // Kept in this browser under its own key; the argument document's keys are as they were.
+  // Kept with the project in this browser; the diagram's own autosave holds nothing of it, and there is no
+  // sketchpad key apart from the project.
   const keys = await page.evaluate(() => Object.keys(window.localStorage).sort());
-  expect(keys).toContain('witt-sketch-v1');
-  expect(JSON.stringify(keys.filter((k) => k !== 'witt-sketch-v1'))).toBe(projectBefore);
+  expect(keys).toContain('witt-workbook-v1');
+  expect(keys).not.toContain('witt-sketch-v1');
+  expect(JSON.stringify(keys.filter((k) => k !== 'witt-workbook-v1'))).toBe(projectBefore);
+  expect(await page.evaluate(() => window.localStorage.getItem('witt-project-v3'))).not.toContain('Kesäloma');
   await page.reload();
   if (await page.getByTestId('home').count()) await page.locator('#btnHomeContinue').click();
   await openSketchpad(page);

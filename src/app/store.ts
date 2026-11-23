@@ -7,6 +7,8 @@ import {
   attachDocuments,
   createBlankProject,
   drawSketch,
+  keepSketches,
+  putSketch,
   isPlainDocument,
   moveDocument,
   parseProject,
@@ -55,11 +57,18 @@ import {
   clearAside,
   hasAside,
   loadWorkbook,
+  moveOldSketchpads,
   putAside,
   readAside,
   saveWorkbook,
 } from '../lib/workbookStorage.ts';
-import type { CollabStatus, DocumentPort, HostSession, ParticipantSession } from '../lib/p2p/session.ts';
+import type {
+  CollabStatus,
+  DocumentPort,
+  HostSession,
+  ParticipantSession,
+  SketchPort,
+} from '../lib/p2p/session.ts';
 import { persist as recordActive } from '../lib/workspaceMeta.ts';
 import { assessorKey, readView, readZones, reviewViewKey, writeView, writeZones } from './view.ts';
 import type { ViewState, Zone, Zones } from './view.ts';
@@ -260,7 +269,19 @@ export function createStore(
   const width = options.windowWidth ?? (typeof window === 'undefined' ? 1440 : window.innerWidth);
   const loaded = loadProject(store);
   const tabs = loadWorkbook(store, loaded.ok ? withOfferedScoring(loaded.project) : null, newId);
-  const initialWorkbook = tabs.ok ? tabs.workbook : workbookOf(blankProject('argument'), newId());
+  const startWorkbook = tabs.ok ? tabs.workbook : workbookOf(blankProject('argument'), newId());
+  // The sketchpads this browser kept apart from the project before 2026-11-23 (the person's own, and the copy of
+  // a session's shared one) become sketchpads of the project, once; not while a project entry is unreadable.
+  const oldPads =
+    tabs.ok && tabs.warning !== undefined
+      ? null
+      : moveOldSketchpads(
+          store,
+          startWorkbook,
+          { own: translator(FI)('sketchOwn'), shared: translator(FI)('sketchSharedCopy') },
+          newId
+        );
+  const initialWorkbook = oldPads?.workbook ?? startWorkbook;
   const initialTab = tabs.ok ? tabs.active : 0;
   const initialProject = initialWorkbook.documents[initialTab] as Project;
   const storageTrouble =
@@ -344,6 +365,16 @@ export function createStore(
       )
     );
   };
+  /** The old sketchpad entries go only when the project that now holds their drawings is stored. */
+  let forgetOldPads: (() => void) | null = oldPads ? oldPads.forget : null;
+  if (forgetOldPads) {
+    const kept = saveWorkbook(store, initialWorkbook, initialTab, nowIso());
+    if (kept.ok) {
+      storedTabs = { workbook: initialWorkbook, activeTab: initialTab };
+      forgetOldPads();
+      forgetOldPads = null;
+    }
+  }
   let collab: CollabLink | null = null;
   let collabUnsubscribe: (() => void)[] = [];
   /** Follow-ups to a participant's proposal (select it, edit its title) that run when the host's commit brings it. */
@@ -369,6 +400,8 @@ export function createStore(
       if (result.ok) {
         storedTabs = snapshot();
         unreadableEntry = false;
+        forgetOldPads?.();
+        forgetOldPads = null;
       }
     }
     if (result.ok) {
@@ -541,6 +574,16 @@ export function createStore(
   let joining = false;
   /** A diagram this participant asked the host for: shown when it arrives. */
   let awaitedDiagram: string | null = null;
+  /** Participant: the sketchpads that came from the session's host (the host's word decides which stay). */
+  let sessionSketchIds = new Set<string>();
+  /** After the host changed the sketchpads otherwise than by drawing: the session tells everyone. */
+  const toldSketchpads = (ids?: readonly string[]) => {
+    if (collab?.role === 'host') collab.session.sketchpadsChanged(ids);
+  };
+  /** A reader of a session changes nothing of the project. */
+  const readerInSession = (): boolean =>
+    collab?.role === 'participant' &&
+    state.project.users.find((u) => u.id === state.actorId)?.role === 'viewer';
   const detachCollab = () => {
     const wasGuest = collab?.role === 'participant';
     const ended = collab !== null;
@@ -550,6 +593,7 @@ export function createStore(
     sessionFirstId = null;
     joining = false;
     awaitedDiagram = null;
+    sessionSketchIds = new Set();
     // The choice of what to leave out is made for one session: it is forgotten when that session is over.
     if (ended && state.unsharedIds.length) set({ unsharedIds: [] });
     // What is open now is the person's copy of the session's project; their own waits aside.
@@ -627,6 +671,34 @@ export function createStore(
         set({ notice: { kind: 'info', text: tr()('collabEndedByOpen') } });
       }
       install(validated);
+    },
+    /** Live collaboration: the project's sketchpads as the session reads and changes them. */
+    sketchPort(): SketchPort {
+      return {
+        pads: () => state.workbook.sketches,
+        draw(id, sketch) {
+          const workbook = drawSketch(state.workbook, id, sketch);
+          if (workbook !== state.workbook)
+            commit(workbook, state.activeTab, { remember: false, fresh: false });
+        },
+        put(pad) {
+          try {
+            const workbook = putSketch(state.workbook, pad);
+            if (collab?.role === 'participant') sessionSketchIds.add(pad.id);
+            if (workbook !== state.workbook)
+              commit(workbook, state.activeTab, { remember: false, fresh: false });
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        keep(order) {
+          const workbook = keepSketches(state.workbook, order, sessionSketchIds);
+          sessionSketchIds = new Set([...sessionSketchIds].filter((id) => order.includes(id)));
+          if (workbook !== state.workbook)
+            commit(workbook, state.activeTab, { remember: false, fresh: false });
+        },
+      };
     },
     /** Live collaboration: how the session reads and changes the document, bypassing the undo history. */
     collabPort(): DocumentPort {
@@ -844,11 +916,14 @@ export function createStore(
       try {
         const incoming = documents.map((d) => withOfferedScoring(parseProject(d)));
         const { workbook } = attachDocuments(state.workbook, incoming, newId, sketches);
+        const known = new Set(state.workbook.sketches.map((s) => s.id));
         commit(workbook, state.workbook.documents.length, {
           fresh: true,
           label: { key: 'historyTabAdd', detail: (incoming[0] as Project).title },
         });
         toldSession();
+        const brought = state.workbook.sketches.filter((s) => !known.has(s.id)).map((s) => s.id);
+        if (brought.length) toldSketchpads(brought);
         set({ home: false });
         return incoming.length;
       } catch (error) {
@@ -924,14 +999,23 @@ export function createStore(
       collab.session.proposeDiagram({ doc, root: newId(), mode });
       return true;
     },
-    /** A new empty sketchpad in the project; returns its id, or null when refused. */
+    /** A new empty sketchpad in the project; returns its id, or null when refused. In a session a participant
+     * asks the host for it (owner 2026-11-23: everyone but a reader may add one): the id is returned at once and
+     * the sketchpad arrives when the host has made it. */
     addProjectSketch(name: string): string | null {
+      if (collab?.role === 'participant') {
+        if (readerInSession() || collab.session.status().phase !== 'active') return null;
+        const pad = newId();
+        collab.session.proposeSketchpad({ pad, name });
+        return pad;
+      }
       try {
         const id = newId();
         commit(addSketch(state.workbook, id, name, blankSketch(newId())), state.activeTab, {
           fresh: false,
           label: { key: 'historySketchAdd', detail: name },
         });
+        toldSketchpads([id]);
         return id;
       } catch (error) {
         refused(error);
@@ -943,16 +1027,29 @@ export function createStore(
       const workbook = drawSketch(state.workbook, id, sketch);
       if (workbook !== state.workbook) commit(workbook, state.activeTab, { remember: false, fresh: false });
     },
+    /** In a session the host names and removes sketchpads, as it does diagrams. */
     renameProjectSketch(id: string, name: string): boolean {
+      if (tabsLocked()) return false;
       const workbook = renameSketch(state.workbook, id, name);
       if (workbook === state.workbook) return false;
       commit(workbook, state.activeTab, {
         fresh: false,
         label: { key: 'historySketchRename', detail: name },
       });
+      toldSketchpads([id]);
+      return true;
+    },
+    /** A sketchpad replaced whole (a file opened onto it). In a session only the host may. */
+    replaceProjectSketch(id: string, sketch: Sketch): boolean {
+      if (collab?.role === 'participant') return false;
+      const workbook = drawSketch(state.workbook, id, sketch);
+      if (workbook === state.workbook) return false;
+      commit(workbook, state.activeTab, { remember: false, fresh: false });
+      toldSketchpads([id]);
       return true;
     },
     removeProjectSketch(id: string): boolean {
+      if (tabsLocked()) return false;
       const removed = state.workbook.sketches.find((s) => s.id === id);
       const workbook = removeSketch(state.workbook, id);
       if (!removed || workbook === state.workbook) return false;
@@ -960,6 +1057,7 @@ export function createStore(
         fresh: false,
         label: { key: 'historySketchRemove', detail: removed.name },
       });
+      toldSketchpads([]);
       return true;
     },
     renameProject(title: string): boolean {

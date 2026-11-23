@@ -198,7 +198,7 @@ export type { JsonSchema } from './ai/jsonSchema.ts';
 export * from './session.ts';
 export { applySketchOps, diffSketch, packSketchOps } from './sketchOps.ts';
 export type { SketchOp } from './sketchOps.ts';
-export { SKETCH_LIMITS, serializeSketch } from './sketch.ts';
+export { SKETCH_LIMITS, blankSketch, parseSketch, serializeSketch, sketchHasDrawing } from './sketch.ts';
 export type { Sketch } from './sketch.ts';
 export {
   WORKBOOK_FORMAT,
@@ -223,6 +223,8 @@ export {
   drawSketch,
   renameSketch,
   removeSketch,
+  putSketch,
+  keepSketches,
   restructure,
   projectPeople,
   peopleElsewhere,

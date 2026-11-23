@@ -56,7 +56,9 @@ export function diagramLabel(diagram: Project): string {
 /** One unnamed diagram: such a project is its diagram, shown, stored and saved exactly as a document was before
  * projects (no tab row, no project entry in storage, a `.witt.json` file). */
 export const isPlainDocument = (workbook: Workbook): boolean =>
-  workbook.documents.length === 1 && workbook.title === '' && workbook.sketches.length === 0;
+  workbook.documents.length === 1 &&
+  workbook.title === '' &&
+  !workbook.sketches.some((s) => sketchHasDrawing(s.sketch));
 
 export const isWorkbookFile = (raw: unknown): boolean => isRecord(raw) && raw.format === WORKBOOK_FORMAT;
 
@@ -121,6 +123,35 @@ export function addSketch(workbook: Workbook, id: string, name: string, sketch: 
 export function drawSketch(workbook: Workbook, id: string, sketch: Sketch): Workbook {
   if (!workbook.sketches.some((s) => s.id === id && s.sketch !== sketch)) return workbook;
   return { ...workbook, sketches: workbook.sketches.map((s) => (s.id === id ? { ...s, sketch } : s)) };
+}
+/** A whole sketchpad as given (a session's host sends it so): in place of the one with its id, name and all,
+ * else after the present ones. */
+export function putSketch(workbook: Workbook, entry: ProjectSketch): Workbook {
+  if (!workbook.sketches.some((s) => s.id === entry.id))
+    return addSketch(workbook, entry.id, entry.name, entry.sketch);
+  const name = cleanSketchName(entry.name);
+  return {
+    ...workbook,
+    sketches: workbook.sketches.map((s) =>
+      s.id === entry.id ? { ...s, name: name || s.name, sketch: entry.sketch } : s
+    ),
+  };
+}
+/** The sketchpads in the order `order` names them; of those in `among`, one that is not named leaves. Others
+ * (not in `among`, not named) stay after the named ones. */
+export function keepSketches(
+  workbook: Workbook,
+  order: readonly string[],
+  among: ReadonlySet<string>
+): Workbook {
+  const place = new Map(order.map((id, i) => [id, i]));
+  const kept = workbook.sketches.filter((s) => place.has(s.id) || !among.has(s.id));
+  const sorted = [...kept].sort(
+    (a, b) => (place.get(a.id) ?? order.length) - (place.get(b.id) ?? order.length)
+  );
+  return sorted.length === workbook.sketches.length && sorted.every((s, i) => s === workbook.sketches[i])
+    ? workbook
+    : { ...workbook, sketches: sorted };
 }
 export function renameSketch(workbook: Workbook, id: string, name: string): Workbook {
   const clean = cleanSketchName(name);

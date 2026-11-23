@@ -217,13 +217,11 @@ test('project sketchpads: several, drawn on, saved in the project file, back aft
   await page.locator('#btnSketchMenu').click();
   const pad = page.getByTestId('sketchpad');
   await expect(pad).toBeVisible();
-  // With no sketchpad in the project the person's own is the one at hand.
-  await expect(page.locator('#btnSketchOwn')).toHaveAttribute('aria-pressed', 'true');
-  await page.locator('#btnSketchNew').click();
+  // With no sketchpad in the project a first one is made, so there is a sheet to draw on.
   const sheets = page.locator('.sketch-which .sketch-sheet');
   await expect(sheets).toHaveText(['Lehtiö 1']);
   await expect(sheets.nth(0)).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#sketchHint')).toContainText('Tämä lehtiö kuuluu projektiin');
+  await expect(page.locator('#sketchHint')).toContainText('Lehtiö kuuluu projektiin');
   const canvas = page.locator('#sketchCanvas');
   await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 0 kohdetta');
   const box = (await canvas.boundingBox())!;
@@ -245,9 +243,8 @@ test('project sketchpads: several, drawn on, saved in the project file, back aft
   await page.locator('#textAccept').click();
   await page.locator('#btnSketchNew').click();
   await expect(sheets).toHaveText(['Lehtiö 1', 'Animaatio', 'Lehtiö 3']);
-  // The person's own sketchpad is another sheet and stays empty.
-  await page.locator('#btnSketchOwn').click();
-  await expect(canvas).toHaveAttribute('aria-label', 'Piirtoalue, 0 kohdetta');
+  // There is no sketchpad apart from the project's.
+  await expect(page.locator('.sketch-which button')).toHaveCount(4);
   await page.locator('#btnSketchBack').click();
 
   // A diagram with sketchpads is a project: the tab row lists them, and the file is the project's.
@@ -280,12 +277,13 @@ test('project sketchpads: several, drawn on, saved in the project file, back aft
   await page.locator('#docTabs .doc-tab-sketch').nth(1).click();
   await expect(page.locator('.sketch-which .sketch-sheet').nth(1)).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#sketchCanvas')).toHaveAttribute('aria-label', 'Piirtoalue, 2 kohdetta');
-  // Removed after a question, the sketchpad leaves the project and the person's own sheet is shown.
+  // Removed after a question, the sketchpad leaves the project and the first one is shown.
   await page.locator('#btnSketchRemove').click();
   await expect(page.locator('#confirmText')).toContainText('Animaatio');
   await page.locator('#confirmAccept').click();
   await expect(page.locator('.sketch-which .sketch-sheet')).toHaveText(['Lehtiö 1']);
-  await expect(page.locator('#btnSketchOwn')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.sketch-which .sketch-sheet').first()).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#sketchCanvas')).toHaveAttribute('aria-label', 'Piirtoalue, 1 kohdetta');
 });
 
 test('undo stays in the shown tab, and the history list goes back and forward', async ({ page }) => {
