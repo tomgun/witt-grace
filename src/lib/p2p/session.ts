@@ -12,6 +12,7 @@ import {
   packSketchOps,
   authorizeCommand,
   commitOrder,
+  createBlankProject,
   createHostState,
   documentDigest,
   encodeInvite,
@@ -39,6 +40,7 @@ import type {
   HostState,
   Seat,
   Invite,
+  Mode,
   Person,
   Project,
   RefuseReason,
@@ -66,6 +68,12 @@ export interface DocumentPort {
   apply(command: Command, ctx: CommandContext, doc?: string): Project;
   /** Take a diagram from the host (already validated): in place of the one with its id, else as a new one. */
   adopt(project: Project): void;
+  /** Host: a new diagram at the end of the project, not shown; false when the project cannot take it. */
+  add(project: Project): boolean;
+  /** Participant: the host no longer shares this diagram: it leaves the project here. */
+  drop(id: string): void;
+  /** Participant: the tabs in the host's order; diagrams not named stay after them. */
+  reorder(ids: readonly string[]): void;
 }
 /**
  * The session's shared sketchpad (owner 2026-11-21): one sketch that everyone in the session draws on. The app keeps
@@ -195,6 +203,9 @@ export interface HostSession extends Common {
   replaced(next: Project): void;
   /** The host replaced the whole shared sketchpad (opened a file): everyone gets it. */
   sketchReplaced(): void;
+  /** The set of shared diagrams changed here (one added, removed, moved, shared or left out): everyone is told
+   * the set, and gets the diagrams that are new to them. */
+  structureChanged(): void;
   /**
    * A personal link for a new name or an existing profile; the opener cannot change the name. A new name must not be
    * in use in the session (`nameInUse`; throws otherwise). Earlier links and seats of the same profile stop working.
@@ -308,6 +319,41 @@ export async function startHost(options: {
         seat.peerId as string,
         proposal && seat.peerId === proposal.peerId ? { ...message, proposal: proposal.id } : message
       );
+  };
+  /** The shared diagrams the participants know of, to tell which ones are new to them. */
+  let announced = new Set(port.documents().map((d) => d.id));
+  const structureChanged = () => {
+    if (closed) return;
+    const fresh = port.documents().filter((d) => !announced.has(d.id));
+    // Everyone who has joined is a person of a new diagram too, before it goes out.
+    for (const diagram of fresh)
+      for (const seat of state.seats.filter((s) => s.joined && !s.removed)) {
+        const now = port.document(diagram.id);
+        const command = now ? seatProfileCommand(now, seat) : null;
+        if (!command) continue;
+        try {
+          port.apply(command, { now: clock.nowIso(), actorId: hostUserId }, diagram.id);
+        } catch {
+          // That diagram keeps its people.
+        }
+      }
+    const documents = port.documents();
+    announced = new Set(documents.map((d) => d.id));
+    state = { ...state, seq: state.seq + 1 };
+    const order = documents.map((d) => d.id);
+    for (const seat of online()) {
+      send(seat.peerId as string, { t: 'set', seq: state.seq, order });
+      for (const diagram of fresh) {
+        const project = port.document(diagram.id);
+        if (project)
+          send(seat.peerId as string, {
+            t: 'snapshot',
+            seq: state.seq,
+            project,
+            digest: documentDigest(project),
+          });
+      }
+    }
   };
   /** The host's own change on behalf of the session (a newcomer's profile). */
   const commitAsHost = (command: Command, doc?: string) => {
@@ -455,9 +501,43 @@ export async function startHost(options: {
         broadcastCommit(verdict.command, ctx, next, { id: message.id, peerId });
         return;
       }
+      case 'diagram': {
+        // A new empty diagram from a participant (owner 2026-11-23: everyone but a reader may add one).
+        const seat = seatOfPeer(state, peerId);
+        const refuse = (reason: 'not-ready' | 'rate' | 'forbidden' | 'refused') =>
+          send(peerId, { t: 'reject', id: message.id, reason });
+        if (!seat || !seat.joined) return refuse('not-ready');
+        const rate = spendRate(seat, clock.nowMs());
+        state = replaceSeat(state, rate.seat);
+        if (!rate.ok) return refuse('rate');
+        const first = port.current();
+        const person = first.users.find((u) => u.id === seat.userId);
+        if (!person || person.role === 'viewer') return refuse('forbidden');
+        let project: Project;
+        try {
+          project = parseProject({
+            ...createBlankProject({
+              mode: message.mode,
+              projectId: message.doc,
+              rootId: message.root,
+              userId: seat.userId,
+              now: clock.nowIso(),
+              scoring: first.settings.scoring,
+            }),
+            // The same people as the session's first diagram, the proposer among them.
+            users: first.users,
+          });
+        } catch {
+          return refuse('refused');
+        }
+        if (port.document(project.id) || !port.add(project)) return refuse('refused');
+        structureChanged();
+        return;
+      }
       case 'resync': {
         if (!seatOfPeer(state, peerId)) return;
-        // Every shared diagram as it is now, the first one first.
+        // The set, then every shared diagram as it is now, the first one first.
+        send(peerId, { t: 'set', seq: state.seq, order: port.documents().map((d) => d.id) });
         for (const project of port.documents())
           send(peerId, { t: 'snapshot', seq: state.seq, project, digest: documentDigest(project) });
         sendSketchpad(peerId);
@@ -490,6 +570,7 @@ export async function startHost(options: {
     localApplied(command, ctx, next) {
       if (!closed) broadcastCommit(command, ctx, next);
     },
+    structureChanged,
     replaced(next) {
       if (closed) return;
       state = { ...state, seq: state.seq + 1 };
@@ -583,6 +664,8 @@ export interface ParticipantSession extends Common {
   /** Send a change to the host, for the diagram `doc` (the first one when absent); it lands when the host
    * commits it. */
   propose(command: Command, doc?: string): void;
+  /** Ask the host for a new empty diagram with these ids; it arrives in the host's set when the host made it. */
+  proposeDiagram(diagram: { doc: string; root: string; mode: Mode }): void;
 }
 
 export async function joinSession(options: {
@@ -793,9 +876,34 @@ export async function joinSession(options: {
           ...(message.detail ? { detail: message.detail } : {}),
         });
         return;
+      case 'set': {
+        if (emitter.status.phase !== 'active') return;
+        // The host's set of shared diagrams: one that left it leaves here, a new one is waited for (its
+        // snapshot follows), and the tabs take the host's order.
+        const order = new Set(message.order);
+        if (firstId === null || !order.has(firstId)) {
+          await finish('diverged');
+          return;
+        }
+        lastSeq = Math.max(lastSeq, message.seq);
+        for (const id of [...shared])
+          if (!order.has(id)) {
+            shared.delete(id);
+            awaiting.delete(id);
+            port.drop(id);
+          }
+        for (const id of message.order)
+          if (!shared.has(id)) {
+            shared.add(id);
+            awaiting.add(id);
+          }
+        port.reorder(message.order);
+        return;
+      }
       case 'snapshot':
         if (emitter.status.phase !== 'active') return;
         if (!adopt(message.project, message.digest, message.seq)) await finish('diverged');
+        else port.reorder([...shared]);
         return;
       case 'sketchpad':
         if (emitter.status.phase !== 'active' || !options.sketch) return;
@@ -872,6 +980,10 @@ export async function joinSession(options: {
       pending.add(id);
       emitter.set({ pending: pending.size });
       sendHost({ t: 'propose', id, command, ...(doc !== undefined && doc !== firstId ? { doc } : {}) });
+    },
+    proposeDiagram(diagram) {
+      if (emitter.status.phase !== 'active') return;
+      sendHost({ t: 'diagram', id: clock.newId(), ...diagram });
     },
     async close() {
       sendHost({ t: 'bye' });

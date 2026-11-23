@@ -246,13 +246,13 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             >
               {t('restoreOwnProject')}
             </Item>
-            <Item id="btnAddDiagram" onClick={addDiagram} disabled={inSession}>
+            <Item id="btnAddDiagram" onClick={addDiagram}>
               {t('addDiagram')}
             </Item>
             <Item
               id="btnAttach"
               onClick={() => window.dispatchEvent(new CustomEvent('witt-attach-file'))}
-              disabled={inSession}
+              disabled={inSession && state.collab?.role === 'participant'}
             >
               {t('attachToProject')}
             </Item>

@@ -205,6 +205,8 @@ export interface AppState {
   collab: CollabStatus | null;
   /** The person's own project is put aside in this browser (they joined a session; WG-063). */
   aside: boolean;
+  /** The diagrams the host leaves out of the session, by id (a choice for this session only, never saved). */
+  unsharedIds: readonly string[];
 }
 const REJECT_TEXT: Record<RejectReason, MessageKey> = {
   rate: 'collabRejectRate',
@@ -312,6 +314,7 @@ export function createStore(
     notice: storageTrouble !== null ? { kind: 'error', text: storageTrouble } : null,
     collab: null,
     aside: hasAside(store),
+    unsharedIds: [],
   };
   type Snapshot = { workbook: Workbook; activeTab: number };
   const snapshot = (): Snapshot => ({ workbook: state.workbook, activeTab: state.activeTab });
@@ -521,21 +524,34 @@ export function createStore(
     });
   };
   /** Tabs stay as they are while a session is open: it shares the diagram that was shown when it began. */
+  /** In a session the host changes the project's structure and everyone is told; a participant's own tab
+   * changes would only be undone by the host's next word, so they are refused (a new diagram is asked of the
+   * host instead, `proposeDiagram`). */
   const tabsLocked = (): boolean => {
-    if (!collab) return false;
+    if (collab?.role !== 'participant') return false;
     set({ notice: { kind: 'error', text: tr()('tabsLockedInSession') } });
     return true;
+  };
+  /** After the host changed the structure: the session tells everyone. */
+  const toldSession = () => {
+    if (collab?.role === 'host') collab.session.structureChanged();
   };
   /** The session's first diagram (the one shown when it began), and whether a joiner still waits for it. */
   let sessionFirstId: string | null = null;
   let joining = false;
+  /** A diagram this participant asked the host for: shown when it arrives. */
+  let awaitedDiagram: string | null = null;
   const detachCollab = () => {
     const wasGuest = collab?.role === 'participant';
+    const ended = collab !== null;
     collabUnsubscribe.forEach((u) => u());
     collabUnsubscribe = [];
     collab = null;
     sessionFirstId = null;
     joining = false;
+    awaitedDiagram = null;
+    // The choice of what to leave out is made for one session: it is forgotten when that session is over.
+    if (ended && state.unsharedIds.length) set({ unsharedIds: [] });
     // What is open now is the person's copy of the session's project; their own waits aside.
     if (wasGuest && state.aside)
       set({ notice: { kind: 'info', text: tr()('asideWaiting'), ownProject: true } });
@@ -618,13 +634,10 @@ export function createStore(
         state.workbook.documents.findIndex((d) => d.id === (id ?? sessionFirstId ?? state.project.id));
       return {
         current: () => state.workbook.documents[indexOf(undefined)] ?? state.project,
-        // Every diagram of the project is shared, the first one first.
-        documents() {
-          const first = indexOf(undefined);
-          const all = state.workbook.documents;
-          return first <= 0 ? [...all] : [all[first] as Project, ...all.filter((_, i) => i !== first)];
-        },
-        document: (id) => state.workbook.documents.find((d) => d.id === id) ?? null,
+        // The shared diagrams in tab order: all of the project but those the host left out.
+        documents: () => state.workbook.documents.filter((d) => !state.unsharedIds.includes(d.id)),
+        document: (id) =>
+          state.unsharedIds.includes(id) ? null : (state.workbook.documents.find((d) => d.id === id) ?? null),
         apply(command, ctx, doc) {
           const index = indexOf(doc);
           const before = state.workbook.documents[index];
@@ -667,12 +680,56 @@ export function createStore(
             return;
           }
           try {
-            // Another diagram of the session: a tab of its own, after the others; the shown tab stays shown.
+            // Another diagram of the session: a tab of its own, after the others. The shown tab stays shown,
+            // unless this is the diagram the person just asked for.
             const { workbook } = attachDocuments(state.workbook, [project], newId);
-            commit(workbook, state.activeTab, { remember: false, fresh: false });
+            const asked = awaitedDiagram === project.id;
+            if (asked) awaitedDiagram = null;
+            commit(workbook, asked ? workbook.documents.length - 1 : state.activeTab, {
+              remember: false,
+              fresh: asked,
+            });
           } catch (error) {
             refused(error);
           }
+        },
+        add(project) {
+          try {
+            const { workbook, renamed } = attachDocuments(
+              state.workbook,
+              [withOfferedScoring(project)],
+              newId
+            );
+            // The proposer named the id: a diagram that would need another id is not taken.
+            if (renamed.size) return false;
+            commit(workbook, state.activeTab, { remember: false, fresh: false });
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        drop(id) {
+          const index = state.workbook.documents.findIndex((d) => d.id === id);
+          if (index === -1 || state.workbook.documents.length === 1) return;
+          const workbook = removeDocument(state.workbook, index);
+          const active =
+            index < state.activeTab
+              ? state.activeTab - 1
+              : Math.min(state.activeTab, workbook.documents.length - 1);
+          commit(workbook, active, { remember: false, fresh: index === state.activeTab });
+        },
+        reorder(ids) {
+          const rank = new Map(ids.map((id, i) => [id, i]));
+          const documents = [...state.workbook.documents].sort(
+            (a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity)
+          );
+          if (documents.every((d, i) => d === state.workbook.documents[i])) return;
+          const shown = state.project.id;
+          commit(
+            { ...state.workbook, documents },
+            documents.findIndex((d) => d.id === shown),
+            { remember: false, fresh: false }
+          );
         },
       };
     },
@@ -682,6 +739,9 @@ export function createStore(
       collab = link;
       // A host shares from the diagram that is shown; a joiner's first diagram comes with the welcome.
       sessionFirstId = link.role === 'host' ? state.project.id : null;
+      // The diagram the session starts from is always shared.
+      if (sessionFirstId && state.unsharedIds.includes(sessionFirstId))
+        set({ unsharedIds: state.unsharedIds.filter((id) => id !== sessionFirstId) });
       joining = link.role === 'participant';
       const onStatus = (status: CollabStatus) => {
         set({ collab: status });
@@ -788,6 +848,7 @@ export function createStore(
           fresh: true,
           label: { key: 'historyTabAdd', detail: (incoming[0] as Project).title },
         });
+        toldSession();
         set({ home: false });
         return incoming.length;
       } catch (error) {
@@ -798,6 +859,11 @@ export function createStore(
     /** Remove a tab's diagram from the project (undo brings it back); the neighbour is shown. */
     removeTab(index: number): boolean {
       if (tabsLocked()) return false;
+      // The session hangs on its first diagram: people, invites and the host's record read it.
+      if (collab && state.workbook.documents[index]?.id === sessionFirstId) {
+        set({ notice: { kind: 'error', text: tr()('tabFirstInSession') } });
+        return false;
+      }
       try {
         const workbook = removeDocument(state.workbook, index);
         const removed = (state.workbook.documents[index] as Project).title;
@@ -818,6 +884,7 @@ export function createStore(
             ...(restore ? { restore } : {}),
           },
         });
+        toldSession();
         return true;
       } catch (error) {
         return refused(error);
@@ -834,6 +901,27 @@ export function createStore(
         workbook.documents.findIndex((d) => d.id === shown),
         { fresh: false, label: { key: 'historyTabMove', detail: state.project.title } }
       );
+      toldSession();
+      return true;
+    },
+    /** Host, in a session or before one: share a diagram with the session or leave it out (never the session's
+     * first diagram). A diagram left out is not sent; one that was shared leaves the participants' projects. */
+    setDiagramShared(id: string, shared: boolean): boolean {
+      if (collab?.role === 'participant' || id === sessionFirstId) return false;
+      if (!state.workbook.documents.some((d) => d.id === id)) return false;
+      const without = state.unsharedIds.filter((x) => x !== id);
+      const unsharedIds = shared ? without : [...without, id];
+      if (unsharedIds.length === state.unsharedIds.length) return false;
+      set({ unsharedIds });
+      toldSession();
+      return true;
+    },
+    /** A participant asks the host for a new empty diagram; it is shown when the host has made it. */
+    askForDiagram(mode: Mode): boolean {
+      if (collab?.role !== 'participant' || collab.session.status().phase !== 'active') return false;
+      const doc = newId();
+      awaitedDiagram = doc;
+      collab.session.proposeDiagram({ doc, root: newId(), mode });
       return true;
     },
     /** A new empty sketchpad in the project; returns its id, or null when refused. */

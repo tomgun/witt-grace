@@ -8,6 +8,7 @@ import {
   normalizePassword,
   parseInvite,
   sameName,
+  diagramLabel,
 } from '../domain/index.ts';
 import type { Signal } from '../domain/index.ts';
 import { suggestPassword } from '../lib/p2p/keys.ts';
@@ -68,9 +69,43 @@ function CopyBlock({
   );
 }
 
+/** Which diagrams the session shares (owner 2026-11-23, WG-063): all of the project unless the host leaves one
+ * out. The diagram the session starts from is always shared. Shown to the host when the project has several. */
+function ShareList() {
+  const state = useAppState();
+  const t = useTranslator();
+  const store = getStore();
+  const diagrams = state.workbook.documents;
+  if (diagrams.length < 2 || state.collab?.role === 'participant') return null;
+  const live = !!state.collab && state.collab.phase !== 'ended';
+  // Before a session the shown diagram is the one it will start from; in one, the port's first diagram.
+  const firstId = live ? store.collabPort().current().id : state.project.id;
+  return (
+    <fieldset className="collab-share" id="collabShareList">
+      <legend>{t('collabShareTitle')}</legend>
+      <p className="inspector-note">{t('collabShareHelp')}</p>
+      {diagrams.map((diagram) => (
+        <label key={diagram.id}>
+          <input
+            type="checkbox"
+            data-doc-id={diagram.id}
+            checked={diagram.id === firstId || !state.unsharedIds.includes(diagram.id)}
+            disabled={diagram.id === firstId}
+            onChange={(e) => store.setDiagramShared(diagram.id, e.target.checked)}
+          />{' '}
+          {diagramLabel(diagram)}
+          {diagram.id === firstId ? <small> ({t('collabShareFirst')})</small> : null}
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+
 function PrivacyNote({ signal, turn }: { signal: Signal; turn: string[] | null }) {
   const t = useTranslator();
-  const diagrams = useAppState().workbook.documents.length;
+  const { workbook, unsharedIds, collab } = useAppState();
+  const diagrams =
+    collab?.role === 'participant' ? 0 : workbook.documents.filter((d) => !unsharedIds.includes(d.id)).length;
   return (
     <div className="inspector-note collab-privacy" id="collabPrivacy">
       <p>{t('collabPrivacyStore')}</p>
@@ -191,6 +226,7 @@ function StartSection() {
           </label>
         ))}
       </fieldset>
+      <ShareList />
       <PrivacyNote signal={signal} turn={turn.active} />
       <details className="collab-advanced">
         <summary>{t('collabAdvanced')}</summary>

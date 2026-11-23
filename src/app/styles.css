@@ -11426,3 +11426,32 @@ body.witt-focus .doc-tabs {
     transition: none;
   }
 }
+
+/* ---- What a session shares (WG-063): the host's list in the collaboration dialog, and the mark on a tab that
+   is left out. ---- */
+.collab-share {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.collab-share label {
+  font-size: 13px;
+}
+.collab-share small {
+  color: var(--muted);
+}
+.doc-tab.not-shared .doc-tab-title {
+  color: var(--muted);
+}
+.doc-tab-unshared {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+}

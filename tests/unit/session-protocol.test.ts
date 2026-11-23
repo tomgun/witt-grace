@@ -768,3 +768,22 @@ test('messages name the diagram they are for: an address is optional, and never 
   assert.equal(parseToPeer(JSON.stringify({ ...welcome, others: many(49) })).ok, true);
   assert.equal(parseToPeer(JSON.stringify({ ...welcome, others: many(50) })).ok, false);
 });
+
+test('the structure messages: a new diagram asked of the host, and the host’s set of shared diagrams', () => {
+  const ask = { t: 'diagram', id: 'pr-2', doc: 'd-new', root: 'r-new', mode: 'decision' };
+  assert.deepEqual(parseToHost(JSON.stringify({ ...ask, extra: 1 })), { ok: true, message: ask });
+  for (const bad of [{ mode: 'risk' }, { doc: '' }, { root: 7 }, { id: undefined }])
+    assert.equal(parseToHost(JSON.stringify({ ...ask, ...bad })).ok, false);
+  assert.deepEqual(parseToPeer(JSON.stringify({ t: 'set', seq: 4, order: ['a', 'b'] })), {
+    ok: true,
+    message: { t: 'set', seq: 4, order: ['a', 'b'] },
+  });
+  // Never empty, never the same diagram twice, never more than a project holds.
+  for (const order of [[], ['a', 'a'], ['a', 7], 'a', Array.from({ length: 51 }, (_, i) => `d${i}`)])
+    assert.equal(parseToPeer(JSON.stringify({ t: 'set', seq: 4, order })).ok, false);
+  assert.equal(
+    parseToPeer(JSON.stringify({ t: 'set', seq: 4, order: Array.from({ length: 50 }, (_, i) => `d${i}`) }))
+      .ok,
+    true
+  );
+});

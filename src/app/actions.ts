@@ -411,6 +411,12 @@ export function moveTargets(project: Project, nodeId: string): Node[] {
 export function addDiagram(): void {
   const store = getStore();
   const state = store.get();
+  // In someone else's session the host makes the diagram: everyone but a reader may ask for one.
+  if (store.collabLink()?.role === 'participant') {
+    if (!canEdit(state)) store.showMessage(t()('viewerCannotEdit'));
+    else store.askForDiagram(state.project.mode);
+    return;
+  }
   const blank = createBlankProject({
     mode: state.project.mode,
     projectId: newId(),

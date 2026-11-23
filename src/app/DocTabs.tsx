@@ -22,7 +22,9 @@ export function DocTabs() {
       ?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
   }, [shownId, activeTab, count]);
   if (isPlainDocument(workbook)) return null;
-  const locked = !!state.collab && state.collab.phase !== 'ended';
+  // In a session the host changes the structure; a participant looks, and may ask for a new diagram.
+  const guest = !!state.collab && state.collab.phase !== 'ended' && state.collab.role === 'participant';
+  const locked = guest;
   const focusTab = (index: number) =>
     requestAnimationFrame(() => document.getElementById(`docTab-${index}`)?.focus());
   const show = (index: number) => {
@@ -73,7 +75,9 @@ export function DocTabs() {
             type="button"
             role="tab"
             id={`docTab-${index}`}
-            className={`doc-tab${index === activeTab ? ' active' : ''}`}
+            className={`doc-tab${index === activeTab ? ' active' : ''}${
+              state.unsharedIds.includes(diagram.id) ? ' not-shared' : ''
+            }`}
             aria-selected={index === activeTab}
             tabIndex={index === activeTab ? 0 : -1}
             data-doc-id={diagram.id}
@@ -87,6 +91,9 @@ export function DocTabs() {
               {t(diagram.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
             </span>
             <span className="doc-tab-title">{diagramLabel(diagram)}</span>
+            {state.unsharedIds.includes(diagram.id) ? (
+              <span className="doc-tab-unshared">{t('tabNotShared')}</span>
+            ) : null}
           </button>
         ))}
       </div>
@@ -154,7 +161,6 @@ export function DocTabs() {
           id="btnTabAdd"
           className="doc-tab-action doc-tab-add"
           title={t('tabAddTitle')}
-          disabled={locked}
           onClick={addDiagram}
         >
           {t('tabAdd')}

@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-24 — `UI_INVENTORY.md`, `SECURITY_AND_PRIVACY.md` — Owner (2026-11-23): in a session the structure may change and a diagram may be left out; everyone but a reader may add a diagram. S-15: `set` and `diagram` messages, `#collabShareList`, `.not-shared`; WG-063 part 3. `CLAUDE.md` invariant 7 reworded by the owner's word (“päivitä vain”) to name the shared diagrams.
 - 2026-11-24 — `UI_INVENTORY.md`, `SECURITY_AND_PRIVACY.md` — Owner (2026-11-23): a collaboration shares all the project's diagrams, and a joiner's own project is put aside in the browser. S-15: `doc` on `propose` and `commit`, `others` on `welcome`, `witt-workbook-aside-v1`, `#btnNoticeOwnProject`, `#btnRestoreOwn`, `#collabPrivacyProject`; WG-063 parts 1 and 2.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner: the home example clearer and wider, a sub-reason seen to belong to its reason, a decision and a risk example, turns of ten seconds, light arrows at the sides. S-15: `.visual-branch` / `.visual-children`, seven examples, `#btnScenarioPrev`, `#btnScenarioNext`.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner: the home backdrop (himmeli) larger and hung from another place, and its points can be taken hold of and swung, simulated as masses and rods so that the neighbours give and not the whole tree. S-15.

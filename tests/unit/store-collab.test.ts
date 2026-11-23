@@ -5,8 +5,11 @@
  *       own seat (WG-030)
  *       a session shares every diagram of the host's project (WG-063): the joiner gets them all and is a person
  *       of each under one id, a change goes to the diagram it was made in whichever tab each person has open, a
- *       proposal for a diagram that is not shared is refused, looking at tabs is free while the structure is
- *       locked, and the joiner's own project is put aside whole in the browser and comes back after the session
+ *       proposal for a diagram that is not shared is refused, looking at tabs is free; the host adds, removes
+ *       and moves diagrams and everyone follows, the session's first diagram cannot be removed, a participant
+ *       changes the structure only by asking the host for a new empty diagram (a reader is refused), a diagram
+ *       the host leaves out is never sent and one that was shared leaves the participants, and the joiner's own
+ *       project is put aside whole in the browser and comes back after the session
  * test: tests/unit/store-collab.test.ts (the real store over the loopback network)
  * red-against: a change applied to the tab that happens to be shown and not to the diagram it was made in,
  *              the joiner's own project replaced with nothing kept, a joiner who is a different person in each
@@ -256,12 +259,120 @@ test('the joiner’s own project is put aside whole and comes back after the ses
   assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
 });
 
-test('tabs in a session: looking is free, the structure is locked', async () => {
-  const { host, guest } = await projectSession();
+test('tabs in a session: looking is free; the host changes the structure and everyone follows', async () => {
+  const { hub, host, guest, titles } = await projectSession();
   assert.equal(guest.selectTab(1), true);
-  assert.equal(host.selectTab(1), true);
-  assert.equal(host.attachTabs([blank('p-3', 'Kolmas')]), 0);
-  assert.equal(host.removeTab(1), false);
-  assert.equal(host.moveTab(0, 1), false);
-  assert.equal(host.get().workbook.documents.length, 2);
+  // The host attaches a third diagram: the guest gets it, and is a person of it under the same id.
+  assert.equal(host.attachTabs([blank('p-3', 'Kolmas')]), 1);
+  await settle(hub);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit', 'Kolmas']);
+  assert.equal(guest.get().activeTab, 1, 'the guest’s shown tab does not move');
+  const aino = guest.get().workbook.documents[0]?.users.find((u) => u.name === 'Aino')?.id;
+  assert.ok(aino);
+  assert.equal(
+    guest.get().workbook.documents[2]?.users.some((u) => u.id === aino),
+    true
+  );
+  assert.equal(JSON.stringify(guest.get().workbook.documents), JSON.stringify(host.get().workbook.documents));
+  // Moved by the host, the guest's tabs take the same order and the shown diagram stays shown.
+  assert.equal(host.moveTab(2, 1), true);
+  await settle(hub);
+  assert.deepEqual(titles(guest), ['Päätös', 'Kolmas', 'Riskit']);
+  assert.equal(guest.get().project.id, 'p-2');
+  // Removed by the host, it leaves the guest's project; the session's first diagram cannot be removed.
+  assert.equal(host.removeTab(1), true);
+  await settle(hub);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+  assert.equal(host.removeTab(0), false);
+  assert.match(host.get().notice?.text ?? '', /Tästä kaaviosta yhteistyö alkoi/);
+  // A participant does not change the structure by themselves.
+  assert.equal(guest.attachTabs([blank('g-9', 'Oma')]), 0);
+  assert.equal(guest.removeTab(1), false);
+  assert.equal(guest.moveTab(0, 1), false);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+});
+
+test('a participant asks for a new diagram and the host makes it for everyone; a reader is refused', async () => {
+  const { hub, host, guest, titles } = await projectSession();
+  assert.equal(guest.askForDiagram('decision'), true);
+  await settle(hub);
+  assert.deepEqual(titles(host).length, 3);
+  assert.equal(host.get().workbook.documents[2]?.mode, 'decision');
+  assert.equal(JSON.stringify(guest.get().workbook.documents), JSON.stringify(host.get().workbook.documents));
+  // The one who asked is shown the new diagram; the host stays where they were.
+  assert.equal(guest.get().activeTab, 2);
+  assert.equal(host.get().activeTab, 0);
+  // The new diagram carries the session's people, the guest among them.
+  const aino = guest.get().workbook.documents[0]?.users.find((u) => u.name === 'Aino')?.id;
+  assert.equal(
+    guest.get().project.users.some((u) => u.id === aino),
+    true
+  );
+  // Made a reader by the host, the same person is refused.
+  const index = host.get().workbook.documents[0]?.users.findIndex((u) => u.id === aino) as number;
+  assert.ok(index > 0);
+  const first = host.get().workbook.documents[0]!;
+  host.load({
+    ...first,
+    users: first.users.map((u) => (u.id === aino ? { ...u, role: 'viewer' as const } : u)),
+  });
+  await settle(hub);
+  assert.equal(guest.askForDiagram('argument'), true);
+  await settle(hub);
+  assert.equal(titles(host).length, 3);
+  assert.match(guest.get().notice?.text ?? '', /./);
+});
+
+test('a diagram the host leaves out is never sent, and one that was shared leaves the participants', async () => {
+  const hub = new LoopbackHub();
+  const host = createStore({ store: memoryStore(), persistent: false, windowWidth: 1440 });
+  host.load(blank('p-1', 'Päätös'));
+  host.attachTabs([blank('p-2', 'Riskit'), blank('p-3', 'Oma muistio')]);
+  host.selectTab(0);
+  assert.equal(host.setDiagramShared('p-3', false), true);
+  const hostSession = await startHost({
+    port: host.collabPort(),
+    connect: async () => hub.join('H'),
+    signal: relay,
+    hostUserId: 'u-host',
+    clock: clock('h'),
+  });
+  host.attachCollab({ role: 'host', session: hostSession });
+  assert.deepEqual(host.get().unsharedIds, ['p-3'], 'the choice made before the start holds');
+  const guest = createStore({ store: memoryStore(), persistent: false, windowWidth: 1440 });
+  const parsed = parseInvite(hostSession.status().link as string);
+  assert.ok(parsed.ok);
+  const guestSession = await joinSession({
+    port: guest.collabPort(),
+    connect: async () => hub.join('G'),
+    invite: parsed.invite,
+    name: 'Aino',
+    clock: clock('g'),
+  });
+  guest.attachCollab({ role: 'participant', session: guestSession });
+  await until(hub, () => guestSession.status().phase === 'confirm');
+  guestSession.accept();
+  await settle(hub);
+  const titles = (store: typeof host) => store.get().workbook.documents.map((d) => d.title);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit']);
+  // The joiner is not added to the diagram that is left out, and cannot write into it.
+  assert.equal(
+    host.get().workbook.documents[2]?.users.some((u) => u.name === 'Aino'),
+    false
+  );
+  guestSession.propose({ type: 'project.setTitle', title: 'Kaapattu' }, 'p-3');
+  await settle(hub);
+  assert.deepEqual(titles(host), ['Päätös', 'Riskit', 'Oma muistio']);
+  // Shared during the session, it arrives; left out again, it leaves. The first diagram is always shared.
+  assert.equal(host.setDiagramShared('p-3', true), true);
+  await settle(hub);
+  assert.deepEqual(titles(guest), ['Päätös', 'Riskit', 'Oma muistio']);
+  assert.equal(host.setDiagramShared('p-2', false), true);
+  await settle(hub);
+  assert.deepEqual(titles(guest), ['Päätös', 'Oma muistio']);
+  assert.equal(host.setDiagramShared('p-1', false), false);
+  // The choice lasts one session.
+  await hostSession.close();
+  await settle(hub);
+  assert.deepEqual(host.get().unsharedIds, []);
 });

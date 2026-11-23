@@ -4,7 +4,7 @@
 // arguments; signatures are checked in src/lib/p2p. The host orders every change; peers replay its commits through the
 // same `applyCommand`, so the documents stay identical (the digest proves it).
 import { SCHEMA_VERSION, isAiProfile, sameName } from './model.ts';
-import type { Project } from './model.ts';
+import type { Mode, Project } from './model.ts';
 import type { Command, CommandType } from './commands.ts';
 import { parseSketch } from './sketch.ts';
 import type { Sketch } from './sketch.ts';
@@ -217,6 +217,8 @@ export type ToHost =
   | { t: 'ready' }
   /** `doc`: the diagram the command is for, by id; absent: the session's first diagram (WG-063). */
   | { t: 'propose'; id: string; command: Command; doc?: string }
+  /** A new empty diagram for the shared project (WG-063 part 3): the ids are the proposer's, the host makes it. */
+  | { t: 'diagram'; id: string; doc: string; root: string; mode: Mode }
   /** Changes to the session's shared sketchpad (owner 2026-11-21); the sender has applied them already. */
   | { t: 'sketch'; ops: SketchOp[] }
   | { t: 'resync' }
@@ -250,6 +252,9 @@ export type ToPeer =
     }
   | { t: 'reject'; id: string; reason: RejectReason; detail?: string }
   | { t: 'snapshot'; seq: number; project: Project; digest: string }
+  /** The shared diagrams, by id and in tab order (WG-063 part 3): sent when one is added, removed, moved, shared
+   * or left out. A diagram that is new to the receiver follows as a snapshot. */
+  | { t: 'set'; seq: number; order: string[] }
   /** Sketchpad changes in the host's order (the sender's own come back too), and the whole sketchpad. */
   | { t: 'sketch'; seq: number; ops: SketchOp[] }
   | { t: 'sketchpad'; seq: number; sketch: Sketch }
@@ -382,6 +387,13 @@ export function parseToHost(raw: string): Parsed<ToHost> {
       const ops = parseSketchOps(m.ops);
       return ops ? { ok: true, message: { t: 'sketch', ops } } : bad;
     }
+    case 'diagram':
+      return isString(m.id) &&
+        isString(m.doc, 200) &&
+        isString(m.root, 200) &&
+        (m.mode === 'argument' || m.mode === 'decision')
+        ? { ok: true, message: { t: 'diagram', id: m.id, doc: m.doc, root: m.root, mode: m.mode } }
+        : bad;
     case 'ready':
     case 'resync':
     case 'bye':
@@ -486,6 +498,15 @@ export function parseToPeer(raw: string): Parsed<ToPeer> {
     case 'snapshot':
       return isCount(m.seq) && isDocument(m.project) && isString(m.digest, 16)
         ? { ok: true, message: { t: 'snapshot', seq: m.seq, project: m.project, digest: m.digest } }
+        : bad;
+    case 'set':
+      return isCount(m.seq) &&
+        Array.isArray(m.order) &&
+        m.order.length >= 1 &&
+        m.order.length <= MAX_SHARED_DOCUMENTS &&
+        m.order.every((id) => isString(id, 200)) &&
+        new Set(m.order).size === m.order.length
+        ? { ok: true, message: { t: 'set', seq: m.seq, order: m.order as string[] } }
         : bad;
     case 'sketch': {
       const ops = isCount(m.seq) ? parseSketchOps(m.ops) : null;
