@@ -237,7 +237,10 @@ export function AiDraftDialog() {
         // A document made from an AI draft is a new document: the app's default method, not the prototype's.
         scoring: SCORING_VERSION,
       });
-      const choice = await store.prepareReplacement(t('importConfirm', { title: incoming.title }));
+      const choice = await store.prepareReplacement(
+        t('importConfirm', { title: incoming.title }),
+        incoming.id
+      );
       if (!choice) return;
       store.load(incoming);
       if (includeRatings) {

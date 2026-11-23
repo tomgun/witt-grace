@@ -40,15 +40,16 @@ export function ExamplesDialog() {
   const close = () => store.openDialog(null);
   const choose = async (entry: ExampleEntry) => {
     if (busy) return;
-    const choice = await store.prepareReplacement(t('demoConfirm'));
+    // A new workspace: never the fixture's own id, so a library copy is never overwritten.
+    const id = newId();
+    const choice = await store.prepareReplacement(t('demoConfirm'), id);
     if (!choice) return;
     setBusy(true);
     try {
       const sample = parseProject(await fetchExample(entry));
       stopTutorial();
-      // A new workspace: never the fixture's own id, so a library copy is never overwritten.
       // The examples open as a tidy tree whatever places their files carry (owner 2026-11-19, S-15).
-      store.load({ ...arranged(sample), id: newId() });
+      store.load({ ...arranged(sample), id });
       store.openDialog(null);
       if (store.get().project.users.length > 1) enterEvaluate();
     } catch (error) {

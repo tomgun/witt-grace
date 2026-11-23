@@ -46,7 +46,14 @@ export { optionPreference, optionPreferenceForRound } from './ballots.ts';
 export type { Preference } from './ballots.ts';
 export { decisionRanking, decisionRankingForAssessor } from './ranking.ts';
 export type { RankedOption, PersonalRankedOption } from './ranking.ts';
-export { createBlankProject, newNode, autoLayoutPositions, arranged, cardsOverlap } from './project.ts';
+export {
+  BLANK_TITLE,
+  createBlankProject,
+  newNode,
+  autoLayoutPositions,
+  arranged,
+  cardsOverlap,
+} from './project.ts';
 export type { CreateInput, NewNodeInput } from './project.ts';
 export {
   visibleNodes,
@@ -193,3 +200,24 @@ export { applySketchOps, diffSketch, packSketchOps } from './sketchOps.ts';
 export type { SketchOp } from './sketchOps.ts';
 export { SKETCH_LIMITS, serializeSketch } from './sketch.ts';
 export type { Sketch } from './sketch.ts';
+export {
+  WORKBOOK_FORMAT,
+  WORKBOOK_VERSION,
+  WORKBOOK_MAX_DOCUMENTS,
+  WORKBOOK_TITLE_MAX,
+  workbookOf,
+  isPlainDocument,
+  diagramLabel,
+  parseWorkbook,
+  serializeWorkbookFile,
+  workbookFileObject,
+  workbookFilename,
+  renameWorkbook,
+  replaceDocument,
+  attachDocuments,
+  removeDocument,
+  moveDocument,
+  readWorkbookText,
+  restoreWorkbook,
+} from './workbook.ts';
+export type { Workbook, WorkbookRead } from './workbook.ts';

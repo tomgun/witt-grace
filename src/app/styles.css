@@ -11011,3 +11011,148 @@ body.witt-focus .canvas-quick-controls {
   border-radius: 50%;
   border: 1px solid var(--border);
 }
+
+/* ---- Project tabs (WG-059, owner 2026-11-23): the project's diagrams in a row under the toolbar, shown from the
+   second diagram on. ---- */
+.doc-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 22px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.doc-tabs-project {
+  flex-shrink: 0;
+  max-width: 220px;
+  padding: 0 10px 0 0;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.doc-tabs-project.unnamed {
+  color: var(--muted);
+  font-weight: 500;
+}
+.doc-tabs-list {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.doc-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  max-width: 260px;
+  padding: 0 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--subtle);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.doc-tab:hover {
+  color: var(--ink);
+  background: var(--surface);
+}
+.doc-tab.active {
+  color: var(--ink);
+  font-weight: 700;
+  background: var(--surface);
+  border-bottom-color: var(--accent);
+}
+.doc-tab:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.doc-tab-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.doc-tab[data-mode='decision'] .doc-tab-type {
+  color: var(--option);
+}
+.doc-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.doc-tabs-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.doc-tab-action {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--subtle);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.doc-tab-action:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+.doc-tab-action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.doc-tab-add {
+  margin-left: 6px;
+  font-weight: 700;
+}
+.doc-tabs :is(.doc-tabs-project, .doc-tab, .doc-tab-action):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+body.witt-focus .doc-tabs {
+  display: none !important;
+}
+@media (max-width: 760px) {
+  .doc-tabs {
+    flex-wrap: wrap;
+    padding: 0 10px;
+    gap: 0 6px;
+  }
+  .doc-tabs-project {
+    max-width: none;
+    flex: 1;
+    min-height: 34px;
+    border-right: 0;
+  }
+  /* The tabs take a row of their own under the project's name and the buttons. */
+  .doc-tabs-list {
+    order: 3;
+    flex-basis: 100%;
+    min-height: 34px;
+  }
+  .doc-tab {
+    max-width: 170px;
+  }
+}

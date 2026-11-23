@@ -25,6 +25,8 @@ src/domain/          pure decisions; imports only other domain modules (ESLint +
                      marginal index and target effects (importance highlight)
   reviews.ts         which relation a review concerns, current vs stale, personal credence/influence, influence summaries
   eligibility.ts     option feasibility from gates: feasible / unresolved / blocked
+  workbook.ts        the project of several diagrams (WG-059): the `witt-project` v1 file boundary, attach / remove /
+                     move / replace a diagram, the browser restore rule; `Project` stays one diagram's document
   ballots.ts         preference per option and per archived round, weights frozen per round
   ranking.ts         options ordered by feasibility, completeness, balance; shared and per assessor
   views.ts           visible nodes, branch-focus projection, explicit collapse, assessment order, value profile, overlap
@@ -45,6 +47,8 @@ src/domain/          pure decisions; imports only other domain modules (ESLint +
                      authorization, the host's seats, invites and rates, document digest
 src/lib/             browser infrastructure; imports domain only
   storage.ts         KeyValueStore over localStorage, in-memory fallback when blocked; witt-project-v3 load/save
+  workbookStorage.ts witt-workbook-v1: the whole project, written when the tabs change; the shown diagram keeps
+                     witt-project-v3
   files.ts           download a text file, pick a text file
   providers.ts       newId (crypto.randomUUID) and nowIso — the only clock and id source
   i18n/              generated catalog.ts (keys, languages, Finnish), messages/<lang>.ts loaded on demand, translator
@@ -66,7 +70,7 @@ src/app/             the UI; the only code that touches the DOM
   collab.ts          live collaboration wiring: start as host, join from #join=, reload rejoin, connection choice
   shortcuts.ts       witt-keybindings-v1: eight rebindable actions, defaults + - * T F R ? Alt+A
   assessmentPass.ts, tableFormat.ts, format.ts   assessment-round progress, table cell texts, number formatting
-  Home, TopBar, Toolbar, LeftPanel, Canvas, ContextMenu, ClaimPreview, ViewDock, Inspector, TableView, Tutorial
+  Home, TopBar, Toolbar, DocTabs (project tabs), LeftPanel, Canvas, ContextMenu, ClaimPreview, ViewDock, Inspector, TableView, Tutorial
   dialogs.tsx        Modal, NoticeBar, ModalHost (confirm, text, notice, move, links, replace, import report, new work,
                      about, help, library, visual export, AI draft / review / results); larger dialogs mount from App
   *Dialog.tsx        Assessment, ReviewLens, Vote, People, Help, Examples, Library, VisualExport, Links, Replace,

@@ -113,8 +113,8 @@ export async function startTutorial(id: TutorialId = 'basics'): Promise<void> {
     update({ position: null, tutorial: { ...base, id, rootId: root.id, firstUserId: state.actorId } });
     return;
   }
-  if (!(await store.prepareReplacement(tr('newDocumentConfirm')))) return;
   const doc = blankProject(id === 'decision' ? 'decision' : 'argument');
+  if (!(await store.prepareReplacement(tr('newDocumentConfirm'), doc.id))) return;
   const root = doc.nodes[0] as Node;
   const project: Project = {
     ...doc,

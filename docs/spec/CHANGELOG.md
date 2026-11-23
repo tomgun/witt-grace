@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-23 — `UI_INVENTORY.md` — Owner: a project holds several diagrams open as tabs and is the file that is saved; one diagram can be saved alone or attached to a project. S-15: the tab row `#docTabs`, three Tiedosto menu items, the file format `witt-project` v1 (`.witt-project.json`), the storage key `witt-workbook-v1`; one unnamed diagram behaves as a document did. Version numbers are not raised for this (owner: no users in production; numbers are reset before the first release, WG-061).
 - 2026-11-21 — `UI_INVENTORY.md` — Owner: the Obsidiaani theme's fonts may ship with the app; S-15: Cormorant Garamond and Space Grotesk (OFL) bundled like Comic Neue.
 - 2026-11-21 — `UI_INVENTORY.md` — Owner: a futuristic theme with crisp text on black; S-15: a thirteenth per-browser skin `obsidian` ◼ Obsidiaani (black, white ink, hairline edges, gold as the one accent, no shadows or glow).
 - 2026-11-21 — `UI_INVENTORY.md`, `SECURITY_AND_PRIVACY.md` — Owner: sketching together in a collaboration: a shared sketchpad that starts empty, a pen colour per person, a copy kept apart from the person's own (`witt-sketch-session-v1`); the session gains the messages `sketch` and `sketchpad` and its protocol number stays 2 (no users yet).

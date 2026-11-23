@@ -2,10 +2,11 @@
 // (inv-panels §D). Menu items that do not apply are disabled, not hidden, unless the prototype hides them.
 import { servedOverWeb } from '../lib/embedded.ts';
 import type { ReactNode } from 'react';
-import { SCORING_OFFERED, childrenOf, isAiProfile } from '../domain/index.ts';
+import { SCORING_OFFERED, childrenOf, isAiProfile, isPlainDocument } from '../domain/index.ts';
 import type { ScoringVersion } from '../domain/index.ts';
 import {
   ADD_LOCAL_USER,
+  addDiagram,
   addNode,
   canEdit,
   chooseActor,
@@ -84,6 +85,7 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
   const store = getStore();
   const { project, view } = state;
   const editable = canEdit(state);
+  const inSession = !!state.collab && state.collab.phase !== 'ended';
   const selected = project.nodes.find((n) => n.id === state.selectedId);
   const root = project.nodes.find((n) => n.parentId === null);
   const aiProfiles = project.users.filter((u) => isAiProfile(u));
@@ -228,6 +230,23 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
               title="Ctrl/Cmd+S"
             >
               {t('saveFile')}
+            </Item>
+            <Item
+              id="btnSaveDiagram"
+              hidden={isPlainDocument(state.workbook)}
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-save-diagram'))}
+            >
+              {t('saveDiagramAlone')}
+            </Item>
+            <Item id="btnAddDiagram" onClick={addDiagram} disabled={inSession}>
+              {t('addDiagram')}
+            </Item>
+            <Item
+              id="btnAttach"
+              onClick={() => window.dispatchEvent(new CustomEvent('witt-attach-file'))}
+              disabled={inSession}
+            >
+              {t('attachToProject')}
             </Item>
             {servedOverWeb(window.location.protocol) ? (
               <Item id="btnCopyLink" onClick={() => window.dispatchEvent(new CustomEvent('witt-copy-link'))}>

@@ -108,7 +108,7 @@ export function LibraryDialog() {
         return;
       }
       const next = parseProject(fresh.document);
-      const choice = await store.prepareReplacement(t('importConfirm', { title: next.title }));
+      const choice = await store.prepareReplacement(t('importConfirm', { title: next.title }), next.id);
       if (!choice) return;
       knownRevisions.set(next.id, fresh.revision);
       store.load(next);

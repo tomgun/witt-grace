@@ -6,10 +6,15 @@ import {
   cardsOverlap,
   exportFilename,
   inspectImport,
+  isPlainDocument,
   parseProject,
+  readWorkbookText,
   serializeProjectFile,
+  serializeWorkbookFile,
   starterToProject,
+  workbookFilename,
 } from '../domain/index.ts';
+import type { Project } from '../domain/index.ts';
 import { downloadText, pickTextFile } from '../lib/files.ts';
 import { DOC_LINK_LIMIT, DOC_LINK_PREFIX, buildDocLink, readDocLink } from '../lib/inflate.ts';
 import { DEFAULT_LANGUAGE } from '../lib/i18n/i18n.ts';
@@ -31,6 +36,7 @@ import { stageDraftFromFile } from './AiDraftDialog.tsx';
 import { stageProposalFromFile } from './AiReviewDialog.tsx';
 import { AssessmentDialog } from './AssessmentDialog.tsx';
 import { Canvas } from './Canvas.tsx';
+import { DocTabs } from './DocTabs.tsx';
 import { ModalHost, NoticeBar } from './dialogs.tsx';
 import { Home } from './Home.tsx';
 import { FILE_SIZE_LIMIT, showImportReport, textByteLength } from './ImportReportDialog.tsx';
@@ -115,6 +121,25 @@ export function App() {
           store.showMessage(t('importTooLarge'));
           return;
         }
+        // A project file (several diagrams) replaces the whole project; anything else goes on as one document.
+        const read = readWorkbookText(picked.text);
+        if (read.kind === 'error') {
+          store.showMessage(t('importFailed', { reason: read.reason }));
+          return;
+        }
+        if (read.kind === 'workbook') {
+          const now = store.get();
+          const hasWork =
+            now.saveStatus !== 'noServer' ||
+            now.project.nodes.length > 1 ||
+            now.workbook.documents.length > 1;
+          const title = read.workbook.title || (read.workbook.documents[0] as Project).title;
+          const count = read.workbook.documents.length;
+          if (hasWork && !(await store.askConfirm(t('projectOpenConfirm', { title, count })))) return;
+          if (store.loadWorkbook(read.workbook))
+            recordEvent(window.localStorage, 'lastOpenedJson', picked.name, read.workbook.id, nowIso());
+          return;
+        }
         const report = inspectImport(picked.text, { currentProject: store.get().project });
         if (!report.ok) {
           showImportReport(report, picked.name);
@@ -152,7 +177,7 @@ export function App() {
         // kept as it is (owner 2026-11-19, S-15).
         const incoming = cardsOverlap(opened) ? arranged(opened) : opened;
         const description = `${t('importConfirm', { title: incoming.title })}\nJSON tarkistettu: ${report.formatName}.`;
-        if (!(await store.prepareReplacement(description))) return;
+        if (!(await store.prepareReplacement(description, incoming.id))) return;
         store.load(incoming);
         recordEvent(window.localStorage, 'lastOpenedJson', picked.name, incoming.id, nowIso());
       } catch (error) {
@@ -161,12 +186,65 @@ export function App() {
         );
       }
     };
-    const saveFile = () => {
+    const saveDiagram = () => {
       const current = store.get().project;
       const filename = exportFilename(current.title);
       downloadText(filename, serializeProjectFile(current));
       recordEvent(window.localStorage, 'lastExportedJson', filename, current.id, nowIso());
       store.notify({ kind: 'info', text: t('savedFile') });
+    };
+    // The project is what is saved (owner 2026-11-23): every diagram in one file. One unnamed diagram is that
+    // diagram's own file, as before tabs, so it stays readable wherever a document file is.
+    const saveFile = () => {
+      const { workbook } = store.get();
+      if (isPlainDocument(workbook)) {
+        saveDiagram();
+        return;
+      }
+      const filename = workbookFilename(workbook);
+      downloadText(filename, serializeWorkbookFile(workbook));
+      recordEvent(window.localStorage, 'lastExportedJson', filename, workbook.id, nowIso());
+      store.notify({ kind: 'info', text: t('savedProjectFile', { count: workbook.documents.length }) });
+    };
+    // Attach: the diagrams of a file join the open project as new tabs; nothing is replaced.
+    const attachFile = async () => {
+      const picked = await pickTextFile();
+      if (!picked) return;
+      try {
+        if (textByteLength(picked.text) > FILE_SIZE_LIMIT) {
+          store.showMessage(t('importTooLarge'));
+          return;
+        }
+        const read = readWorkbookText(picked.text);
+        if (read.kind === 'error') {
+          store.showMessage(t('importFailed', { reason: read.reason }));
+          return;
+        }
+        let incoming: Project[];
+        if (read.kind === 'workbook') incoming = [...read.workbook.documents];
+        else {
+          const report = inspectImport(picked.text, { currentProject: store.get().project });
+          if (!report.ok) {
+            showImportReport(report, picked.name);
+            return;
+          }
+          if (report.format !== 'project' && report.format !== 'starter') {
+            store.showMessage(t('attachNothing'));
+            return;
+          }
+          const opened =
+            report.format === 'starter'
+              ? starterToProject(report.parsed, { now: nowIso(), newId, scoring: SCORING_VERSION })
+              : parseProject(report.parsed);
+          incoming = [cardsOverlap(opened) ? arranged(opened) : opened];
+        }
+        const count = store.attachTabs(incoming);
+        if (count > 0) store.notify({ kind: 'info', text: t('attachedNotice', { count }) });
+      } catch (error) {
+        store.showMessage(
+          t('importFailed', { reason: error instanceof Error ? error.message : String(error) })
+        );
+      }
     };
     // A link that carries the whole document (owner 2026-11-20, S-15): made here, copied by the person's press.
     const copyLink = async () => {
@@ -200,6 +278,7 @@ export function App() {
       }
     };
     const onOpen = () => void openFile();
+    const onAttach = () => void attachFile();
     const onCopyLink = () => void copyLink();
     const onHash = () => void readLink();
     void readLink();
@@ -207,7 +286,11 @@ export function App() {
     window.addEventListener('witt-copy-link', onCopyLink);
     window.addEventListener('witt-open-file', onOpen);
     window.addEventListener('witt-save-file', saveFile);
+    window.addEventListener('witt-save-diagram', saveDiagram);
+    window.addEventListener('witt-attach-file', onAttach);
     return () => {
+      window.removeEventListener('witt-save-diagram', saveDiagram);
+      window.removeEventListener('witt-attach-file', onAttach);
       window.removeEventListener('hashchange', onHash);
       window.removeEventListener('witt-copy-link', onCopyLink);
       window.removeEventListener('witt-open-file', onOpen);
@@ -360,6 +443,7 @@ export function App() {
     <div className="app-shell" data-testid="app">
       <TopBar shortcuts={shortcuts} />
       <Toolbar frame={frame} shortcuts={shortcuts} />
+      <DocTabs />
       <NoticeBar />
       <main className={workspaceClass} id="workspaceMain" data-testid="workspace">
         <LeftPanel frame={frame} />

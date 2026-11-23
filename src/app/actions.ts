@@ -2,9 +2,11 @@
 // document change is one command; everything else is session or view state.
 import {
   CARD_W,
+  SCORING_VERSION,
   canAttachReasonConcept,
   canReparent,
   childrenOf,
+  createBlankProject,
   descendants,
   fourWayProjection,
   rootNode,
@@ -12,7 +14,7 @@ import {
 } from '../domain/index.ts';
 import type { Node, Project, Stance } from '../domain/index.ts';
 import { translator } from '../lib/i18n/i18n.ts';
-import { newId } from '../lib/providers.ts';
+import { newId, nowIso } from '../lib/providers.ts';
 import { fadeOutCards } from './fade.ts';
 import { buildFrame } from './projection.ts';
 import { getStore } from './store.ts';
@@ -398,4 +400,64 @@ export function openRepeatLibrary(): void {
 
 export function moveTargets(project: Project, nodeId: string): Node[] {
   return project.nodes.filter((n) => canReparent(project, nodeId, n.id));
+}
+
+// ---- Project tabs (WG-059) -------------------------------------------------------------------------------------
+
+/** A new empty diagram in a tab of its own, of the shown diagram's type and with the same people (the same stable
+ * ids), so a person is one person across the project's diagrams. Its question opens for writing. */
+export function addDiagram(): void {
+  const store = getStore();
+  const state = store.get();
+  const blank = createBlankProject({
+    mode: state.project.mode,
+    projectId: newId(),
+    rootId: newId(),
+    userId: state.actorId,
+    now: nowIso(),
+    scoring: SCORING_VERSION,
+  });
+  if (store.attachTabs([{ ...blank, users: state.project.users }]) === 0) return;
+  const root = blank.nodes.find((n) => n.parentId === null);
+  if (root && store.get().view.presentation === 'tree')
+    requestAnimationFrame(() => requestAnimationFrame(() => store.setInlineEdit(root.id)));
+}
+
+/** Remove a tab's diagram from the project after a confirmation that names it; undo brings it back. */
+export async function removeDiagram(index: number): Promise<void> {
+  const store = getStore();
+  const document = store.get().workbook.documents[index];
+  if (!document) return;
+  if (!(await store.askConfirm(t()('tabCloseConfirm', { title: document.title })))) return;
+  // The tabs may have changed while the question was open: remove the diagram that was named.
+  const now = store.get().workbook.documents.findIndex((d) => d.id === document.id);
+  if (now !== -1) store.removeTab(now);
+}
+
+/** Rename the shown diagram: its title is the document's own title (the main claim's card is not touched). */
+export async function renameDiagram(): Promise<void> {
+  const store = getStore();
+  const state = store.get();
+  if (!canEdit(state)) {
+    store.showMessage(t()('viewerCannotEdit'));
+    return;
+  }
+  const title = await store.askText(
+    t()('tabRename'),
+    t()('tabRenameAction'),
+    t()('tabRenameAction'),
+    state.project.title
+  );
+  if (title) store.dispatch({ type: 'project.setTitle', title });
+}
+
+export async function renameProject(): Promise<void> {
+  const store = getStore();
+  const title = await store.askText(
+    t()('projectRenamePrompt'),
+    t()('projectRename'),
+    t()('projectRenameAction'),
+    store.get().workbook.title
+  );
+  if (title !== null) store.renameProject(title);
 }

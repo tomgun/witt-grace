@@ -3,13 +3,22 @@
 import { useSyncExternalStore } from 'react';
 import {
   applyCommand,
+  attachDocuments,
   createBlankProject,
+  isPlainDocument,
+  moveDocument,
   parseProject,
+  parseWorkbook,
+  removeDocument,
+  renameWorkbook,
+  replaceDocument,
   rootNode,
   SCORING_VERSION,
   withOfferedScoring,
+  workbookFileObject,
+  workbookOf,
 } from '../domain/index.ts';
-import type { Command, ImportReport, Mode, Project, RejectReason } from '../domain/index.ts';
+import type { Command, ImportReport, Mode, Project, RejectReason, Workbook } from '../domain/index.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
 import { languageFromSearch } from '../lib/pageHead.ts';
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
@@ -23,7 +32,8 @@ import {
   saveProject,
   writePreference,
 } from '../lib/storage.ts';
-import type { KeyValueStore } from '../lib/storage.ts';
+import type { KeyValueStore, SaveResult } from '../lib/storage.ts';
+import { loadWorkbook, saveWorkbook } from '../lib/workbookStorage.ts';
 import type { CollabStatus, DocumentPort, HostSession, ParticipantSession } from '../lib/p2p/session.ts';
 import { persist as recordActive } from '../lib/workspaceMeta.ts';
 import { assessorKey, readView, readZones, reviewViewKey, writeView, writeZones } from './view.ts';
@@ -106,7 +116,11 @@ export interface Notice {
   undo?: boolean;
 }
 export interface AppState {
+  /** The active tab's diagram: `workbook.documents[activeTab]`, kept here so every view reads one document. */
   project: Project;
+  /** The project: every diagram open as a tab (WG-059). */
+  workbook: Workbook;
+  activeTab: number;
   selectedId: string;
   actorId: string;
   language: Language;
@@ -210,13 +224,26 @@ export function createStore(
   const persistent = options.persistent ?? detected?.persistent ?? false;
   const width = options.windowWidth ?? (typeof window === 'undefined' ? 1440 : window.innerWidth);
   const loaded = loadProject(store);
-  const initialProject = loaded.ok ? withOfferedScoring(loaded.project) : blankProject('argument');
+  const tabs = loadWorkbook(store, loaded.ok ? withOfferedScoring(loaded.project) : null, newId);
+  const initialWorkbook = tabs.ok ? tabs.workbook : workbookOf(blankProject('argument'), newId());
+  const initialTab = tabs.ok ? tabs.active : 0;
+  const initialProject = initialWorkbook.documents[initialTab] as Project;
+  const storageTrouble =
+    !loaded.ok && 'reason' in loaded
+      ? loaded.reason
+      : tabs.ok
+        ? (tabs.warning ?? null)
+        : 'reason' in tabs
+          ? tabs.reason
+          : null;
   const savedLanguage = readPreference(store, LOCALE_KEY);
   // An address may name its language (`?lang=en`, the form the sitemap lists): it wins for this visit and is not
   // stored, so the person's own choice comes back on the bare address.
   const askedLanguage = typeof window === 'undefined' ? null : languageFromSearch(window.location.search);
   let state: AppState = {
     project: initialProject,
+    workbook: initialWorkbook,
+    activeTab: initialTab,
     selectedId: (rootNode(initialProject) as { id: string }).id,
     actorId: restoreActor(store, initialProject),
     language: isLanguage(askedLanguage)
@@ -246,14 +273,38 @@ export function createStore(
     dialog: null,
     canUndo: false,
     canRedo: false,
-    saveStatus: loaded.ok ? 'savedBrowser' : 'noServer',
+    saveStatus: loaded.ok || tabs.ok ? 'savedBrowser' : 'noServer',
     storagePersistent: persistent,
-    hydrationFailed: !loaded.ok && 'reason' in loaded,
-    notice: !loaded.ok && 'reason' in loaded ? { kind: 'error', text: loaded.reason } : null,
+    hydrationFailed: storageTrouble !== null,
+    notice: storageTrouble !== null ? { kind: 'error', text: storageTrouble } : null,
     collab: null,
   };
-  const past: Project[] = [];
-  const future: Project[] = [];
+  /** An undo step holds the whole project with its shown tab before and after the change: undoing and redoing go
+   * to the tab the change was made in, and a removed tab or a replaced project comes back like any other change. */
+  type Snapshot = { workbook: Workbook; activeTab: number };
+  type Step = { before: Snapshot; after: Snapshot };
+  const past: Step[] = [];
+  const future: Step[] = [];
+  const snapshot = (): Snapshot => ({ workbook: state.workbook, activeTab: state.activeTab });
+  /** What the project's own storage entry last held, to write it only when the tabs change. */
+  let storedTabs: Snapshot | null =
+    tabs.ok && tabs.stored ? { workbook: initialWorkbook, activeTab: initialTab } : null;
+  /** A project entry that could not be read stays in storage until the person makes a project of their own. */
+  let unreadableEntry = tabs.ok && tabs.warning !== undefined;
+  const tabsChanged = (): boolean => {
+    const { workbook, activeTab } = state;
+    if (!storedTabs) return !isPlainDocument(workbook);
+    const before = storedTabs.workbook;
+    return (
+      storedTabs.activeTab !== activeTab ||
+      before.id !== workbook.id ||
+      before.title !== workbook.title ||
+      before.documents.length !== workbook.documents.length ||
+      workbook.documents.some((d, i) =>
+        i === activeTab ? d.id !== (before.documents[i] as Project).id : d !== before.documents[i]
+      )
+    );
+  };
   let collab: CollabLink | null = null;
   let collabUnsubscribe: (() => void)[] = [];
   /** Follow-ups to a participant's proposal (select it, edit its title) that run when the host's commit brings it. */
@@ -271,67 +322,123 @@ export function createStore(
     emit();
   };
   const persist = (project: Project) => {
-    const result = saveProject(store, project, nowIso());
-    if (result.ok) recordActive(store, project, result.at);
+    // The project's entry first, then the shown diagram's own autosave: if the first write fails the autosave
+    // still holds the diagram it held, so nothing that was stored is lost (the entry is the larger write).
+    let result: SaveResult = { ok: true, at: nowIso() };
+    if (tabsChanged() && !(unreadableEntry && isPlainDocument(state.workbook))) {
+      result = saveWorkbook(store, state.workbook, state.activeTab, nowIso());
+      if (result.ok) {
+        storedTabs = snapshot();
+        unreadableEntry = false;
+      }
+    }
+    if (result.ok) {
+      result = saveProject(store, project, nowIso());
+      if (result.ok) recordActive(store, project, result.at);
+    }
     set({ saveStatus: result.ok ? (persistent ? 'savedBrowser' : 'noServer') : 'saveFailed' });
     if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
   };
-  const replace = (incoming: Project, { remember = true } = {}) => {
-    // Every document enters here (open, import, example, library, join): an archived calculation method becomes
-    // the default one (owner 2026-11-18).
-    const project = withOfferedScoring(incoming);
+  /** The one way the project changes: `workbook` with `activeTab` shown. `remember` makes it an undo step;
+   * `fresh` (default: when another tab is shown) starts the shown diagram's selection, profile and view focus
+   * over. */
+  const commit = (
+    workbook: Workbook,
+    activeTab: number,
+    opts: { remember?: boolean; fresh?: boolean } = {}
+  ) => {
+    const project = workbook.documents[activeTab] as Project;
+    const fresh = opts.fresh ?? activeTab !== state.activeTab;
     // Undo replaces whole documents, which a shared session cannot replay: no history while one is open.
-    if (remember && !collab) {
-      past.push(state.project);
+    if ((opts.remember ?? true) && !collab) {
+      past.push({ before: snapshot(), after: { workbook, activeTab } });
       if (past.length > 60) past.shift();
       future.length = 0;
     }
-    const selected = project.nodes.some((n) => n.id === state.selectedId)
-      ? state.selectedId
-      : (rootNode(project) as { id: string }).id;
+    const rootId = (rootNode(project) as { id: string }).id;
+    const selected =
+      !fresh && project.nodes.some((n) => n.id === state.selectedId) ? state.selectedId : rootId;
     const actor =
       pinnedActor(project) ??
-      (project.users.some((u) => u.id === state.actorId)
-        ? state.actorId
-        : (project.users[0] as { id: string }).id);
+      (fresh
+        ? restoreActor(store, project)
+        : project.users.some((u) => u.id === state.actorId)
+          ? state.actorId
+          : (project.users[0] as { id: string }).id);
     set({
       project,
+      workbook,
+      activeTab,
       selectedId: selected,
       actorId: actor,
       appearance: effectiveAppearance(store, project),
       canUndo: !collab && past.length > 0,
       canRedo: !collab && future.length > 0,
+      ...(fresh
+        ? {
+            selectedLibraryReason: null,
+            depthOverrides: new Map(),
+            explicitlyClosedIds: new Set(),
+            mutedIds: new Set(),
+            tableRevealId: null,
+            inlineEditId: null,
+            claimPreview: null,
+            reviewIds: readReviewIds(store, project.id),
+            view: {
+              ...state.view,
+              focus: { mode: 'all', anchorId: rootId },
+              compactVisible: false,
+              depthLimit: null,
+            },
+          }
+        : {}),
     });
     persist(project);
+    if (fresh) {
+      writeView(store, state.view);
+      api.requestFit();
+    }
     for (const [id, runs] of [...awaitingNodes])
       if (project.nodes.some((n) => n.id === id)) {
         awaitingNodes.delete(id);
         runs.forEach((run) => run());
       }
   };
-  /** Show a different document: fresh selection, profile and view focus (open, new, join). */
-  const install = (validated: Project) => {
-    const rootId = (rootNode(validated) as { id: string }).id;
-    replace(validated);
-    set({
-      selectedId: rootId,
-      actorId: pinnedActor(validated) ?? restoreActor(store, validated),
-      selectedLibraryReason: null,
-      depthOverrides: new Map(),
-      explicitlyClosedIds: new Set(),
-      mutedIds: new Set(),
-      tableRevealId: null,
-      reviewIds: readReviewIds(store, validated.id),
-      view: {
-        ...state.view,
-        focus: { mode: 'all', anchorId: rootId },
-        compactVisible: false,
-        depthLimit: null,
-      },
-      home: false,
-    });
-    writeView(store, state.view);
-    api.requestFit();
+  const replace = (incoming: Project, opts: { remember?: boolean; fresh?: boolean } = {}) =>
+    // Every document enters here (open, import, example, library, join): an archived calculation method becomes
+    // the default one (owner 2026-11-18).
+    commit(
+      replaceDocument(state.workbook, state.activeTab, withOfferedScoring(incoming)),
+      state.activeTab,
+      opts
+    );
+  const refused = (error: unknown): false => {
+    set({ notice: { kind: 'error', text: error instanceof Error ? error.message : String(error) } });
+    return false;
+  };
+  /** Show a different document with a fresh selection, profile and view focus (open, new, example, join). One
+   * unnamed diagram is replaced by it, as a document always was. In a project it becomes a new tab, so opening
+   * something never takes a diagram away; the shown diagram's own newer version replaces it in place. */
+  const install = (validated: Project): boolean => {
+    try {
+      if (isPlainDocument(state.workbook) || validated.id === state.project.id)
+        replace(validated, { fresh: true });
+      else {
+        const { workbook } = attachDocuments(state.workbook, [withOfferedScoring(validated)], newId);
+        commit(workbook, state.workbook.documents.length, { fresh: true });
+        set({ notice: { kind: 'info', text: tr()('tabOpenedNotice', { title: validated.title }) } });
+      }
+    } catch (error) {
+      return refused(error);
+    }
+    set({ home: false });
+    return true;
+  };
+  /** Tabs stay as they are while a session is open: it shares the diagram that was shown when it began. */
+  const tabsLocked = (): boolean => {
+    if (!collab) return false;
+    set({ notice: { kind: 'error', text: tr()('tabsLockedInSession') } });
+    return true;
   };
   const detachCollab = () => {
     collabUnsubscribe.forEach((u) => u());
@@ -379,6 +486,10 @@ export function createStore(
     /** Replace the whole document (new, open, import). The person confirmed it already. */
     load(project: Project) {
       const validated = parseProject(project);
+      if (state.workbook.documents.some((d, i) => i !== state.activeTab && d.id === validated.id)) {
+        set({ notice: { kind: 'error', text: tr()('tabAlreadyOpen', { title: validated.title }) } });
+        return;
+      }
       if (collab?.role === 'participant') {
         set({ notice: { kind: 'error', text: tr()('collabLeaveFirst') } });
         return;
@@ -405,8 +516,12 @@ export function createStore(
           return state.project;
         },
         adopt(project) {
+          // A diagram the person already has in another tab is shown there, not copied into this one.
+          const tab = state.workbook.documents.findIndex((d) => d.id === project.id);
+          if (tab !== -1 && tab !== state.activeTab)
+            commit(state.workbook, tab, { remember: false, fresh: true });
           if (project.id === state.project.id) replace(project);
-          else install(project);
+          else if (!install(project)) replace(project, { fresh: true });
         },
       };
     },
@@ -460,19 +575,94 @@ export function createStore(
     },
     undo() {
       if (collab) return;
-      const previous = past.pop();
-      if (!previous) return;
-      future.push(state.project);
-      replace(previous, { remember: false });
+      const step = past.pop();
+      if (!step) return;
+      future.push(step);
+      commit(step.before.workbook, step.before.activeTab, { remember: false });
       set({ canUndo: past.length > 0, canRedo: future.length > 0 });
     },
     redo() {
       if (collab) return;
-      const next = future.pop();
-      if (!next) return;
-      past.push(state.project);
-      replace(next, { remember: false });
+      const step = future.pop();
+      if (!step) return;
+      past.push(step);
+      commit(step.after.workbook, step.after.activeTab, { remember: false });
       set({ canUndo: past.length > 0, canRedo: future.length > 0 });
+    },
+    /** Show another tab. Not an undo step: looking at a diagram changes nothing. */
+    selectTab(index: number): boolean {
+      if (index === state.activeTab || !state.workbook.documents[index]) return false;
+      if (tabsLocked()) return false;
+      commit(state.workbook, index, { remember: false });
+      return true;
+    },
+    /** Add diagrams after the present tabs and show the first of them; returns how many were added. A diagram
+     * whose id the project already holds comes in as a copy with a new id. */
+    attachTabs(documents: readonly Project[]): number {
+      if (documents.length === 0 || tabsLocked()) return 0;
+      try {
+        const incoming = documents.map((d) => withOfferedScoring(parseProject(d)));
+        const { workbook } = attachDocuments(state.workbook, incoming, newId);
+        commit(workbook, state.workbook.documents.length, { fresh: true });
+        set({ home: false });
+        return incoming.length;
+      } catch (error) {
+        refused(error);
+        return 0;
+      }
+    },
+    /** Remove a tab's diagram from the project (undo brings it back); the neighbour is shown. */
+    removeTab(index: number): boolean {
+      if (tabsLocked()) return false;
+      try {
+        const workbook = removeDocument(state.workbook, index);
+        const active =
+          index < state.activeTab
+            ? state.activeTab - 1
+            : Math.min(state.activeTab, workbook.documents.length - 1);
+        commit(workbook, active, { fresh: index === state.activeTab });
+        return true;
+      } catch (error) {
+        return refused(error);
+      }
+    },
+    /** Move a tab; the shown diagram stays shown. */
+    moveTab(from: number, to: number): boolean {
+      if (tabsLocked()) return false;
+      const workbook = moveDocument(state.workbook, from, to);
+      if (workbook === state.workbook) return false;
+      const shown = state.project.id;
+      commit(
+        workbook,
+        workbook.documents.findIndex((d) => d.id === shown),
+        { fresh: false }
+      );
+      return true;
+    },
+    renameProject(title: string): boolean {
+      const workbook = renameWorkbook(state.workbook, title);
+      if (workbook.title === state.workbook.title) return false;
+      commit(workbook, state.activeTab, { fresh: false });
+      return true;
+    },
+    /** Replace the whole project with an opened one (undo brings the previous project back). */
+    loadWorkbook(incoming: Workbook): boolean {
+      if (collab?.role === 'participant') {
+        set({ notice: { kind: 'error', text: tr()('collabLeaveFirst') } });
+        return false;
+      }
+      if (collab?.role === 'host') {
+        void collab.session.close();
+        set({ notice: { kind: 'info', text: tr()('collabEndedByOpen') } });
+      }
+      try {
+        // The store's own boundary: whoever calls, the project that enters has been through the file's checks.
+        commit(parseWorkbook(workbookFileObject(incoming)), 0, { fresh: true });
+      } catch (error) {
+        return refused(error);
+      }
+      set({ home: false });
+      return true;
     },
     /** The prototype's `selectNode`: clears a library selection and a table reveal that is not this node. */
     select(id: string) {
@@ -596,9 +786,23 @@ export function createStore(
     },
     /** The prototype's `prepareReplacement`: with nothing saved it resolves 'forget' at once; otherwise the replace
      * dialog asks whether to discard the current work, save it to the library first, or stay (null). */
-    prepareReplacement(description: string): Promise<ReplaceChoice> {
+    prepareReplacement(description: string, incomingId?: string): Promise<ReplaceChoice> {
       const hasWork = state.saveStatus !== 'noServer' || state.project.nodes.length > 1;
       if (!hasWork) return Promise.resolve('forget');
+      // A diagram that is open in another tab cannot be opened over this one: say so before asking anything.
+      const held = state.workbook.documents.find((d, i) => i !== state.activeTab && d.id === incomingId);
+      if (held) {
+        set({ notice: { kind: 'error', text: tr()('tabAlreadyOpen', { title: held.title }) } });
+        return Promise.resolve(null);
+      }
+      // In a project a document that is not one of its diagrams opens in a new tab: nothing is replaced, so
+      // there is nothing to ask (`incomingId` is the id it will be opened with).
+      if (
+        incomingId !== undefined &&
+        !isPlainDocument(state.workbook) &&
+        !state.workbook.documents.some((d) => d.id === incomingId)
+      )
+        return Promise.resolve('forget');
       return new Promise((resolve) => set({ modal: { kind: 'replace', description, resolve } }));
     },
     /** The prototype's `askText`: resolves the trimmed value, or null when cancelled. */

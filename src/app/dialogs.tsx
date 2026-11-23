@@ -2,6 +2,7 @@
 // (confirm, text prompt, notice, move subtree, links) plus the small named dialogs (new work, about).
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { isPlainDocument } from '../domain/index.ts';
 import { blankProject, getStore, useAppState, useTranslator } from './store.ts';
 import type { ModalRequest } from './store.ts';
 import { moveTargets } from './actions.ts';
@@ -282,7 +283,9 @@ function NewWorkDialog() {
     store.openDialog(null);
     const current = store.get().project;
     const hasWork = current.nodes.length > 1 || current.title !== blankProject(current.mode).title;
-    if (hasWork && !(await store.askConfirm(t('newDocumentConfirm')))) return;
+    // In a project the new document opens in a tab of its own: nothing is replaced, nothing to confirm.
+    const replaces = isPlainDocument(store.get().workbook);
+    if (hasWork && replaces && !(await store.askConfirm(t('newDocumentConfirm')))) return;
     const blank = blankProject(mode);
     store.load(blank);
     // A new document starts by writing its question: the placeholder title is open for editing, selected, so the

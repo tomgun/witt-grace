@@ -53,6 +53,8 @@ export interface CreateInput {
   /** The prototype's version unless the caller asks for another; the app's new documents pass SCORING_VERSION. */
   scoring?: ScoringVersion;
 }
+/** The title a new document carries until the person names it. */
+export const BLANK_TITLE = 'Nimetön pohdinta';
 export function createBlankProject({
   mode = 'argument',
   projectId,
@@ -73,7 +75,7 @@ export function createBlankProject({
   return {
     schemaVersion: SCHEMA_VERSION,
     id: projectId,
-    title: 'Nimetön pohdinta',
+    title: BLANK_TITLE,
     mode,
     theme: 'light',
     settings: {

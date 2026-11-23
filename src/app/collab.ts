@@ -275,7 +275,8 @@ async function confirmJoin() {
   const doc = status.document;
   if (doc && doc.id !== store.get().project.id) {
     const choice = await store.prepareReplacement(
-      store.translate('collabJoinReplace', { host: status.hostName ?? '?', title: doc.title })
+      store.translate('collabJoinReplace', { host: status.hostName ?? '?', title: doc.title }),
+      doc.id
     );
     if (!choice) {
       await link.session.close();
