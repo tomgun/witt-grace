@@ -11,6 +11,7 @@ import {
   readWorkbookText,
   serializeProjectFile,
   serializeWorkbookFile,
+  linkedSet,
   starterToProject,
   workbookFilename,
 } from '../domain/index.ts';
@@ -195,6 +196,17 @@ export function App() {
     };
     const saveDiagram = () => {
       const current = store.get().project;
+      // A diagram with links is saved with every diagram they reach, as one project file, so that no link is
+      // left without its diagram (WG-060, owner 2026-11-23).
+      const set = linkedSet(store.get().workbook, current.id);
+      if (set.length > 1) {
+        const file = { id: newId(), title: '', documents: set, sketches: [] };
+        const name = workbookFilename(file);
+        downloadText(name, serializeWorkbookFile(file));
+        recordEvent(window.localStorage, 'lastExportedJson', name, current.id, nowIso());
+        store.notify({ kind: 'info', text: t('savedLinkedSet', { count: set.length }) });
+        return;
+      }
       const filename = exportFilename(current.title);
       downloadText(filename, serializeProjectFile(current));
       recordEvent(window.localStorage, 'lastExportedJson', filename, current.id, nowIso());

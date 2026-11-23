@@ -25,6 +25,11 @@ export function DocTabs() {
   // In a session the host changes the structure; a participant looks, and may ask for a new diagram.
   const guest = !!state.collab && state.collab.phase !== 'ended' && state.collab.role === 'participant';
   const locked = guest;
+  // The way back along a followed link (WG-060): the last place that is still there and is not this diagram.
+  const cameFrom = [...state.linkTrail]
+    .reverse()
+    .map((origin) => workbook.documents.find((d) => d.id === origin.docId))
+    .find((d) => d && d.id !== shownId);
   const focusTab = (index: number) =>
     requestAnimationFrame(() => document.getElementById(`docTab-${index}`)?.focus());
   const show = (index: number) => {
@@ -68,6 +73,19 @@ export function DocTabs() {
       >
         {workbook.title || t('projectUntitled')}
       </button>
+      {cameFrom ? (
+        <button
+          type="button"
+          id="btnLinkBack"
+          className="doc-tab-action doc-tab-back"
+          title={t('diagramLinkBack', { title: diagramLabel(cameFrom) })}
+          onClick={() => {
+            if (store.linkBack()) focusTab(store.get().activeTab);
+          }}
+        >
+          {`← ${diagramLabel(cameFrom)}`}
+        </button>
+      ) : null}
       <div className="doc-tabs-list" role="tablist" aria-label={t('projectTabs')} onKeyDown={onKey}>
         {workbook.documents.map((diagram, index) => (
           <button

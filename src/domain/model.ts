@@ -136,6 +136,10 @@ export interface Node {
   /** Owner 2026-11-10: the influence slider of this relation moves in 0.1 steps instead of 0.5. Display only; the
    * data accepts 0.1 steps everywhere. */
   fineInfluence?: true;
+  /** Owner 2026-11-23 (WG-060): a jump to another diagram of the same project, by that diagram's id. Navigation
+   * only: nothing is scored from the linked diagram, and the node keeps its own sub-tree and ratings. A link whose
+   * diagram is not in the project (removed, saved without it, left out of a session) stays and leads nowhere. */
+  linkedDiagramId?: string;
 }
 export const TYPE_LABEL_MAX = 40;
 export interface SharedReason {

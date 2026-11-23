@@ -5,6 +5,7 @@ import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerE
 import {
   CARD_W,
   clamp,
+  diagramLabel,
   documentPosition,
   edgeGeometry,
   influenceSummary,
@@ -14,6 +15,7 @@ import {
   NODE_SIZE_LIMITS,
   isUnrated,
   isValue,
+  linkTarget,
   navigate,
   NAV_KEYS,
   secondaryLinkPath,
@@ -744,6 +746,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         (project.settings.showAuthors !== false && node.authorVisibility === 'named')) &&
       l.labels;
     const addDisabled = !editable || !!node.sharedReasonId || node.kind === 'group';
+    const linkTo = linkTarget(state.workbook, project, node);
     const chips = cardChips(frame, t, node, l, frame.importance);
     const preview = previewHandlers(node.id, '.node-title', store.setClaimPreview);
     const dragging = state.draggingLibraryReason;
@@ -881,6 +884,24 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
                 ▦
               </button>
             </>
+          ) : null}
+          {node.linkedDiagramId !== undefined ? (
+            <button
+              type="button"
+              className={`node-link${linkTo ? '' : ' missing'}`}
+              data-testid="node-link"
+              title={linkTo ? `${t('diagramLinkOpen')}: ${diagramLabel(linkTo)}` : t('diagramLinkMissing')}
+              aria-label={
+                linkTo ? `${t('diagramLinkOpen')}: ${diagramLabel(linkTo)}` : t('diagramLinkMissing')
+              }
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                store.followLink(node.id);
+              }}
+            >
+              ↗
+            </button>
           ) : null}
           {frame.mutedIds.has(node.id) ? (
             <button

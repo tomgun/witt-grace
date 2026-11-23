@@ -269,6 +269,9 @@ export function parseProject(input: unknown): Project {
         : {}),
       ...(p.unrated === true ? { unrated: true as const } : {}),
       ...(p.fineInfluence === true ? { fineInfluence: true as const } : {}),
+      ...(p.linkedDiagramId !== undefined
+        ? { linkedDiagramId: str(p.linkedDiagramId, 100, 'Linkitetyn kaavion tunniste', false) }
+        : {}),
     };
   });
   const roots = nodes.filter((n) => n.parentId === null);

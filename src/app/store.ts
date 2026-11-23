@@ -5,6 +5,7 @@ import {
   applyCommand,
   addSketch,
   attachDocuments,
+  linkTarget,
   createBlankProject,
   drawSketch,
   keepSketches,
@@ -216,6 +217,13 @@ export interface AppState {
   aside: boolean;
   /** The diagrams the host leaves out of the session, by id (a choice for this session only, never saved). */
   unsharedIds: readonly string[];
+  /** Where the links between diagrams were followed from, oldest first: the way back (WG-060). Kept for the
+   * visit only; a place whose diagram is gone is passed over. */
+  linkTrail: readonly LinkOrigin[];
+}
+export interface LinkOrigin {
+  docId: string;
+  nodeId: string;
 }
 const REJECT_TEXT: Record<RejectReason, MessageKey> = {
   rate: 'collabRejectRate',
@@ -336,6 +344,7 @@ export function createStore(
     collab: null,
     aside: hasAside(store),
     unsharedIds: [],
+    linkTrail: [],
   };
   type Snapshot = { workbook: Workbook; activeTab: number };
   const snapshot = (): Snapshot => ({ workbook: state.workbook, activeTab: state.activeTab });
@@ -908,6 +917,49 @@ export function createStore(
       // Looking is local: in a session too everyone shows the tab they want.
       commit(state.workbook, index, { remember: false });
       return true;
+    },
+    /** Show the node `nodeId` of the project's diagram `docId`, selected and in the middle. Looking only. */
+    showNodeIn(docId: string, nodeId: string): boolean {
+      const index = state.workbook.documents.findIndex((d) => d.id === docId);
+      if (index === -1) return false;
+      if (index !== state.activeTab) commit(state.workbook, index, { remember: false });
+      if (state.project.nodes.some((n) => n.id === nodeId)) {
+        api.select(nodeId);
+        api.requestCenter(nodeId);
+      }
+      return true;
+    },
+    /** Follow a node's link to its diagram (WG-060) and remember where from. A link whose diagram is not in the
+     * project says so and goes nowhere. */
+    followLink(nodeId: string): boolean {
+      const node = state.project.nodes.find((n) => n.id === nodeId);
+      const target = node ? linkTarget(state.workbook, state.project, node) : null;
+      if (!target) {
+        set({ notice: { kind: 'error', text: tr()('diagramLinkMissing') } });
+        return false;
+      }
+      const from: LinkOrigin = { docId: state.project.id, nodeId };
+      commit(state.workbook, state.workbook.documents.indexOf(target), { remember: false });
+      set({
+        linkTrail: [
+          ...state.linkTrail.filter((o) => o.docId !== from.docId || o.nodeId !== from.nodeId),
+          from,
+        ].slice(-20),
+      });
+      return true;
+    },
+    /** Back to where the last link was followed from; false when there is no such place any more. */
+    linkBack(): boolean {
+      const trail = [...state.linkTrail];
+      while (trail.length) {
+        const origin = trail.pop() as LinkOrigin;
+        if (origin.docId === state.project.id) continue;
+        if (!state.workbook.documents.some((d) => d.id === origin.docId)) continue;
+        set({ linkTrail: trail });
+        return api.showNodeIn(origin.docId, origin.nodeId);
+      }
+      set({ linkTrail: [] });
+      return false;
     },
     /** Add diagrams after the present tabs and show the first of them; returns how many were added. A diagram
      * whose id the project already holds comes in as a copy with a new id. */

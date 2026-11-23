@@ -9,7 +9,7 @@ import type { Sketch } from './sketch.ts';
 import { applyCommand } from './commands.ts';
 import type { CommandContext } from './commands.ts';
 import { sameName, withOfferedScoring } from './model.ts';
-import type { Project, User } from './model.ts';
+import type { Node, Project, User } from './model.ts';
 
 export const WORKBOOK_FORMAT = 'witt-project';
 export const WORKBOOK_VERSION = 1;
@@ -218,8 +218,9 @@ export function replaceDocument(workbook: Workbook, index: number, diagram: Proj
 /**
  * Diagrams added after the present ones, in the order given. An incoming diagram whose id is already in the
  * project (or repeats within the incoming set) gets a new id from `newId`, so attaching the same file twice
- * makes a copy instead of overwriting; the returned `renamed` maps old ids to new ones for whoever keeps
- * references between diagrams.
+ * makes a copy instead of overwriting; the returned `renamed` maps old ids to new ones. The links between the
+ * incoming diagrams follow such a change (WG-060): a link to a diagram that came in under a new id leads to the
+ * copy, not to the diagram that held the id before.
  */
 export function attachDocuments(
   workbook: Workbook,
@@ -244,6 +245,7 @@ export function attachDocuments(
     renamed.set(diagram.id, id);
     return { ...diagram, id };
   });
+  const relinked = renamed.size ? added.map((diagram) => withLinksRenamed(diagram, renamed)) : added;
   // A whole project attached brings its sketchpads too; one whose id is taken comes in under a new id.
   const takenSketches = new Set(workbook.sketches.map((s) => s.id));
   const addedSketches = incomingSketches.map((entry) => {
@@ -255,11 +257,60 @@ export function attachDocuments(
   return {
     workbook: {
       ...workbook,
-      documents: [...workbook.documents, ...added],
+      documents: [...workbook.documents, ...relinked],
       sketches: [...workbook.sketches, ...addedSketches],
     },
     renamed,
   };
+}
+
+// ---- Links between the project's diagrams (WG-060, owner 2026-11-23) ------------------------------------------
+// A node may name another diagram of the project (`linkedDiagramId`). The link is navigation only. It lives in the
+// node's own document, so a diagram saved alone keeps it; whether it leads anywhere is the project's to say.
+
+const withLinksRenamed = (diagram: Project, renamed: ReadonlyMap<string, string>): Project =>
+  diagram.nodes.some((n) => n.linkedDiagramId !== undefined && renamed.has(n.linkedDiagramId))
+    ? {
+        ...diagram,
+        nodes: diagram.nodes.map((n) => {
+          const to = n.linkedDiagramId === undefined ? undefined : renamed.get(n.linkedDiagramId);
+          return to === undefined ? n : { ...n, linkedDiagramId: to };
+        }),
+      }
+    : diagram;
+
+/** The diagram a node's link leads to, when it is in the project and is not the node's own diagram. */
+export function linkTarget(workbook: Workbook, from: Project, node: Node): Project | null {
+  if (node.linkedDiagramId === undefined || node.linkedDiagramId === from.id) return null;
+  return workbook.documents.find((d) => d.id === node.linkedDiagramId) ?? null;
+}
+
+/** The nodes of the project's other diagrams whose link leads to the diagram `id`: the ways back. */
+export function linksInto(workbook: Workbook, id: string): { diagram: Project; node: Node }[] {
+  return workbook.documents.flatMap((diagram) =>
+    diagram.id === id
+      ? []
+      : diagram.nodes.filter((n) => n.linkedDiagramId === id).map((node) => ({ diagram, node }))
+  );
+}
+
+/** The diagram `id` and every diagram its links reach, through any number of links: itself first, the others in
+ * tab order. What is saved as one set, so that no link of the set is left without its diagram. */
+export function linkedSet(workbook: Workbook, id: string): Project[] {
+  const byId = new Map(workbook.documents.map((d) => [d.id, d]));
+  const start = byId.get(id);
+  if (!start) return [];
+  const reached = new Set([id]);
+  const queue = [start];
+  for (let diagram = queue.shift(); diagram; diagram = queue.shift())
+    for (const node of diagram.nodes) {
+      const next = node.linkedDiagramId === undefined ? undefined : byId.get(node.linkedDiagramId);
+      if (next && !reached.has(next.id)) {
+        reached.add(next.id);
+        queue.push(next);
+      }
+    }
+  return [start, ...workbook.documents.filter((d) => d.id !== id && reached.has(d.id))];
 }
 
 /** The project without the diagram at `index`; the last diagram cannot be removed. */

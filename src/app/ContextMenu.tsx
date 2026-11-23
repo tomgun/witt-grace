@@ -1,6 +1,6 @@
 // The node context menu (right click, Shift+F10) with the prototype's items, order and predicates (inv-canvas §2).
 import { useEffect, useRef } from 'react';
-import { childrenOf, mutable } from '../domain/index.ts';
+import { childrenOf, diagramLabel, linkTarget, mutable } from '../domain/index.ts';
 import {
   addNode,
   arrangeTree,
@@ -88,6 +88,14 @@ export function ContextMenu({
     });
   if ((project.links ?? []).some((l) => l.sourceId === nodeId || l.targetId === nodeId))
     add({ label: t('repeatLegacyConnections'), action: () => store.openModal({ kind: 'links', nodeId }) });
+  // A link to another diagram of the project (WG-060): followed from here too, for the keyboard.
+  const linkTo = linkTarget(state.workbook, project, node);
+  if (node.linkedDiagramId !== undefined)
+    add({
+      label: linkTo ? `↗ ${t('diagramLinkOpen')}: ${diagramLabel(linkTo)}` : t('diagramLinkMissing'),
+      action: () => store.followLink(nodeId),
+      disabled: !linkTo,
+    });
   const addDisabled = !editable || !!node.sharedReasonId || node.kind === 'group';
   add({
     label: t('supportAdd'),

@@ -591,6 +591,10 @@ export const PROJECT_SCHEMA: JsonSchema = {
         fineInfluence: {
           const: true,
         },
+        // Added 2026-11-23 (owner, WG-060): a jump to another diagram of the same project.
+        linkedDiagramId: {
+          $ref: '#/$defs/id',
+        },
         constraintStatus: {
           enum: ['unknown', 'met', 'unmet'],
         },

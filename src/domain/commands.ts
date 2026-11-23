@@ -80,6 +80,8 @@ export type Command =
       unrated?: boolean;
       /** The influence slider moves in 0.1 steps. */
       fineInfluence?: boolean;
+      /** A jump to another diagram of the project, by its id; `null` takes the link away (WG-060). */
+      linkedDiagramId?: string | null;
     }
   | { type: 'node.move'; id: string; parentId: string }
   | { type: 'node.remove'; id: string }
@@ -924,6 +926,16 @@ function run(p: Project, c: Command, ctx: CommandContext): void {
       if (c.fineInfluence !== undefined) {
         if (c.fineInfluence) n.fineInfluence = true;
         else delete n.fineInfluence;
+      }
+      if (c.linkedDiagramId !== undefined) {
+        const target = c.linkedDiagramId;
+        if (target === null) delete n.linkedDiagramId;
+        else {
+          if (typeof target !== 'string' || !target.trim() || target.length > 100)
+            fail('Virheellinen linkitetyn kaavion tunniste');
+          if (target === p.id) fail('Kaavio ei voi linkittää itseensä');
+          n.linkedDiagramId = target;
+        }
       }
       return;
     }

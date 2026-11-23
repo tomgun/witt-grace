@@ -30,6 +30,9 @@ import {
   truthAssessable,
   TYPE_LABEL_MAX,
   SCORING_RULES,
+  diagramLabel,
+  linkTarget,
+  linksInto,
 } from '../domain/index.ts';
 import type { InfluenceSummary, Node, NodeScore, Project, SemanticType, Stance } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
@@ -282,6 +285,73 @@ function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
         </datalist>
       </Field>
       <HelpNote id="typeLabelHelp">{t('typeLabelHelp')}</HelpNote>
+    </div>
+  );
+}
+/** A jump from the node to another diagram of the project (WG-060, owner 2026-11-23), and on the main claim the
+ * ways back: the nodes of other diagrams that link here. Navigation only; nothing is scored through a link. */
+function DiagramLinkField({ node, editable }: { node: Node; editable: boolean }) {
+  const t = useTranslator();
+  const state = useAppState();
+  const store = getStore();
+  const { workbook, project } = state;
+  const others = workbook.documents.filter((d) => d.id !== project.id);
+  const target = linkTarget(workbook, project, node);
+  const missing = node.linkedDiagramId !== undefined && !target;
+  const into = node.parentId === null ? linksInto(workbook, project.id) : [];
+  if (!others.length && node.linkedDiagramId === undefined) return null;
+  const named = (d: Project) =>
+    `${t(d.mode === 'decision' ? 'modeDecision' : 'modeArgument')}: ${diagramLabel(d)}`;
+  const choices: [string, string][] = [
+    ['', t('diagramLinkNone')],
+    ...others.map((d): [string, string] => [d.id, named(d)]),
+    ...(missing ? [[node.linkedDiagramId as string, t('diagramLinkGone')] as [string, string]] : []),
+  ];
+  return (
+    <div className="diagram-link-field" data-testid="diagram-link-field">
+      <div className="type-label-field">
+        <Select
+          id="nodeDiagramLink"
+          testId="node-diagram-link"
+          label={t('diagramLinkField')}
+          value={node.linkedDiagramId ?? ''}
+          choices={choices}
+          editable={editable}
+          onCommit={(v) => store.dispatch({ type: 'node.edit', id: node.id, linkedDiagramId: v || null })}
+        />
+        <HelpNote id="diagramLinkHelp">{t('diagramLinkHelp')}</HelpNote>
+      </div>
+      {target ? (
+        <button
+          type="button"
+          id="btnDiagramLinkOpen"
+          className="btn quiet diagram-link-open"
+          data-testid="diagram-link-open"
+          onClick={() => store.followLink(node.id)}
+        >
+          {`↗ ${t('diagramLinkOpen')}: ${diagramLabel(target)}`}
+        </button>
+      ) : null}
+      {missing ? (
+        <p className="inspector-note" data-testid="diagram-link-missing">
+          {t('diagramLinkMissing')}
+        </p>
+      ) : null}
+      {into.length ? (
+        <div className="diagram-links-into" data-testid="diagram-links-into">
+          <p className="inspector-note">{t('diagramLinksInto')}</p>
+          {into.map(({ diagram, node: from }) => (
+            <button
+              key={`${diagram.id}:${from.id}`}
+              type="button"
+              className="btn quiet diagram-link-open"
+              onClick={() => store.showNodeIn(diagram.id, from.id)}
+            >
+              {`← ${diagramLabel(diagram)} › ${from.title}`}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1511,6 +1581,7 @@ export function Inspector({ frame }: { frame: Frame }) {
             node={node}
             editable={fullyEditable}
           />
+          <DiagramLinkField node={node} editable={fullyEditable} />
           <Select
             id="nodeParent"
             testId="node-parent"
@@ -1582,6 +1653,7 @@ export function Inspector({ frame }: { frame: Frame }) {
     const typeLabel = !node.sharedReasonId ? (
       <TypeLabelField key={`type:${node.id}:${node.typeLabel ?? ''}`} node={node} editable={editable} />
     ) : null;
+    const diagramLink = <DiagramLinkField node={node} editable={editable} />;
     const placement = node.parentId ? (
       <>
         <Select
@@ -1696,6 +1768,7 @@ export function Inspector({ frame }: { frame: Frame }) {
         />
         {evaluating ? null : typeLabel}
         {evaluating ? null : <UnratedField node={node} editable={editable} />}
+        {evaluating ? null : diagramLink}
         {node.relation === 'option' ? <OptionValues node={node} /> : null}
         {project.mode === 'decision' && node.parentId === null ? <DecisionValueMatrix /> : null}
         {project.mode === 'decision' && (node.parentId === null || node.relation === 'option') ? (
@@ -1768,6 +1841,7 @@ export function Inspector({ frame }: { frame: Frame }) {
                   <fieldset className="inspector-group">
                     <legend>{t('structureLegend')}</legend>
                     {typeLabel}
+                    {diagramLink}
                     {placement}
                     {reuseButton}
                   </fieldset>
