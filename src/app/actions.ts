@@ -8,6 +8,7 @@ import {
   childrenOf,
   createBlankProject,
   descendants,
+  personIdFor,
   fourWayProjection,
   rootNode,
   stableFourWayAddition,
@@ -280,7 +281,8 @@ export async function addLocalProfile(): Promise<string | null> {
     store.showMessage(tr('profileNameTaken'));
     return null;
   }
-  const id = newId();
+  // A name the project knows from another diagram is that same person here.
+  const id = personIdFor(store.get().workbook, store.get().project, name, newId());
   if (!store.dispatch({ type: 'user.add', id, name, shares: 1, role: 'editor' })) return null;
   store.setActor(id);
   return id;

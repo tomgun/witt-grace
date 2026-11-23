@@ -6,8 +6,10 @@ import { BLANK_TITLE } from './project.ts';
 import { exportFilename } from './serialize.ts';
 import { parseSketch, sketchHasDrawing } from './sketch.ts';
 import type { Sketch } from './sketch.ts';
-import { withOfferedScoring } from './model.ts';
-import type { Project } from './model.ts';
+import { applyCommand } from './commands.ts';
+import type { CommandContext } from './commands.ts';
+import { sameName, withOfferedScoring } from './model.ts';
+import type { Project, User } from './model.ts';
 
 export const WORKBOOK_FORMAT = 'witt-project';
 export const WORKBOOK_VERSION = 1;
@@ -305,4 +307,63 @@ export function restructure(target: Workbook, current: Workbook): Workbook {
     documents: target.documents.map((d) => diagrams.get(d.id) ?? d),
     sketches: target.sketches.map((s) => ({ ...s, sketch: sketches.get(s.id) ?? s.sketch })),
   };
+}
+
+// ---- People across the project's diagrams (WG-059, owner 2026-11-23) ----------------------------------------
+// People stay in each diagram's own document, so a diagram saved alone is whole. What the project adds is that
+// one person is one stable id wherever they are: a person added by a name the project knows gets the id they
+// have elsewhere, a person of another diagram can be added as they are, and a new name reaches every diagram.
+
+/** Every person of the project once, by id, in the order first met (the diagrams in tab order). */
+export function projectPeople(workbook: Workbook): User[] {
+  const seen = new Map<string, User>();
+  for (const diagram of workbook.documents)
+    for (const user of diagram.users) if (!seen.has(user.id)) seen.set(user.id, user);
+  return [...seen.values()];
+}
+
+/** The people of the project's other diagrams who are not in `diagram`, neither by id nor by name. */
+export function peopleElsewhere(workbook: Workbook, diagram: Project): User[] {
+  return projectPeople(workbook).filter(
+    (person) => !diagram.users.some((u) => u.id === person.id || sameName(u.name, person.name))
+  );
+}
+
+/**
+ * The id for a human person about to be added to `diagram` under `name`: the id that name has in another diagram
+ * of the project, so the person is the same person there and here, else `fresh`. An id already in this diagram
+ * (the same person under another name) and an AI viewpoint's id are never reused.
+ */
+export function personIdFor(workbook: Workbook, diagram: Project, name: string, fresh: string): string {
+  const known = projectPeople(workbook).find(
+    (person) => person.profileKind !== 'ai' && sameName(person.name, name)
+  );
+  return known && !diagram.users.some((u) => u.id === known.id) ? known.id : fresh;
+}
+
+/**
+ * A person's new name in every diagram that has them, the diagram at `except` aside (it was renamed by the
+ * command itself). A diagram where the name belongs to someone else keeps the old one. The same project when no diagram changed.
+ */
+export function renamePersonElsewhere(
+  workbook: Workbook,
+  except: number,
+  id: string,
+  name: string,
+  ctx: CommandContext
+): Workbook {
+  let changed = false;
+  const documents = workbook.documents.map((diagram, index) => {
+    if (index === except || !diagram.users.some((u) => u.id === id && u.name !== name)) return diagram;
+    // The command itself does not look for a namesake (the dialog does): two people must not share a name.
+    if (diagram.users.some((u) => u.id !== id && sameName(u.name, name))) return diagram;
+    try {
+      const next = applyCommand(diagram, { type: 'user.rename', id, name }, ctx);
+      changed ||= next !== diagram;
+      return next;
+    } catch {
+      return diagram;
+    }
+  });
+  return changed ? { ...workbook, documents } : workbook;
 }

@@ -10,8 +10,13 @@
  *       project has up to 20 named sketchpads, written to the file only when something is drawn on them, refused
  *       with the place when one does not parse; attaching a whole project brings its sketchpads without
  *       overwriting one; a step in the project's structure keeps the content every diagram and sketchpad has now
+ *       one person is one stable id across the project's diagrams: a name the project knows gets the id it has
+ *       elsewhere (never an AI viewpoint's, never one this diagram holds under another name), the people of other
+ *       diagrams can be added as they are, and a new name reaches every diagram that has the person
  * test: tests/unit/workbook.test.ts
- * red-against: an attached diagram overwriting the one with the same id (work lost on attaching a file twice), the
+ * red-against: the same person added to a second diagram under a new id (their ratings then read as two people's),
+ *              a rename that leaves the old name in the other diagrams, an AI viewpoint's id given to a person,
+ *              an attached diagram overwriting the one with the same id (work lost on attaching a file twice), the
  *              rename map dropped, removing the only diagram leaving an empty project, a move that drops or
  *              doubles a diagram, a stale stored copy winning over the fresh autosave, a fresh autosave doubled
  *              into a second tab, an empty sketchpad written to every file, a drawing left out of the saved
@@ -27,6 +32,10 @@ import {
   addSketch,
   drawSketch,
   isPlainDocument,
+  peopleElsewhere,
+  personIdFor,
+  projectPeople,
+  renamePersonElsewhere,
   removeSketch,
   renameSketch,
   restructure,
@@ -43,7 +52,7 @@ import {
   workbookFilename,
   workbookOf,
 } from '../../src/domain/index.ts';
-import type { Project, ProjectSketch, Workbook } from '../../src/domain/index.ts';
+import type { Project, ProjectSketch, User, Workbook } from '../../src/domain/index.ts';
 import { addElement, blankSketch } from '../../src/domain/sketch.ts';
 import type { Sketch } from '../../src/domain/sketch.ts';
 
@@ -336,4 +345,66 @@ test('restructure: the tabs, names and sketchpads of the target with the content
   assert.equal(back.documents[2], before.documents[2]);
   assert.equal(back.sketches[0]?.name, 'Vanha nimi');
   assert.deepEqual(back.sketches[0]?.sketch, drawn('new'));
+});
+
+const person = (id: string, name: string, ai = false): User => ({
+  id,
+  name,
+  shares: ai ? 0 : 1,
+  role: ai ? 'viewer' : 'editor',
+  ...(ai ? { profileKind: 'ai' as const } : {}),
+});
+const withPeople = (id: string, ...people: User[]): Project => {
+  const base = doc(id);
+  return { ...base, users: [...base.users, ...people] };
+};
+
+test('one person is one id across the project: the people, who can be added here, and the id for a name', () => {
+  const a = withPeople('a', person('u-2', 'Noora'), person('ai-1', 'Kriitikko', true));
+  const b = withPeople('b', person('u-3', 'Ville'));
+  const project: Workbook = { id: 'wb', title: '', documents: [a, b], sketches: [] };
+  assert.deepEqual(
+    projectPeople(project).map((u) => u.id),
+    ['u-1', 'u-2', 'ai-1', 'u-3']
+  );
+  // In b: Noora and the AI viewpoint can come in as they are; Minä (u-1) is already there.
+  assert.deepEqual(
+    peopleElsewhere(project, b).map((u) => u.name),
+    ['Noora', 'Kriitikko']
+  );
+  assert.deepEqual(
+    peopleElsewhere(project, a).map((u) => u.name),
+    ['Ville']
+  );
+  // A name the project knows gets that person's id; case and surrounding space do not count.
+  assert.equal(personIdFor(project, b, '  noora ', 'fresh'), 'u-2');
+  assert.equal(personIdFor(project, b, 'Uusi ihminen', 'fresh'), 'fresh');
+  // An AI viewpoint's id is never given to a person, nor an id this diagram already holds under another name.
+  assert.equal(personIdFor(project, b, 'Kriitikko', 'fresh'), 'fresh');
+  const renamedHere = { ...b, users: [...b.users, person('u-2', 'N. Virtanen')] };
+  assert.equal(
+    personIdFor({ ...project, documents: [a, renamedHere] }, renamedHere, 'Noora', 'fresh'),
+    'fresh'
+  );
+});
+
+test('a new name reaches every diagram that has the person, and leaves a diagram where the name is taken', () => {
+  const a = withPeople('a', person('u-2', 'Noora'));
+  const b = withPeople('b', person('u-2', 'Noora'));
+  const c = withPeople('c', person('u-2', 'Noora'), person('u-9', 'Noora Virtanen'));
+  const d = doc('d');
+  const project: Workbook = { id: 'wb', title: '', documents: [a, b, c, d], sketches: [] };
+  const ctx = { now: NOW, actorId: 'u-1' };
+  const renamed = renamePersonElsewhere(project, 0, 'u-2', 'Noora Virtanen', ctx);
+  const nameIn = (index: number) => renamed.documents[index]?.users.find((u) => u.id === 'u-2')?.name;
+  // a is the diagram the command renamed already: left as it is here.
+  assert.deepEqual([nameIn(0), nameIn(1), nameIn(2)], ['Noora', 'Noora Virtanen', 'Noora']);
+  assert.equal(renamed.documents[3], d);
+  assert.equal(renamed.documents[2], c);
+  // Nothing to change: the same project back.
+  assert.equal(
+    renamePersonElsewhere(renamed, 0, 'u-2', 'Noora Virtanen', ctx).documents[1],
+    renamed.documents[1]
+  );
+  assert.equal(renamePersonElsewhere(project, 0, 'no-such', 'X', ctx), project);
 });

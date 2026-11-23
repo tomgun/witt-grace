@@ -14,6 +14,7 @@ import {
   removeDocument,
   removeSketch,
   renameSketch,
+  renamePersonElsewhere,
   renameWorkbook,
   replaceDocument,
   restructure,
@@ -548,6 +549,18 @@ export function createStore(
         const next = applyCommand(state.project, command, ctx);
         if (next === state.project) return false;
         replace(next, { label: commandLabel(command, state.project, next) });
+        // A person is one person in every diagram of the project: a new name reaches the others too.
+        if (command.type === 'user.rename' && !collab) {
+          const everywhere = renamePersonElsewhere(
+            state.workbook,
+            state.activeTab,
+            command.id,
+            command.name,
+            ctx
+          );
+          if (everywhere !== state.workbook)
+            commit(everywhere, state.activeTab, { remember: false, fresh: false });
+        }
         if (collab?.role === 'host') collab.session.localApplied(command, ctx, next);
         return true;
       } catch (error) {

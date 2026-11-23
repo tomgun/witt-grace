@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner's plan 2026-11-23 (WG-059): **one person is one person across a project's diagrams.** A person added under a name another diagram knows gets the same id; *Projektin muut henkilöt* in the people dialog adds a person of another diagram as they are; a rename reaches every diagram. People stay in each diagram's document, so the file format is unchanged.
 - Owner 2026-11-23: **the home screen has a living backdrop**: an argument tree as a wire mesh that turns slowly behind the page, in the theme's colours; it stands still when the system asks for less motion and on phones, and never takes a click (WG-062). `src/app/homeMesh.ts`, `src/app/HomeBackdrop.tsx`.
 - Owner 2026-11-23: **undo per diagram and a change history.** ↶ / ↷ cover the shown diagram only and never a change made in another tab; the project's structure (tabs, names, sketchpads, an opened project) has its own steps. *Muutoshistoria* (≣ in the top bar, Muokkaa menu) lists the shown diagram's and the structure's changes with what they concerned, and a press on a row goes back or forward to that state. A removed tab's notice offers Kumoa. `src/app/history.ts`, `src/app/HistoryDialog.tsx`.
 - Owner 2026-11-23: **several sketchpads in a project**, named, removable, listed in the tab row; only the drawn ones are saved (`sketches` in the project file); attaching a whole project brings its sketchpads.

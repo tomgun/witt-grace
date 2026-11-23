@@ -645,3 +645,14 @@ test('what left and came back by the history keeps what it had become', () => {
   store.jumpTo(attach);
   assert.deepEqual(titles(), ['A', 'B muokattu']);
 });
+
+test('a person renamed in one diagram has the new name in the project’s other diagrams too', () => {
+  const { store } = open();
+  store.load(doc('a', 'A'));
+  store.dispatch({ type: 'user.add', id: 'u-2', name: 'Noora', shares: 1, role: 'editor' });
+  // A new diagram made from this one carries the same people; here it is attached with them.
+  store.attachTabs([{ ...doc('b', 'B'), users: store.get().project.users }]);
+  store.dispatch({ type: 'user.rename', id: 'u-2', name: 'Noora Virtanen' });
+  const names = store.get().workbook.documents.map((d) => d.users.find((u) => u.id === 'u-2')?.name);
+  assert.deepEqual(names, ['Noora Virtanen', 'Noora Virtanen']);
+});

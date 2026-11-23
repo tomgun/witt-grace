@@ -224,6 +224,10 @@ export {
   renameSketch,
   removeSketch,
   restructure,
+  projectPeople,
+  peopleElsewhere,
+  personIdFor,
+  renamePersonElsewhere,
   WORKBOOK_MAX_SKETCHES,
 } from './workbook.ts';
 export type { ProjectSketch, Workbook, WorkbookRead } from './workbook.ts';

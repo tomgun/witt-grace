@@ -3,7 +3,7 @@
 // (inv-review-vote-table §E).
 import { useEffect, useRef } from 'react';
 import type { KeyboardEvent } from 'react';
-import { isAiProfile } from '../domain/index.ts';
+import { isAiProfile, peopleElsewhere, personIdFor } from '../domain/index.ts';
 import type { AssessmentWeighting, User } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
 import { canEdit, isOwner } from './actions.ts';
@@ -88,8 +88,21 @@ export function PeopleDialog({ open, onClose }: { open: boolean; onClose: () => 
       store.showMessage(t('profileNameTaken'));
       return;
     }
-    guarded(() => store.dispatch({ type: 'user.add', id: newId(), name, shares: 1, role: 'editor' }));
+    // A name the project knows from another diagram is that same person here.
+    const id = personIdFor(store.get().workbook, store.get().project, name, newId());
+    guarded(() => store.dispatch({ type: 'user.add', id, name, shares: 1, role: 'editor' }));
   };
+  /** A person of another diagram of the project comes into this one as they are: the same id and name. */
+  const elsewhere = peopleElsewhere(state.workbook, project);
+  const addFromProject = (person: User) =>
+    guarded(() =>
+      store.dispatch({
+        type: 'user.add',
+        id: person.id,
+        name: person.name,
+        ...(isAiProfile(person) ? { profileKind: 'ai' as const } : { shares: 1, role: 'editor' as const }),
+      })
+    );
 
   return (
     <dialog
@@ -224,6 +237,26 @@ export function PeopleDialog({ open, onClose }: { open: boolean; onClose: () => 
                 );
               })}
             </div>
+            {elsewhere.length > 0 ? (
+              <section className="project-people" id="projectPeople" aria-labelledby="projectPeopleTitle">
+                <h3 id="projectPeopleTitle">{t('projectPeopleTitle')}</h3>
+                <p>{t('projectPeopleHelp')}</p>
+                <div className="project-people-list">
+                  {elsewhere.map((person) => (
+                    <button
+                      key={person.id}
+                      type="button"
+                      className="btn quiet project-person-add"
+                      data-user-id={person.id}
+                      disabled={!owner || project.users.length >= 100}
+                      onClick={() => addFromProject(person)}
+                    >
+                      {t('projectPersonAdd', { name: person.name })}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ) : null}
             <div className="dialog-actions">
               <button
                 type="button"

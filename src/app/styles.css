@@ -11262,3 +11262,20 @@ body.witt-focus .doc-tabs {
     display: none;
   }
 }
+
+/* ---- People of the project's other diagrams, offered in the people dialog (WG-059). ---- */
+.project-people {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.project-people h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+.project-people-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
