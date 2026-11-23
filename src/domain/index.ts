@@ -219,5 +219,11 @@ export {
   moveDocument,
   readWorkbookText,
   restoreWorkbook,
+  addSketch,
+  drawSketch,
+  renameSketch,
+  removeSketch,
+  restructure,
+  WORKBOOK_MAX_SKETCHES,
 } from './workbook.ts';
-export type { Workbook, WorkbookRead } from './workbook.ts';
+export type { ProjectSketch, Workbook, WorkbookRead } from './workbook.ts';

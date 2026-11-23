@@ -37,6 +37,7 @@ import { stageProposalFromFile } from './AiReviewDialog.tsx';
 import { AssessmentDialog } from './AssessmentDialog.tsx';
 import { Canvas } from './Canvas.tsx';
 import { DocTabs } from './DocTabs.tsx';
+import type { SketchSheet } from './sketchStore.ts';
 import { ModalHost, NoticeBar } from './dialogs.tsx';
 import { Home } from './Home.tsx';
 import { FILE_SIZE_LIMIT, showImportReport, textByteLength } from './ImportReportDialog.tsx';
@@ -70,9 +71,15 @@ export function App() {
   const [shortcutsVersion, setShortcutsVersion] = useState(0);
   // Luonnoslehtiö (S-15, 2026-11-20): a screen of its own, opened from the home screen and the Näkymä menu; its
   // code is fetched when it is first opened.
-  const [sketching, setSketching] = useState(false);
+  const [sketching, setSketching] = useState<false | 'default' | SketchSheet>(false);
   useEffect(() => {
-    const open = () => setSketching(true);
+    // The tab row asks for one of the project's sketchpads; the Näkymä menu leaves the choice to the sketchpad.
+    const open = (event: Event) => {
+      const detail = (event as CustomEvent<unknown>).detail;
+      setSketching(
+        typeof detail === 'string' && detail.startsWith('project:') ? (detail as SketchSheet) : 'default'
+      );
+    };
     window.addEventListener('witt-sketch', open);
     return () => window.removeEventListener('witt-sketch', open);
   }, []);
@@ -238,7 +245,8 @@ export function App() {
               : parseProject(report.parsed);
           incoming = [cardsOverlap(opened) ? arranged(opened) : opened];
         }
-        const count = store.attachTabs(incoming);
+        // A whole project brings its sketchpads with it.
+        const count = store.attachTabs(incoming, read.kind === 'workbook' ? read.workbook.sketches : []);
         if (count > 0) store.notify({ kind: 'info', text: t('attachedNotice', { count }) });
       } catch (error) {
         store.showMessage(
@@ -423,7 +431,12 @@ export function App() {
   if (sketching) {
     return (
       <Suspense fallback={null}>
-        <Sketchpad onClose={() => setSketching(false)} />
+        <Sketchpad
+          onClose={() => setSketching(false)}
+          {...(sketching !== 'default' ? { initial: sketching } : {})}
+        />
+        {/* The sketchpad's questions (a sketchpad's name, removing one) use the app's dialogs. */}
+        <ModalHost frame={frame} onShortcutsChanged={() => setShortcutsVersion((v) => v + 1)} />
       </Suspense>
     );
   }

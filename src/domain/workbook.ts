@@ -4,6 +4,8 @@
 import { parseProject, ParseError } from './parse.ts';
 import { BLANK_TITLE } from './project.ts';
 import { exportFilename } from './serialize.ts';
+import { parseSketch, sketchHasDrawing } from './sketch.ts';
+import type { Sketch } from './sketch.ts';
 import { withOfferedScoring } from './model.ts';
 import type { Project } from './model.ts';
 
@@ -18,7 +20,17 @@ export interface Workbook {
   title: string;
   /** The diagrams in tab order; never empty, ids unique. */
   documents: readonly Project[];
+  /** The project's sketchpads in tab order (owner 2026-11-23); ids unique. One with nothing drawn lives only
+   * while the project is open: it is never written to a file or to storage. */
+  sketches: readonly ProjectSketch[];
 }
+export interface ProjectSketch {
+  id: string;
+  name: string;
+  sketch: Sketch;
+}
+export const WORKBOOK_MAX_SKETCHES = 20;
+export const SKETCH_NAME_MAX = 40;
 
 const isRecord = (x: unknown): x is Record<string, unknown> =>
   x !== null && typeof x === 'object' && !Array.isArray(x);
@@ -26,6 +38,7 @@ const cleanTitle = (title: string): string => title.trim().slice(0, WORKBOOK_TIT
 
 /** A project of one diagram, as a file of one document opens. */
 export const workbookOf = (diagram: Project, id: string): Workbook => ({
+  sketches: [],
   id,
   title: '',
   documents: [diagram],
@@ -41,7 +54,7 @@ export function diagramLabel(diagram: Project): string {
 /** One unnamed diagram: such a project is its diagram, shown, stored and saved exactly as a document was before
  * projects (no tab row, no project entry in storage, a `.witt.json` file). */
 export const isPlainDocument = (workbook: Workbook): boolean =>
-  workbook.documents.length === 1 && workbook.title === '';
+  workbook.documents.length === 1 && workbook.title === '' && workbook.sketches.length === 0;
 
 export const isWorkbookFile = (raw: unknown): boolean => isRecord(raw) && raw.format === WORKBOOK_FORMAT;
 
@@ -73,7 +86,55 @@ export function parseWorkbook(raw: unknown): Workbook {
     seen.add(diagram.id);
     return diagram;
   });
-  return { id: raw.id, title: cleanTitle(raw.title), documents };
+  const sketches: ProjectSketch[] = [];
+  if (raw.sketches !== undefined) {
+    if (!Array.isArray(raw.sketches) || raw.sketches.length > WORKBOOK_MAX_SKETCHES)
+      throw new ParseError(`$.sketches: enintään ${WORKBOOK_MAX_SKETCHES} lehtiötä`);
+    raw.sketches.forEach((entry: unknown, i: number) => {
+      if (!isRecord(entry) || typeof entry.id !== 'string' || !entry.id.trim())
+        throw new ParseError(`$.sketches[${i}].id: lehtiön tunniste puuttuu`);
+      const id = entry.id;
+      if (typeof entry.name !== 'string')
+        throw new ParseError(`$.sketches[${i}].name: nimen on oltava tekstiä`);
+      if (sketches.some((known) => known.id === id))
+        throw new ParseError(`$.sketches[${i}].id: sama tunniste kahdella lehtiöllä (${id})`);
+      const sketch = validSketch(entry.sketch, `$.sketches[${i}].sketch`);
+      // An untouched sketchpad in a file is dropped, not kept as an empty one.
+      if (sketchHasDrawing(sketch)) sketches.push({ id, name: cleanSketchName(entry.name), sketch });
+    });
+  }
+  return { id: raw.id, title: cleanTitle(raw.title), documents, sketches };
+}
+
+const cleanSketchName = (name: string): string => name.trim().slice(0, SKETCH_NAME_MAX);
+
+/** A new sketchpad after the present ones. */
+export function addSketch(workbook: Workbook, id: string, name: string, sketch: Sketch): Workbook {
+  if (workbook.sketches.length >= WORKBOOK_MAX_SKETCHES)
+    throw new Error(`Projektissa voi olla enintään ${WORKBOOK_MAX_SKETCHES} lehtiötä`);
+  if (workbook.sketches.some((s) => s.id === id)) throw new Error('Lehtiön tunniste on jo käytössä');
+  return { ...workbook, sketches: [...workbook.sketches, { id, name: cleanSketchName(name), sketch }] };
+}
+/** The sketchpad `id` as it was just drawn; the same project when there is no such sketchpad. */
+export function drawSketch(workbook: Workbook, id: string, sketch: Sketch): Workbook {
+  if (!workbook.sketches.some((s) => s.id === id && s.sketch !== sketch)) return workbook;
+  return { ...workbook, sketches: workbook.sketches.map((s) => (s.id === id ? { ...s, sketch } : s)) };
+}
+export function renameSketch(workbook: Workbook, id: string, name: string): Workbook {
+  const clean = cleanSketchName(name);
+  if (!clean || !workbook.sketches.some((s) => s.id === id && s.name !== clean)) return workbook;
+  return { ...workbook, sketches: workbook.sketches.map((s) => (s.id === id ? { ...s, name: clean } : s)) };
+}
+export function removeSketch(workbook: Workbook, id: string): Workbook {
+  if (!workbook.sketches.some((s) => s.id === id)) return workbook;
+  return { ...workbook, sketches: workbook.sketches.filter((s) => s.id !== id) };
+}
+
+/** A sketchpad through its own boundary, so what is written is exactly what would be read. */
+function validSketch(sketch: unknown, path: string): Sketch {
+  const parsed = parseSketch(JSON.stringify(sketch ?? null));
+  if (!parsed.ok) throw new ParseError(`${path}: luonnoslehtiö ei kelpaa (${parsed.reason})`);
+  return parsed.sketch;
 }
 
 /** The project file's bytes: validated, two-space indented, trailing newline, like a document's file. */
@@ -86,6 +147,18 @@ export const workbookFileObject = (workbook: Workbook) => ({
   id: workbook.id,
   title: workbook.title,
   documents: workbook.documents.map((diagram) => parseProject(diagram)),
+  // Only sketchpads with something drawn are written; the key is left out when there is none.
+  ...(workbook.sketches.some((s) => sketchHasDrawing(s.sketch))
+    ? {
+        sketches: workbook.sketches
+          .filter((s) => sketchHasDrawing(s.sketch))
+          .map((s, i) => ({
+            id: s.id,
+            name: s.name,
+            sketch: validSketch(s.sketch, `$.sketches[${i}].sketch`),
+          })),
+      }
+    : {}),
 });
 
 /** A filename for the project file: the project's name, else the first diagram's title, slugged as a document's. */
@@ -118,10 +191,13 @@ export function replaceDocument(workbook: Workbook, index: number, diagram: Proj
 export function attachDocuments(
   workbook: Workbook,
   incoming: readonly Project[],
-  newId: () => string
+  newId: () => string,
+  incomingSketches: readonly ProjectSketch[] = []
 ): { workbook: Workbook; renamed: ReadonlyMap<string, string> } {
   if (workbook.documents.length + incoming.length > WORKBOOK_MAX_DOCUMENTS)
     throw new Error(`Projektissa voi olla enintään ${WORKBOOK_MAX_DOCUMENTS} kaaviota`);
+  if (workbook.sketches.length + incomingSketches.length > WORKBOOK_MAX_SKETCHES)
+    throw new Error(`Projektissa voi olla enintään ${WORKBOOK_MAX_SKETCHES} lehtiötä`);
   const taken = new Set(workbook.documents.map((d) => d.id));
   const renamed = new Map<string, string>();
   const added = incoming.map((diagram) => {
@@ -135,7 +211,22 @@ export function attachDocuments(
     renamed.set(diagram.id, id);
     return { ...diagram, id };
   });
-  return { workbook: { ...workbook, documents: [...workbook.documents, ...added] }, renamed };
+  // A whole project attached brings its sketchpads too; one whose id is taken comes in under a new id.
+  const takenSketches = new Set(workbook.sketches.map((s) => s.id));
+  const addedSketches = incomingSketches.map((entry) => {
+    const id = takenSketches.has(entry.id) ? newId() : entry.id;
+    if (takenSketches.has(id)) throw new Error('Uusi tunniste on jo käytössä');
+    takenSketches.add(id);
+    return id === entry.id ? entry : { ...entry, id };
+  });
+  return {
+    workbook: {
+      ...workbook,
+      documents: [...workbook.documents, ...added],
+      sketches: [...workbook.sketches, ...addedSketches],
+    },
+    renamed,
+  };
 }
 
 /** The project without the diagram at `index`; the last diagram cannot be removed. */
@@ -199,4 +290,19 @@ export function restoreWorkbook(
     };
   if (documents.length >= WORKBOOK_MAX_DOCUMENTS) return { workbook: stored.workbook, active };
   return { workbook: { ...stored.workbook, documents: [...documents, fresh] }, active: documents.length };
+}
+
+/**
+ * A step back or forward in the project's structure: the tabs, names and sketchpads of `target`, with the content
+ * each diagram and sketchpad has now. Only a diagram or a sketchpad that is not in `current` (a removed one coming
+ * back) takes the content `target` kept for it, so undoing a removed tab never takes back work done elsewhere.
+ */
+export function restructure(target: Workbook, current: Workbook): Workbook {
+  const diagrams = new Map(current.documents.map((d) => [d.id, d]));
+  const sketches = new Map(current.sketches.map((s) => [s.id, s.sketch]));
+  return {
+    ...target,
+    documents: target.documents.map((d) => diagrams.get(d.id) ?? d),
+    sketches: target.sketches.map((s) => ({ ...s, sketch: sketches.get(s.id) ?? s.sketch })),
+  };
 }

@@ -11097,6 +11097,9 @@ body.witt-focus .canvas-quick-controls {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.doc-tab-sketch {
+  border-left: 1px solid var(--border);
+}
 .doc-tabs-actions {
   display: flex;
   align-items: center;
@@ -11155,4 +11158,87 @@ body.witt-focus .doc-tabs {
   .doc-tab {
     max-width: 170px;
   }
+}
+
+/* ---- Muutoshistoria (owner 2026-11-23): the change history list. ---- */
+.history-dialog {
+  width: min(560px, calc(100vw - 24px));
+}
+.history-intro,
+.history-empty {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 19px;
+}
+.history-list {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  max-height: min(52vh, 460px);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.history-list li + li {
+  border-top: 1px solid var(--border);
+}
+.history-entry {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.history-entry:hover {
+  background: var(--accent-soft);
+}
+.history-entry[aria-current='step'] {
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+.history-entry.undone .history-what {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.history-entry:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.history-what {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.history-detail {
+  font-weight: 400;
+  color: var(--subtle);
+}
+.history-scope {
+  margin-right: 6px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.history-meta {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.history-meta strong {
+  color: var(--accent-text);
 }

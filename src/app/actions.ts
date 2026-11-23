@@ -461,3 +461,12 @@ export async function renameProject(): Promise<void> {
   );
   if (title !== null) store.renameProject(title);
 }
+
+/** A new sketchpad in the project, opened at once for drawing. */
+export function addSketchpad(): void {
+  const store = getStore();
+  const id = store.addProjectSketch(
+    t()('sketchDefaultName', { n: store.get().workbook.sketches.length + 1 })
+  );
+  if (id) window.dispatchEvent(new CustomEvent('witt-sketch', { detail: `project:${id}` }));
+}

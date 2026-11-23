@@ -1,25 +1,41 @@
 /**
  * must: the store keeps the project and its shown tab (WG-059): `project` is always the shown tab's diagram; a
- *       command changes only that diagram; attaching adds tabs and shows the first added one; undo is one history
- *       for the project and goes back to the tab the change was made in, a removed tab included; looking at another
- *       tab is not an undo step; one unnamed diagram is replaced by an opened document (after the replace question),
- *       while in a project the document opens in a new tab without a question and a document another tab holds is
- *       refused; in the browser's storage the shown diagram keeps the prototype's key `witt-project-v3`, the whole
- *       project is under `witt-workbook-v1` only when there is more than one diagram or a project name, and a
- *       reload brings back every tab with the newest content of the shown one
+ *       command changes only that diagram; attaching adds tabs and shows the first added one; Kumoa belongs to the
+ *       shown diagram (owner 2026-11-23): it never takes back a change made in another tab, nor a change to the
+ *       project's structure, except the step that brought the shown diagram into the project once that diagram
+ *       has nothing of its own left to undo; a structure step (a tab removed, attached, moved, a name, a
+ *       sketchpad, an opened project) is taken back by the Kumoa offered after a removal or from the history
+ *       list, and keeps what the diagrams hold now; looking at another tab is not a step; the
+ *       history list shows the shown diagram's and the structure's steps in order with what they concerned, and
+ *       a jump goes to the state after any of them, forward too until a new change is made; one unnamed diagram
+ *       is replaced by an opened document (after the replace question), while in a project the document opens in
+ *       a new tab without a question and a document another tab holds is refused; in the browser's storage the
+ *       shown diagram keeps the prototype's key `witt-project-v3`, the whole project is under `witt-workbook-v1`
+ *       only when it is more than one unnamed diagram, and a reload brings back every tab with the newest content
+ *       of the shown one; a project has several sketchpads: drawing on one is not a history step, undoing a
+ *       diagram edit leaves the drawings, a removed or renamed sketchpad comes back, only drawn ones are stored
  * test: tests/unit/store-tabs.test.ts
- * red-against: an edit written into the first tab whatever is shown, undo taking back the right change but leaving
- *              the wrong tab shown, a removed diagram that undo cannot bring back, the project entry rewritten
+ * red-against: an edit written into the first tab whatever is shown, undo in one tab taking back the newest change
+ *              of another (work lost out of sight), Kumoa in one tab removing a tab that was added since, a
+ *              removed tab with no way back, a project file with the same diagram ids opened over the person's
+ *              work with nothing recorded to take it back, a jump that wanders into another tab and undoes its
+ *              steps, redo writing an old edit over a newer file opened under the same id, a sketchpad that comes
+ *              back empty after a jump back and forward, undo of a removed tab reverting the edits made since in other
+ *              diagrams, a jump that stops one step short or redoes over a new change, a removed diagram that undo cannot bring back, the project entry rewritten
  *              on every keystroke-sized command (it holds every diagram), a one-diagram browser gaining a second
  *              storage entry, a reload showing the stale copy of the diagram that was being edited, the autosave
  *              overwritten before the project entry is safely written (a full quota then loses the diagram that
  *              lived only in the autosave), an entry this build cannot read removed by the next opened document,
+ *              undo of a diagram edit taking the drawing made since back with it, a drawn sketchpad lost on
+ *              reload, an attached sketchpad written over the person's own,
  *              an opened file silently taking the place of the shown tab's diagram in a project
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createBlankProject, rootNode } from '../../src/domain/index.ts';
 import type { Project } from '../../src/domain/index.ts';
+import { addElement, blankSketch } from '../../src/domain/sketch.ts';
+import type { Sketch } from '../../src/domain/sketch.ts';
 import { PROJECT_KEY, memoryStore } from '../../src/lib/storage.ts';
 import type { KeyValueStore } from '../../src/lib/storage.ts';
 import { WORKBOOK_KEY } from '../../src/lib/workbookStorage.ts';
@@ -87,7 +103,7 @@ test('attaching a diagram the project holds makes a copy, never an overwrite', (
   assert.notEqual(second?.id, 'a');
 });
 
-test('undo is one history: it returns to the tab of the change; looking at a tab is not a step', () => {
+test('undo belongs to the shown diagram: it never takes back a change made in another tab', () => {
   const { store, titles } = open();
   store.load(doc('a', 'A'));
   store.attachTabs([doc('b', 'B')]);
@@ -95,22 +111,110 @@ test('undo is one history: it returns to the tab of the change; looking at a tab
   store.dispatch({ type: 'project.setTitle', title: 'A2' });
   store.selectTab(1);
   store.dispatch({ type: 'project.setTitle', title: 'B2' });
+  store.dispatch({ type: 'project.setTitle', title: 'B3' });
   store.selectTab(0);
-  // The newest change was in tab 1: undo goes there and takes it back.
+  // The newest change of all is B3, but tab A is shown: undo takes back A's own change and stays here.
+  store.undo();
+  assert.deepEqual(titles(), ['A', 'B3']);
+  assert.equal(store.get().activeTab, 0);
+  store.redo();
+  assert.deepEqual(titles(), ['A2', 'B3']);
+  assert.equal(store.get().canRedo, false);
+  // In tab B its two changes come back one at a time; A's is not touched.
+  store.selectTab(1);
+  store.undo();
   store.undo();
   assert.deepEqual(titles(), ['A2', 'B']);
   assert.equal(store.get().activeTab, 1);
-  store.undo();
-  assert.deepEqual(titles(), ['A', 'B']);
-  assert.equal(store.get().activeTab, 0);
-  store.redo();
   store.redo();
   assert.deepEqual(titles(), ['A2', 'B2']);
-  assert.equal(store.get().activeTab, 1);
-  assert.equal(store.get().canRedo, false);
 });
 
-test('a removed tab comes back with undo; the neighbour is shown meanwhile; the last tab stays', () => {
+test('Kumoa leaves the structure alone; a removed tab comes back by its own Kumoa and keeps later edits', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  store.attachTabs([doc('b', 'B'), doc('c', 'C')]);
+  store.removeTab(2);
+  const restore = store.get().notice?.restore;
+  assert.match(store.get().notice?.text ?? '', /Kaavio ”C” poistettu projektista/);
+  store.dispatch({ type: 'project.setTitle', title: 'B muokattu' });
+  store.selectTab(0);
+  // Shown: A, which has no change of its own. Kumoa has nothing to take: it does not bring C back from here.
+  assert.equal(store.get().canUndo, false);
+  store.undo();
+  assert.deepEqual(titles(), ['A', 'B muokattu']);
+  // The removal's own Kumoa brings C back, and B's later edit stays.
+  assert.equal(store.undoStructure(restore), true);
+  assert.deepEqual(titles(), ['A', 'B muokattu', 'C']);
+  // Once another structure step is newer, an old notice's Kumoa does nothing.
+  store.renameProject('Hanke');
+  assert.equal(store.undoStructure(restore), false);
+  assert.deepEqual(titles(), ['A', 'B muokattu', 'C']);
+});
+
+test('a diagram added to the project is taken away by Kumoa only from that diagram, with nothing of its own left', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  store.attachTabs([doc('b', 'B')]);
+  store.dispatch({ type: 'project.setTitle', title: 'B2' });
+  store.undo();
+  assert.deepEqual(titles(), ['A', 'B']);
+  store.undo();
+  assert.deepEqual(titles(), ['A']);
+  store.redo();
+  assert.deepEqual(titles(), ['A', 'B']);
+  assert.equal(store.get().project.id, 'b');
+});
+
+test('the history list: the shown diagram’s and the structure’s steps in order, and a jump to any of them', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  store.attachTabs([doc('b', 'B')]);
+  store.dispatch({ type: 'project.setTitle', title: 'B2' });
+  store.dispatch({ type: 'project.setTitle', title: 'B3' });
+  store.renameProject('Hanke');
+  const rows = () => store.historyList().map(({ step, done }) => [step.label.key, step.label.detail, done]);
+  assert.deepEqual(rows(), [
+    ['historyReplaced', 'A', true],
+    ['historyTabAdd', 'B', true],
+    ['historyTitle', 'B2', true],
+    ['historyTitle', 'B3', true],
+    ['historyProjectRename', 'Hanke', true],
+  ]);
+  const seqOf = (detail: string) =>
+    store.historyList().find(({ step }) => step.label.detail === detail)?.step.seq as number;
+  // Back to right after "B2": the rename and B3 are undone and stay listed.
+  store.jumpTo(seqOf('B2'));
+  assert.deepEqual(titles(), ['A', 'B2']);
+  assert.equal(store.get().workbook.title, '');
+  assert.deepEqual(
+    rows().map((row) => row[2]),
+    [true, true, true, false, false]
+  );
+  // Forward again, since no new change was made.
+  store.jumpTo(seqOf('Hanke'));
+  assert.deepEqual(titles(), ['A', 'B3']);
+  assert.equal(store.get().workbook.title, 'Hanke');
+  // A new change after going back drops what was undone.
+  store.jumpTo(seqOf('B2'));
+  store.dispatch({ type: 'project.setTitle', title: 'B uusi suunta' });
+  assert.deepEqual(
+    rows().map((row) => row[1]),
+    ['A', 'B', 'B2', 'B uusi suunta']
+  );
+  // The other tab lists its own steps and the structure's, not B's.
+  store.selectTab(0);
+  assert.deepEqual(
+    rows().map((row) => row[0]),
+    ['historyReplaced', 'historyTabAdd']
+  );
+  // The starting state: everything undone.
+  store.jumpTo(0);
+  assert.equal(store.get().canUndo, false);
+  assert.equal(store.get().workbook.documents.length, 1);
+});
+
+test('removed tabs come back newest first; the neighbour is shown meanwhile; the last tab stays', () => {
   const { store, titles } = open();
   store.load(doc('a', 'A'));
   store.attachTabs([doc('b', 'B'), doc('c', 'C')]);
@@ -124,8 +228,8 @@ test('a removed tab comes back with undo; the neighbour is shown meanwhile; the 
   assert.equal(store.get().activeTab, 0);
   assert.equal(store.removeTab(0), false);
   assert.match(store.get().notice?.text ?? '', /viimeistä kaaviota ei voi poistaa/);
-  store.undo();
-  store.undo();
+  assert.equal(store.undoStructure(), true);
+  assert.equal(store.undoStructure(), true);
   assert.deepEqual(titles(), ['A', 'B', 'C']);
   assert.equal(store.get().project.id, 'c');
 });
@@ -180,7 +284,7 @@ test('the replace question: asked for one diagram with work, not in a project fo
   assert.match(store.get().notice?.text ?? '', /Kaavio ”A” on jo auki toisella välilehdellä/);
 });
 
-test('removing a tab right of the shown one keeps the shown one; undo takes back a move and a project name', () => {
+test('removing a tab right of the shown one keeps the shown one; a move and a project name are taken back', () => {
   const { store, titles } = open();
   store.load(doc('a', 'A'));
   store.attachTabs([doc('b', 'B'), doc('c', 'C')]);
@@ -189,9 +293,9 @@ test('removing a tab right of the shown one keeps the shown one; undo takes back
   assert.equal(store.get().activeTab, 1);
   store.moveTab(1, 0);
   store.renameProject('Hanke');
-  store.undo();
+  store.undoStructure();
   assert.equal(store.get().workbook.title, '');
-  store.undo();
+  store.undoStructure();
   assert.deepEqual(titles(), ['A', 'B']);
   assert.equal(store.get().project.id, 'b');
 });
@@ -340,7 +444,12 @@ test('opening a project file replaces the whole project, and undo brings the pre
   store.load(doc('a', 'A'));
   store.attachTabs([doc('b', 'B')]);
   assert.equal(
-    store.loadWorkbook({ id: 'wb-new', title: 'Toinen', documents: [doc('x', 'X'), doc('y', 'Y')] }),
+    store.loadWorkbook({
+      id: 'wb-new',
+      title: 'Toinen',
+      documents: [doc('x', 'X'), doc('y', 'Y')],
+      sketches: [],
+    }),
     true
   );
   assert.deepEqual(titles(), ['X', 'Y']);
@@ -349,4 +458,190 @@ test('opening a project file replaces the whole project, and undo brings the pre
   store.undo();
   assert.deepEqual(titles(), ['A', 'B']);
   assert.equal(store.get().workbook.title, '');
+});
+
+const drawn = (id: string): Sketch =>
+  addElement(blankSketch('f1'), 0, { id, type: 'pen', color: 0, size: 4, points: [10, 10, 40, 40] });
+const sketchOf = (store: ReturnType<typeof createStore>, id: string) =>
+  store.get().workbook.sketches.find((s) => s.id === id)?.sketch;
+
+test('sketchpads: several per project; drawing is not a history step and undoing a diagram edit keeps it', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  const first = store.addProjectSketch('Lehtiö 1') as string;
+  const second = store.addProjectSketch('Lehtiö 2') as string;
+  assert.deepEqual(
+    store.get().workbook.sketches.map((s) => s.name),
+    ['Lehtiö 1', 'Lehtiö 2']
+  );
+  store.dispatch({ type: 'project.setTitle', title: 'A2' });
+  const steps = store.historyList().length;
+  store.drawProjectSketch(second, drawn('p2'));
+  assert.equal(store.historyList().length, steps);
+  store.undo();
+  assert.deepEqual(titles(), ['A']);
+  assert.deepEqual(sketchOf(store, second), drawn('p2'));
+  // A removed sketchpad comes back with its drawing; a renamed one gets its name back.
+  store.renameProjectSketch(second, 'Animaatio');
+  store.removeProjectSketch(second);
+  assert.deepEqual(
+    store.get().workbook.sketches.map((s) => s.id),
+    [first]
+  );
+  store.undoStructure();
+  assert.deepEqual(sketchOf(store, second), drawn('p2'));
+  assert.equal(store.get().workbook.sketches[1]?.name, 'Animaatio');
+  store.undoStructure();
+  assert.equal(store.get().workbook.sketches[1]?.name, 'Lehtiö 2');
+});
+
+test('sketchpads on reload: the drawn ones come back, an empty one is not kept; an attached project brings its own', () => {
+  const kv = memoryStore();
+  const first = open(kv);
+  first.store.load(doc('a', 'A'));
+  const empty = first.store.addProjectSketch('Tyhjä') as string;
+  const used = first.store.addProjectSketch('Piirretty') as string;
+  first.store.drawProjectSketch(used, drawn('p1'));
+  const again = open(kv).store.get().workbook.sketches;
+  assert.deepEqual(
+    again.map((s) => [s.id, s.name]),
+    [[used, 'Piirretty']]
+  );
+  assert.equal(
+    again.some((s) => s.id === empty),
+    false
+  );
+  // Attach: the same sketchpad id comes in as another sketchpad, and the person's own keeps its drawing.
+  const count = first.store.attachTabs([doc('b', 'B')], [{ id: used, name: 'Tuotu', sketch: drawn('p9') }]);
+  assert.equal(count, 1);
+  const names = first.store.get().workbook.sketches.map((s) => s.name);
+  assert.deepEqual(names, ['Tyhjä', 'Piirretty', 'Tuotu']);
+  assert.deepEqual(sketchOf(first.store, used), drawn('p1'));
+});
+
+test('an opened project replaces the sketchpads too, and undoing it brings the previous ones back', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  const mine = store.addProjectSketch('Oma') as string;
+  store.drawProjectSketch(mine, drawn('p1'));
+  store.loadWorkbook({
+    id: 'wb-new',
+    title: 'Toinen',
+    documents: [doc('x', 'X')],
+    sketches: [{ id: 'sx', name: 'Heidän', sketch: drawn('p2') }],
+  });
+  assert.deepEqual(
+    store.get().workbook.sketches.map((s) => s.name),
+    ['Heidän']
+  );
+  store.undo();
+  assert.deepEqual(titles(), ['A']);
+  assert.deepEqual(
+    store.get().workbook.sketches.map((s) => s.name),
+    ['Oma']
+  );
+  assert.deepEqual(sketchOf(store, mine), drawn('p1'));
+});
+
+test('opening a project that shares diagrams with the open one is undone as a whole: no work is lost', () => {
+  for (const shownWhenOpening of [0, 1]) {
+    const { store, titles } = open();
+    store.load(doc('a', 'A'));
+    store.attachTabs([doc('b', 'B')]);
+    const saved = store.get().workbook;
+    store.dispatch({ type: 'project.setTitle', title: 'B työ' });
+    store.selectTab(0);
+    store.dispatch({ type: 'project.setTitle', title: 'A työ' });
+    store.selectTab(shownWhenOpening);
+    store.loadWorkbook(saved);
+    assert.deepEqual(titles(), ['A', 'B']);
+    // The opened project shows its first diagram, whose only step is the opening: Kumoa takes it back whole.
+    store.undo();
+    assert.deepEqual(titles(), ['A työ', 'B työ'], `shown tab ${shownWhenOpening}`);
+    store.redo();
+    assert.deepEqual(titles(), ['A', 'B']);
+  }
+});
+
+test('a project with another structure that shares a diagram: taking the opening back restores the person’s own', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  store.attachTabs([doc('b', 'B')]);
+  store.selectTab(0);
+  store.dispatch({ type: 'project.setTitle', title: 'A työ' });
+  store.loadWorkbook({
+    id: 'wb-file',
+    title: 'Tiedosto',
+    documents: [doc('a', 'A tiedostosta')],
+    sketches: [],
+  });
+  assert.deepEqual(titles(), ['A tiedostosta']);
+  assert.equal(store.undoStructure(), true);
+  assert.deepEqual(titles(), ['A työ', 'B']);
+});
+
+test('a jump stays with the shown diagram: a structure step on the way does not pull in another tab’s steps', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  store.attachTabs([doc('b', 'B')]);
+  store.selectTab(0);
+  store.dispatch({ type: 'project.setTitle', title: 'A1' });
+  const target = store.historyList().pop()?.step.seq as number;
+  store.selectTab(1);
+  store.renameProject('P');
+  store.dispatch({ type: 'project.setTitle', title: 'B1' });
+  store.selectTab(0);
+  store.dispatch({ type: 'project.setTitle', title: 'A2' });
+  store.jumpTo(target);
+  assert.deepEqual(titles(), ['A1', 'B1']);
+  assert.equal(store.get().activeTab, 0);
+  assert.equal(store.get().workbook.title, '');
+});
+
+test('a diagram that comes into the project starts without steps, whatever an older copy with its id did', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  store.dispatch({ type: 'project.setTitle', title: 'A vanha muokkaus' });
+  store.undo();
+  store.load(doc('b', 'B'));
+  store.load(doc('a', 'A uudempi tiedosto'));
+  assert.equal(store.get().canRedo, false);
+  store.redo();
+  assert.deepEqual(titles(), ['A uudempi tiedosto']);
+  // Its only step is the opening itself.
+  store.undo();
+  assert.deepEqual(titles(), ['B']);
+});
+
+test('what left and came back by the history keeps what it had become', () => {
+  const { store, titles } = open();
+  store.load(doc('a', 'A'));
+  const start = store.historyList().pop()?.step.seq as number;
+  // A sketchpad added and drawn on, then a jump to before it and back.
+  const pad = store.addProjectSketch('Lehtiö 1') as string;
+  const added = store.historyList().pop()?.step.seq as number;
+  store.drawProjectSketch(pad, drawn('p1'));
+  store.jumpTo(start);
+  assert.deepEqual(store.get().workbook.sketches, []);
+  store.jumpTo(added);
+  assert.deepEqual(sketchOf(store, pad), drawn('p1'));
+  // Removed, brought back, drawn on again, removed again by redo, brought back: the later stroke is there.
+  store.removeProjectSketch(pad);
+  const removal = store.historyList().pop()?.step.seq as number;
+  store.undoStructure();
+  store.drawProjectSketch(pad, drawn('p2'));
+  store.jumpTo(removal);
+  assert.deepEqual(store.get().workbook.sketches, []);
+  store.undoStructure();
+  assert.deepEqual(sketchOf(store, pad), drawn('p2'));
+  // An attached diagram edited, then from the first tab a jump to before the attach and back.
+  store.attachTabs([doc('b', 'B')]);
+  const attach = store.historyList().find(({ step }) => step.label.key === 'historyTabAdd')?.step
+    .seq as number;
+  store.dispatch({ type: 'project.setTitle', title: 'B muokattu' });
+  store.selectTab(0);
+  store.jumpTo(attach - 1);
+  assert.deepEqual(titles(), ['A']);
+  store.jumpTo(attach);
+  assert.deepEqual(titles(), ['A', 'B muokattu']);
 });

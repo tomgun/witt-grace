@@ -3,22 +3,39 @@
 import { useSyncExternalStore } from 'react';
 import {
   applyCommand,
+  addSketch,
   attachDocuments,
   createBlankProject,
+  drawSketch,
   isPlainDocument,
   moveDocument,
   parseProject,
   parseWorkbook,
   removeDocument,
+  removeSketch,
+  renameSketch,
   renameWorkbook,
   replaceDocument,
+  restructure,
   rootNode,
   SCORING_VERSION,
   withOfferedScoring,
   workbookFileObject,
   workbookOf,
 } from '../domain/index.ts';
-import type { Command, ImportReport, Mode, Project, RejectReason, Workbook } from '../domain/index.ts';
+import type {
+  Command,
+  ImportReport,
+  Mode,
+  Project,
+  ProjectSketch,
+  RejectReason,
+  Workbook,
+} from '../domain/index.ts';
+import { blankSketch } from '../domain/sketch.ts';
+import type { Sketch } from '../domain/sketch.ts';
+import { commandLabel, createHistory, stepKind } from './history.ts';
+import type { HistoryLabel, HistoryStep } from './history.ts';
 import { DEFAULT_LANGUAGE, FI, isLanguage, loadMessages, translator } from '../lib/i18n/i18n.ts';
 import { languageFromSearch } from '../lib/pageHead.ts';
 import type { Language, MessageKey, Messages } from '../lib/i18n/i18n.ts';
@@ -90,7 +107,8 @@ export type DialogName =
   | 'visualExport'
   | 'contextReasons'
   | 'sharedReasons'
-  | 'collab';
+  | 'collab'
+  | 'history';
 export type ModalRequest =
   | { kind: 'confirm'; text: string; resolve: (ok: boolean) => void }
   | {
@@ -112,6 +130,9 @@ export type ReplaceChoice = 'forget' | 'keep' | null;
 export interface Notice {
   kind: 'error' | 'info';
   text: string;
+  /** The notice follows a change to the project's structure (a removed tab): its Kumoa takes back that step,
+   * whatever diagram is shown, while it is still the newest structure step. */
+  restore?: number;
   /** The notice follows a change that undo takes back: it offers Kumoa while undo is available. */
   undo?: boolean;
 }
@@ -279,13 +300,14 @@ export function createStore(
     notice: storageTrouble !== null ? { kind: 'error', text: storageTrouble } : null,
     collab: null,
   };
-  /** An undo step holds the whole project with its shown tab before and after the change: undoing and redoing go
-   * to the tab the change was made in, and a removed tab or a replaced project comes back like any other change. */
   type Snapshot = { workbook: Workbook; activeTab: number };
-  type Step = { before: Snapshot; after: Snapshot };
-  const past: Step[] = [];
-  const future: Step[] = [];
   const snapshot = (): Snapshot => ({ workbook: state.workbook, activeTab: state.activeTab });
+  /** Kumoa and Tee uudelleen: every diagram's own steps and the project structure's (history.ts). */
+  const history = createHistory();
+  const historyFlags = () => {
+    const can = history.can(state.project.id);
+    return { canUndo: !collab && can.undo, canRedo: !collab && can.redo };
+  };
   /** What the project's own storage entry last held, to write it only when the tabs change. */
   let storedTabs: Snapshot | null =
     tabs.ok && tabs.stored ? { workbook: initialWorkbook, activeTab: initialTab } : null;
@@ -299,6 +321,7 @@ export function createStore(
       storedTabs.activeTab !== activeTab ||
       before.id !== workbook.id ||
       before.title !== workbook.title ||
+      before.sketches !== workbook.sketches ||
       before.documents.length !== workbook.documents.length ||
       workbook.documents.some((d, i) =>
         i === activeTab ? d.id !== (before.documents[i] as Project).id : d !== before.documents[i]
@@ -339,21 +362,37 @@ export function createStore(
     set({ saveStatus: result.ok ? (persistent ? 'savedBrowser' : 'noServer') : 'saveFailed' });
     if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
   };
-  /** The one way the project changes: `workbook` with `activeTab` shown. `remember` makes it an undo step;
-   * `fresh` (default: when another tab is shown) starts the shown diagram's selection, profile and view focus
-   * over. */
+  /** The one way the project changes: `workbook` with `activeTab` shown. Unless `remember` is false it becomes
+   * a history step when it changed the shown diagram or the project's structure, named by `label`; `fresh`
+   * (default: when another tab is shown) starts the shown diagram's selection, profile and view focus over. */
   const commit = (
     workbook: Workbook,
     activeTab: number,
-    opts: { remember?: boolean; fresh?: boolean } = {}
+    opts: { remember?: boolean; fresh?: boolean; label?: HistoryLabel; whole?: boolean } = {}
   ) => {
     const project = workbook.documents[activeTab] as Project;
     const fresh = opts.fresh ?? activeTab !== state.activeTab;
     // Undo replaces whole documents, which a shared session cannot replay: no history while one is open.
     if ((opts.remember ?? true) && !collab) {
-      past.push({ before: snapshot(), after: { workbook, activeTab } });
-      if (past.length > 60) past.shift();
-      future.length = 0;
+      const before = { workbook: state.workbook, shownId: state.project.id };
+      const after = { workbook, shownId: project.id };
+      // `whole`: the project is replaced, whatever ids the incoming diagrams share with the present ones.
+      const kind = opts.whole ? 'project' : stepKind(before, after);
+      const label: HistoryLabel = opts.label ?? {
+        key: kind === 'project' ? 'historyProject' : 'historyChange',
+      };
+      if (kind === 'diagram')
+        history.record(
+          { scope: 'diagram', docId: project.id, before: state.project, after: project },
+          label,
+          nowIso()
+        );
+      else if (kind === 'project')
+        history.record(
+          { scope: 'project', before, after, ...(opts.whole ? { whole: true } : {}) },
+          label,
+          nowIso()
+        );
     }
     const rootId = (rootNode(project) as { id: string }).id;
     const selected =
@@ -372,8 +411,6 @@ export function createStore(
       selectedId: selected,
       actorId: actor,
       appearance: effectiveAppearance(store, project),
-      canUndo: !collab && past.length > 0,
-      canRedo: !collab && future.length > 0,
       ...(fresh
         ? {
             selectedLibraryReason: null,
@@ -393,6 +430,7 @@ export function createStore(
           }
         : {}),
     });
+    set(historyFlags());
     persist(project);
     if (fresh) {
       writeView(store, state.view);
@@ -404,7 +442,10 @@ export function createStore(
         runs.forEach((run) => run());
       }
   };
-  const replace = (incoming: Project, opts: { remember?: boolean; fresh?: boolean } = {}) =>
+  const replace = (
+    incoming: Project,
+    opts: { remember?: boolean; fresh?: boolean; label?: HistoryLabel; whole?: boolean } = {}
+  ) =>
     // Every document enters here (open, import, example, library, join): an archived calculation method becomes
     // the default one (owner 2026-11-18).
     commit(
@@ -422,10 +463,18 @@ export function createStore(
   const install = (validated: Project): boolean => {
     try {
       if (isPlainDocument(state.workbook) || validated.id === state.project.id)
-        replace(validated, { fresh: true });
+        replace(validated, {
+          fresh: true,
+          label: { key: 'historyReplaced', detail: validated.title },
+          // Another document over one unnamed diagram replaces the project as a whole.
+          whole: validated.id !== state.project.id,
+        });
       else {
         const { workbook } = attachDocuments(state.workbook, [withOfferedScoring(validated)], newId);
-        commit(workbook, state.workbook.documents.length, { fresh: true });
+        commit(workbook, state.workbook.documents.length, {
+          fresh: true,
+          label: { key: 'historyTabAdd', detail: validated.title },
+        });
         set({ notice: { kind: 'info', text: tr()('tabOpenedNotice', { title: validated.title }) } });
       }
     } catch (error) {
@@ -433,6 +482,30 @@ export function createStore(
     }
     set({ home: false });
     return true;
+  };
+  /** Apply one side of a history step. A diagram's step puts that diagram's content back; a structure step puts
+   * the tabs, names and sketchpads back and leaves every diagram's present content alone (`restructure`). */
+  const applyStep = (step: HistoryStep, side: 'before' | 'after') => {
+    if (step.scope === 'diagram') {
+      const index = state.workbook.documents.findIndex((d) => d.id === step.docId);
+      if (index !== -1)
+        commit(replaceDocument(state.workbook, index, step[side]), index, { remember: false });
+      return;
+    }
+    // The side that is being left keeps what it has become since: a sketchpad drawn on, a diagram edited after
+    // it was attached come back as they are now when the step is walked the other way.
+    const other = side === 'before' ? 'after' : 'before';
+    step[other] = step.whole
+      ? { workbook: state.workbook, shownId: state.project.id }
+      : { ...step[other], workbook: restructure(step[other].workbook, state.workbook) };
+    const view = step[side];
+    // A step that replaced the project is the state it holds; any other puts the structure back and leaves the
+    // content every diagram and sketchpad has now.
+    const workbook = step.whole ? view.workbook : restructure(view.workbook, state.workbook);
+    const shown = workbook.documents.findIndex((d) => d.id === view.shownId);
+    commit(workbook, shown === -1 ? Math.min(state.activeTab, workbook.documents.length - 1) : shown, {
+      remember: false,
+    });
   };
   /** Tabs stay as they are while a session is open: it shares the diagram that was shown when it began. */
   const tabsLocked = (): boolean => {
@@ -445,8 +518,7 @@ export function createStore(
     collabUnsubscribe = [];
     collab = null;
     awaitingNodes.clear();
-    past.length = 0;
-    future.length = 0;
+    history.clear();
     set({ canUndo: false, canRedo: false });
   };
 
@@ -475,7 +547,7 @@ export function createStore(
         const ctx = { now: nowIso(), actorId: state.actorId };
         const next = applyCommand(state.project, command, ctx);
         if (next === state.project) return false;
-        replace(next);
+        replace(next, { label: commandLabel(command, state.project, next) });
         if (collab?.role === 'host') collab.session.localApplied(command, ctx, next);
         return true;
       } catch (error) {
@@ -575,19 +647,46 @@ export function createStore(
     },
     undo() {
       if (collab) return;
-      const step = past.pop();
-      if (!step) return;
-      future.push(step);
-      commit(step.before.workbook, step.before.activeTab, { remember: false });
-      set({ canUndo: past.length > 0, canRedo: future.length > 0 });
+      const step = history.takeUndo(state.project.id);
+      if (step) applyStep(step, 'before');
     },
     redo() {
       if (collab) return;
-      const step = future.pop();
-      if (!step) return;
-      past.push(step);
-      commit(step.after.workbook, step.after.activeTab, { remember: false });
-      set({ canUndo: past.length > 0, canRedo: future.length > 0 });
+      const step = history.takeRedo(state.project.id);
+      if (step) applyStep(step, 'after');
+    },
+    /** The history list: the shown diagram's steps and the project structure's, oldest first. */
+    historyList: () => (collab ? [] : history.list(state.project.id)),
+    /** Take back the structure step `seq` (a removed tab) if it is still the newest one; returns success. */
+    undoStructure(seq: number | null = history.newestStructure()): boolean {
+      if (collab || seq === null) return false;
+      const step = history.takeStructureUndo(seq);
+      if (step) applyStep(step, 'before');
+      return step !== null;
+    },
+    /** Go to the state right after step `seq` (0: before the first step), undoing or redoing on the way. */
+    jumpTo(seq: number) {
+      if (collab) return;
+      // The list is the shown diagram's: the jump walks that diagram's steps and the structure's, and never
+      // another tab's, even when a structure step on the way shows another tab for a moment.
+      const pinned = state.project.id;
+      for (let guard = 0; guard < 1000; guard++) {
+        const steps = history.list(pinned);
+        const newestDone = steps.filter((s) => s.done).pop();
+        const oldestUndone = steps.find((s) => !s.done);
+        const back = !!newestDone && newestDone.step.seq > seq;
+        const step = back
+          ? history.takeUndo(pinned, true)
+          : oldestUndone && oldestUndone.step.seq <= seq
+            ? history.takeRedo(pinned, true)
+            : null;
+        if (!step) return;
+        applyStep(step, back ? 'before' : 'after');
+        const index = state.workbook.documents.findIndex((d) => d.id === pinned);
+        // The diagram itself was taken away by the step (the one that brought it in): the jump ends there.
+        if (index === -1) return;
+        if (index !== state.activeTab) commit(state.workbook, index, { remember: false });
+      }
     },
     /** Show another tab. Not an undo step: looking at a diagram changes nothing. */
     selectTab(index: number): boolean {
@@ -598,12 +697,15 @@ export function createStore(
     },
     /** Add diagrams after the present tabs and show the first of them; returns how many were added. A diagram
      * whose id the project already holds comes in as a copy with a new id. */
-    attachTabs(documents: readonly Project[]): number {
+    attachTabs(documents: readonly Project[], sketches: readonly ProjectSketch[] = []): number {
       if (documents.length === 0 || tabsLocked()) return 0;
       try {
         const incoming = documents.map((d) => withOfferedScoring(parseProject(d)));
-        const { workbook } = attachDocuments(state.workbook, incoming, newId);
-        commit(workbook, state.workbook.documents.length, { fresh: true });
+        const { workbook } = attachDocuments(state.workbook, incoming, newId, sketches);
+        commit(workbook, state.workbook.documents.length, {
+          fresh: true,
+          label: { key: 'historyTabAdd', detail: (incoming[0] as Project).title },
+        });
         set({ home: false });
         return incoming.length;
       } catch (error) {
@@ -616,11 +718,24 @@ export function createStore(
       if (tabsLocked()) return false;
       try {
         const workbook = removeDocument(state.workbook, index);
+        const removed = (state.workbook.documents[index] as Project).title;
         const active =
           index < state.activeTab
             ? state.activeTab - 1
             : Math.min(state.activeTab, workbook.documents.length - 1);
-        commit(workbook, active, { fresh: index === state.activeTab });
+        commit(workbook, active, {
+          fresh: index === state.activeTab,
+          label: { key: 'historyTabRemove', detail: (state.workbook.documents[index] as Project).title },
+        });
+        // Kumoa stays with the shown diagram, so the removal offers its own way back.
+        const restore = history.newestStructure();
+        set({
+          notice: {
+            kind: 'info',
+            text: tr()('tabRemovedNotice', { title: removed }),
+            ...(restore ? { restore } : {}),
+          },
+        });
         return true;
       } catch (error) {
         return refused(error);
@@ -635,14 +750,55 @@ export function createStore(
       commit(
         workbook,
         workbook.documents.findIndex((d) => d.id === shown),
-        { fresh: false }
+        { fresh: false, label: { key: 'historyTabMove', detail: state.project.title } }
       );
+      return true;
+    },
+    /** A new empty sketchpad in the project; returns its id, or null when refused. */
+    addProjectSketch(name: string): string | null {
+      try {
+        const id = newId();
+        commit(addSketch(state.workbook, id, name, blankSketch(newId())), state.activeTab, {
+          fresh: false,
+          label: { key: 'historySketchAdd', detail: name },
+        });
+        return id;
+      } catch (error) {
+        refused(error);
+        return null;
+      }
+    },
+    /** A project sketchpad as it was just drawn. Not a history step: the sketchpad has its own undo. */
+    drawProjectSketch(id: string, sketch: Sketch) {
+      const workbook = drawSketch(state.workbook, id, sketch);
+      if (workbook !== state.workbook) commit(workbook, state.activeTab, { remember: false, fresh: false });
+    },
+    renameProjectSketch(id: string, name: string): boolean {
+      const workbook = renameSketch(state.workbook, id, name);
+      if (workbook === state.workbook) return false;
+      commit(workbook, state.activeTab, {
+        fresh: false,
+        label: { key: 'historySketchRename', detail: name },
+      });
+      return true;
+    },
+    removeProjectSketch(id: string): boolean {
+      const removed = state.workbook.sketches.find((s) => s.id === id);
+      const workbook = removeSketch(state.workbook, id);
+      if (!removed || workbook === state.workbook) return false;
+      commit(workbook, state.activeTab, {
+        fresh: false,
+        label: { key: 'historySketchRemove', detail: removed.name },
+      });
       return true;
     },
     renameProject(title: string): boolean {
       const workbook = renameWorkbook(state.workbook, title);
       if (workbook.title === state.workbook.title) return false;
-      commit(workbook, state.activeTab, { fresh: false });
+      commit(workbook, state.activeTab, {
+        fresh: false,
+        label: { key: 'historyProjectRename', detail: workbook.title },
+      });
       return true;
     },
     /** Replace the whole project with an opened one (undo brings the previous project back). */
@@ -657,7 +813,16 @@ export function createStore(
       }
       try {
         // The store's own boundary: whoever calls, the project that enters has been through the file's checks.
-        commit(parseWorkbook(workbookFileObject(incoming)), 0, { fresh: true });
+        const opened = parseWorkbook(workbookFileObject(incoming));
+        // Sketchpads with nothing drawn are not written, so they are not in `opened`; nothing is lost by that.
+        commit(opened, 0, {
+          fresh: true,
+          whole: true,
+          label: {
+            key: 'historyProjectOpen',
+            detail: opened.title || (opened.documents[0] as Project).title,
+          },
+        });
       } catch (error) {
         return refused(error);
       }

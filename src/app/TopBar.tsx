@@ -239,6 +239,17 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
           >
             ↷
           </button>
+          <button
+            type="button"
+            id="btnHistoryTop"
+            className="zone-toggle"
+            disabled={inSession}
+            title={inSession ? t('historyInSession') : t('historyDialogTitle')}
+            aria-label={t('historyDialogTitle')}
+            onClick={() => store.openDialog('history')}
+          >
+            ≣
+          </button>
         </div>
         <div className="zone-controls" role="group" aria-label={t('zoneControls')}>
           {ZONE_BUTTONS.map(({ zone, id, glyph, key, shortcut }) => (

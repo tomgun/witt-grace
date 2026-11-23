@@ -339,6 +339,9 @@ export function Toolbar({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcu
             <Item id="btnRedo" onClick={() => store.redo()} disabled={!state.canRedo} kbd="Ctrl/Cmd+Shift+Z">
               {t('redo')}
             </Item>
+            <Item id="btnHistory" onClick={() => store.openDialog('history')} disabled={inSession}>
+              {t('historyMenu')}
+            </Item>
           </Menu>
           <Menu id="assessmentMenu" label={t('toolbarAssessGroup')}>
             <Item id="btnPeople" onClick={() => store.openDialog('people')} title={t('profileManage')}>

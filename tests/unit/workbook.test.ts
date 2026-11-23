@@ -6,12 +6,17 @@
  *       appends in order and gives a colliding diagram a new id; the last diagram cannot be removed; moving keeps
  *       every diagram; a tab never takes a document another tab holds; the browser restore puts the shown
  *       diagram's own autosave into the tab that holds its id, and adds a diagram it does not know as a new tab
- *       (never over a stored one); a tab is called by the document's title, or its question while unnamed
+ *       (never over a stored one); a tab is called by the document's title, or its question while unnamed; a
+ *       project has up to 20 named sketchpads, written to the file only when something is drawn on them, refused
+ *       with the place when one does not parse; attaching a whole project brings its sketchpads without
+ *       overwriting one; a step in the project's structure keeps the content every diagram and sketchpad has now
  * test: tests/unit/workbook.test.ts
  * red-against: an attached diagram overwriting the one with the same id (work lost on attaching a file twice), the
  *              rename map dropped, removing the only diagram leaving an empty project, a move that drops or
  *              doubles a diagram, a stale stored copy winning over the fresh autosave, a fresh autosave doubled
- *              into a second tab, an unknown autosave written over the shown tab's stored diagram, a version-2 file read as version 1, an error that does not say which diagram
+ *              into a second tab, an empty sketchpad written to every file, a drawing left out of the saved
+ *              project file, an attached sketchpad written over the person's own with the same id, undoing a
+ *              removed tab taking back the edits made in other diagrams since, an unknown autosave written over the shown tab's stored diagram, a version-2 file read as version 1, an error that does not say which diagram
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -19,6 +24,12 @@ import {
   SCORING_VERSION,
   attachDocuments,
   createBlankProject,
+  addSketch,
+  drawSketch,
+  isPlainDocument,
+  removeSketch,
+  renameSketch,
+  restructure,
   diagramLabel,
   moveDocument,
   parseWorkbook,
@@ -32,7 +43,9 @@ import {
   workbookFilename,
   workbookOf,
 } from '../../src/domain/index.ts';
-import type { Project, Workbook } from '../../src/domain/index.ts';
+import type { Project, ProjectSketch, Workbook } from '../../src/domain/index.ts';
+import { addElement, blankSketch } from '../../src/domain/sketch.ts';
+import type { Sketch } from '../../src/domain/sketch.ts';
 
 const NOW = '2026-11-23T10:00:00.000Z';
 const doc = (id: string, title = `Kaavio ${id}`): Project => ({
@@ -49,6 +62,7 @@ const book = (...ids: string[]): Workbook => ({
   id: 'wb-1',
   title: 'Hanke',
   documents: ids.map((id) => doc(id)),
+  sketches: [],
 });
 const ids = (workbook: Workbook): string[] => workbook.documents.map((d) => d.id);
 const counter = (prefix: string) => {
@@ -138,6 +152,7 @@ test('attaching stops at 50 diagrams and changes nothing then', () => {
     id: 'wb',
     title: '',
     documents: Array.from({ length: 49 }, (_, i) => doc(`d${i}`)),
+    sketches: [],
   };
   assert.equal(attachDocuments(full, [doc('x')], counter('n')).workbook.documents.length, 50);
   assert.throws(() => attachDocuments(full, [doc('x'), doc('y')], counter('n')), /enintään 50 kaaviota/);
@@ -214,4 +229,111 @@ test('restore: nothing stored gives a project of the one diagram, or nothing; a 
   assert.equal(restoreWorkbook({ workbook: book('a', 'b'), active: 9 }, null, counter('wb'))?.active, 1);
   assert.equal(restoreWorkbook({ workbook: book('a', 'b'), active: -3 }, null, counter('wb'))?.active, 0);
   assert.equal(restoreWorkbook({ workbook: book('a', 'b'), active: 0.5 }, null, counter('wb'))?.active, 0);
+});
+
+const drawn = (id = 'p1'): Sketch =>
+  addElement(blankSketch('f1'), 0, { id, type: 'pen', color: 0, size: 4, points: [10, 10, 40, 40] });
+const pad = (id: string, name: string, sketch: Sketch = drawn()): ProjectSketch => ({ id, name, sketch });
+
+test('sketchpads: several per project, named, drawn on, removed; an empty one makes a project but is not saved', () => {
+  const plain = { ...book('a'), title: '' };
+  assert.equal(isPlainDocument(plain), true);
+  let project = addSketch(plain, 's1', '  Luonnos  ', blankSketch('f1'));
+  assert.equal(isPlainDocument(project), false);
+  assert.deepEqual(
+    project.sketches.map((s) => s.name),
+    ['Luonnos']
+  );
+  // Nothing drawn yet: the file has no `sketches` and reads back as the plain diagram.
+  assert.equal('sketches' in (JSON.parse(serializeWorkbookFile(project)) as object), false);
+  project = addSketch(project, 's2', 'Animaatio', blankSketch('f2'));
+  project = drawSketch(project, 's2', drawn());
+  assert.equal(drawSketch(project, 'no-such', drawn()), project);
+  project = renameSketch(project, 's2', 'x'.repeat(50));
+  assert.equal(project.sketches[1]?.name.length, 40);
+  assert.equal(renameSketch(project, 's2', '   '), project);
+  const text = serializeWorkbookFile(project);
+  const back = parseWorkbook(JSON.parse(text));
+  assert.deepEqual(
+    back.sketches.map((s) => s.id),
+    ['s2']
+  );
+  assert.deepEqual(back.sketches[0]?.sketch, drawn());
+  assert.equal(serializeWorkbookFile(back), text);
+  assert.deepEqual(
+    removeSketch(project, 's1').sketches.map((s) => s.id),
+    ['s2']
+  );
+  assert.equal(removeSketch(project, 'no-such'), project);
+  assert.throws(() => addSketch(project, 's2', 'Sama', blankSketch('f3')), /tunniste on jo käytössä/);
+});
+
+test('at most 20 sketchpads, in a project and in a file', () => {
+  let project = book('a');
+  for (let i = 0; i < 20; i++) project = addSketch(project, `s${i}`, `L${i}`, drawn());
+  assert.throws(() => addSketch(project, 's20', 'L20', drawn()), /enintään 20 lehtiötä/);
+  const good = JSON.parse(serializeWorkbookFile(project)) as { sketches: unknown[] };
+  assert.equal(good.sketches.length, 20);
+  assert.throws(
+    () => parseWorkbook({ ...good, sketches: [...good.sketches, good.sketches[0]] }),
+    /^ParseError: \$\.sketches: enintään 20 lehtiötä$/
+  );
+});
+
+test('a project file refuses a sketchpad that does not parse, a missing id and a doubled id, naming the place', () => {
+  const good = JSON.parse(serializeWorkbookFile(book('a'))) as Record<string, unknown>;
+  const refusal = (sketches: unknown): string => {
+    try {
+      parseWorkbook({ ...good, sketches });
+    } catch (error) {
+      return (error as Error).message;
+    }
+    return 'accepted';
+  };
+  assert.match(
+    refusal([{ id: 's1', name: 'A', sketch: { format: 'witt-sketch', version: 9 } }]),
+    /^\$\.sketches\[0\]\.sketch: /
+  );
+  assert.match(refusal([{ name: 'A', sketch: drawn() }]), /^\$\.sketches\[0\]\.id: /);
+  assert.match(refusal([pad('s1', 'A'), pad('s1', 'B')]), /^\$\.sketches\[1\]\.id: sama tunniste/);
+  assert.match(refusal([{ id: 's1', name: 7, sketch: drawn() }]), /^\$\.sketches\[0\]\.name: /);
+  // An untouched sketchpad in a file is dropped.
+  assert.equal(refusal([pad('s1', 'A', blankSketch('f1'))]), 'accepted');
+  assert.deepEqual(parseWorkbook({ ...good, sketches: [pad('s1', 'A', blankSketch('f1'))] }).sketches, []);
+});
+
+test('attaching a whole project brings its sketchpads; one whose id is taken comes under a new id', () => {
+  const mine = { ...book('a'), sketches: [pad('s1', 'Oma')] };
+  const { workbook } = attachDocuments(mine, [doc('b')], counter('new'), [
+    pad('s1', 'Tuotu'),
+    pad('s2', 'Toinen'),
+  ]);
+  assert.deepEqual(
+    workbook.sketches.map((s) => [s.id, s.name]),
+    [
+      ['s1', 'Oma'],
+      ['new-1', 'Tuotu'],
+      ['s2', 'Toinen'],
+    ]
+  );
+  assert.equal(workbook.sketches[0], mine.sketches[0]);
+});
+
+test('restructure: the tabs, names and sketchpads of the target with the content each has now', () => {
+  const before = { ...book('a', 'b', 'c'), sketches: [pad('s1', 'Vanha nimi', drawn('old'))] };
+  // Since then: c was removed, a was edited, the sketchpad was drawn on and renamed, the project renamed.
+  const editedA = doc('a', 'A muokattu');
+  const current: Workbook = {
+    id: 'wb-1',
+    title: 'Uusi nimi',
+    documents: [editedA, before.documents[1] as Project],
+    sketches: [pad('s1', 'Uusi nimi', drawn('new'))],
+  };
+  const back = restructure(before, current);
+  assert.deepEqual(ids(back), ['a', 'b', 'c']);
+  assert.equal(back.title, 'Hanke');
+  assert.equal(back.documents[0], editedA);
+  assert.equal(back.documents[2], before.documents[2]);
+  assert.equal(back.sketches[0]?.name, 'Vanha nimi');
+  assert.deepEqual(back.sketches[0]?.sketch, drawn('new'));
 });

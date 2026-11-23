@@ -8,6 +8,7 @@ import type { ModalRequest } from './store.ts';
 import { moveTargets } from './actions.ts';
 import type { Frame } from './projection.ts';
 import { HelpDialog } from './HelpDialog.tsx';
+import { HistoryDialog } from './HistoryDialog.tsx';
 import { LinksDialog } from './LinksDialog.tsx';
 import { ReplaceDialog } from './ReplaceDialog.tsx';
 import { EditionBadge } from './EditionBadge.tsx';
@@ -98,6 +99,19 @@ export function NoticeBar() {
       data-testid="notice"
     >
       <span>{notice.text}</span>
+      {notice.restore !== undefined ? (
+        <button
+          type="button"
+          className="btn quiet"
+          id="btnNoticeRestore"
+          onClick={() => {
+            getStore().undoStructure(notice.restore);
+            getStore().notify(null);
+          }}
+        >
+          {t('undo')}
+        </button>
+      ) : null}
       {notice.undo && canUndo ? (
         <button
           type="button"
@@ -408,6 +422,7 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
       <ExamplesDialog />
       {state.dialog === 'newWork' ? <NewWorkDialog /> : null}
       {state.dialog === 'about' ? <AboutDialog /> : null}
+      {state.dialog === 'history' ? <HistoryDialog /> : null}
       {state.dialog === 'help' ? <HelpDialog onShortcutsChanged={onShortcutsChanged} /> : null}
       {state.dialog === 'library' ? <LibraryDialog /> : null}
       {state.dialog === 'visualExport' ? <VisualExportDialog frame={frame} /> : null}
@@ -433,6 +448,7 @@ export function ModalHost({ frame, onShortcutsChanged }: { frame: Frame; onShort
         'aiReview',
         'aiResults',
         'collab',
+        'history',
       ].includes(state.dialog) ? (
         <PlaceholderDialog name={state.dialog} />
       ) : null}

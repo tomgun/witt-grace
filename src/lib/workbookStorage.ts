@@ -1,6 +1,7 @@
-// The project (several diagrams as tabs, WG-059) in browser storage. The active diagram keeps its own autosave key
+// The project (several diagrams as tabs, WG-059) in browser storage. The shown diagram keeps its own autosave key
 // (`witt-project-v3`, written on every change, the prototype's key); this key holds the whole project and is
-// written only when the tabs change: a diagram added, removed, moved, the project renamed, another tab shown.
+// written when the tabs or the sketchpads change: a diagram added, removed, moved, the project renamed, another
+// tab shown, a stroke on a project sketchpad (the whole entry is rewritten then; a known cost, see STATUS).
 // A project of one unnamed diagram has no entry here, so such a browser stores exactly what it did before tabs.
 import { isPlainDocument, parseWorkbook, restoreWorkbook, workbookFileObject } from '../domain/index.ts';
 import type { Project, Workbook } from '../domain/index.ts';

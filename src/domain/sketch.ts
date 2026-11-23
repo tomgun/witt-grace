@@ -542,6 +542,10 @@ export const setFps = (sketch: Sketch, fps: number): Sketch => ({
 });
 
 // ---- the file ---------------------------------------------------------------------------------------------------
+/** Something has been drawn or a second frame made: an untouched sketchpad is not worth keeping. */
+export const sketchHasDrawing = (sketch: Sketch): boolean =>
+  sketch.frames.length > 1 || sketch.frames.some((f) => f.elements.length > 0);
+
 export const serializeSketch = (sketch: Sketch): string => `${JSON.stringify(sketch)}\n`;
 
 export type SketchParse = { ok: true; sketch: Sketch } | { ok: false; reason: string };

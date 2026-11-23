@@ -4,7 +4,8 @@
 import { useEffect } from 'react';
 import type { KeyboardEvent } from 'react';
 import { diagramLabel, isPlainDocument } from '../domain/index.ts';
-import { addDiagram, removeDiagram, renameDiagram, renameProject } from './actions.ts';
+import { addDiagram, addSketchpad, removeDiagram, renameDiagram, renameProject } from './actions.ts';
+import { projectSheet } from './sketchStore.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
 export function DocTabs() {
@@ -90,6 +91,21 @@ export function DocTabs() {
           </button>
         ))}
       </div>
+      {workbook.sketches.map((entry) => (
+        <button
+          key={entry.id}
+          type="button"
+          className="doc-tab doc-tab-sketch"
+          data-sketch-id={entry.id}
+          title={t('projectSketchOpen')}
+          onClick={() =>
+            window.dispatchEvent(new CustomEvent('witt-sketch', { detail: projectSheet(entry.id) }))
+          }
+        >
+          <span className="doc-tab-type">{t('sketchWhich')}</span>
+          <span className="doc-tab-title">{entry.name}</span>
+        </button>
+      ))}
       <div className="doc-tabs-actions">
         <button
           type="button"
@@ -143,6 +159,15 @@ export function DocTabs() {
           onClick={addDiagram}
         >
           {t('tabAdd')}
+        </button>
+        <button
+          type="button"
+          id="btnSketchAdd"
+          className="doc-tab-action doc-tab-add"
+          title={t('sketchProject')}
+          onClick={addSketchpad}
+        >
+          {t('sketchNew')}
         </button>
       </div>
     </div>

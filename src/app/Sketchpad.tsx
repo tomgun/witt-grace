@@ -39,7 +39,15 @@ import { downloadText, pickTextFile } from '../lib/files.ts';
 import type { MessageKey } from '../lib/i18n/catalog.ts';
 import { applySketchOps, diffSketch } from '../domain/sketchOps.ts';
 import { newId } from '../lib/providers.ts';
-import { hasDrawing, ownSketch, sharedSketch } from './sketchStore.ts';
+import {
+  hasDrawing,
+  ownSketch,
+  projectSheet,
+  projectSheetId,
+  projectSketchPad,
+  sharedSketch,
+} from './sketchStore.ts';
+import type { SketchSheet } from './sketchStore.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
 /** The pen a person starts with on the shared sketchpad, by their place in the session; white is left out. */
@@ -208,14 +216,20 @@ function draw(ctx: CanvasRenderingContext2D, elements: readonly SketchElement[],
   ctx.restore();
 }
 
-export default function Sketchpad({ onClose }: { onClose: () => void }) {
+export default function Sketchpad({ onClose, initial }: { onClose: () => void; initial?: SketchSheet }) {
   const t = useTranslator();
-  const { collab } = useAppState();
+  const { collab, workbook } = useAppState();
   /** A session is on: the shared sketchpad is drawn on by everyone in it. */
   const live = collab?.phase === 'active' || collab?.phase === 'reconnecting';
   const place = collab ? collab.people.findIndex((p) => p.userId === collab.selfUserId) : -1;
-  const [which, setWhich] = useState<'own' | 'shared'>(live ? 'shared' : 'own');
-  const pad = which === 'shared' ? sharedSketch : ownSketch;
+  // A session opens on its shared sketchpad; otherwise the sheet asked for, else the project's first sketchpad,
+  // else the person's own.
+  const [which, setWhich] = useState<SketchSheet>(
+    live ? 'shared' : (initial ?? (workbook.sketches[0] ? projectSheet(workbook.sketches[0].id) : 'own'))
+  );
+  const projectId = projectSheetId(which);
+  const projectEntry = projectId ? workbook.sketches.find((s) => s.id === projectId) : undefined;
+  const pad = which === 'shared' ? sharedSketch : projectId ? projectSketchPad(projectId) : ownSketch;
   const sketch = useSyncExternalStore(pad.subscribe, pad.get);
   const sharing = which === 'shared' && live;
   /** Waiting for the host to come back: what was drawn now would be lost when it does. */
@@ -280,7 +294,7 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     }
     setSketch(next, base);
   };
-  const choose = (next: 'own' | 'shared') => {
+  const choose = (next: SketchSheet) => {
     if (next === which) return;
     // Each sketchpad has its own steps to undo; they are not carried from one to the other.
     history.current = { past: [], future: [] };
@@ -294,6 +308,38 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
     if (next === 'shared' && live) setColor(seatColor(place));
     setWhich(next);
   };
+  // The project's sketchpads: a new one, a name, removal. The sheet in hand is left when it is gone (removed
+  // here, or taken away by the project's undo).
+  const addSheet = () => {
+    const id = getStore().addProjectSketch(
+      t('sketchDefaultName', { n: getStore().get().workbook.sketches.length + 1 })
+    );
+    if (id) choose(projectSheet(id));
+  };
+  const renameSheet = async () => {
+    if (!projectEntry) return;
+    const name = await getStore().askText(
+      t('sketchRenamePrompt'),
+      t('sketchRenameAction'),
+      t('sketchRenameAction'),
+      projectEntry.name
+    );
+    if (name) getStore().renameProjectSketch(projectEntry.id, name);
+  };
+  const removeSheet = async () => {
+    if (!projectEntry) return;
+    if (!(await getStore().askConfirm(t('sketchRemoveConfirm', { name: projectEntry.name })))) return;
+    const id = projectEntry.id;
+    // Leave the sheet first: its undo steps must not reach another sketchpad.
+    choose('own');
+    getStore().removeProjectSketch(id);
+  };
+  const sheetGone = projectId !== null && !projectEntry;
+  useEffect(() => {
+    if (!sheetGone) return;
+    const timer = setTimeout(() => choose('own'));
+    return () => clearTimeout(timer);
+  });
   const undo = () => {
     if (sharing) return;
     const previous = history.current.past.pop();
@@ -731,17 +777,39 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
           ←
         </button>
         <h1>{t('sketchTitle')}</h1>
-        {live || copyKept ? (
-          <div className="sketch-which" role="group" aria-label={t('sketchWhich')}>
+        <div className="sketch-which" role="group" aria-label={t('sketchWhich')}>
+          <button
+            type="button"
+            className="btn quiet"
+            id="btnSketchOwn"
+            aria-pressed={which === 'own'}
+            onClick={() => choose('own')}
+          >
+            {t('sketchOwn')}
+          </button>
+          {workbook.sketches.map((entry) => (
             <button
+              key={entry.id}
               type="button"
-              className="btn quiet"
-              id="btnSketchOwn"
-              aria-pressed={which === 'own'}
-              onClick={() => choose('own')}
+              className="btn quiet sketch-sheet"
+              data-sketch-id={entry.id}
+              aria-pressed={which === projectSheet(entry.id)}
+              title={t('sketchProject')}
+              onClick={() => choose(projectSheet(entry.id))}
             >
-              {t('sketchOwn')}
+              {entry.name}
             </button>
+          ))}
+          <button
+            type="button"
+            className="btn quiet"
+            id="btnSketchNew"
+            title={t('sketchProject')}
+            onClick={addSheet}
+          >
+            {t('sketchNew')}
+          </button>
+          {live || copyKept ? (
             <button
               type="button"
               className="btn quiet"
@@ -751,9 +819,29 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
             >
               {t(live ? 'sketchShared' : 'sketchSharedCopy')}
             </button>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
         <div className="sketch-bar-actions">
+          {projectEntry ? (
+            <>
+              <button
+                type="button"
+                className="btn quiet"
+                id="btnSketchRename"
+                onClick={() => void renameSheet()}
+              >
+                {t('sketchRenameAction')}
+              </button>
+              <button
+                type="button"
+                className="btn quiet"
+                id="btnSketchRemove"
+                onClick={() => void removeSheet()}
+              >
+                {t('sketchRemoveAction')}
+              </button>
+            </>
+          ) : null}
           <button
             type="button"
             className="btn quiet"
@@ -883,7 +971,9 @@ export default function Sketchpad({ onClose }: { onClose: () => void }) {
                     ? t('sketchSharedHint')
                     : which === 'shared'
                       ? t('sketchCopyHint')
-                      : t('sketchIntro'))}
+                      : projectId
+                        ? t('sketchProjectHint')
+                        : t('sketchIntro'))}
           </p>
           {sharing && collab ? (
             <ul className="sketch-people" id="sketchPeople" aria-label={t('sketchPens')}>
