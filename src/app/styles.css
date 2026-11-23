@@ -11279,3 +11279,150 @@ body.witt-focus .doc-tabs {
   gap: 6px;
   margin-top: 8px;
 }
+
+/* ---- The home example, reworked (owner 2026-11-23): a wider card, each branch with its own reasons indented
+   under it and tied to it by a line, an option tone for the decision example, light arrows at the sides. ---- */
+.home-hero {
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  gap: clamp(24px, 3.4vw, 56px);
+}
+.home-visual {
+  min-height: 492px;
+  padding: 26px 30px;
+  justify-content: flex-start;
+  gap: 20px;
+}
+.home-visual .visual-scenario {
+  gap: 22px;
+  flex: 1;
+}
+.home-visual .visual-branches {
+  align-items: start;
+  gap: 18px;
+}
+.visual-branch {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.home-visual .visual-node {
+  min-height: 0;
+  padding: 13px 14px;
+}
+.home-visual .visual-node strong {
+  min-height: 0;
+}
+.visual-node.option {
+  border-top-color: var(--option);
+}
+.visual-node.option small {
+  color: var(--option);
+}
+/* A branch's own reasons: a stem down from the branch's card, and an elbow into each reason. */
+.visual-children {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 20px;
+  padding: 12px 0 0 16px;
+  border-left: 2px solid var(--border);
+}
+.visual-children .visual-node {
+  padding: 10px 12px;
+}
+.visual-children .visual-node::before {
+  content: '';
+  position: absolute;
+  left: -17px;
+  top: 50%;
+  width: 16px;
+  border-top: 2px solid var(--border);
+}
+.visual-children .visual-node strong {
+  font-size: 12px;
+  font-weight: 650;
+}
+/* The stem ends at the last reason's elbow, not below it. */
+.visual-children .visual-node:last-child::after {
+  content: '';
+  position: absolute;
+  left: -19px;
+  top: calc(50% + 1px);
+  bottom: -2px;
+  width: 4px;
+  background: var(--surface);
+}
+.visual-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 30px;
+  height: 44px;
+  margin-top: -22px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--subtle);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.visual-arrow.prev {
+  left: 6px;
+}
+.visual-arrow.next {
+  right: 6px;
+}
+.home-visual:hover .visual-arrow {
+  opacity: 0.85;
+}
+.visual-arrow:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+  opacity: 1;
+}
+/* A touch screen has no hover: the arrows are always there. */
+@media (hover: none) {
+  .visual-arrow {
+    opacity: 0.85;
+  }
+}
+@media (max-width: 1020px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  /* On a narrow card the arrows sit beside the dots, not over the tree. */
+  .visual-arrow {
+    top: auto;
+    bottom: 38px;
+    margin-top: 0;
+    height: 30px;
+  }
+  .home-visual {
+    padding: 20px 14px;
+  }
+  .home-visual .visual-branches {
+    gap: 10px;
+  }
+  .visual-children {
+    margin-left: 10px;
+    padding-left: 10px;
+  }
+  .visual-children .visual-node::before {
+    left: -11px;
+    width: 10px;
+  }
+  .visual-children .visual-node:last-child::after {
+    left: -13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visual-arrow {
+    transition: none;
+  }
+}

@@ -52,16 +52,24 @@ test('a point of the himmeli is taken hold of with the mouse and let go; control
   test.skip((viewport?.width ?? 1440) < 700, 'the himmeli is still and not held on a phone-width window');
   await page.goto('/');
   const cursor = () => page.locator('#homeScreen').evaluate((el) => (el as HTMLElement).style.cursor);
-  // Find a point: the pointer turns into a hand near one, where nothing of the page is in the way.
-  let spot: [number, number] | null = null;
-  for (let y = 520; y < 880 && !spot; y += 8)
-    for (let x = 600; x < 800 && !spot; x += 8) {
-      await page.mouse.move(x, y);
-      if ((await cursor()) === 'grab') spot = [x, y];
-    }
+  // Find a point: the pointer turns into a hand near one, where nothing of the page is in the way. The page's
+  // layout decides where that is, so the whole window is tried, as pointer moves the page itself would see.
+  const spot = await page.evaluate(() => {
+    const home = document.getElementById('homeScreen') as HTMLElement;
+    for (let y = 8; y < window.innerHeight; y += 8)
+      for (let x = 8; x < window.innerWidth; x += 8) {
+        const target = document.elementFromPoint(x, y);
+        if (!target) continue;
+        target.dispatchEvent(new PointerEvent('pointermove', { clientX: x, clientY: y, bubbles: true }));
+        if (home.style.cursor === 'grab') return [x, y] as [number, number];
+      }
+    return null;
+  });
   expect(spot).not.toBeNull();
   const [x, y] = spot as [number, number];
   const backdrop = page.locator('#homeBackdrop');
+  await page.mouse.move(x, y);
+  expect(await cursor()).toBe('grab');
   await page.mouse.down();
   await expect(backdrop).toHaveAttribute('data-held', /^\d+$/);
   expect(await cursor()).toBe('grabbing');

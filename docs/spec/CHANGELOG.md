@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-23 — `UI_INVENTORY.md` — Owner: the home example clearer and wider, a sub-reason seen to belong to its reason, a decision and a risk example, turns of ten seconds, light arrows at the sides. S-15: `.visual-branch` / `.visual-children`, seven examples, `#btnScenarioPrev`, `#btnScenarioNext`.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner: the home backdrop (himmeli) larger and hung from another place, and its points can be taken hold of and swung, simulated as masses and rods so that the neighbours give and not the whole tree. S-15.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner's plan (WG-059): one person has one stable id in every diagram of a project. S-15: a known name reuses the person's id, `#projectPeople` in the people dialog adds a person of another diagram as they are, a rename reaches every diagram; the document format is unchanged.
 - 2026-11-23 — `UI_INVENTORY.md` — Owner: a restrained animated backdrop on the home screen, made of an argument tree. S-15: `canvas#homeBackdrop`, a slowly turning wire-mesh tree; still with reduced motion and on phones.

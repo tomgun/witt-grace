@@ -6,35 +6,28 @@ import { useEffect, useRef, useState } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
 import { homeCard } from '../lib/workspaceMeta.ts';
 import type { MessageKey } from '../lib/i18n/catalog.ts';
+import { SCENARIOS, SCENARIO_TURN_MS, scenarioAfter } from './homeScenarios.ts';
+import type { Scenario, ScenarioNode } from './homeScenarios.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
-interface Scenario {
-  label: MessageKey;
-  root: MessageKey;
-  pro: MessageKey;
-  proWhy: MessageKey;
-  con: MessageKey;
-  conWhy: MessageKey;
+/** One card of the example: its small label, its text. The catalog's older texts begin with an arrow that is
+ * dropped. */
+function ExampleCard({
+  node,
+  t,
+  leaf = false,
+}: {
+  node: ScenarioNode;
+  t: (key: MessageKey) => string;
+  leaf?: boolean;
+}) {
+  return (
+    <div className={`visual-node ${node.tone}${leaf ? ' leaf' : ''}`}>
+      <small>{t(node.tag)}</small>
+      <strong>{t(node.title).replace(/^↳\s*/, '')}</strong>
+    </div>
+  );
 }
-/** The home screen's example trees: one size, five walks of life (owner 2026-11-20, S-15). All synthetic. */
-const SCENARIOS: readonly Scenario[] = [
-  {
-    label: 'homeScenarioLabel1',
-    root: 'homeCanvasRoot',
-    pro: 'homeCanvasForTitle',
-    proWhy: 'homeCanvasForDetail',
-    con: 'homeCanvasAgainstTitle',
-    conWhy: 'homeCanvasAgainstDetail',
-  },
-  ...([2, 3, 4, 5] as const).map((n): Scenario => ({
-    label: `homeScenarioLabel${n}`,
-    root: `homeScenario${n}Root`,
-    pro: `homeScenario${n}For`,
-    proWhy: `homeScenario${n}ForDetail`,
-    con: `homeScenario${n}Against`,
-    conWhy: `homeScenario${n}AgainstDetail`,
-  })),
-];
 
 export function Home() {
   const state = useAppState();
@@ -57,13 +50,15 @@ export function Home() {
   const continueWork = () => store.setHome(false);
   const invite = useTutorialInvite();
   const [scenario, setScenario] = useState(0);
-  const [picked, setPicked] = useState(false);
   const [hovering, setHovering] = useState(false);
+  // The examples take turns slowly, ten seconds each (owner 2026-11-23), so there is time to read one. The turn
+  // waits while the pointer rests on the picture, starts over when the reader picks an example, and does not
+  // run at all for a person who asked for less motion.
   useEffect(() => {
-    if (picked || hovering || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = window.setInterval(() => setScenario((i) => (i + 1) % SCENARIOS.length), 8000);
-    return () => window.clearInterval(timer);
-  }, [picked, hovering]);
+    if (hovering || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setTimeout(() => setScenario((i) => scenarioAfter(i, 1)), SCENARIO_TURN_MS);
+    return () => window.clearTimeout(timer);
+  }, [scenario, hovering]);
   const shown = SCENARIOS[scenario] as Scenario;
   // The method is told on the page itself (owner 2026-11-20, S-15): the links take the reader to it.
   const toMethod = () => {
@@ -246,9 +241,8 @@ export function Home() {
             ) : null}
             <p className="home-privacy">{t('homePrivacy')}</p>
           </div>
-          {/* A picture of the tool, not content: hidden from a screen reader, its dots not in the tab order. Five
-              small scenarios take turns (owner 2026-11-20, S-15): slowly, not at all when motion is to be reduced,
-              and never again once the reader has picked one or while the pointer rests on the picture. */}
+          {/* A picture of the tool, not content: hidden from a screen reader, its controls not in the tab order.
+              Seven small examples take turns (owner 2026-11-20 and 2026-11-23, S-15). */}
           <div
             className="home-visual"
             aria-hidden="true"
@@ -263,29 +257,42 @@ export function Home() {
               <div className="visual-root">
                 <span className="visual-mini-icon">◇</span> <span>{t(shown.root)}</span>
               </div>
+              {/* Two branches side by side, and under each its own reasons, indented and tied to it by a line:
+                  a reason's reason is seen to belong to that reason (owner 2026-11-23). */}
               <div className="visual-branches">
-                <div className="visual-node supporting">
-                  <small>{t('homeCanvasFor')}</small>
-                  <strong>{t(shown.pro)}</strong>
-                </div>
-                <div className="visual-node opposing">
-                  <small>{t('homeCanvasAgainst')}</small>
-                  <strong>{t(shown.con)}</strong>
-                </div>
-              </div>
-              {/* The reasons' own reasons as cards of their own, as in the real tree (owner 2026-11-20: the lines
-                  inside the cards "ei näytä tutulta"). The catalog's older texts begin with an arrow that is dropped. */}
-              <div className="visual-leaves">
-                <div className="visual-node leaf supporting">
-                  <small>{t('homeCanvasFor')}</small>
-                  <strong>{t(shown.proWhy).replace(/^↳\s*/, '')}</strong>
-                </div>
-                <div className="visual-node leaf opposing">
-                  <small>{t('homeCanvasAgainst')}</small>
-                  <strong>{t(shown.conWhy).replace(/^↳\s*/, '')}</strong>
-                </div>
+                {shown.branches.map((branch) => (
+                  <div className="visual-branch" key={branch.title}>
+                    <ExampleCard node={branch} t={t} />
+                    <div className="visual-children">
+                      {branch.children.map((child) => (
+                        <ExampleCard key={child.title} node={child} t={t} leaf />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
+            {/* Light arrows at the sides: seen when the pointer is on the picture, always on a touch screen. */}
+            <button
+              type="button"
+              tabIndex={-1}
+              className="visual-arrow prev"
+              id="btnScenarioPrev"
+              title={t('homeScenarioPrev')}
+              onClick={() => setScenario((i) => scenarioAfter(i, -1))}
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              tabIndex={-1}
+              className="visual-arrow next"
+              id="btnScenarioNext"
+              title={t('homeScenarioNext')}
+              onClick={() => setScenario((i) => scenarioAfter(i, 1))}
+            >
+              ›
+            </button>
             <div className="visual-dots">
               {SCENARIOS.map((item, i) => (
                 <button
@@ -294,10 +301,7 @@ export function Home() {
                   tabIndex={-1}
                   className={i === scenario ? 'active' : ''}
                   title={t('homeScenarioPick', { name: t(item.label) })}
-                  onClick={() => {
-                    setScenario(i);
-                    setPicked(true);
-                  }}
+                  onClick={() => setScenario(i)}
                 />
               ))}
             </div>

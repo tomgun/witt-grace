@@ -139,14 +139,20 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
     'Punnitse ja päätä GRACE-menetelmällä',
   ]);
   await expect(method.locator('.home-uses li').first()).toContainText('Arvioita ei tarvita.');
-  // The example beside the lead takes turns between five walks of life; a press on a dot picks one and it stays.
+  // The example beside the lead takes turns between seven small trees: five walks of life, a decision, risks.
   const visual = page.locator('.home-visual');
-  await expect(visual.locator('.visual-dots button')).toHaveCount(5);
+  await expect(visual.locator('.visual-dots button')).toHaveCount(7);
   await visual.locator('.visual-dots button').nth(4).click();
   await expect(page.locator('#homeScenarioName')).toHaveText('Perhe');
   await expect(visual.locator('.visual-root')).toContainText('Hankitaanko perheeseen koira?');
-  await expect(visual.locator('.visual-leaves .visual-node strong')).toHaveText([
-    'Koko perhe ulkoilee enemmän',
+  // A reason's own reason is about that reason, and sits under it: each branch holds its card and its children.
+  const branches = visual.locator('.visual-branch');
+  await expect(branches).toHaveCount(2);
+  await expect(branches.nth(0).locator('> .visual-node strong')).toHaveText('Lapset oppivat vastuuta');
+  await expect(branches.nth(0).locator('.visual-children .visual-node strong')).toHaveText([
+    'Hoitovuorot jaetaan lasten kesken',
+  ]);
+  await expect(branches.nth(1).locator('.visual-children .visual-node strong')).toHaveText([
     'Isovanhemmat voivat hoitaa lomilla',
   ]);
   // A picture, not content: hidden from a screen reader and out of the tab order.
@@ -154,11 +160,33 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   expect(await visual.locator('button:not([tabindex="-1"])').count()).toBe(0);
   await visual.locator('.visual-dots button').nth(0).click();
   await expect(page.locator('#homeScenarioName')).toHaveText('Yritys');
-  // The example is a tree: the reasons' own reasons are cards under them, without an arrow.
-  await expect(page.locator('.home-visual .visual-leaves .visual-node strong')).toHaveText([
+  await expect(visual.locator('.visual-children .visual-node strong')).toHaveText([
     'Varhainen palaute auttaa parantamaan tuotetta',
     'Testataan tärkeimmät oletukset ensin',
   ]);
+  // The arrows at the sides go round: back from the first example is the last one, the risks.
+  await visual.hover();
+  await page.locator('#btnScenarioPrev').click();
+  await expect(page.locator('#homeScenarioName')).toHaveText('Riskit');
+  await expect(visual.locator('.visual-root')).toContainText('Verkkokauppa avataan marraskuussa');
+  await expect(branches.nth(0).locator('> .visual-node small')).toHaveText('! RISKI');
+  await expect(branches.nth(0).locator('.visual-children .visual-node small')).toHaveText([
+    'SYY',
+    'TORJUNTA',
+  ]);
+  await page.locator('#btnScenarioPrev').click();
+  await expect(page.locator('#homeScenarioName')).toHaveText('Päätös');
+  await expect(visual.locator('.visual-branch > .visual-node.option strong')).toHaveText([
+    'Toimisto keskustassa',
+    'Etätyö ja pieni tila',
+  ]);
+  await expect(branches.nth(1).locator('.visual-children .visual-node small')).toHaveText([
+    '+ PUOLTAA',
+    '− VASTUSTAA',
+  ]);
+  await page.locator('#btnScenarioNext').click();
+  await page.locator('#btnScenarioNext').click();
+  await expect(page.locator('#homeScenarioName')).toHaveText('Yritys');
   await expect(method.locator('.method-gains li')).toHaveCount(4);
   await expect(method.locator('.home-features li h4')).toHaveText(['Kartoita', 'Punnitse', 'Päätä yhdessä']);
   await expect(method).toContainText('Puuttuva arvio ei ole nolla');
