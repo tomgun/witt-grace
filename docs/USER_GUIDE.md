@@ -200,6 +200,8 @@ The settings are in five sections. Each section's heading says what is set in it
 
 **Panels**: `Alt+1` left, `Alt+2` top (the toolbar), `Alt+3` right, `Alt+4` bottom; the top bar's buttons ◧ ▤ ◨ ▥. The choice is remembered. On a narrow window (≤ 1000 px) the left panel starts hidden and at ≤ 600 px the app opens in the table; at 390 px the panels stack.
 
+Behind the home screen an argument tree drawn as a wire mesh turns slowly. It stands still when your system asks for less motion and on a phone-width window.
+
 **Themes**: Light, Dark, Paper, Star map, Hologram, Manuscript, Quill pen, Night colours, Terminal (green on black like an old terminal), ASCII (cards and tree lines drawn from characters) Comic (hand-drawn, xkcd-like), Obsidian (crisp white text on black, hairline edges without shadows, gold as the one accent colour) and Grove (a morning in a birch grove: a light forest seen from inside: a canopy overhead, tall trunks and birches, ferns at the foot; the main claim in a pale green crown and its reasons hanging below as branches, supporting ones green and opposing ones dashed rowan red; leaves, birds, pollen floating in the light and small animals walking the branches move in the background; choose ↓ top-down in the view settings and the branches droop; the motion stops when your system asks for reduced motion, and large trees and phones get a calmer grove). The first three are saved in the document (and travel with the file); the others are per browser. **Languages**: Finnish, German, English, Spanish, French, Russian, Simplified Chinese, Japanese and Korean; switching is immediate and remembered.
 
 ### The sketchpad

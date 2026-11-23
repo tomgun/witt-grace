@@ -70,6 +70,7 @@ src/app/             the UI; the only code that touches the DOM
   collab.ts          live collaboration wiring: start as host, join from #join=, reload rejoin, connection choice
   shortcuts.ts       witt-keybindings-v1: eight rebindable actions, defaults + - * T F R ? Alt+A
   assessmentPass.ts, tableFormat.ts, format.ts   assessment-round progress, table cell texts, number formatting
+  homeMesh.ts        the home backdrop's geometry (pure): a seeded tree in space and its projection; HomeBackdrop.tsx draws it
   history.ts         the change history (pure): each diagram's steps and the project structure's, what Kumoa takes
   Home, TopBar, Toolbar, DocTabs (project tabs), HistoryDialog, LeftPanel, Canvas, ContextMenu, ClaimPreview, ViewDock, Inspector, TableView, Tutorial
   dialogs.tsx        Modal, NoticeBar, ModalHost (confirm, text, notice, move, links, replace, import report, new work,

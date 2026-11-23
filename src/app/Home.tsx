@@ -1,5 +1,6 @@
 // The home screen (UI_INVENTORY S-01): one main action, three groups of others, and the warnings.
 import { EditionBadge } from './EditionBadge.tsx';
+import { HomeBackdrop } from './HomeBackdrop.tsx';
 import { dismissInviteForGood, dismissInviteForNow, useTutorialInvite } from './Tutorial.tsx';
 import { useEffect, useRef, useState } from 'react';
 import { LanguageSelect, ThemeSelect, ACRONYMS } from './TopBar.tsx';
@@ -84,6 +85,7 @@ export function Home() {
   ] as const;
   return (
     <div id="homeScreen" className="home-screen" data-testid="home">
+      <HomeBackdrop appearance={state.appearance} />
       <nav className="home-nav" aria-label="WITT">
         <button
           type="button"

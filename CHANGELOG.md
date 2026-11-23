@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner 2026-11-23: **the home screen has a living backdrop**: an argument tree as a wire mesh that turns slowly behind the page, in the theme's colours; it stands still when the system asks for less motion and on phones, and never takes a click (WG-062). `src/app/homeMesh.ts`, `src/app/HomeBackdrop.tsx`.
 - Owner 2026-11-23: **undo per diagram and a change history.** ↶ / ↷ cover the shown diagram only and never a change made in another tab; the project's structure (tabs, names, sketchpads, an opened project) has its own steps. *Muutoshistoria* (≣ in the top bar, Muokkaa menu) lists the shown diagram's and the structure's changes with what they concerned, and a press on a row goes back or forward to that state. A removed tab's notice offers Kumoa. `src/app/history.ts`, `src/app/HistoryDialog.tsx`.
 - Owner 2026-11-23: **several sketchpads in a project**, named, removable, listed in the tab row; only the drawn ones are saved (`sketches` in the project file); attaching a whole project brings its sketchpads.
 - Owner 2026-11-23: **the project has a sketchpad of its own** (WG-059). *Projektin lehtiö* in Luonnoslehtiö and in the tab row; it is saved in the project file (`sketch`) and in the browser with the project, and the person's own sketchpad stays as it was, per browser. Drawing on it is not a step of the project's undo. `src/domain/workbook.ts` (`withSketch`), `src/app/sketchStore.ts` (`projectSketch`).

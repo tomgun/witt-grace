@@ -11242,3 +11242,23 @@ body.witt-focus .doc-tabs {
 .history-meta strong {
   color: var(--accent-text);
 }
+
+/* ---- The home screen's backdrop (owner 2026-11-23): an argument tree as a slowly turning wire mesh, under the
+   content and out of reach of the pointer. ---- */
+.home-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.home-screen > :not(.home-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+@media print {
+  .home-backdrop {
+    display: none;
+  }
+}
