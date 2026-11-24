@@ -225,6 +225,8 @@ export interface LinkOrigin {
   docId: string;
   nodeId: string;
 }
+/** Strokes on a sketchpad are written to the browser at most this often (the entry holds every diagram). */
+const STROKE_WRITE_MS = 1000;
 const REJECT_TEXT: Record<RejectReason, MessageKey> = {
   rate: 'collabRejectRate',
   forbidden: 'collabRejectForbidden',
@@ -400,33 +402,75 @@ export function createStore(
     state = { ...state, ...patch };
     emit();
   };
-  const persist = (project: Project) => {
+  /** When the project's entry was last written, and a write held back meanwhile (see `persist`). */
+  let entryWrittenAt = -Infinity;
+  let heldEntry: ReturnType<typeof setTimeout> | null = null;
+  const writeEntry = (): SaveResult => {
+    if (heldEntry) clearTimeout(heldEntry);
+    heldEntry = null;
+    const result = saveWorkbook(store, state.workbook, state.activeTab, nowIso());
+    entryWrittenAt = Date.now();
+    if (result.ok) {
+      storedTabs = snapshot();
+      unreadableEntry = false;
+      forgetOldPads?.();
+      forgetOldPads = null;
+    }
+    return result;
+  };
+  const reported = (result: SaveResult) => {
+    set({ saveStatus: result.ok ? (persistent ? 'savedBrowser' : 'noServer') : 'saveFailed' });
+    if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
+  };
+  /** A held-back write of the project's entry, written now (its time came, or the page is going away). */
+  const flushEntry = () => {
+    if (!heldEntry) return;
+    heldEntry = null;
+    if (tabsChanged()) reported(writeEntry());
+  };
+  const persist = (project: Project, stroke = false) => {
+    // A stroke on a sketchpad changes the project's entry only, which holds every diagram: strokes that follow
+    // each other closely are written as one, at most once a second, and what is held back is written when the
+    // page is hidden or closed. The shown diagram, which a stroke does not touch, is not written at all.
+    if (stroke) {
+      if (!tabsChanged() || (unreadableEntry && isPlainDocument(state.workbook))) return;
+      const wait = entryWrittenAt + STROKE_WRITE_MS - Date.now();
+      if (wait > 0) {
+        heldEntry ??= setTimeout(flushEntry, wait);
+        return;
+      }
+      reported(writeEntry());
+      return;
+    }
     // The project's entry first, then the shown diagram's own autosave: if the first write fails the autosave
     // still holds the diagram it held, so nothing that was stored is lost (the entry is the larger write).
     let result: SaveResult = { ok: true, at: nowIso() };
-    if (tabsChanged() && !(unreadableEntry && isPlainDocument(state.workbook))) {
-      result = saveWorkbook(store, state.workbook, state.activeTab, nowIso());
-      if (result.ok) {
-        storedTabs = snapshot();
-        unreadableEntry = false;
-        forgetOldPads?.();
-        forgetOldPads = null;
-      }
-    }
+    if (tabsChanged() && !(unreadableEntry && isPlainDocument(state.workbook))) result = writeEntry();
     if (result.ok) {
       result = saveProject(store, project, nowIso());
       if (result.ok) recordActive(store, project, result.at);
     }
-    set({ saveStatus: result.ok ? (persistent ? 'savedBrowser' : 'noServer') : 'saveFailed' });
-    if (!result.ok) set({ notice: { kind: 'error', text: result.reason } });
+    reported(result);
   };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', flushEntry);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushEntry();
+    });
+  }
   /** The one way the project changes: `workbook` with `activeTab` shown. Unless `remember` is false it becomes
    * a history step when it changed the shown diagram or the project's structure, named by `label`; `fresh`
    * (default: when another tab is shown) starts the shown diagram's selection, profile and view focus over. */
   const commit = (
     workbook: Workbook,
     activeTab: number,
-    opts: { remember?: boolean; fresh?: boolean; label?: HistoryLabel; whole?: boolean } = {}
+    opts: {
+      remember?: boolean;
+      fresh?: boolean;
+      label?: HistoryLabel;
+      whole?: boolean;
+      stroke?: boolean;
+    } = {}
   ) => {
     const project = workbook.documents[activeTab] as Project;
     const fresh = opts.fresh ?? activeTab !== state.activeTab;
@@ -489,7 +533,7 @@ export function createStore(
         : {}),
     });
     set(historyFlags());
-    persist(project);
+    persist(project, opts.stroke);
     if (fresh) {
       writeView(store, state.view);
       api.requestFit();
@@ -686,9 +730,10 @@ export function createStore(
       return {
         pads: () => state.workbook.sketches,
         draw(id, sketch) {
+          // Someone's stroke in the session: written as one's own strokes are.
           const workbook = drawSketch(state.workbook, id, sketch);
           if (workbook !== state.workbook)
-            commit(workbook, state.activeTab, { remember: false, fresh: false });
+            commit(workbook, state.activeTab, { remember: false, fresh: false, stroke: true });
         },
         put(pad) {
           try {
@@ -1077,7 +1122,8 @@ export function createStore(
     /** A project sketchpad as it was just drawn. Not a history step: the sketchpad has its own undo. */
     drawProjectSketch(id: string, sketch: Sketch) {
       const workbook = drawSketch(state.workbook, id, sketch);
-      if (workbook !== state.workbook) commit(workbook, state.activeTab, { remember: false, fresh: false });
+      if (workbook !== state.workbook)
+        commit(workbook, state.activeTab, { remember: false, fresh: false, stroke: true });
     },
     /** In a session the host names and removes sketchpads, as it does diagrams. */
     renameProjectSketch(id: string, name: string): boolean {

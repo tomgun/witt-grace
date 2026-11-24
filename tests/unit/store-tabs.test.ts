@@ -16,7 +16,9 @@
  *       diagram edit leaves the drawings, a removed or renamed sketchpad comes back, only drawn ones are stored
  *       the sketchpads this browser kept apart from the project before 2026-11-23 (`witt-sketch-v1`,
  *       `witt-sketch-session-v1`) move into the project once when they hold a drawing, and their old entries go
- *       only when the project is stored
+ *       only when the project is stored; strokes that follow each other closely are written to the project's entry
+ *       as one, at most once a second (the first at once, the rest together after it), and a stroke does not
+ *       rewrite the shown diagram's autosave
  * test: tests/unit/store-tabs.test.ts
  * red-against: an edit written into the first tab whatever is shown, undo in one tab taking back the newest change
  *              of another (work lost out of sight), Kumoa in one tab removing a tab that was added since, a
@@ -30,7 +32,8 @@
  *              overwritten before the project entry is safely written (a full quota then loses the diagram that
  *              lived only in the autosave), an entry this build cannot read removed by the next opened document,
  *              undo of a diagram edit taking the drawing made since back with it, a drawn sketchpad lost on
- *              reload, an attached sketchpad written over the person's own,
+ *              reload, an attached sketchpad written over the person's own, every stroke rewriting the whole project entry (it holds
+ *              every diagram) or the shown diagram a stroke does not touch, the last strokes of a burst never written,
  *              an opened file silently taking the place of the shown tab's diagram in a project
  */
 import assert from 'node:assert/strict';
@@ -688,4 +691,35 @@ test('the old sketchpad of the browser moves into the project once; an empty old
   };
   assert.equal(open(full).store.get().workbook.sketches.length, 1);
   assert.notEqual(inner.getItem('witt-sketch-v1'), null);
+});
+
+test('strokes in a burst: the first is written at once, the rest together a second later, the diagram not at all', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1_000_000 });
+  const { kv, writes } = counting();
+  const { store } = open(kv);
+  store.load(doc('a', 'A'));
+  const pad = store.addProjectSketch('Lehtiö 1') as string;
+  const entry = writes(WORKBOOK_KEY);
+  const diagram = writes(PROJECT_KEY);
+  const strokes = ['p1', 'p2', 'p3', 'p4', 'p5'];
+  for (const name of strokes) {
+    store.drawProjectSketch(pad, drawn(name));
+    t.mock.timers.tick(100);
+  }
+  // The first stroke was written; the four after it wait for their second.
+  assert.equal(writes(WORKBOOK_KEY), entry + 1);
+  assert.deepEqual(sketchOf(open(kv).store, pad), drawn('p1'));
+  t.mock.timers.tick(1_000);
+  assert.equal(writes(WORKBOOK_KEY), entry + 2);
+  assert.deepEqual(sketchOf(open(kv).store, pad), drawn('p5'));
+  // No stroke rewrote the shown diagram's own autosave.
+  assert.equal(writes(PROJECT_KEY), diagram);
+  // A change of the diagram meanwhile writes the held strokes with it, and nothing is written twice.
+  store.drawProjectSketch(pad, drawn('p6'));
+  store.drawProjectSketch(pad, drawn('p7'));
+  store.dispatch({ type: 'project.setTitle', title: 'A2' });
+  assert.deepEqual(sketchOf(open(kv).store, pad), drawn('p7'));
+  const after = writes(WORKBOOK_KEY);
+  t.mock.timers.tick(2_000);
+  assert.equal(writes(WORKBOOK_KEY), after);
 });
