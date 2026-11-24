@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-24 — `UI_INVENTORY.md` — Owner: the method texts must be understood by an ordinary reader; −5…+5 is explained nowhere, better to say a reason is for or against on a scale of 1–5. S-15: the two assessed things explained in everyday words with an example, the signed scale not named on the home screen, three other texts simplified.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: is “Aikataulussa ei ole joustovaraa” really the cause of “Testaus jää kesken”? S-15: the cause in the home screen's risk example is *Kehitystyö venyy ja vie testausajan*.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the method section should tell what matters, from the benefits to the details, without the tool's inner rules; name the lighter cognitive load (one claim at a time) and the independent assessments of details, weights and credibility. S-15: the section reordered and reworded, *Kaksi tapaa käyttää* removed, the stage texts `homeExplore`/`homeEvaluate`/`homeDecide` (the prototype's) reworded.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the himmeli does not show properly in most themes and is odd between the sections, perhaps at the bottom of the page; the method could be a “second page” on scrolling down, with a more stylish design. S-15: the top fills the first screenful, the method is a sheet of its own with a large heading, `#homeClosing` with the himmeli ends the page, and the himmeli takes the chosen theme's colours.

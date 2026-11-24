@@ -201,6 +201,13 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   await expect(method.locator('.home-features li h4')).toHaveText(['Kartoita', 'Punnitse', 'Päätä yhdessä']);
   // What it does not promise is said in plain words, without the tool's inner rules.
   await expect(method).toContainText('Se ei kerro, onko väite tosi');
+  // The two things assessed are said in everyday words: for or against, how strongly from 1 to 5; the signed
+  // scale of the sliders (−5…+5) is not needed to understand the method.
+  await expect(method).toContainText(
+    'puoltaako vai vastustaako se väitettä, ja kuinka vahvasti asteikolla 1–5'
+  );
+  await expect(method).not.toContainText('−5');
+  await expect(method).not.toContainText('mustasta laatikosta');
   // Risks are a side thread of the same tool (owner 2026-11-24).
   await expect(method).toContainText('Samalla tavalla voi jäsentää riskit');
   await expect(method).not.toContainText('Puuttuva arvio ei ole nolla');
