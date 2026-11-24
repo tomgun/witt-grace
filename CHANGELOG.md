@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- The host can share a diagram or leave it out during a collaboration too, in the collaboration dialog's list *Jaettavat kaaviot* (WG-063).
 - Owner 2026-11-24: the method section in everyday words: what credibility and influence mean is said where they are named (for or against the claim, how strongly on a scale of 1–5), with an example; the signed scale −5…+5 is no longer named on the home screen.
 - Owner 2026-11-24: the home screen's method section reads from the benefits to the details: one claim at a time, seeing what you disagree about, a result that can be explained, everyone's own assessment; then how it works, with an example of the two scales; then what it suits and what it does not promise, in plain words. The block *Kaksi tapaa käyttää* is gone.
 - Owner 2026-11-24: **the home screen is two pages.** The top fills the first screenful on a desktop window; the method is a page of its own below it, a sheet with a large heading and more air; the himmeli closes the page under the method.

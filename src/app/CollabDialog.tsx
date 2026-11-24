@@ -70,7 +70,8 @@ function CopyBlock({
 }
 
 /** Which diagrams the session shares (owner 2026-11-23, WG-063): all of the project unless the host leaves one
- * out. The diagram the session starts from is always shared. Shown to the host when the project has several. */
+ * out. The diagram the session starts from is always shared. Shown to the host when the project has several, in
+ * the start form and in the running session's dialog. */
 function ShareList() {
   const state = useAppState();
   const t = useTranslator();
@@ -716,6 +717,8 @@ export function CollabDialog() {
         <HostSection status={status} who={who} setWho={setWho} chosen={chosen} choose={choose} />
       ) : null}
       {status ? <People status={status} {...(status.role === 'host' ? { onReissue: reissue } : {})} /> : null}
+      {/* The host shares a diagram or leaves it out during the session too (WG-063). */}
+      {status?.role === 'host' ? <ShareList /> : null}
       {status ? (
         <>
           <p className="inspector-note">{t('collabKeepsCopy')}</p>
