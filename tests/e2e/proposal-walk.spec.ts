@@ -181,7 +181,7 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
     ]);
   }
   await expect(branches.nth(1).locator('.visual-children .visual-node strong')).toHaveText([
-    'Aikataulussa ei ole joustovaraa',
+    'Kehitystyö venyy ja vie testausajan',
     'Viikoittainen katsaus paljastaa viiveet ajoissa',
   ]);
   await page.locator('#btnScenarioPrev').click();
