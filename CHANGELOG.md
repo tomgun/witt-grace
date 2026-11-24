@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner 2026-11-24: the home screen's method section reads from the benefits to the details: one claim at a time, seeing what you disagree about, a result that can be explained, everyone's own assessment; then how it works, with an example of the two scales; then what it suits and what it does not promise, in plain words. The block *Kaksi tapaa käyttää* is gone.
 - Owner 2026-11-24: **the home screen is two pages.** The top fills the first screenful on a desktop window; the method is a page of its own below it, a sheet with a large heading and more air; the himmeli closes the page under the method.
 - Fixed: the himmeli was drawn in the previous theme's colours after a change of theme, and when arriving with a saved skin, so it was pale or nearly invisible on most themes. It now takes the chosen theme's colours and is drawn more strongly.
 - Owner 2026-11-24: the home examples' main claims are statements one can be for or against (*Uusi tuote kannattaa julkaista nyt*), one of the five and the decision aside; the risk example now reads as a goal (*Tavoite: …*) with two risks under it, each with its cause and what is done about it.

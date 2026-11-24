@@ -314,17 +314,7 @@ export function Home() {
             {t('methodTitle')}
           </h2>
           <p className="method-lead">{t('methodLead')}</p>
-          <h3>{t('homeUseHeading')}</h3>
-          <ul className="home-uses">
-            <li>
-              <strong>{t('homeUseMapT')}</strong>
-              <span>{t('homeUseMap')}</span>
-            </li>
-            <li>
-              <strong>{t('homeUseGraceT')}</strong>
-              <span>{t('homeUseGrace')}</span>
-            </li>
-          </ul>
+          {/* From what one gains to how it works (owner 2026-11-24): the benefits first, the details after. */}
           <h3>{t('methodGainHeading')}</h3>
           <ul className="method-gains">
             {gains.map(([title, text]) => (

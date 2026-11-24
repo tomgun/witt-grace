@@ -127,18 +127,21 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   }
   await expect(heading).toHaveText('GRACE-menetelmä: tee ajattelusta näkyvää');
   await expect(method.locator('h3')).toHaveText([
-    'Kaksi tapaa käyttää',
     'Mitä saat',
     'Näin se toimii',
     'Mihin se sopii',
     'Mitä se ei lupaa',
   ]);
-  // The plain tree first, the method's weighing and deciding second: one need not rate to use the tool.
-  await expect(method.locator('.home-uses li strong')).toHaveText([
-    'Jäsennä ajatteluasi',
-    'Punnitse ja päätä GRACE-menetelmällä',
+  // The benefits come first, in the reader's words: one claim at a time, where the disagreement is, a result
+  // that can be explained, everyone's own assessment.
+  await expect(method.locator('.method-gains li strong')).toHaveText([
+    'Yksi väite kerrallaan',
+    'Näet, mistä olette eri mieltä',
+    'Tulos, jonka voi selittää',
+    'Jokaisen arvio itsenäisesti',
   ]);
-  await expect(method.locator('.home-uses li').first()).toContainText('Arvioita ei tarvita.');
+  // One need not rate to use the tool: the first stage says so.
+  await expect(method.locator('.home-features li').first()).toContainText('Voit pysähtyä tähän');
   // The example beside the lead takes turns between seven small trees: five walks of life, a decision, risks.
   const visual = page.locator('.home-visual');
   await expect(visual.locator('.visual-dots button')).toHaveCount(7);
@@ -196,7 +199,11 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   await expect(page.locator('#homeScenarioName')).toHaveText('Yritys');
   await expect(method.locator('.method-gains li')).toHaveCount(4);
   await expect(method.locator('.home-features li h4')).toHaveText(['Kartoita', 'Punnitse', 'Päätä yhdessä']);
-  await expect(method).toContainText('Puuttuva arvio ei ole nolla');
+  // What it does not promise is said in plain words, without the tool's inner rules.
+  await expect(method).toContainText('Se ei kerro, onko väite tosi');
+  // Risks are a side thread of the same tool (owner 2026-11-24).
+  await expect(method).toContainText('Samalla tavalla voi jäsentää riskit');
+  await expect(method).not.toContainText('Puuttuva arvio ei ole nolla');
   await expect(method.locator('kbd')).toHaveCount(0);
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)
