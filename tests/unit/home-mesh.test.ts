@@ -6,17 +6,27 @@
  *       and a screen point is taken back into the model at a given depth; the tree is a body of masses and rods
  *       (owner, same day): at rest it stays at rest, a held point goes with the hand and pulls its children most,
  *       its parent a little and a far branch hardly at all, the main claim never moves, the hand has a reach, and
- *       let go the tree swings back and settles
+ *       let go the tree swings back and settles; the tree is not there at first (owner 2026-11-24): the main claim
+ *       appears after 30 s, then one reason at a time 5–15 s apart, always under a claim that is already there,
+ *       the same on every visit; a reason that appears starts at its claim and is drawn out to its place; the box
+ *       the turning tree stays in is known, so the page can fit the whole of it
  * test: tests/unit/home-mesh.test.ts
  * red-against: Math.random in the layout (another tree on every render), a reason drawn above its claim, a line
  *              between siblings (a net, not a tree), perspective inverted (far points drawn larger), the whole tree
  *              moving as one stiff piece when a point is pulled, a release that never settles or explodes, a point
- *              dragged off to infinity, the tree torn off the claim it hangs from
+ *              dragged off to infinity, the tree torn off the claim it hangs from, a reason appearing before its
+ *              claim (a point hanging in the air), the whole tree shown at once, a gap of a fraction of a second
+ *              (flicker), a new point popping up at its final place, a box that leaves a far point outside
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  GROW_GAP_MS,
+  GROW_START_MS,
   HOLD_REACH,
+  bodyWithSprout,
+  growthTimes,
+  meshExtent,
   bodyAtRest,
   bodyStep,
   bodyUnrest,
@@ -178,4 +188,58 @@ test('the hand cannot take a point farther than its reach, and the main claim is
   body = bodyAtRest(mesh);
   for (let i = 0; i < 20; i++) body = bodyStep(mesh, body, 33, { index: 0, x: 5, y: 5, z: 5 });
   assert.equal(bodyUnrest(mesh, body), 0);
+});
+
+test('growing: the main claim after 30 s, then a reason at a time 5–15 s apart, each after its own claim', () => {
+  const mesh = buildMesh();
+  const at = growthTimes(mesh);
+  assert.deepEqual(at, growthTimes(mesh));
+  assert.equal(GROW_START_MS, 30_000);
+  assert.deepEqual([...GROW_GAP_MS], [5_000, 15_000]);
+  assert.equal(at.length, 51);
+  assert.equal(at[0], 30_000);
+  mesh.nodes.forEach((node, i) => {
+    if (node.parent >= 0) assert.ok(at[i]! > at[node.parent]!, `point ${i} appears before its claim`);
+  });
+  const order = [...at].sort((a, b) => a - b);
+  for (let i = 1; i < order.length; i++) {
+    const gap = order[i]! - order[i - 1]!;
+    assert.ok(gap >= 5_000 && gap <= 15_000, `gap ${gap}`);
+  }
+  // Not level by level: some reason of a reason appears before the last reason of the main claim.
+  const lastFirstLevel = Math.max(...at.filter((_, i) => mesh.nodes[i]!.depth === 1));
+  assert.ok(at.some((t, i) => mesh.nodes[i]!.depth > 1 && t < lastFirstLevel));
+});
+
+test('a reason that appears starts at its claim, at rest, and is drawn out to its own place', () => {
+  const mesh = buildMesh();
+  const index = 7;
+  const parent = mesh.nodes[index]!.parent;
+  const far = (body: Body, a: number, b: number) =>
+    Math.hypot(...[0, 1, 2].map((k) => body.now[a * 3 + k]! - body.now[b * 3 + k]!));
+  let body = bodyWithSprout(mesh, bodyAtRest(mesh), index);
+  const rod = Math.hypot(
+    mesh.nodes[index]!.x - mesh.nodes[parent]!.x,
+    mesh.nodes[index]!.y - mesh.nodes[parent]!.y,
+    mesh.nodes[index]!.z - mesh.nodes[parent]!.z
+  );
+  assert.ok(far(body, index, parent) < rod * 0.05);
+  assert.deepEqual(body.now.slice(index * 3, index * 3 + 3), body.before.slice(index * 3, index * 3 + 3));
+  for (let i = 0; i < 400; i++) body = bodyStep(mesh, body, 16);
+  assert.ok(bodyUnrest(mesh, body) < 0.02, `unrest ${bodyUnrest(mesh, body)}`);
+  // The main claim has no claim to grow out of.
+  const rest = bodyAtRest(mesh);
+  assert.equal(bodyWithSprout(mesh, rest, 0), rest);
+});
+
+test('the box the turning tree stays in holds every point at every angle', () => {
+  const mesh = buildMesh();
+  const box = meshExtent(mesh);
+  for (let angle = 0; angle < Math.PI * 2; angle += 0.05)
+    for (const node of mesh.nodes) {
+      const p = project(node, angle, 0, 0, 1);
+      assert.ok(p.x >= box.left - 0.02 && p.x <= box.right + 0.02);
+      assert.ok(p.y >= box.top - 0.02 && p.y <= box.bottom + 0.02);
+    }
+  assert.ok(box.right - box.left < 4 && box.bottom - box.top < 3);
 });

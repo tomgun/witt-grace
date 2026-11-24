@@ -11245,11 +11245,16 @@ body.witt-focus .doc-tabs {
 
 /* ---- The home screen's backdrop (owner 2026-11-23): an argument tree as a slowly turning wire mesh, under the
    content and out of reach of the pointer. ---- */
+/* Owner 2026-11-24: the tree has its own place in the layout and scrolls with the page. */
+.home-screen {
+  position: relative;
+}
 .home-backdrop {
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   z-index: 0;
   pointer-events: none;
 }

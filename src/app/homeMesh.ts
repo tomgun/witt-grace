@@ -68,6 +68,67 @@ export function buildMesh(seed = 7): Mesh {
   return { nodes };
 }
 
+// ---- Growing (owner 2026-11-24: “tulee sivulle vasta kun on ollut 30 s etusivulla ja alkaa rakentua juuresta
+// pikkuhiljaa (esim. 5-15 sek välein uusi alisolmu johonkin)”) -----------------------------------------------------
+
+/** The main claim appears after this long on the home screen. */
+export const GROW_START_MS = 30_000;
+/** A new reason appears this long after the one before it: somewhere between the two. */
+export const GROW_GAP_MS = [5_000, 15_000] as const;
+
+/** When each point of the tree appears, in milliseconds on the home screen, in the order of the mesh's nodes:
+ * the main claim first, then one reason at a time under some claim that is already there, as the seed decides.
+ * The same on every visit. */
+export function growthTimes(mesh: Mesh, seed = 11): number[] {
+  const random = seeded(seed);
+  const at = mesh.nodes.map(() => Infinity);
+  if (!mesh.nodes.length) return at;
+  at[0] = GROW_START_MS;
+  let time = GROW_START_MS;
+  const waiting = new Set(mesh.nodes.map((_, i) => i).slice(1));
+  while (waiting.size) {
+    const ready = [...waiting].filter((i) => at[(mesh.nodes[i] as MeshNode).parent] !== Infinity);
+    if (!ready.length) break;
+    const next = ready[Math.floor(random() * ready.length)] as number;
+    time += GROW_GAP_MS[0] + random() * (GROW_GAP_MS[1] - GROW_GAP_MS[0]);
+    at[next] = time;
+    waiting.delete(next);
+  }
+  return at;
+}
+
+/** The body with the point `index` put where its claim is now, a hair towards its own place: a reason that has
+ * just appeared grows out of its claim as the rods and its own place draw it out. */
+export function bodyWithSprout(mesh: Mesh, body: Body, index: number): Body {
+  const node = mesh.nodes[index];
+  if (!node || node.parent < 0) return body;
+  const parent = mesh.nodes[node.parent] as MeshNode;
+  const now = [...body.now];
+  const home = [node.x - parent.x, node.y - parent.y, node.z - parent.z];
+  for (let k = 0; k < 3; k++)
+    now[index * 3 + k] = (body.now[node.parent * 3 + k] as number) + (home[k] as number) * 0.04;
+  const before = [...body.before];
+  for (let k = 0; k < 3; k++) before[index * 3 + k] = now[index * 3 + k] as number;
+  return { now, before };
+}
+
+/** The box the whole tree stays in while it turns, in model units around the projection's centre (`unit` 1):
+ * what the page has to leave room for so that the tree fits the layout (owner 2026-11-24). */
+export function meshExtent(mesh: Mesh): { left: number; right: number; top: number; bottom: number } {
+  const box = { left: 0, right: 0, top: Infinity, bottom: -Infinity };
+  for (let step = 0; step < 72; step++) {
+    const angle = (step / 72) * Math.PI * 2;
+    for (const node of mesh.nodes) {
+      const p = project(node, angle, 0, 0, 1);
+      box.left = Math.min(box.left, p.x);
+      box.right = Math.max(box.right, p.x);
+      box.top = Math.min(box.top, p.y);
+      box.bottom = Math.max(box.bottom, p.y);
+    }
+  }
+  return box;
+}
+
 export interface Projected {
   x: number;
   y: number;
