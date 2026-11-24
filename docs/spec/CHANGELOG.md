@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-24 — `UI_INVENTORY.md` — Owner: is “Vuokra on korkea… vastustaa vain vähän” a clear example, when a high rent may weigh a lot? S-15: the example of the two scales is a pair, sure but slight (walls to paint, 1/5) and unsure but heavy (the rent going up, 4/5).
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the method texts must be understood by an ordinary reader; −5…+5 is explained nowhere, better to say a reason is for or against on a scale of 1–5. S-15: the two assessed things explained in everyday words with an example, the signed scale not named on the home screen, three other texts simplified.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: is “Aikataulussa ei ole joustovaraa” really the cause of “Testaus jää kesken”? S-15: the cause in the home screen's risk example is *Kehitystyö venyy ja vie testausajan*.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the method section should tell what matters, from the benefits to the details, without the tool's inner rules; name the lighter cognitive load (one claim at a time) and the independent assessments of details, weights and credibility. S-15: the section reordered and reworded, *Kaksi tapaa käyttää* removed, the stage texts `homeExplore`/`homeEvaluate`/`homeDecide` (the prototype's) reworded.

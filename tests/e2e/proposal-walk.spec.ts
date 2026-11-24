@@ -206,6 +206,11 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   await expect(method).toContainText(
     'puoltaako vai vastustaako se väitettä, ja kuinka vahvasti asteikolla 1–5'
   );
+  // The example shows both ways the two differ: sure but slight, unsure but heavy.
+  await expect(method).toContainText('on varmasti totta, mutta vastustaa valintaa vain vähän (1/5)');
+  await expect(method).toContainText(
+    'on epävarmaa, mutta jos se pitää paikkansa, se vastustaa valintaa vahvasti (4/5)'
+  );
   await expect(method).not.toContainText('−5');
   await expect(method).not.toContainText('mustasta laatikosta');
   // Risks are a side thread of the same tool (owner 2026-11-24).
