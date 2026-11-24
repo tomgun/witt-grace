@@ -4407,18 +4407,31 @@ body[data-theme='manuscript-pen'] .home-eyebrow {
   padding: 0 0 7px;
   color: #84383d;
 }
+/* Owner 2026-11-24: the feather is fine but must not lie behind the slogan. It rests in the free corner above the
+   example card, clear of every line of text; where the card is under the text it is small, beside the eyebrow. */
 body[data-theme='manuscript-pen'] .home-hero-copy::before {
   content: '';
   position: absolute;
-  top: 12%;
-  right: -12%;
-  width: 215px;
-  height: 360px;
+  top: -92px;
+  left: calc(100% + 46px);
+  width: 138px;
+  height: 216px;
   background: var(--witt-quill-image) center/contain no-repeat;
-  opacity: 0.28;
+  opacity: 0.3;
   pointer-events: none;
   z-index: 0;
-  transform: rotate(4deg);
+  transform: rotate(38deg);
+}
+@media (max-width: 1020px) {
+  body[data-theme='manuscript-pen'] .home-hero-copy::before {
+    top: -34px;
+    left: auto;
+    right: 4px;
+    width: 64px;
+    height: 100px;
+    opacity: 0.22;
+    transform: rotate(52deg);
+  }
 }
 body[data-theme='manuscript-pen'] .home-hero h1 {
   font-family: 'Apple Chancery', 'URW Chancery L', 'Iowan Old Style', Baskerville, Georgia, serif;
@@ -4653,13 +4666,6 @@ body[data-theme='manuscript-pen'] .node-collapse {
   }
   body[data-theme^='manuscript-'] .home-lead {
     font-size: 16px;
-  }
-  body[data-theme='manuscript-pen'] .home-hero-copy::before {
-    width: 112px;
-    height: 180px;
-    top: 24%;
-    right: 1%;
-    opacity: 0.16;
   }
   body[data-theme='manuscript-book'] .home-hero-copy::before {
     width: 95px;

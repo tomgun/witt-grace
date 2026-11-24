@@ -6,8 +6,8 @@
 // appears, and then a reason at a time, a few seconds apart, until the tree is whole; the whole of it fits the
 // window, above the example card on a wide one. A point of it can be taken hold of with the mouse or a finger wherever no control of the page is in the
 // way: it follows the hand and pulls its neighbours with it (homeMesh.ts). The canvas itself never takes input.
-// Still, whole from the start and not to be held, when the person asks for less motion and on a phone-width
-// window; paused while the page is hidden. The colours are the theme's own.
+// Still, whole from the start and not to be held, when the person asks for less motion; not drawn at all where
+// the page has no free place for it (a narrow window); paused while the page is hidden. The colours are the theme's own.
 import { useEffect, useRef } from 'react';
 import {
   bodyAtRest,
@@ -64,6 +64,8 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     let height = 0;
     /** Where the model sits on the screen: hung from near the top, most of it at the right edge. */
     let frameBox = { cx: 0, cy: 0, unit: 1 };
+    /** Whether the page has a place for the tree at this size. */
+    let placed = false;
     let points: Projected[] = [];
     let angle = START_ANGLE;
     let hold: (Hold & { depth: number }) | null = null;
@@ -75,21 +77,22 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      // The whole tree fits the layout as it turns (owner 2026-11-24): on a wide window it hangs in the free
-      // band above the example card, under the top row. Where the page has no such band (a narrow or a low
-      // window) it fits the window instead, behind the content.
+      // The whole tree fits the layout as it turns (owner 2026-11-24): it hangs in the free band above the
+      // example card, under the top row. Where the page has no such band (the card under the text on a narrow
+      // window, or a low window) there is no place for it and it is not drawn at all.
       const own = canvas.getBoundingClientRect();
       const nav = page.querySelector('.home-nav')?.getBoundingClientRect();
       const card = page.querySelector('.home-visual')?.getBoundingClientRect();
-      let room = { left: 16, top: 20, w: width - 32, h: height - 48 };
-      if (nav && card && card.left > width * 0.4 && card.top - nav.bottom >= BAND_MIN)
-        // The points have a size of their own: a little air on every side.
-        room = {
-          left: card.left - own.left + 10,
-          top: nav.bottom - own.top + 10,
-          w: card.width - 20,
-          h: card.top - nav.bottom - 26,
-        };
+      placed = !!nav && !!card && card.left > width * 0.4 && card.top - nav.bottom >= BAND_MIN;
+      canvas.dataset.placed = String(placed);
+      if (!nav || !card || !placed) return;
+      // The points have a size of their own: a little air on every side.
+      const room = {
+        left: card.left - own.left + 10,
+        top: nav.bottom - own.top + 10,
+        w: card.width - 20,
+        h: card.top - nav.bottom - 26,
+      };
       const unit = Math.max(
         40,
         Math.min(room.w / (extent.right - extent.left), room.h / (extent.bottom - extent.top))
@@ -102,7 +105,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     };
     /** The points that have appeared by now; a new one starts at its claim. Without motion all are there. */
     const grow = (now: number) => {
-      const age = moving ? now - cameUp : Infinity;
+      const age = !placed ? -Infinity : moving ? now - cameUp : Infinity;
       let count = 0;
       mesh.nodes.forEach((_, i) => {
         const at = appearsAt[i] as number;
@@ -183,7 +186,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     const start = () => {
       cancelAnimationFrame(frame);
       resize();
-      moving = !calm();
+      moving = placed && !calm();
       if (!moving) {
         hold = null;
         body = bodyAtRest(mesh);

@@ -6,14 +6,14 @@
  *       of with the mouse where no control is in the way (a hand cursor shows it), follows the drag and is let go,
  *       and a press on a button still goes to the button; on a desktop-width window nothing of it is there at
  *       first (owner 2026-11-24): after 30 s the main claim appears, then reasons one at a time, and the whole
- *       tree (51 points) hangs in the band between the top row and the example card; still, it is whole from
- *       the start
+ *       tree (51 points) hangs in the band between the top row and the example card; with reduced motion it is
+ *       whole from the start; on a phone-width window, where the card is under the text, it is not drawn
  * test: tests/e2e/backdrop-walk.spec.ts (desktop 1440×900 and mobile 390×844)
  * red-against: a canvas that swallows clicks on the home screen's buttons, an animation that ignores the reduced
  *              motion setting, an empty canvas (a colour token that did not resolve), the canvas left over the
  *              workspace, a grab that starts on a button and swallows its press, a point that stays held after
  *              the mouse is released, the whole tree at once on arrival, a tree that never grows, a tree that
- *              runs under the example card, the text column or the top row, or off the window's edge
+ *              runs under the example card, the text column or the top row, or off the window's edge, a tree spread behind the text on a phone
  */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
@@ -51,8 +51,9 @@ test('the backdrop is drawn, out of the way, and gone in the workspace', async (
   const backdrop = page.locator('#homeBackdrop');
   await expect(backdrop).toHaveAttribute('aria-hidden', 'true');
   await expect(backdrop).toHaveCSS('pointer-events', 'none');
-  const wide = (viewport?.width ?? 1440) >= 700;
+  const wide = (viewport?.width ?? 1440) >= 1000;
   await expect(backdrop).toHaveAttribute('data-animated', String(wide));
+  await expect(backdrop).toHaveAttribute('data-placed', String(wide));
   if (wide) {
     // Nothing at first; the main claim after half a minute; reasons one at a time; then the whole tree.
     await expect(backdrop).toHaveAttribute('data-points', '0');
@@ -62,16 +63,12 @@ test('the backdrop is drawn, out of the way, and gone in the workspace', async (
     await page.clock.fastForward(16_000);
     await expect(backdrop).toHaveAttribute('data-points', /^[23]$/);
     await page.clock.fastForward(WHOLE_TREE_MS);
-  }
-  await expect(backdrop).toHaveAttribute('data-points', '51');
-  expect(await drawnPixels(page)).toBeGreaterThan(500);
-  // The whole of it is inside the window; on a wide window it hangs in the band above the example card, under
-  // the top row, and never runs under the card or the text column.
-  await page.clock.fastForward(3_000);
-  const box = await drawnBox(page);
-  expect(box.right).toBeLessThan(0.995);
-  expect(box.bottom).toBeLessThan(0.995);
-  if ((viewport?.width ?? 1440) >= 1000) {
+    await expect(backdrop).toHaveAttribute('data-points', '51');
+    expect(await drawnPixels(page)).toBeGreaterThan(500);
+    // The whole of it hangs in the band above the example card, under the top row: never under the card, the
+    // text column or the window's edge.
+    await page.clock.fastForward(3_000);
+    const box = await drawnBox(page);
     const size = viewport!;
     const card = (await page.locator('.home-visual').boundingBox())!;
     const nav = (await page.locator('.home-nav').boundingBox())!;
@@ -79,6 +76,11 @@ test('the backdrop is drawn, out of the way, and gone in the workspace', async (
     expect(box.bottom * size.height).toBeLessThanOrEqual(card.y);
     expect(box.left * size.width).toBeGreaterThanOrEqual(card.x - 2);
     expect(box.right * size.width).toBeLessThanOrEqual(card.x + card.width + 2);
+  } else {
+    // Where the card is under the text the page has no place for the tree: nothing is drawn, however long.
+    await page.clock.fastForward(WHOLE_TREE_MS);
+    await expect(backdrop).toHaveAttribute('data-points', '0');
+    expect(await drawnPixels(page)).toBe(0);
   }
   // The home screen's main action is pressed through it.
   await page.locator('#btnHomeNew').click();
@@ -87,7 +89,8 @@ test('the backdrop is drawn, out of the way, and gone in the workspace', async (
   await expect(page.locator('#homeBackdrop')).toHaveCount(0);
 });
 
-test('with reduced motion the backdrop stands still', async ({ page }) => {
+test('with reduced motion the backdrop stands still', async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 1440) < 1000, 'a phone-width window has no place for the tree');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(page.locator('#homeBackdrop')).toHaveAttribute('data-animated', 'false');
