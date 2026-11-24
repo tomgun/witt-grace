@@ -1,6 +1,7 @@
 // The home screen's example trees (owner 2026-11-20, S-15; reworked 2026-11-23): five argument trees from five
-// walks of life, a decision tree and a risk tree. Every one has the same shape, a question or a goal, two branches
-// under it, and under each branch its own reasons, so the card keeps its size while they take turns. A branch's
+// walks of life, a decision tree and a risk tree. An argument's main claim is a statement one can be for or against
+// (owner 2026-11-24: “argumentti pitäisi olla positiivinen väitelause”); one of the five is left as a question, and
+// a decision asks. Every one has the same shape, a claim, a question or a goal, two branches under it, and under each branch its own reasons, so the card keeps its size while they take turns. A branch's
 // reasons are about that branch, never about the question above it. All synthetic.
 import type { MessageKey } from '../lib/i18n/catalog.ts';
 
@@ -117,7 +118,8 @@ export const SCENARIOS: readonly Scenario[] = [
       },
     ],
   },
-  // Risks: the goal on top, a risk against it with what is done about it, and an action for it with why it helps.
+  // Risks (owner 2026-11-24: “riskikorttia en ihan tajua… miten viikoittainen tilannekatsaus on tukitoimi”): the
+  // goal on top, said to be the goal, and under it two risks to it, each with its cause and what is done about it.
   {
     label: 'homeScenarioLabel7',
     root: 'homeRiskRoot',
@@ -132,10 +134,13 @@ export const SCENARIOS: readonly Scenario[] = [
         ],
       },
       {
-        tag: 'homeTagAction',
-        tone: 'supporting',
-        title: 'homeRiskAction',
-        children: [{ tag: FOR, tone: 'supporting', title: 'homeRiskActionWhy' }],
+        tag: 'homeTagRisk',
+        tone: 'opposing',
+        title: 'homeRisk2',
+        children: [
+          { tag: 'homeTagCause', tone: 'opposing', title: 'homeRisk2Cause' },
+          { tag: 'homeTagMitigation', tone: 'supporting', title: 'homeRisk2Mitigation' },
+        ],
       },
     ],
   },

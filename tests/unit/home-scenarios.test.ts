@@ -1,15 +1,18 @@
 /**
  * must: the home screen's examples (owner 2026-11-20 and 2026-11-23, S-15) are seven trees of one shape: a question
  *       or a goal, two branches, one or two reasons under each branch; five argument trees, then a decision whose
- *       branches are options with a reason for and one against each, then risks (a risk with its cause and what is
- *       done about it, an action with why it helps); every text has a Finnish wording of its own and no text is
+ *       branches are options with a reason for and one against each, then risks (the goal, named as
+ *       the goal, and two risks to it, each with its cause and what is done about it; owner 2026-11-24); an
+ *       argument's main claim is a statement and not a question, one of the five aside (owner 2026-11-24); every text has a Finnish wording of its own and no text is
  *       used twice; in the argument examples a reason's own reason is for it in some and against it in others, on
  *       both sides (owner 2026-11-24); an example is shown for fifteen seconds (owner 2026-11-24: “+5 sek”); the arrows go round the ends
  * test: tests/unit/home-scenarios.test.ts
  * red-against: an example without a second branch (the card changes size as they take turns), a child text reused
  *              from another example, every sub-reason taking its parent's side (for under for, against under
  *              against), a label that does not match the card's colour, a decision example whose options are coloured as reasons, a turn of eight
- *              seconds, the previous arrow stopping at the first example
+ *              seconds, the previous arrow stopping at the first example, a main claim worded as a question in
+ *              every example (nothing to be for or against), an action filed under the goal as if it were a
+ *              reason for it
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -53,7 +56,7 @@ test('the family example: the reason under “Lapset oppivat vastuuta” is abou
   );
 });
 
-test('the decision example has two options with a reason for and one against each; the risks a risk and an action', () => {
+test('the decision example has two options with a reason for and one against each; the risks are two risks', () => {
   const decision = SCENARIOS[5]!;
   assert.deepEqual(
     decision.branches.map((b) => [b.tone, text(b.tag), text(b.title)]),
@@ -67,21 +70,30 @@ test('the decision example has two options with a reason for and one against eac
       option.children.map((c) => c.tone),
       ['supporting', 'opposing']
     );
+  // The risks: the goal, named as the goal, and two risks to it, each with its cause and what is done about it.
   const risks = SCENARIOS[6]!;
+  assert.match(text(risks.root), /^Tavoite: /);
   assert.deepEqual(
     risks.branches.map((b) => [b.tone, text(b.tag)]),
     [
       ['opposing', '! RISKI'],
-      ['supporting', '+ TUKEVA TOIMI'],
+      ['opposing', '! RISKI'],
     ]
   );
-  assert.deepEqual(
-    risks.branches[0].children.map((c) => [c.tone, text(c.tag)]),
-    [
-      ['opposing', 'SYY'],
-      ['supporting', 'TORJUNTA'],
-    ]
-  );
+  for (const risk of risks.branches)
+    assert.deepEqual(
+      risk.children.map((c) => [c.tone, text(c.tag)]),
+      [
+        ['opposing', 'SYY'],
+        ['supporting', 'TORJUNTA'],
+      ]
+    );
+});
+
+test('an argument’s main claim is a statement; one of the five is left a question, and the decision asks', () => {
+  const asks = SCENARIOS.map((s) => text(s.root).endsWith('?'));
+  assert.deepEqual(asks, [false, false, false, false, true, true, false]);
+  assert.equal(text(SCENARIOS[0]!.root), 'Uusi tuote kannattaa julkaista nyt');
 });
 
 test('fifteen seconds an example, and the arrows go round', () => {

@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-24 — `UI_INVENTORY.md` — Owner: an argument's main claim should be a positive statement, not a question (some may stay questions); the risk example was not understood (what is its root, how is a weekly review a supporting action). S-15: four example claims reworded as statements (`homeCanvasRoot` among them, the prototype's text); the risk example is a named goal with two risks, each with cause and mitigation.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the small himmeli is fine but its place is not, and the method comes too soon after the top; agreed to a band of air between them where the himmeli hangs; the home examples stay 5 s longer. S-15: `#homeInterlude` with the himmeli and one line; example turns of 15 s.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the Sulkakynä skin's feather is fine but lies disturbingly behind the main slogan. S-15: the feather moves to the free corner above the example card; the himmeli is not drawn where the layout has no place for it.
 - 2026-11-24 — `UI_INVENTORY.md` — Owner: the himmeli still disturbs; it should fit the layout, appear only after 30 s on the home screen and build up from the root a reason at a time (5–15 s apart). S-15 (WG-062): the tree hangs whole in the band above the example card and grows from the main claim.

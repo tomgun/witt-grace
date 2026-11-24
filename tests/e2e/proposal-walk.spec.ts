@@ -168,11 +168,18 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   await visual.hover();
   await page.locator('#btnScenarioPrev').click();
   await expect(page.locator('#homeScenarioName')).toHaveText('Riskit');
-  await expect(visual.locator('.visual-root')).toContainText('Verkkokauppa avataan marraskuussa');
-  await expect(branches.nth(0).locator('> .visual-node small')).toHaveText('! RISKI');
-  await expect(branches.nth(0).locator('.visual-children .visual-node small')).toHaveText([
-    'SYY',
-    'TORJUNTA',
+  // The goal is named as the goal, and under it are two risks to it, each with its cause and what is done about it.
+  await expect(visual.locator('.visual-root')).toContainText('Tavoite: verkkokauppa aukeaa marraskuussa');
+  for (const index of [0, 1]) {
+    await expect(branches.nth(index).locator('> .visual-node small')).toHaveText('! RISKI');
+    await expect(branches.nth(index).locator('.visual-children .visual-node small')).toHaveText([
+      'SYY',
+      'TORJUNTA',
+    ]);
+  }
+  await expect(branches.nth(1).locator('.visual-children .visual-node strong')).toHaveText([
+    'Aikataulussa ei ole joustovaraa',
+    'Viikoittainen katsaus paljastaa viiveet ajoissa',
   ]);
   await page.locator('#btnScenarioPrev').click();
   await expect(page.locator('#homeScenarioName')).toHaveText('Päätös');
