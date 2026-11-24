@@ -11251,12 +11251,76 @@ body.witt-focus .doc-tabs {
 
 /* ---- The home screen's backdrop (owner 2026-11-23): an argument tree as a slowly turning wire mesh, under the
    content and out of reach of the pointer. ---- */
-/* Owner 2026-11-24: a band of air between the top of the home screen and the method; the himmeli hangs in it. */
-.home-interlude {
+/* Owner 2026-11-24 (“menetelmäkuvaus voisi olla ikään kuin toisella sivulla alaspäin skrollaten… vähän
+   tyylikkäämpi design”, “himmeli… voisi olla sivun pohjalla”): the top of the home screen is one screenful, the
+   method a page of its own below it, set as a sheet with a large heading, and the himmeli closes the page. */
+@media (min-width: 1021px) and (min-height: 720px) {
+  .home-hero {
+    min-height: calc(100dvh - 83px);
+  }
+}
+.home-method {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  column-gap: clamp(28px, 5vw, 82px);
+  align-content: start;
+  min-height: 100dvh;
+  margin-top: clamp(28px, 7vh, 84px);
+  padding: clamp(40px, 9vh, 104px) clamp(20px, 4.4vw, 68px) clamp(36px, 7vh, 80px);
+  border: 1px solid var(--border);
+  border-radius: clamp(18px, 2.4vw, 32px);
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  scroll-margin-top: 16px;
+}
+.home-method > * {
+  grid-column: 1 / -1;
+}
+.home-method > h2 {
+  grid-column: 1;
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(30px, 4.3vw, 58px);
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+.home-method p.method-lead {
+  grid-column: 2;
+  align-self: end;
+  max-width: 58ch;
+  color: var(--subtle);
+  font-size: clamp(16px, 1.45vw, 20px);
+  line-height: 1.55;
+}
+.home-method h3 {
+  margin: clamp(34px, 6vh, 62px) 0 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.home-method .method-pair h3 {
+  margin-top: clamp(34px, 6vh, 62px);
+}
+.home-method-actions {
+  margin-top: clamp(22px, 4vh, 40px);
+}
+@media (max-width: 1020px) {
+  .home-method {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .home-method > h2 {
+    max-width: none;
+  }
+  .home-method p.method-lead {
+    grid-column: 1;
+    margin-top: 16px;
+  }
+}
+.home-closing {
   display: grid;
   justify-items: center;
   gap: clamp(14px, 2.4vh, 26px);
-  padding: clamp(36px, 9vh, 110px) 0 clamp(40px, 9vh, 104px);
+  padding: clamp(44px, 10vh, 120px) 0 clamp(28px, 6vh, 64px);
 }
 .home-backdrop {
   display: block;
@@ -11264,7 +11328,7 @@ body.witt-focus .doc-tabs {
   height: clamp(230px, 36vh, 360px);
   pointer-events: none;
 }
-.home-interlude-line {
+.home-closing-line {
   max-width: 34ch;
   margin: 0;
   color: var(--subtle);
@@ -11278,8 +11342,11 @@ body.witt-focus .doc-tabs {
   z-index: 1;
 }
 @media print {
-  .home-interlude {
+  .home-closing {
     display: none;
+  }
+  .home-method {
+    min-height: 0;
   }
 }
 

@@ -5,6 +5,8 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- Owner 2026-11-24: **the home screen is two pages.** The top fills the first screenful on a desktop window; the method is a page of its own below it, a sheet with a large heading and more air; the himmeli closes the page under the method.
+- Fixed: the himmeli was drawn in the previous theme's colours after a change of theme, and when arriving with a saved skin, so it was pale or nearly invisible on most themes. It now takes the chosen theme's colours and is drawn more strongly.
 - Owner 2026-11-24: the home examples' main claims are statements one can be for or against (*Uusi tuote kannattaa julkaista nyt*), one of the five and the decision aside; the risk example now reads as a goal (*Tavoite: …*) with two risks under it, each with its cause and what is done about it.
 - Owner 2026-11-24: **the home screen breathes.** Between the top of the page and the description of the method there is a band of air where the himmeli now hangs, with one line under it (*Hyvä päätös kasvaa perustelu kerrallaan.*); nothing of the himmeli is behind the slogan or the example card any more. A reader who scrolls there at once finds the tree begun. The home examples turn every 15 seconds (10 before).
 - Owner 2026-11-24: in the Sulkakynä theme the home screen's feather no longer lies behind the slogan: it rests in the free corner above the example card. On a narrow window, where the example card is under the text, the himmeli is not shown (it used to spread behind the text).

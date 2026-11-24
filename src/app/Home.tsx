@@ -309,11 +309,6 @@ export function Home() {
             </div>
           </div>
         </div>
-        {/* A band of air between the page's top and the method (owner 2026-11-24): the himmeli hangs here. */}
-        <section className="home-interlude" id="homeInterlude">
-          <HomeBackdrop appearance={state.appearance} />
-          <p className="home-interlude-line">{t('homeInterludeLine')}</p>
-        </section>
         <section className="home-method" id="homeMethod" aria-labelledby="homeMethodTitle">
           <h2 id="homeMethodTitle" tabIndex={-1}>
             {t('methodTitle')}
@@ -379,6 +374,11 @@ export function Home() {
               {t('homeDemo')}
             </button>
           </div>
+        </section>
+        {/* The page closes with the himmeli (owner 2026-11-24: “ehkä se voisi olla sivun pohjalla”). */}
+        <section className="home-closing" id="homeClosing">
+          <HomeBackdrop appearance={state.appearance} />
+          <p className="home-closing-line">{t('homeInterludeLine')}</p>
         </section>
       </main>
     </div>

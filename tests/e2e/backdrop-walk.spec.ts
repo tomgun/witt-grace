@@ -1,7 +1,8 @@
 /**
  * must: the home screen has the himmeli canvas `#homeBackdrop` (owner 2026-11-23, WG-062, UI_INVENTORY S-15) in a
- *       band of its own between the top of the page and the method (`#homeInterlude`, owner 2026-11-24), with one
- *       line of text under it: the canvas is hidden from assistive technology and never takes the pointer; the
+ *       band of its own that closes the page, under the method (`#homeClosing`, owner 2026-11-24), with one
+ *       line of text under it; the method is a page of its own under the first screenful; the tree is drawn in
+ *       the chosen theme's colours: the canvas is hidden from assistive technology and never takes the pointer; the
  *       whole tree stays inside its band; on a desktop-width window nothing of it is there at first: after 30 s
  *       the main claim appears, then reasons one at a time until all 51 points are there; whoever scrolls to the
  *       band before that finds the tree begun (six points) and growing; with reduced motion and on a phone-width
@@ -9,7 +10,8 @@
  *       point is taken hold of with the mouse (a hand cursor shows it), follows the drag and is let go, and a
  *       press on a button still goes to the button
  * test: tests/e2e/backdrop-walk.spec.ts (desktop 1440×900 and mobile 390×844)
- * red-against: the tree behind the slogan or the example card again, an animation that ignores the reduced motion
+ * red-against: the tree drawn in the previous theme's colours (pale or invisible after a theme change), the
+ *              method starting inside the first screenful, the tree behind the slogan or the example card again, an animation that ignores the reduced motion
  *              setting, an empty canvas (a colour token that did not resolve), the canvas left over the
  *              workspace, the whole tree at once on arrival, a tree that never grows, an empty band met by a
  *              reader who scrolls down at once, a tree cut by its band's edge, a grab that starts on a button and
@@ -54,13 +56,19 @@ test('the himmeli has its own band, grows from the main claim, and is gone in th
   const backdrop = page.locator('#homeBackdrop');
   await expect(backdrop).toHaveAttribute('aria-hidden', 'true');
   await expect(backdrop).toHaveCSS('pointer-events', 'none');
-  // Its band sits between the top of the page and the method, with a line of text under the tree.
+  // The page in order: the top, the method as a page of its own, and the himmeli's band closing the page, with
+  // a line of text under the tree.
   const top = (await page.locator('.home-hero').boundingBox())!;
-  const band = (await page.locator('#homeInterlude').boundingBox())!;
   const method = (await page.locator('#homeMethod').boundingBox())!;
-  expect(band.y).toBeGreaterThanOrEqual(top.y + top.height - 1);
-  expect(method.y).toBeGreaterThanOrEqual(band.y + band.height - 1);
-  await expect(page.locator('.home-interlude-line')).toHaveText('Hyvä päätös kasvaa perustelu kerrallaan.');
+  const band = (await page.locator('#homeClosing').boundingBox())!;
+  expect(method.y).toBeGreaterThanOrEqual(top.y + top.height - 1);
+  expect(band.y).toBeGreaterThanOrEqual(method.y + method.height - 1);
+  await expect(page.locator('.home-closing-line')).toHaveText('Hyvä päätös kasvaa perustelu kerrallaan.');
+  if ((viewport?.width ?? 1440) >= 1021) {
+    // On a desktop window the top fills the first screenful and the method is at least a screenful.
+    expect(method.y).toBeGreaterThanOrEqual(viewport!.height);
+    expect(method.height).toBeGreaterThanOrEqual(viewport!.height);
+  }
   const wide = (viewport?.width ?? 1440) >= 700;
   await expect(backdrop).toHaveAttribute('data-animated', String(wide));
   if (wide) {
@@ -86,6 +94,44 @@ test('the himmeli has its own band, grows from the main claim, and is gone in th
   await page.locator('#btnNewWorkArgument').click();
   await expect(page.getByTestId('app')).toBeVisible();
   await expect(page.locator('#homeBackdrop')).toHaveCount(0);
+});
+
+test('the himmeli is drawn in the chosen theme’s colours, not the previous theme’s', async ({
+  page,
+  viewport,
+}) => {
+  test.skip((viewport?.width ?? 1440) < 700, 'the desktop walk covers the theme change');
+  await page.clock.install();
+  await page.goto('/');
+  await page.clock.fastForward(WHOLE_TREE_MS);
+  const backdrop = page.locator('#homeBackdrop');
+  await expect(backdrop).toHaveAttribute('data-points', '51');
+  /** Whether something on the canvas is drawn in the body's own `--accent` (the main claim's colour). */
+  const inAccent = () =>
+    backdrop.evaluate((canvas) => {
+      const probe = document.createElement('span');
+      probe.style.color = getComputedStyle(document.body).getPropertyValue('--accent');
+      document.body.append(probe);
+      const [r, g, b] = (getComputedStyle(probe).color.match(/[\d.]+/g) ?? []).map(Number);
+      probe.remove();
+      const c = canvas as HTMLCanvasElement;
+      const data = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data;
+      for (let i = 0; i < data.length; i += 4)
+        if (
+          data[i + 3]! > 120 &&
+          Math.abs(data[i]! - r!) < 14 &&
+          Math.abs(data[i + 1]! - g!) < 14 &&
+          Math.abs(data[i + 2]! - b!) < 14
+        )
+          return true;
+      return false;
+    });
+  for (const theme of ['obsidian', 'manuscript-pen', 'light']) {
+    await page.locator('#homeScreen select').nth(1).selectOption(theme);
+    await expect(backdrop).toHaveAttribute('data-theme', theme);
+    await page.clock.fastForward(500);
+    expect(await inAccent(), `the main claim in ${theme}'s accent`).toBe(true);
+  }
 });
 
 test('scrolling to the band at once finds the tree begun, not an empty band', async ({ page, viewport }) => {

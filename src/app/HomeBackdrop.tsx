@@ -1,8 +1,9 @@
 // The home screen's himmeli (owner 2026-11-23: “hillitty, mutta sellainen joka tuo hiukan elävyyttä… voisiko se
 // koostua jotenkin argumentaatiopuusta”; “hiirellä/kosketuksella voisi tarrata noodeihin ja heiluttaa himmeliä…
 // ikään kuin fysiikkamallinnettuna… ettei koko rakennelma liiku vaan dynaamisesti noodin viereisistä”): an
-// argument tree as a wire mesh that hangs from its main claim and turns slowly. It has a band of its own between
-// the top of the page and the method (owner 2026-11-24) and fits it whole. It is not there at first: after half a
+// argument tree as a wire mesh that hangs from its main claim and turns slowly. It closes the page, in a band of
+// its own under the method (owner 2026-11-24), and fits it whole; it is drawn strongly enough to be seen in
+// every theme. It is not there at first: after half a
 // minute on the home screen the main claim appears, and then a reason at a time, a few seconds apart, until the
 // tree is whole; whoever scrolls to the band earlier finds the tree begun. A point of it can be taken hold of
 // with the mouse or a finger: it follows the hand and pulls its neighbours with it (homeMesh.ts). The canvas
@@ -53,13 +54,23 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     /** Which points are there, and how strongly each is drawn (0…1). */
     const there = mesh.nodes.map(() => false);
     const strength = mesh.nodes.map(() => 0);
-    const tokens = getComputedStyle(document.body);
-    const token = (name: string, fallback: string) => tokens.getPropertyValue(name).trim() || fallback;
-    const colour: Record<MeshStance, string> = {
-      root: token('--accent', '#6b5cff'),
-      support: token('--green', '#2f9c58'),
-      oppose: token('--red', '#c2495a'),
+    // The colours are the theme's. The theme is set on the body after this effect has run, so they are read
+    // again whenever the body's theme changes; reading them once here would draw in the previous theme's colours.
+    const colour: Record<MeshStance, string> = { root: '#6b5cff', support: '#2f9c58', oppose: '#c2495a' };
+    const readColours = () => {
+      const tokens = getComputedStyle(document.body);
+      const token = (name: string, fallback: string) => tokens.getPropertyValue(name).trim() || fallback;
+      colour.root = token('--accent', '#6b5cff');
+      colour.support = token('--green', '#2f9c58');
+      colour.oppose = token('--red', '#c2495a');
+      canvas.dataset.theme = document.body.dataset.theme ?? '';
     };
+    readColours();
+    const themed = new MutationObserver(() => {
+      readColours();
+      draw();
+    });
+    themed.observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
     let width = 0;
     let height = 0;
     /** Where the model sits on the screen: hung from near the top, most of it at the right edge. */
@@ -134,13 +145,13 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
         ctx.stroke();
       };
       mesh.nodes.forEach((node, i) => {
-        if (node.parent >= 0 && there[i]) line(i, node.parent, colour[node.stance], 0.26, 1.2);
+        if (node.parent >= 0 && there[i]) line(i, node.parent, colour[node.stance], 0.62, 1.3);
       });
       mesh.nodes.forEach((node, i) => {
         if (!there[i]) return;
         const p = points[i]!;
         const held = hold?.index === i;
-        ctx.globalAlpha = (held ? 0.9 : 0.22 + 0.36 * p.near) * strength[i]!;
+        ctx.globalAlpha = (held ? 1 : 0.55 + 0.4 * p.near) * strength[i]!;
         ctx.fillStyle = colour[node.stance];
         ctx.beginPath();
         ctx.arc(
@@ -274,6 +285,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     window.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => {
       cancelAnimationFrame(frame);
+      themed.disconnect();
       seen.disconnect();
       sized.disconnect();
       motion.removeEventListener('change', start);
