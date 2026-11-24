@@ -142,7 +142,7 @@ export const SCENARIOS: readonly Scenario[] = [
 ];
 
 /** How long one example is shown before the next takes its turn. */
-export const SCENARIO_TURN_MS = 10_000;
+export const SCENARIO_TURN_MS = 15_000;
 /** The example `step` places after (or before) `index`, around the ends. */
 export const scenarioAfter = (index: number, step: number, count: number = SCENARIOS.length): number =>
   (((index + step) % count) + count) % count;

@@ -1,13 +1,13 @@
-// The home screen's backdrop, the himmeli (owner 2026-11-23: “hillitty, mutta sellainen joka tuo hiukan elävyyttä…
-// voisiko se koostua jotenkin argumentaatiopuusta”; “hiirellä/kosketuksella voisi tarrata noodeihin ja heiluttaa
-// himmeliä… ikään kuin fysiikkamallinnettuna… ettei koko rakennelma liiku vaan dynaamisesti noodin viereisistä”):
-// an argument tree as a wire mesh that hangs from its main claim at the right edge and turns slowly behind the
-// page. It is not there at first (owner 2026-11-24): after half a minute on the home screen the main claim
-// appears, and then a reason at a time, a few seconds apart, until the tree is whole; the whole of it fits the
-// window, above the example card on a wide one. A point of it can be taken hold of with the mouse or a finger wherever no control of the page is in the
-// way: it follows the hand and pulls its neighbours with it (homeMesh.ts). The canvas itself never takes input.
-// Still, whole from the start and not to be held, when the person asks for less motion; not drawn at all where
-// the page has no free place for it (a narrow window); paused while the page is hidden. The colours are the theme's own.
+// The home screen's himmeli (owner 2026-11-23: “hillitty, mutta sellainen joka tuo hiukan elävyyttä… voisiko se
+// koostua jotenkin argumentaatiopuusta”; “hiirellä/kosketuksella voisi tarrata noodeihin ja heiluttaa himmeliä…
+// ikään kuin fysiikkamallinnettuna… ettei koko rakennelma liiku vaan dynaamisesti noodin viereisistä”): an
+// argument tree as a wire mesh that hangs from its main claim and turns slowly. It has a band of its own between
+// the top of the page and the method (owner 2026-11-24) and fits it whole. It is not there at first: after half a
+// minute on the home screen the main claim appears, and then a reason at a time, a few seconds apart, until the
+// tree is whole; whoever scrolls to the band earlier finds the tree begun. A point of it can be taken hold of
+// with the mouse or a finger: it follows the hand and pulls its neighbours with it (homeMesh.ts). The canvas
+// itself never takes input. Still, whole from the start and not to be held, when the person asks for less motion
+// and on a phone-width window; paused while the page is hidden. The colours are the theme's own.
 import { useEffect, useRef } from 'react';
 import {
   bodyAtRest,
@@ -30,8 +30,8 @@ const START_ANGLE = 0.6;
 const GRAB_REACH = 22;
 /** A point that has just appeared takes this long to reach its full strength. */
 const FADE_IN_MS = 1800;
-/** The least height of the band above the example card that the tree is hung in, in pixels. */
-const BAND_MIN = 120;
+/** How many points are there at the latest when the band is first scrolled into view. */
+const BEGUN_POINTS = 6;
 /** What of the page is never grabbed through: its controls and the example card. */
 const IN_THE_WAY = 'button, a, input, select, textarea, summary, label, dialog, .home-visual';
 
@@ -44,7 +44,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     const cameUp = since.current;
     const canvas = ref.current;
     const ctx = canvas?.getContext('2d');
-    const page = canvas?.parentElement;
+    const page = canvas?.closest<HTMLElement>('.home-screen');
     if (!canvas || !ctx || !page) return;
     const mesh = buildMesh();
     const appearsAt = growthTimes(mesh);
@@ -64,8 +64,8 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     let height = 0;
     /** Where the model sits on the screen: hung from near the top, most of it at the right edge. */
     let frameBox = { cx: 0, cy: 0, unit: 1 };
-    /** Whether the page has a place for the tree at this size. */
-    let placed = false;
+    /** Added to the time on the home screen: see `seen` below. */
+    let ahead = 0;
     let points: Projected[] = [];
     let angle = START_ANGLE;
     let hold: (Hold & { depth: number }) | null = null;
@@ -77,22 +77,9 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      // The whole tree fits the layout as it turns (owner 2026-11-24): it hangs in the free band above the
-      // example card, under the top row. Where the page has no such band (the card under the text on a narrow
-      // window, or a low window) there is no place for it and it is not drawn at all.
-      const own = canvas.getBoundingClientRect();
-      const nav = page.querySelector('.home-nav')?.getBoundingClientRect();
-      const card = page.querySelector('.home-visual')?.getBoundingClientRect();
-      placed = !!nav && !!card && card.left > width * 0.4 && card.top - nav.bottom >= BAND_MIN;
-      canvas.dataset.placed = String(placed);
-      if (!nav || !card || !placed) return;
-      // The points have a size of their own: a little air on every side.
-      const room = {
-        left: card.left - own.left + 10,
-        top: nav.bottom - own.top + 10,
-        w: card.width - 20,
-        h: card.top - nav.bottom - 26,
-      };
+      // The whole tree fits its own band of the page as it turns (owner 2026-11-24). The points have a size of
+      // their own: a little air on every side.
+      const room = { left: 12, top: 12, w: width - 24, h: height - 24 };
       const unit = Math.max(
         40,
         Math.min(room.w / (extent.right - extent.left), room.h / (extent.bottom - extent.top))
@@ -105,7 +92,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     };
     /** The points that have appeared by now; a new one starts at its claim. Without motion all are there. */
     const grow = (now: number) => {
-      const age = !placed ? -Infinity : moving ? now - cameUp : Infinity;
+      const age = moving ? now - cameUp + ahead : Infinity;
       let count = 0;
       mesh.nodes.forEach((_, i) => {
         const at = appearsAt[i] as number;
@@ -186,7 +173,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     const start = () => {
       cancelAnimationFrame(frame);
       resize();
-      moving = placed && !calm();
+      moving = !calm();
       if (!moving) {
         hold = null;
         body = bodyAtRest(mesh);
@@ -262,12 +249,21 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     };
 
     start();
+    // Whoever scrolls down to the band before the tree has begun does not meet an empty one: the main claim and
+    // its first reasons are there on arrival, and the tree grows on from that.
+    const begun = [...appearsAt].sort((a, b) => a - b)[BEGUN_POINTS - 1] ?? 0;
+    const seen = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        ahead = Math.max(ahead, begun - (performance.now() - cameUp));
+        seen.disconnect();
+      },
+      { threshold: 0.4 }
+    );
+    seen.observe(canvas);
     // The canvas takes its size from the page: draw again whenever that size changes (the first layout too).
     const sized = new ResizeObserver(start);
     sized.observe(canvas);
-    // The band the tree hangs in moves when the example card does.
-    const card = page.querySelector('.home-visual');
-    if (card) sized.observe(card);
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     motion.addEventListener('change', start);
     window.addEventListener('resize', start);
@@ -278,6 +274,7 @@ export function HomeBackdrop({ appearance }: { appearance: string }) {
     window.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => {
       cancelAnimationFrame(frame);
+      seen.disconnect();
       sized.disconnect();
       motion.removeEventListener('change', start);
       window.removeEventListener('resize', start);

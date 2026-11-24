@@ -4,7 +4,7 @@
  *       branches are options with a reason for and one against each, then risks (a risk with its cause and what is
  *       done about it, an action with why it helps); every text has a Finnish wording of its own and no text is
  *       used twice; in the argument examples a reason's own reason is for it in some and against it in others, on
- *       both sides (owner 2026-11-24); an example is shown for ten seconds; the arrows go round the ends
+ *       both sides (owner 2026-11-24); an example is shown for fifteen seconds (owner 2026-11-24: “+5 sek”); the arrows go round the ends
  * test: tests/unit/home-scenarios.test.ts
  * red-against: an example without a second branch (the card changes size as they take turns), a child text reused
  *              from another example, every sub-reason taking its parent's side (for under for, against under
@@ -84,8 +84,8 @@ test('the decision example has two options with a reason for and one against eac
   );
 });
 
-test('ten seconds an example, and the arrows go round', () => {
-  assert.equal(SCENARIO_TURN_MS, 10_000);
+test('fifteen seconds an example, and the arrows go round', () => {
+  assert.equal(SCENARIO_TURN_MS, 15_000);
   assert.equal(scenarioAfter(0, 1), 1);
   assert.equal(scenarioAfter(6, 1), 0);
   assert.equal(scenarioAfter(0, -1), 6);

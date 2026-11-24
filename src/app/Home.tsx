@@ -51,7 +51,7 @@ export function Home() {
   const invite = useTutorialInvite();
   const [scenario, setScenario] = useState(0);
   const [hovering, setHovering] = useState(false);
-  // The examples take turns slowly, ten seconds each (owner 2026-11-23), so there is time to read one. The turn
+  // The examples take turns slowly, fifteen seconds each (owner 2026-11-24; ten before), so there is time to read one. The turn
   // waits while the pointer rests on the picture, starts over when the reader picks an example, and does not
   // run at all for a person who asked for less motion.
   useEffect(() => {
@@ -80,7 +80,6 @@ export function Home() {
   ] as const;
   return (
     <div id="homeScreen" className="home-screen" data-testid="home">
-      <HomeBackdrop appearance={state.appearance} />
       <nav className="home-nav" aria-label="WITT">
         <button
           type="button"
@@ -310,6 +309,11 @@ export function Home() {
             </div>
           </div>
         </div>
+        {/* A band of air between the page's top and the method (owner 2026-11-24): the himmeli hangs here. */}
+        <section className="home-interlude" id="homeInterlude">
+          <HomeBackdrop appearance={state.appearance} />
+          <p className="home-interlude-line">{t('homeInterludeLine')}</p>
+        </section>
         <section className="home-method" id="homeMethod" aria-labelledby="homeMethodTitle">
           <h2 id="homeMethodTitle" tabIndex={-1}>
             {t('methodTitle')}
