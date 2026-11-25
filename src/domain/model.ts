@@ -56,7 +56,11 @@ export const withOfferedScoring = (project: Project): Project =>
     ? project
     : { ...project, settings: { ...project.settings, scoring: SCORING_VERSION } };
 
-export const MODES = ['argument', 'decision'] as const;
+/** `risk` (owner 2026-11-24/25, WG-058): a goal at the root, with the risks against it and the actions for it. It
+ * scores as an argument does; the roles of its nodes are read from the tree (`riskRole`). */
+export const MODES = ['argument', 'decision', 'risk'] as const;
+/** The roles of a risk tree's nodes, read from where they stand (WG-058). */
+export const RISK_ROLES = ['goal', 'action', 'risk', 'cause', 'mitigation'] as const;
 export const THEMES = ['light', 'dark', 'paper'] as const;
 export const KINDS = ['claim', 'option', 'decision', 'group'] as const;
 export const STANCES = ['root', 'support', 'oppose', 'neutral', 'option', 'group'] as const;
@@ -77,6 +81,7 @@ export const PROFILE_KINDS = ['human', 'ai'] as const;
 export const AUDIT_ACTIONS = ['open', 'cast', 'update', 'retract', 'close'] as const;
 
 export type Mode = (typeof MODES)[number];
+export type RiskRole = (typeof RISK_ROLES)[number];
 export type Theme = (typeof THEMES)[number];
 export type Kind = (typeof KINDS)[number];
 export type Stance = (typeof STANCES)[number];

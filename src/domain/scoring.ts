@@ -212,8 +212,9 @@ function hasReasons(
     return !!source && !outOfScore(source);
   });
 }
+/** The argument's main claim, or the risk tree's goal (WG-058): it scores as a main claim does. */
 const isThesis = (project: Project, node: Node): boolean =>
-  project.mode === 'argument' && node.parentId === null && node.kind === 'claim';
+  project.mode !== 'decision' && node.parentId === null && node.kind === 'claim';
 /** An option or the argument-mode thesis: the node the balance is read from. */
 const isTarget = (project: Project, node: Node): boolean => node.kind === 'option' || isThesis(project, node);
 /** What a scored node passes to its parent as the strength of its relation. */

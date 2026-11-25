@@ -118,8 +118,9 @@ export const SCENARIOS: readonly Scenario[] = [
       },
     ],
   },
-  // Risks (owner 2026-11-24: “riskikorttia en ihan tajua… miten viikoittainen tilannekatsaus on tukitoimi”): the
-  // goal on top, said to be the goal, and under it two risks to it, each with its cause and what is done about it.
+  // Risks (owner 2026-11-24: “riskikorttia en ihan tajua… miten viikoittainen tilannekatsaus on tukitoimi”; 2026-11-25:
+  // the supporting action stays, as it supports the goal and does not hold back a risk): the goal on top, said to be
+  // the goal; under it a risk to it with its cause and what holds it back, and an action that helps the goal itself.
   {
     label: 'homeScenarioLabel7',
     root: 'homeRiskRoot',
@@ -134,13 +135,10 @@ export const SCENARIOS: readonly Scenario[] = [
         ],
       },
       {
-        tag: 'homeTagRisk',
-        tone: 'opposing',
-        title: 'homeRisk2',
-        children: [
-          { tag: 'homeTagCause', tone: 'opposing', title: 'homeRisk2Cause' },
-          { tag: 'homeTagMitigation', tone: 'supporting', title: 'homeRisk2Mitigation' },
-        ],
+        tag: 'homeTagAction',
+        tone: 'supporting',
+        title: 'homeRiskAction',
+        children: [{ tag: FOR, tone: 'supporting', title: 'homeRiskActionWhy' }],
       },
     ],
   },

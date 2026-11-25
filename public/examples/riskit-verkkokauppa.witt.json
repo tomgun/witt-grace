@@ -1,0 +1,807 @@
+{
+  "schemaVersion": 8,
+  "id": "ex-riskit-verkkokauppa",
+  "title": "Riskit: verkkokauppa aukeaa marraskuussa",
+  "mode": "risk",
+  "theme": "light",
+  "settings": {
+    "voteWeighting": "equal",
+    "assessmentWeighting": "equal",
+    "shareSnapshotDate": null,
+    "scoring": "anchored-reasons-v1",
+    "showAuthors": true
+  },
+  "users": [
+    {
+      "id": "u-aino",
+      "name": "Aino · projektipäällikkö",
+      "shares": 1,
+      "role": "owner"
+    },
+    {
+      "id": "u-bertil",
+      "name": "Bertil · kehittäjä",
+      "shares": 1,
+      "role": "editor"
+    },
+    {
+      "id": "u-ceren",
+      "name": "Ceren · asiakaspalvelu",
+      "shares": 1,
+      "role": "editor"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "parentId": null,
+      "relation": "root",
+      "kind": "claim",
+      "title": "Verkkokauppa aukeaa marraskuussa",
+      "details": "",
+      "confidence": 50,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 64,
+        "y": 545
+      },
+      "createdBy": "u-aino",
+      "lastEditedBy": "u-aino"
+    },
+    {
+      "id": "n-001",
+      "parentId": "root",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kokenut toimittaja rakentaa kassan ja maksut",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 90
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-008",
+      "parentId": "root",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Testaus jää kesken",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 363
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-015",
+      "parentId": "n-008",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Kehitystyö venyy ja vie testausajan",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 272
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-022",
+      "parentId": "n-015",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Laajuus lukitaan syyskuun lopussa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 272
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-029",
+      "parentId": "n-008",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Viikoittainen katsaus paljastaa viiveet ajoissa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 454
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-036",
+      "parentId": "n-029",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Katsaus jää kiireessä pitämättä",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 1084,
+        "y": 454
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-043",
+      "parentId": "root",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Maksupalvelun sopimus viivästyy",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 727
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-050",
+      "parentId": "n-043",
+      "relation": "support",
+      "kind": "claim",
+      "title": "Sopimusneuvottelut alkavat vasta lokakuussa",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 636
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-057",
+      "parentId": "n-043",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Varamaksupalvelu on valmiina",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 818
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-064",
+      "parentId": "root",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Joulusesongin kuorma kaataa palvelun",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 404,
+        "y": 1000
+      },
+      "createdBy": "u-aino"
+    },
+    {
+      "id": "n-071",
+      "parentId": "n-064",
+      "relation": "oppose",
+      "kind": "claim",
+      "title": "Kuormitustesti tehdään ennen avausta",
+      "details": "",
+      "confidence": 100,
+      "impact": 3,
+      "collapsed": false,
+      "position": {
+        "x": 744,
+        "y": 1000
+      },
+      "createdBy": "u-aino"
+    }
+  ],
+  "sharedReasons": [],
+  "reasonConcepts": [],
+  "votes": [
+    {
+      "id": "v-002",
+      "nodeId": "n-001",
+      "userId": "u-aino",
+      "confidence": 85,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-004",
+      "nodeId": "n-001",
+      "userId": "u-bertil",
+      "confidence": 80,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-006",
+      "nodeId": "n-001",
+      "userId": "u-ceren",
+      "confidence": 90,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-009",
+      "nodeId": "n-008",
+      "userId": "u-aino",
+      "confidence": 50,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "1rs2nuz220u"
+    },
+    {
+      "id": "v-011",
+      "nodeId": "n-008",
+      "userId": "u-bertil",
+      "confidence": 60,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "1rs2nuz220u"
+    },
+    {
+      "id": "v-013",
+      "nodeId": "n-008",
+      "userId": "u-ceren",
+      "confidence": 45,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "1rs2nuz220u"
+    },
+    {
+      "id": "v-016",
+      "nodeId": "n-015",
+      "userId": "u-aino",
+      "confidence": 60,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "7nfuwc0sf4"
+    },
+    {
+      "id": "v-018",
+      "nodeId": "n-015",
+      "userId": "u-bertil",
+      "confidence": 70,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "7nfuwc0sf4"
+    },
+    {
+      "id": "v-020",
+      "nodeId": "n-015",
+      "userId": "u-ceren",
+      "confidence": 55,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "7nfuwc0sf4"
+    },
+    {
+      "id": "v-023",
+      "nodeId": "n-022",
+      "userId": "u-aino",
+      "confidence": 70,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-025",
+      "nodeId": "n-022",
+      "userId": "u-bertil",
+      "confidence": 50,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-027",
+      "nodeId": "n-022",
+      "userId": "u-ceren",
+      "confidence": 60,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-030",
+      "nodeId": "n-029",
+      "userId": "u-aino",
+      "confidence": 75,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "28n86sefxfn"
+    },
+    {
+      "id": "v-032",
+      "nodeId": "n-029",
+      "userId": "u-bertil",
+      "confidence": 65,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "28n86sefxfn"
+    },
+    {
+      "id": "v-034",
+      "nodeId": "n-029",
+      "userId": "u-ceren",
+      "confidence": 70,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "28n86sefxfn"
+    },
+    {
+      "id": "v-037",
+      "nodeId": "n-036",
+      "userId": "u-aino",
+      "confidence": 30,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-039",
+      "nodeId": "n-036",
+      "userId": "u-bertil",
+      "confidence": 40,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-041",
+      "nodeId": "n-036",
+      "userId": "u-ceren",
+      "confidence": 35,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-044",
+      "nodeId": "n-043",
+      "userId": "u-aino",
+      "confidence": 30,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "gphwj9dqnp"
+    },
+    {
+      "id": "v-046",
+      "nodeId": "n-043",
+      "userId": "u-bertil",
+      "confidence": 25,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "gphwj9dqnp"
+    },
+    {
+      "id": "v-048",
+      "nodeId": "n-043",
+      "userId": "u-ceren",
+      "confidence": 40,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "gphwj9dqnp"
+    },
+    {
+      "id": "v-051",
+      "nodeId": "n-050",
+      "userId": "u-aino",
+      "confidence": 80,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-053",
+      "nodeId": "n-050",
+      "userId": "u-bertil",
+      "confidence": 85,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-055",
+      "nodeId": "n-050",
+      "userId": "u-ceren",
+      "confidence": 75,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-058",
+      "nodeId": "n-057",
+      "userId": "u-aino",
+      "confidence": 60,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-060",
+      "nodeId": "n-057",
+      "userId": "u-bertil",
+      "confidence": 70,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-062",
+      "nodeId": "n-057",
+      "userId": "u-ceren",
+      "confidence": 50,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-065",
+      "nodeId": "n-064",
+      "userId": "u-aino",
+      "confidence": 25,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "7gs9niexx5"
+    },
+    {
+      "id": "v-067",
+      "nodeId": "n-064",
+      "userId": "u-bertil",
+      "confidence": 35,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "7gs9niexx5"
+    },
+    {
+      "id": "v-069",
+      "nodeId": "n-064",
+      "userId": "u-ceren",
+      "confidence": 20,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "7gs9niexx5"
+    },
+    {
+      "id": "v-072",
+      "nodeId": "n-071",
+      "userId": "u-aino",
+      "confidence": 80,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-074",
+      "nodeId": "n-071",
+      "userId": "u-bertil",
+      "confidence": 70,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    },
+    {
+      "id": "v-076",
+      "nodeId": "n-071",
+      "userId": "u-ceren",
+      "confidence": 75,
+      "updatedAt": "2026-11-25T09:00:00.000Z",
+      "subtree": "wvjl67o803"
+    }
+  ],
+  "edgeAssessments": [
+    {
+      "id": "a-003",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-001",
+      "influence": 3,
+      "fingerprint": "[\"n-001\",\"root\",\"Kokenut toimittaja rakentaa kassan ja maksut\",\"Verkkokauppa aukeaa marraskuussa\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-005",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-001",
+      "influence": 3,
+      "fingerprint": "[\"n-001\",\"root\",\"Kokenut toimittaja rakentaa kassan ja maksut\",\"Verkkokauppa aukeaa marraskuussa\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-007",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-001",
+      "influence": 2,
+      "fingerprint": "[\"n-001\",\"root\",\"Kokenut toimittaja rakentaa kassan ja maksut\",\"Verkkokauppa aukeaa marraskuussa\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-010",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-008",
+      "influence": -4,
+      "fingerprint": "[\"n-008\",\"root\",\"Testaus jää kesken\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-012",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-008",
+      "influence": -4,
+      "fingerprint": "[\"n-008\",\"root\",\"Testaus jää kesken\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-014",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-008",
+      "influence": -3,
+      "fingerprint": "[\"n-008\",\"root\",\"Testaus jää kesken\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-017",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-015",
+      "influence": 3,
+      "fingerprint": "[\"n-015\",\"n-008\",\"Kehitystyö venyy ja vie testausajan\",\"Testaus jää kesken\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-019",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-015",
+      "influence": 4,
+      "fingerprint": "[\"n-015\",\"n-008\",\"Kehitystyö venyy ja vie testausajan\",\"Testaus jää kesken\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-021",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-015",
+      "influence": 3,
+      "fingerprint": "[\"n-015\",\"n-008\",\"Kehitystyö venyy ja vie testausajan\",\"Testaus jää kesken\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-024",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-022",
+      "influence": -2,
+      "fingerprint": "[\"n-022\",\"n-015\",\"Laajuus lukitaan syyskuun lopussa\",\"Kehitystyö venyy ja vie testausajan\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-026",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-022",
+      "influence": -2,
+      "fingerprint": "[\"n-022\",\"n-015\",\"Laajuus lukitaan syyskuun lopussa\",\"Kehitystyö venyy ja vie testausajan\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-028",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-022",
+      "influence": -3,
+      "fingerprint": "[\"n-022\",\"n-015\",\"Laajuus lukitaan syyskuun lopussa\",\"Kehitystyö venyy ja vie testausajan\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-031",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-029",
+      "influence": -3,
+      "fingerprint": "[\"n-029\",\"n-008\",\"Viikoittainen katsaus paljastaa viiveet ajoissa\",\"Testaus jää kesken\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-033",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-029",
+      "influence": -2,
+      "fingerprint": "[\"n-029\",\"n-008\",\"Viikoittainen katsaus paljastaa viiveet ajoissa\",\"Testaus jää kesken\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-035",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-029",
+      "influence": -3,
+      "fingerprint": "[\"n-029\",\"n-008\",\"Viikoittainen katsaus paljastaa viiveet ajoissa\",\"Testaus jää kesken\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-038",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-036",
+      "influence": -2,
+      "fingerprint": "[\"n-036\",\"n-029\",\"Katsaus jää kiireessä pitämättä\",\"Viikoittainen katsaus paljastaa viiveet ajoissa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-040",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-036",
+      "influence": -3,
+      "fingerprint": "[\"n-036\",\"n-029\",\"Katsaus jää kiireessä pitämättä\",\"Viikoittainen katsaus paljastaa viiveet ajoissa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-042",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-036",
+      "influence": -2,
+      "fingerprint": "[\"n-036\",\"n-029\",\"Katsaus jää kiireessä pitämättä\",\"Viikoittainen katsaus paljastaa viiveet ajoissa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-045",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-043",
+      "influence": -5,
+      "fingerprint": "[\"n-043\",\"root\",\"Maksupalvelun sopimus viivästyy\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-047",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-043",
+      "influence": -5,
+      "fingerprint": "[\"n-043\",\"root\",\"Maksupalvelun sopimus viivästyy\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-049",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-043",
+      "influence": -4,
+      "fingerprint": "[\"n-043\",\"root\",\"Maksupalvelun sopimus viivästyy\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-052",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-050",
+      "influence": 3,
+      "fingerprint": "[\"n-050\",\"n-043\",\"Sopimusneuvottelut alkavat vasta lokakuussa\",\"Maksupalvelun sopimus viivästyy\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-054",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-050",
+      "influence": 2,
+      "fingerprint": "[\"n-050\",\"n-043\",\"Sopimusneuvottelut alkavat vasta lokakuussa\",\"Maksupalvelun sopimus viivästyy\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-056",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-050",
+      "influence": 3,
+      "fingerprint": "[\"n-050\",\"n-043\",\"Sopimusneuvottelut alkavat vasta lokakuussa\",\"Maksupalvelun sopimus viivästyy\",\"support\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-059",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-057",
+      "influence": -3,
+      "fingerprint": "[\"n-057\",\"n-043\",\"Varamaksupalvelu on valmiina\",\"Maksupalvelun sopimus viivästyy\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-061",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-057",
+      "influence": -4,
+      "fingerprint": "[\"n-057\",\"n-043\",\"Varamaksupalvelu on valmiina\",\"Maksupalvelun sopimus viivästyy\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-063",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-057",
+      "influence": -3,
+      "fingerprint": "[\"n-057\",\"n-043\",\"Varamaksupalvelu on valmiina\",\"Maksupalvelun sopimus viivästyy\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-066",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-064",
+      "influence": -3,
+      "fingerprint": "[\"n-064\",\"root\",\"Joulusesongin kuorma kaataa palvelun\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-068",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-064",
+      "influence": -4,
+      "fingerprint": "[\"n-064\",\"root\",\"Joulusesongin kuorma kaataa palvelun\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-070",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-064",
+      "influence": -3,
+      "fingerprint": "[\"n-064\",\"root\",\"Joulusesongin kuorma kaataa palvelun\",\"Verkkokauppa aukeaa marraskuussa\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-073",
+      "userId": "u-aino",
+      "subjectType": "primary",
+      "subjectId": "n-071",
+      "influence": -3,
+      "fingerprint": "[\"n-071\",\"n-064\",\"Kuormitustesti tehdään ennen avausta\",\"Joulusesongin kuorma kaataa palvelun\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-075",
+      "userId": "u-bertil",
+      "subjectType": "primary",
+      "subjectId": "n-071",
+      "influence": -3,
+      "fingerprint": "[\"n-071\",\"n-064\",\"Kuormitustesti tehdään ennen avausta\",\"Joulusesongin kuorma kaataa palvelun\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    },
+    {
+      "id": "a-077",
+      "userId": "u-ceren",
+      "subjectType": "primary",
+      "subjectId": "n-071",
+      "influence": -2,
+      "fingerprint": "[\"n-071\",\"n-064\",\"Kuormitustesti tehdään ennen avausta\",\"Joulusesongin kuorma kaataa palvelun\",\"oppose\"]",
+      "updatedAt": "2026-11-25T09:00:00.000Z"
+    }
+  ],
+  "ballots": [],
+  "votingRound": null,
+  "voteAudit": [],
+  "voteHistory": [],
+  "comments": [],
+  "links": [],
+  "layout": {
+    "fourWayOffsets": {}
+  },
+  "createdAt": "2026-11-25T09:00:00.000Z",
+  "updatedAt": "2026-11-25T09:00:00.000Z"
+}

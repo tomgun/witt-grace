@@ -1,8 +1,9 @@
 // The autosave metadata beside the active draft, in the prototype's exact shape (`witt-workspace-meta-v1`):
 // which document was last autosaved and when, and the last JSON file opened or exported. A single draft lives in
 // `witt-project-v3`; explicit library saves are IndexedDB (library.ts). No document history, no migration of old keys.
-import type { Project } from '../domain/index.ts';
-import type { Translator } from './i18n/i18n.ts';
+import { MODES } from '../domain/index.ts';
+import type { Mode, Project } from '../domain/index.ts';
+import type { MessageKey, Translator } from './i18n/i18n.ts';
 import { PROJECT_KEY, saveProject } from './storage.ts';
 import type { KeyValueStore } from './storage.ts';
 
@@ -79,10 +80,17 @@ export function recordEvent(
   return event;
 }
 
+/** The name of each document type. */
+export const MODE_LABEL_KEYS: Record<Mode, MessageKey> = {
+  argument: 'modeArgument',
+  decision: 'modeDecision',
+  risk: 'modeRisk',
+};
+
 export interface ActiveSummary {
   id: string | null;
   title: string | null;
-  mode: 'decision' | 'argument' | null;
+  mode: Mode | null;
   nodeCount: number | null;
   /** The document's own content edit time. */
   editedAt: string | null;
@@ -100,7 +108,7 @@ export function activeSummary(store: KeyValueStore, project: unknown, temporary 
   return {
     id: typeof doc.id === 'string' ? doc.id : null,
     title: typeof doc.title === 'string' && doc.title.trim() ? doc.title.trim() : null,
-    mode: doc.mode === 'decision' ? 'decision' : doc.mode === 'argument' ? 'argument' : null,
+    mode: (MODES as readonly unknown[]).includes(doc.mode) ? (doc.mode as Mode) : null,
     nodeCount: Array.isArray(doc.nodes) ? doc.nodes.length : null,
     editedAt: validTime(doc.updatedAt),
     browserSavedAt: temporary ? null : validTime(active?.savedAt),
@@ -201,7 +209,7 @@ export function replaceDialogTexts(t: Translator, locale: string, active: Active
   return {
     currentName: active.title || t('homeTimeUnknown'),
     currentInfo: [
-      active.mode ? t(active.mode === 'decision' ? 'modeDecision' : 'modeArgument') : null,
+      active.mode ? t(MODE_LABEL_KEYS[active.mode]) : null,
       active.nodeCount === null ? null : t('replaceNodeCount', { count: active.nodeCount }),
     ]
       .filter(Boolean)

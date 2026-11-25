@@ -1,4 +1,6 @@
 // The example manifest for #examplesDialog, apart from the dialog so unit tests can read it without JSX.
+import type { Mode } from '../domain/index.ts';
+
 export interface ExampleEntry {
   id: string;
   title: string;
@@ -7,7 +9,7 @@ export interface ExampleEntry {
   participants: string[];
   nodeCount: number;
   /** The document's type, shown on the card so the two kinds of work can be told apart before opening. */
-  mode: 'argument' | 'decision';
+  mode: Mode;
 }
 /** The prototype's `Examples.list()` verbatim (fictional data; the files are byte-equal copies of its fixtures). */
 export const EXAMPLES: readonly ExampleEntry[] = [
@@ -97,5 +99,16 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     participants: ['Arvioija'],
     nodeCount: 59,
     mode: 'decision',
+  },
+  // Added 2026-11-25 (owner, WG-058): a risk tree, built by scripts/build-risk-example.ts. Fictional data.
+  {
+    id: 'riskit-verkkokauppa',
+    title: 'Riskit: verkkokauppa aukeaa marraskuussa',
+    description:
+      'Tavoite, sitä tukeva toimi ja kolme riskiä syineen ja torjuntoineen. Todennäköisyys on uskottavuus ja vakavuus vaikutus.',
+    filename: 'riskit-verkkokauppa.witt.json',
+    participants: ['Aino · projektipäällikkö', 'Bertil · kehittäjä', 'Ceren · asiakaspalvelu'],
+    nodeCount: 12,
+    mode: 'risk',
   },
 ];

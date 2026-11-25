@@ -97,7 +97,7 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
   const setMode = (mode: Mode) => {
     if (mode === state.project.mode) return;
     if (
-      mode === 'argument' &&
+      mode !== 'decision' &&
       state.project.nodes.some((n) => n.relation === 'option' || n.relation === 'group')
     ) {
       store.showMessage(t('optionsPreventArgumentMode'));
@@ -206,6 +206,16 @@ export function TopBar({ shortcuts }: { shortcuts: Shortcuts }) {
             onClick={() => setMode('decision')}
           >
             {t('modeDecision')}
+          </button>
+          <button
+            type="button"
+            id="modeRisk"
+            data-testid="mode-risk"
+            className={state.project.mode === 'risk' ? 'active' : ''}
+            aria-pressed={state.project.mode === 'risk'}
+            onClick={() => setMode('risk')}
+          >
+            {t('modeRisk')}
           </button>
         </div>
         <CollabChip />

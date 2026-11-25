@@ -2,6 +2,7 @@
 // app.js helpers (inv-canvas §1.5, inv-inspector §F). Pure functions over the document, the scores and the view.
 import {
   argumentBalance,
+  assertNever,
   assessmentFields,
   baseConfidence,
   credenceSpread,
@@ -15,13 +16,26 @@ import {
   marginalTargetEffects,
   personalCredence,
   personalInfluence,
+  riskRole,
+  riskRoleIsGood,
   SCORING_RULES,
   sharedReason,
   viewpointSpread,
 } from '../domain/index.ts';
-import type { Lens, Node, NodeScore, Project, Scores, Stance, TargetEffect } from '../domain/index.ts';
+import type {
+  Lens,
+  Mode,
+  Node,
+  NodeScore,
+  Project,
+  RiskRole,
+  Scores,
+  Stance,
+  TargetEffect,
+} from '../domain/index.ts';
 import { fig } from './numberFormat.ts';
 import type { MessageKey, Translator } from '../lib/i18n/i18n.ts';
+import { MODE_LABEL_KEYS } from '../lib/workspaceMeta.ts';
 import type { Layers, ViewState } from './view.ts';
 
 export const EM_DASH = '—';
@@ -121,6 +135,51 @@ export function displayedPrimaryRelation(ctx: DeriveContext, node: Node): Stance
 export const ratesSignificance = (project: Project, node: Node): boolean =>
   project.mode === 'decision' && project.nodes.find((n) => n.id === node.parentId)?.kind === 'option';
 
+/** The name of a document type. */
+export const modeLabelKey = (mode: Mode): MessageKey => MODE_LABEL_KEYS[mode];
+/** The tag of a role in a risk tree (WG-058). */
+export function riskRoleKey(role: RiskRole): MessageKey {
+  switch (role) {
+    case 'goal':
+      return 'riskRoleGoal';
+    case 'action':
+      return 'riskRoleAction';
+    case 'risk':
+      return 'riskRoleRisk';
+    case 'cause':
+      return 'riskRoleCause';
+    case 'mitigation':
+      return 'riskRoleMitigation';
+    default:
+      return assertNever(role);
+  }
+}
+/** The words of the card's + and − in a risk tree: what is added under this node (WG-058). */
+export function riskAddKey(role: Exclude<RiskRole, 'goal'>): MessageKey {
+  switch (role) {
+    case 'action':
+      return 'riskAddAction';
+    case 'risk':
+      return 'riskAddRisk';
+    case 'cause':
+      return 'riskAddCause';
+    case 'mitigation':
+      return 'riskAddMitigation';
+    default:
+      return assertNever(role);
+  }
+}
+/** The node's role in a risk tree as it reads now: in the direction people have given it. Null outside one. */
+export const shownRiskRole = (ctx: DeriveContext, node: Node): RiskRole | null =>
+  riskRole(ctx.project, node, (n) => displayedPrimaryRelation(ctx, n));
+/** The relation a card is coloured by: in a risk tree what is good for the goal looks supporting and what is bad
+ * looks opposing (a mitigation opposes its risk, yet it is on the goal's side); elsewhere the shown relation. */
+export function cardTone(ctx: DeriveContext, node: Node): Stance {
+  const role = shownRiskRole(ctx, node);
+  if (!role || role === 'goal') return displayedPrimaryRelation(ctx, node);
+  return riskRoleIsGood(role) ? 'support' : 'oppose';
+}
+
 export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
   if (node.relation === 'group') return 'optionGroupType';
   if (node.relation === 'option') return 'optionType';
@@ -135,6 +194,8 @@ export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
 export function relationLabel(ctx: DeriveContext, t: Translator, node: Node): string {
   if (node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group'))
     return node.typeLabel;
+  const role = shownRiskRole(ctx, node);
+  if (role && !node.typeLabel) return t(riskRoleKey(role));
   const key = relationLabelKey(ctx, node);
   const typed = reasonTypeLabel(node);
   // A reason with its own type name reads as one phrase: "Puoltava tosiasia", "Neutraali tavoite" (owner, S-15).

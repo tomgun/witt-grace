@@ -3,7 +3,8 @@
 // bookkeeping of seats, invites and rates. No clock, no randomness, no crypto: tokens, ids and `nowMs` come in as
 // arguments; signatures are checked in src/lib/p2p. The host orders every change; peers replay its commits through the
 // same `applyCommand`, so the documents stay identical (the digest proves it).
-import { SCHEMA_VERSION, isAiProfile, sameName } from './model.ts';
+import { MODES, SCHEMA_VERSION, isAiProfile, sameName } from './model.ts';
+
 import type { Mode, Project } from './model.ts';
 import type { Command, CommandType } from './commands.ts';
 import { parseSketch } from './sketch.ts';
@@ -11,6 +12,7 @@ import type { Sketch } from './sketch.ts';
 import { parseSketchOps } from './sketchOps.ts';
 import type { SketchOp } from './sketchOps.ts';
 import { SKETCH_NAME_MAX, WORKBOOK_MAX_SKETCHES } from './workbook.ts';
+const isMode = (value: unknown): value is Mode => (MODES as readonly unknown[]).includes(value);
 
 /** 2 since 2026-11-18: a session may carry a document scored with a calculation method that a protocol-1 build
  * cannot parse, so such a build is told "different version" at the door instead of failing on the first snapshot. */
@@ -399,10 +401,7 @@ export function parseToHost(raw: string): Parsed<ToHost> {
         ? { ok: true, message: { t: 'sketchpad', id: m.id, pad: m.pad, name: m.name } }
         : bad;
     case 'diagram':
-      return isString(m.id) &&
-        isString(m.doc, 200) &&
-        isString(m.root, 200) &&
-        (m.mode === 'argument' || m.mode === 'decision')
+      return isString(m.id) && isString(m.doc, 200) && isString(m.root, 200) && isMode(m.mode)
         ? { ok: true, message: { t: 'diagram', id: m.id, doc: m.doc, root: m.root, mode: m.mode } }
         : bad;
     case 'ready':

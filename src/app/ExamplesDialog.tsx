@@ -11,6 +11,7 @@ import { stopTutorial } from './Tutorial.tsx';
 
 import { EXAMPLES } from './examples.ts';
 import type { ExampleEntry } from './examples.ts';
+import { modeLabelKey } from './derive.ts';
 
 export { EXAMPLES };
 
@@ -92,9 +93,7 @@ export function ExamplesDialog() {
                   disabled={busy}
                   onClick={() => void choose(entry)}
                 >
-                  <span className={`example-type ${entry.mode}`}>
-                    {t(entry.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
-                  </span>
+                  <span className={`example-type ${entry.mode}`}>{t(modeLabelKey(entry.mode))}</span>
                   <strong>{entry.title}</strong>
                   <small>{entry.description}</small>
                   <small>

@@ -46,7 +46,6 @@ import {
   reuseFromTreeNode,
 } from './actions.ts';
 import {
-  EM_DASH,
   balanceDeltaText,
   balanceReading,
   balanceText,
@@ -54,16 +53,19 @@ import {
   credenceNoteKey,
   credencePercentText,
   derivedResult,
-  valueText,
   displayedPrimaryRelation,
+  EM_DASH,
   importanceHint,
   importanceText,
+  modeLabelKey,
   nodeAssessmentSnapshot,
   ratesSignificance,
+  shownRiskRole,
   relationLabel,
   resultText,
   shownInfluence,
   signed,
+  valueText,
   viewedAssessorId,
 } from './derive.ts';
 import { scoringText } from './scoringText.ts';
@@ -300,8 +302,7 @@ function DiagramLinkField({ node, editable }: { node: Node; editable: boolean })
   const missing = node.linkedDiagramId !== undefined && !target;
   const into = node.parentId === null ? linksInto(workbook, project.id) : [];
   if (!others.length && node.linkedDiagramId === undefined) return null;
-  const named = (d: Project) =>
-    `${t(d.mode === 'decision' ? 'modeDecision' : 'modeArgument')}: ${diagramLabel(d)}`;
+  const named = (d: Project) => `${t(modeLabelKey(d.mode))}: ${diagramLabel(d)}`;
   const choices: [string, string][] = [
     ['', t('diagramLinkNone')],
     ...others.map((d): [string, string] => [d.id, named(d)]),
@@ -1015,6 +1016,8 @@ const countedOptionActive = (frame: Frame, project: Project, node: Node, actorId
   isUnrated(node) || frame.mutedIds.has(node.id) || hasAbstained(project, node.id, actorId);
 
 function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
+  // A risk's credence is how likely it is, and its influence how badly it hurts (WG-058): the same two axes.
+  const isRisk = shownRiskRole(frame, node) === 'risk';
   const state = useAppState();
   const t = useTranslator();
   const store = getStore();
@@ -1178,7 +1181,13 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             key={`c:${node.id}:${ownVote?.confidence ?? 'none'}`}
             id="nodeConfidence"
             testId="review-credence"
-            label={t(credenceIsFeeling(project, node) ? 'ownCredenceFeeling' : 'ownCredence')}
+            label={t(
+              credenceIsFeeling(project, node)
+                ? 'ownCredenceFeeling'
+                : isRisk
+                  ? 'riskProbability'
+                  : 'ownCredence'
+            )}
             value={ownVote?.confidence ?? node.confidence}
             min={0}
             max={100}
@@ -1220,7 +1229,13 @@ function EvaluateBlock({ frame, node }: { frame: Frame; node: Node }) {
             key={`i:${node.id}:${ownImpact?.current && ownImpact.record ? ownImpact.record.influence : 'none'}`}
             id="nodeImpact"
             testId="review-influence"
-            label={t(ratesSignificance(project, node) ? 'profileSignificance' : 'profileInfluence')}
+            label={t(
+              isRisk
+                ? 'riskSeverity'
+                : ratesSignificance(project, node)
+                  ? 'profileSignificance'
+                  : 'profileInfluence'
+            )}
             value={
               ownImpact?.current && ownImpact.record
                 ? ownImpact.record.influence

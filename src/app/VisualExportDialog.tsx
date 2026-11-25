@@ -13,6 +13,7 @@ import type { ExportLayers, SnapshotInput, VisualExportOptions } from '../lib/ex
 import {
   cardChips,
   displayedPrimaryRelation,
+  modeLabelKey,
   relationLabel,
   shownInfluence,
   viewedAssessorId,
@@ -57,7 +58,7 @@ export function snapshotInput(frame: Frame, t: Translator, options: VisualExport
       cardChips(frame, t, node, { ...l }, frame.importance).map((chip) => `${chip.label}: ${chip.value}`),
     shownInfluence: (node: Node) => shownInfluence(frame, node),
     title: project.title,
-    subtitle: `WITT · GRACE · ${t(project.mode === 'decision' ? 'modeDecision' : 'modeArgument')} · ${viewpoint}${
+    subtitle: `WITT · GRACE · ${t(modeLabelKey(project.mode))} · ${viewpoint}${
       assessor && personal && isAiProfile(assessor) ? ' · AI' : ''
     }`,
   };

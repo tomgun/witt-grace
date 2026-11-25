@@ -2,7 +2,8 @@
  * must: the home screen's examples (owner 2026-11-20 and 2026-11-23, S-15) are seven trees of one shape: a question
  *       or a goal, two branches, one or two reasons under each branch; five argument trees, then a decision whose
  *       branches are options with a reason for and one against each, then risks (the goal, named as
- *       the goal, and two risks to it, each with its cause and what is done about it; owner 2026-11-24); an
+ *       the goal, a risk to it with its cause and what holds it back, and an action that supports the goal;
+ *       owner 2026-11-24/25); an
  *       argument's main claim is a statement and not a question, one of the five aside (owner 2026-11-24); every text has a Finnish wording of its own and no text is
  *       used twice; in the argument examples a reason's own reason is for it in some and against it in others, on
  *       both sides (owner 2026-11-24); an example is shown for fifteen seconds (owner 2026-11-24: “+5 sek”); the arrows go round the ends
@@ -56,7 +57,7 @@ test('the family example: the reason under “Lapset oppivat vastuuta” is abou
   );
 });
 
-test('the decision example has two options with a reason for and one against each; the risks are two risks', () => {
+test('the decision example has two options with a reason for and one against each; the risks a risk and an action', () => {
   const decision = SCENARIOS[5]!;
   assert.deepEqual(
     decision.branches.map((b) => [b.tone, text(b.tag), text(b.title)]),
@@ -70,24 +71,28 @@ test('the decision example has two options with a reason for and one against eac
       option.children.map((c) => c.tone),
       ['supporting', 'opposing']
     );
-  // The risks: the goal, named as the goal, and two risks to it, each with its cause and what is done about it.
+  // The risks: the goal, named as the goal; a risk to it with its cause and what holds it back, and a supporting
+  // action for the goal itself (owner 2026-11-25: it supports the goal and does not hold back a risk).
   const risks = SCENARIOS[6]!;
   assert.match(text(risks.root), /^Tavoite: /);
   assert.deepEqual(
-    risks.branches.map((b) => [b.tone, text(b.tag)]),
+    risks.branches.map((b) => [b.tone, text(b.tag), text(b.title)]),
     [
-      ['opposing', '! RISKI'],
-      ['opposing', '! RISKI'],
+      ['opposing', '! RISKI', 'Testaus jää kesken'],
+      ['supporting', '+ TUKEVA TOIMI', 'Valmis kauppa-alusta otetaan käyttöön'],
     ]
   );
-  for (const risk of risks.branches)
-    assert.deepEqual(
-      risk.children.map((c) => [c.tone, text(c.tag)]),
-      [
-        ['opposing', 'SYY'],
-        ['supporting', 'TORJUNTA'],
-      ]
-    );
+  assert.deepEqual(
+    risks.branches[0]!.children.map((c) => [c.tone, text(c.tag)]),
+    [
+      ['opposing', 'SYY'],
+      ['supporting', 'TORJUNTA'],
+    ]
+  );
+  assert.deepEqual(
+    risks.branches[1]!.children.map((c) => [c.tone, text(c.title)]),
+    [['supporting', 'Alusta on jo käytössä tuhansissa kaupoissa']]
+  );
 });
 
 test('an argument’s main claim is a statement; one of the five is left a question, and the decision asks', () => {

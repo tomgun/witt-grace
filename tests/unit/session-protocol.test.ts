@@ -772,7 +772,7 @@ test('messages name the diagram they are for: an address is optional, and never 
 test('the structure messages: a new diagram asked of the host, and the host’s set of shared diagrams', () => {
   const ask = { t: 'diagram', id: 'pr-2', doc: 'd-new', root: 'r-new', mode: 'decision' };
   assert.deepEqual(parseToHost(JSON.stringify({ ...ask, extra: 1 })), { ok: true, message: ask });
-  for (const bad of [{ mode: 'risk' }, { doc: '' }, { root: 7 }, { id: undefined }])
+  for (const bad of [{ mode: 'mindmap' }, { doc: '' }, { root: 7 }, { id: undefined }])
     assert.equal(parseToHost(JSON.stringify({ ...ask, ...bad })).ok, false);
   assert.deepEqual(parseToPeer(JSON.stringify({ t: 'set', seq: 4, order: ['a', 'b'] })), {
     ok: true,

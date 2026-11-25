@@ -74,6 +74,8 @@ The workspace has the top bar (document title and type, ↶ undo and ↷ redo, f
 
 **Decision mode.** Choose *Päätös*. The root is the decision question (PÄÄTÖS) and gets no credence. Add *+ Päätösvaihtoehto* (option) and, if useful, *+ Vaihtoehtoryhmä* (option group: structural only – no rating, balance, gate or ballot of its own; concrete options go inside it). Supporting and opposing reasons go under the options. You cannot return to argument mode while options exist, and options cannot be added while a ballot round is open.
 
+**Risks.** Choose *Riskit* (risks) or Uusi työ → *Tyhjä riskipuu* (blank risk tree). The root is a goal (TAVOITE), for example *The web shop opens in November*. Under the goal add *+ Tukeva toimi* (a supporting action: something that helps the goal) and *− Riski* (a risk: something that may prevent it). Under a risk add *+ Syy* (a cause: what makes the risk likelier) and *− Torjunta* (a mitigation: what holds the risk back). A cause can have deeper causes and mitigations. Under a supporting action or a mitigation an opposing card is a risk that it fails, and a supporting card is a plain reason. The card's + and − and the side panel's buttons say what they add. The tag (TAVOITE, TUKEVA TOIMI, RISKI, SYY, TORJUNTA) is read from the tree and is not set by hand; an own type name replaces it. Cards are coloured by their side: supporting actions and mitigations are on the goal's side (like supporting cards), risks and causes against it (like opposing cards). The lines still show the relation's direction. A risk's two ratings are the same two axes as elsewhere: **probability** is its credence (0–100 %) and **severity** its influence on the goal. A risk tree scores exactly as an argument, so the goal's result says how well the goal holds with its risks and actions. The examples include the risk tree *Riskit: verkkokauppa aukeaa marraskuussa*. A risk register (the risks by probability and severity) and a risk matrix come later.
+
 **Repeated reasons.** One reason may bear on several targets differently; every use is rated separately. The left panel's *Yhteydet ja perustelut* tab (also Edit → *Toistuvat perustelut*):
 
 - *Uusi perustelu kirjastoon* + *Luo kirjastoon* creates a card (a blank title becomes "Uusi perustelu"). Advanced: *Perustelun luonne* (fact or consequence / assumption / value) and *Arviointien jakaminen*: *Arviot kohteittain* (ratings per target, recommended) or *Sama lukittu arvio* (one locked credence and influence shared by every use).
@@ -221,7 +223,7 @@ Gliding recognises a thing only from a frame to its copy: something drawn again 
 
 ## 7. Files and sharing
 
-**The document's type** (*Argumentointi* examines one claim, *Päätös* compares options) is chosen with the switch beside the document's title; both choices are in sight. The example cards say which type each example is.
+**The document's type** (*Argumentointi* examines one claim, *Päätös* compares options, *Riskit* starts from a goal and its risks) is chosen with the switch beside the document's title; all three are in sight. The example cards say which type each example is.
 
 **File menu**: *+ Uusi* (new), *Avaa JSON* (open), *↓ Tallenna tiedosto* (`Ctrl/Cmd+S`; downloads `<title>.witt.json`, or the whole project as `<name>.witt-project.json` when it has several diagrams), *Uusi kaavio projektiin* (new diagram in the project), *Liitä tiedosto projektiin…* (attach a file to the project), *Vie kuva / PDF* (image/PDF), *Asiakirjakirjasto*, *Tuo tai vie lisäyksiä (AI tai toinen arvioija)…* and the save status.
 

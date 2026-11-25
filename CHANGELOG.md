@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- A third document type, *Riskit* (risks), beside Argumentointi and Päätös: the root is a goal; under it go supporting actions and risks, under a risk its causes and mitigations. The tags are read from the tree, cards are coloured by whether they are on the goal's side, the + and − buttons say what they add, and a risk's sliders ask for its probability and severity. It scores exactly as an argument. New in Uusi työ (*Tyhjä riskipuu*), in the type switch and as an example. The home screen's risk example has its supporting action back (WG-058).
 - The × that removes a diagram from the project is on the shown tab's own edge instead of among the buttons at the right, and is not shown where a diagram cannot be removed (WG-059, owner 2026-11-25).
 - Drawing on a sketchpad no longer rewrites the whole project in the browser's storage on every stroke: strokes that follow each other closely are written together, at most once a second, and what is held back is written when the page is hidden or closed (WG-063).
 - The host can share a diagram or leave it out during a collaboration too, in the collaboration dialog's list *Jaettavat kaaviot* (WG-063).

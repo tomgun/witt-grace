@@ -171,19 +171,22 @@ test('the home screen tells the method itself and leads to the walkthrough', asy
   await visual.hover();
   await page.locator('#btnScenarioPrev').click();
   await expect(page.locator('#homeScenarioName')).toHaveText('Riskit');
-  // The goal is named as the goal, and under it are two risks to it, each with its cause and what is done about it.
+  // The goal is named as the goal; under it a risk with its cause and what holds it back, and an action that
+  // supports the goal itself (owner 2026-11-25).
   await expect(visual.locator('.visual-root')).toContainText('Tavoite: verkkokauppa aukeaa marraskuussa');
-  for (const index of [0, 1]) {
-    await expect(branches.nth(index).locator('> .visual-node small')).toHaveText('! RISKI');
-    await expect(branches.nth(index).locator('.visual-children .visual-node small')).toHaveText([
-      'SYY',
-      'TORJUNTA',
-    ]);
-  }
-  await expect(branches.nth(1).locator('.visual-children .visual-node strong')).toHaveText([
+  await expect(branches.nth(0).locator('> .visual-node small')).toHaveText('! RISKI');
+  await expect(branches.nth(0).locator('.visual-children .visual-node small')).toHaveText([
+    'SYY',
+    'TORJUNTA',
+  ]);
+  await expect(branches.nth(0).locator('.visual-children .visual-node strong')).toHaveText([
     'Kehitystyö venyy ja vie testausajan',
     'Viikoittainen katsaus paljastaa viiveet ajoissa',
   ]);
+  await expect(branches.nth(1).locator('> .visual-node small')).toHaveText('+ TUKEVA TOIMI');
+  await expect(branches.nth(1).locator('> .visual-node strong')).toHaveText(
+    'Valmis kauppa-alusta otetaan käyttöön'
+  );
   await page.locator('#btnScenarioPrev').click();
   await expect(page.locator('#homeScenarioName')).toHaveText('Päätös');
   await expect(visual.locator('.visual-branch > .visual-node.option strong')).toHaveText([

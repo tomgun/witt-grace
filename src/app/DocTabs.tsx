@@ -7,6 +7,7 @@ import { diagramLabel, isPlainDocument } from '../domain/index.ts';
 import { addDiagram, addSketchpad, removeDiagram, renameDiagram, renameProject } from './actions.ts';
 import { projectSheet } from './sketchStore.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
+import { modeLabelKey } from './derive.ts';
 
 export function DocTabs() {
   const state = useAppState();
@@ -105,9 +106,7 @@ export function DocTabs() {
               onClick={() => show(index)}
               onDoubleClick={() => void renameDiagram()}
             >
-              <span className="doc-tab-type">
-                {t(diagram.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
-              </span>
+              <span className="doc-tab-type">{t(modeLabelKey(diagram.mode))}</span>
               <span className="doc-tab-title">{diagramLabel(diagram)}</span>
               {state.unsharedIds.includes(diagram.id) ? (
                 <span className="doc-tab-unshared">{t('tabNotShared')}</span>

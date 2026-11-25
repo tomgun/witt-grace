@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { isPlainDocument } from '../domain/index.ts';
+import type { Mode } from '../domain/index.ts';
 import { blankProject, getStore, useAppState, useTranslator } from './store.ts';
 import type { ModalRequest } from './store.ts';
 import { moveTargets } from './actions.ts';
@@ -303,7 +304,7 @@ function MoveDialog({ request }: { request: Extract<ModalRequest, { kind: 'move'
 function NewWorkDialog() {
   const t = useTranslator();
   const store = getStore();
-  const create = async (mode: 'argument' | 'decision') => {
+  const create = async (mode: Mode) => {
     store.openDialog(null);
     const current = store.get().project;
     const hasWork = current.nodes.length > 1 || current.title !== blankProject(current.mode).title;
@@ -348,6 +349,15 @@ function NewWorkDialog() {
           onClick={() => void create('decision')}
         >
           {t('newBlankDecision')}
+        </button>
+        <button
+          type="button"
+          id="btnNewWorkRisk"
+          data-testid="new-risk"
+          className="btn quiet"
+          onClick={() => void create('risk')}
+        >
+          {t('newBlankRisk')}
         </button>
         <button
           type="button"

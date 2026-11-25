@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
 import {
   CARD_W,
+  childRiskRole,
   clamp,
   diagramLabel,
   documentPosition,
@@ -40,12 +41,15 @@ import { ClaimPreview, previewHandlers } from './ClaimPreview.tsx';
 import { ContextMenu } from './ContextMenu.tsx';
 import {
   cardChips,
+  cardTone,
   displayedPrimaryRelation,
   importanceHint,
   importanceText,
   relationLabel,
   reasonTypeLabel,
+  riskAddKey,
   shownInfluence,
+  shownRiskRole,
   shownScore,
   signed,
   userTraces,
@@ -663,7 +667,13 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   };
   const renderCard = (node: Node) => {
     const pos = visualPosition(node);
-    const relation = displayedPrimaryRelation(frame, node);
+    // In a risk tree the card is coloured by its side (good or bad for the goal) and tagged by its role (WG-058).
+    const tone = cardTone(frame, node);
+    const role = shownRiskRole(frame, node);
+    const addsSupport = role ? childRiskRole(role, 'support') : null;
+    const addsOppose = role ? childRiskRole(role, 'oppose') : null;
+    const supportWords = t(addsSupport ? riskAddKey(addsSupport) : 'supportAdd');
+    const opposeWords = t(addsOppose ? riskAddKey(addsOppose) : 'opposeAdd');
     const effect = frame.importance.effects.get(node.id);
     const important = frame.importance.importantIds.has(node.id);
     const childCount = project.nodes.filter((n) => n.parentId === node.id).length;
@@ -755,7 +765,8 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         key={node.id}
         className={classes.join(' ')}
         data-id={node.id}
-        data-relation={relation}
+        data-relation={tone}
+        data-risk-role={role ?? undefined}
         data-focus-stance={focusing ? view.focus.mode : undefined}
         data-importance-delta={effect && view.showImportance ? String(effect.delta) : undefined}
         data-editing={state.inlineEditId === node.id ? 'true' : undefined}
@@ -827,8 +838,8 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             type="button"
             className="node-add support"
             data-relation="support"
-            title={`${t('supportAdd')} (${displayShortcut(shortcuts.support)})`}
-            aria-label={`${t('supportAdd')}: ${node.title}`}
+            title={`${supportWords} (${displayShortcut(shortcuts.support)})`}
+            aria-label={`${supportWords}: ${node.title}`}
             disabled={addDisabled}
             onClick={(e) => {
               e.preventDefault();
@@ -842,8 +853,8 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
             type="button"
             className="node-add oppose"
             data-relation="oppose"
-            title={`${t('opposeAdd')} (${displayShortcut(shortcuts.oppose)})`}
-            aria-label={`${t('opposeAdd')}: ${node.title}`}
+            title={`${opposeWords} (${displayShortcut(shortcuts.oppose)})`}
+            aria-label={`${opposeWords}: ${node.title}`}
             disabled={addDisabled}
             onClick={(e) => {
               e.preventDefault();

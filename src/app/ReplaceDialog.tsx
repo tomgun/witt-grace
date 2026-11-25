@@ -7,6 +7,7 @@ import { Modal } from './dialogs.tsx';
 import { saveCurrentToLibrary } from './libraryBridge.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 import type { ModalRequest, ReplaceChoice } from './store.ts';
+import { modeLabelKey } from './derive.ts';
 
 /** The prototype's `formatWorkspaceTime`: a medium date and short time in the UI language, or "Tarkka aika ei tiedossa". */
 export function formatWorkspaceTime(
@@ -50,10 +51,9 @@ export function ReplaceDialog({ request }: { request: Extract<ModalRequest, { ki
     }
   };
   const unknown = t('homeTimeUnknown');
-  const info = [
-    t(project.mode === 'decision' ? 'modeDecision' : 'modeArgument'),
-    t('replaceNodeCount', { count: project.nodes.length }),
-  ].join(' · ');
+  const info = [t(modeLabelKey(project.mode)), t('replaceNodeCount', { count: project.nodes.length })].join(
+    ' · '
+  );
   // The autosave happens with every change, so the document's own edit time is the browser copy's time as well
   // (the home card shows the same value); a session-only store has no durable copy to date.
   const editedAt = formatWorkspaceTime(project.updatedAt, state.language, unknown);

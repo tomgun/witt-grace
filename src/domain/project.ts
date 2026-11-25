@@ -55,6 +55,12 @@ export interface CreateInput {
 }
 /** The title a new document carries until the person names it. */
 export const BLANK_TITLE = 'Nimetön pohdinta';
+/** The root's text in a new document, to be written over (the risk tree's root is a goal, WG-058). */
+export const BLANK_ROOT_TITLES: Record<Mode, string> = {
+  argument: 'Mikä on tarkasteltava väite?',
+  decision: 'Mikä on paras päätös?',
+  risk: 'Mikä on tavoite?',
+};
 export function createBlankProject({
   mode = 'argument',
   projectId,
@@ -68,7 +74,7 @@ export function createBlankProject({
   const node = newNode({
     id: rootId,
     kind: mode === 'decision' ? 'decision' : 'claim',
-    title: mode === 'decision' ? 'Mikä on paras päätös?' : 'Mikä on tarkasteltava väite?',
+    title: BLANK_ROOT_TITLES[mode],
     confidence: 50,
     createdBy: user.id,
   });

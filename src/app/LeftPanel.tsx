@@ -1,11 +1,11 @@
 // The left panel: outline, the "Yhteydet ja perustelut" library pane and the add block (inv-panels §A).
 import { useState } from 'react';
-import { childrenOf, secondaryOverlapWarning, signedLinkImpact } from '../domain/index.ts';
+import { childRiskRole, childrenOf, secondaryOverlapWarning, signedLinkImpact } from '../domain/index.ts';
 import type { Node } from '../domain/index.ts';
 import { newId } from '../lib/providers.ts';
 import { addNode, canAttachLibraryReason, canEdit, openRepeatLibrary } from './actions.ts';
 import { previewHandlers } from './ClaimPreview.tsx';
-import { displayedPrimaryRelation, signed } from './derive.ts';
+import { cardTone, riskAddKey, shownRiskRole, signed } from './derive.ts';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
 
@@ -32,7 +32,7 @@ function OutlineItem({ frame, node, depth }: { frame: Frame; node: Node; depth: 
       <button
         type="button"
         className={classes.join(' ')}
-        data-relation={displayedPrimaryRelation(frame, node)}
+        data-relation={cardTone(frame, node)}
         data-testid={`outline-${node.id}`}
         style={{ paddingLeft: Math.min(12 + depth * 13, 62) }}
         title={node.title}
@@ -341,6 +341,10 @@ export function LeftPanel({ frame }: { frame: Frame }) {
   const root = project.nodes.find((n) => n.parentId === null);
   const store = getStore();
   const votingOpen = project.votingRound?.status === 'open';
+  // In a risk tree the buttons say what they add under the selected node (WG-058).
+  const selectedRole = selected ? shownRiskRole(frame, selected) : null;
+  const addsSupport = selectedRole ? childRiskRole(selectedRole, 'support') : null;
+  const addsOppose = selectedRole ? childRiskRole(selectedRole, 'oppose') : null;
   return (
     <aside className="sidepanel leftpanel" aria-label={t('tree')} data-testid="outline">
       <div className="panel-heading">
@@ -400,7 +404,7 @@ export function LeftPanel({ frame }: { frame: Frame }) {
               disabled={!editable || selected?.kind === 'group'}
               onClick={() => addNode('support')}
             >
-              {t('supportAdd')}
+              {t(addsSupport ? riskAddKey(addsSupport) : 'supportAdd')}
             </button>
             <button
               type="button"
@@ -410,7 +414,7 @@ export function LeftPanel({ frame }: { frame: Frame }) {
               disabled={!editable || selected?.kind === 'group'}
               onClick={() => addNode('oppose')}
             >
-              {t('opposeAdd')}
+              {t(addsOppose ? riskAddKey(addsOppose) : 'opposeAdd')}
             </button>
             <button
               type="button"

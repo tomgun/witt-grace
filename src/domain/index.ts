@@ -1,6 +1,7 @@
 // Public surface of the domain. UI and infrastructure import from here, never from a sibling file's internals.
 export * from './model.ts';
 export { parseProject, ParseError } from './parse.ts';
+export { riskRole, childRiskRole, riskRoleIsGood } from './risk.ts';
 export {
   childrenOf,
   rootNode,

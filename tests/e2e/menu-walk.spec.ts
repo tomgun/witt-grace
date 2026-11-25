@@ -44,11 +44,11 @@ test('one menu at a time; Escape and a press outside close it', async ({ page })
 });
 
 /**
- * must: both document types, Argumentointi and Päätös, lie inside the frame of the switch beside the title,
- *       in Finnish and in a language with longer words (owner's report 2026-11-19)
+ * must: every document type, Argumentointi, Päätös and Riskit (WG-058), lies inside the frame of the switch beside
+ *       the title, in Finnish and in a language with longer words (owner's report 2026-11-19)
  * red-against: the switch laid in the first column of the menu's grid, where the second choice ran out of its frame
  */
-test('the document type switch holds both choices', async ({ page }) => {
+test('the document type switch holds every choice', async ({ page }) => {
   for (const language of ['fi', 'de']) {
     await page.goto('/');
     await page.evaluate((l) => {
@@ -72,6 +72,6 @@ test('the document type switch holds both choices', async ({ page }) => {
         );
       });
     });
-    expect(inside, language).toEqual([true, true]);
+    expect(inside, language).toEqual([true, true, true]);
   }
 });
