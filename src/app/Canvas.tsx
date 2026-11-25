@@ -549,6 +549,9 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
     const parent = byId.get(child.parentId);
     if (!parent) return [];
     const classes = ['edge', `edge-${displayedPrimaryRelation(frame, child)}`];
+    // An option group hangs from the tree by a line of the options' colour (owner 2026-11-25; the prototype's
+    // `edge-group` has no stroke, so a group looked detached).
+    if (child.relation === 'group') classes.push('edge-option');
     let title: string | undefined;
     if (view.indexMode === 'personal' && child.relation !== 'option' && child.relation !== 'group') {
       const direction = shownInfluence(frame, child);

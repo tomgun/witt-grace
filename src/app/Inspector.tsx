@@ -251,6 +251,7 @@ function Range({
 function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
   const t = useTranslator();
   const store = getStore();
+  const risk = useAppState().project.mode === 'risk';
   const [draft, setDraft] = useState(node.typeLabel ?? '');
   const commit = () => {
     const next = draft.trim();
@@ -279,7 +280,7 @@ function TypeLabelField({ node, editable }: { node: Node; editable: boolean }) {
           }}
         />
         <datalist id="typeLabelPresets">
-          {t('typeLabelPresets')
+          {t(risk ? 'riskTypeLabelPresets' : 'typeLabelPresets')
             .split(';')
             .map((preset) => (
               <option key={preset} value={preset} />

@@ -4,12 +4,16 @@
  *       − add (under the goal a supporting action and a risk, under a risk a cause and a mitigation), and the added
  *       cards are tagged so; a card is coloured by its side, so a mitigation looks supporting and a cause opposing
  *       although a mitigation opposes its risk; the side panel's add buttons say the same as the card's; a risk's
- *       sliders ask for its probability and its severity; the risk
- *       example is listed as a risk tree and opens with its tags
+ *       sliders ask for its probability and its severity; a new card carries a question that says what its role
+ *       holds until it is written (owner 2026-11-25: every new card read “Puoltava / Vastustava argumentti”), and a
+ *       plain reason under a mitigation the usual text; a person's own type name stands in place of the role word
+ *       and the card keeps its side's colour (owner 2026-11-25: can the names be changed where they do not fit);
+ *       the risk example is listed as a risk tree and opens with its tags
  * test: tests/e2e/risk-walk.spec.ts (desktop 1440×900)
  * red-against: the risk tree missing from Uusi työ, a mitigation coloured as a risk, a cause tagged PUOLTAA, the
  *              + of a risk still saying “Puoltava”, a risk's sliders asking for credence and influence, the example
- *              listed as an argument
+ *              listed as an argument, a new risk titled “Vastustava argumentti”, a renamed mitigation tagged
+ *              “Vastustava varasuunnitelma”
  */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
@@ -19,10 +23,11 @@ test.skip(({ viewport }) => (viewport?.width ?? 1440) < 1000, 'the walk drives t
 
 const card = (page: Page, title: string) =>
   page.locator('.node', { has: page.locator('.node-title', { hasText: title }) });
-async function addUnder(page: Page, parent: string, sign: 'support' | 'oppose', title: string) {
+async function addUnder(page: Page, parent: string, sign: 'support' | 'oppose', title: string, asks: string) {
   await card(page, parent).locator(`.node-add[data-relation="${sign}"]`).click();
   const editor = page.locator('.node-inline-editor');
   await expect(editor).toBeFocused();
+  await expect(editor).toHaveValue(asks);
   await editor.fill(title);
   await editor.press('Enter');
   await expect(card(page, title)).toBeVisible();
@@ -53,15 +58,33 @@ test('a risk tree: a goal, a supporting action, a risk with its cause and mitiga
   );
   await expect(goal.locator('.node-add[data-relation="oppose"]')).toHaveAttribute('title', /^− Riski/);
 
-  await addUnder(page, 'Verkkokauppa aukeaa marraskuussa', 'support', 'Valmis kauppa-alusta');
-  await addUnder(page, 'Verkkokauppa aukeaa marraskuussa', 'oppose', 'Testaus jää kesken');
+  await addUnder(
+    page,
+    'Verkkokauppa aukeaa marraskuussa',
+    'support',
+    'Valmis kauppa-alusta',
+    'Mikä auttaa saavuttamaan tavoitteen?'
+  );
+  await addUnder(
+    page,
+    'Verkkokauppa aukeaa marraskuussa',
+    'oppose',
+    'Testaus jää kesken',
+    'Mikä voi mennä pieleen?'
+  );
   const risk = card(page, 'Testaus jää kesken');
   await expect(card(page, 'Valmis kauppa-alusta').locator('.node-tag')).toHaveText('TUKEVA TOIMI');
   await expect(risk.locator('.node-tag')).toHaveText('RISKI');
   await expect(risk.locator('.node-add[data-relation="support"]')).toHaveAttribute('title', /^\+ Syy/);
   await expect(risk.locator('.node-add[data-relation="oppose"]')).toHaveAttribute('title', /^− Torjunta/);
-  await addUnder(page, 'Testaus jää kesken', 'support', 'Kehitystyö venyy');
-  await addUnder(page, 'Testaus jää kesken', 'oppose', 'Viikoittainen katsaus');
+  await addUnder(page, 'Testaus jää kesken', 'support', 'Kehitystyö venyy', 'Mikä voi aiheuttaa tämän?');
+  await addUnder(
+    page,
+    'Testaus jää kesken',
+    'oppose',
+    'Viikoittainen katsaus',
+    'Miten tätä voi ehkäistä tai lieventää?'
+  );
   const cause = card(page, 'Kehitystyö venyy');
   const mitigation = card(page, 'Viikoittainen katsaus');
   await expect(cause.locator('.node-tag')).toHaveText('SYY');
@@ -72,6 +95,26 @@ test('a risk tree: a goal, a supporting action, a risk with its cause and mitiga
   await expect(cause).toHaveAttribute('data-relation', 'oppose');
   await expect(mitigation).toHaveAttribute('data-relation', 'support');
   await expect(mitigation).toHaveAttribute('data-risk-role', 'mitigation');
+
+  // A plain reason under a mitigation starts with the usual text.
+  await addUnder(
+    page,
+    'Viikoittainen katsaus',
+    'support',
+    'Katsaus on jo kalenterissa',
+    'Puoltava argumentti'
+  );
+  await expect(card(page, 'Katsaus on jo kalenterissa').locator('.node-tag')).toHaveText('PUOLTAA');
+
+  // The person's own type name stands in place of the role word; the side's colour stays.
+  await mitigation.locator('.node-title').click();
+  await page.locator('#nodeTypeLabel').fill('Varasuunnitelma');
+  await page.locator('#nodeTypeLabel').press('Enter');
+  await expect(mitigation.locator('.node-tag')).toHaveText('Varasuunnitelma');
+  await expect(mitigation).toHaveAttribute('data-relation', 'support');
+  await page.locator('#nodeTypeLabel').fill('');
+  await page.locator('#nodeTypeLabel').press('Enter');
+  await expect(mitigation.locator('.node-tag')).toHaveText('TORJUNTA');
 
   // A risk's two ratings are its probability and its severity.
   await page.locator('#btnWorkflowEvaluate').click();

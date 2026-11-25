@@ -155,6 +155,21 @@ export function riskRoleKey(role: RiskRole): MessageKey {
   }
 }
 /** The words of the card's + and − in a risk tree: what is added under this node (WG-058). */
+/** The text a new node of the role carries until it is written: a question that says what belongs there. */
+export function riskNewTitleKey(role: Exclude<RiskRole, 'goal'>): MessageKey {
+  switch (role) {
+    case 'action':
+      return 'riskNewAction';
+    case 'risk':
+      return 'riskNewRisk';
+    case 'cause':
+      return 'riskNewCause';
+    case 'mitigation':
+      return 'riskNewMitigation';
+    default:
+      return assertNever(role);
+  }
+}
 export function riskAddKey(role: Exclude<RiskRole, 'goal'>): MessageKey {
   switch (role) {
     case 'action':
@@ -194,8 +209,9 @@ export function relationLabelKey(ctx: DeriveContext, node: Node): MessageKey {
 export function relationLabel(ctx: DeriveContext, t: Translator, node: Node): string {
   if (node.typeLabel && (node.parentId === null || node.kind === 'option' || node.kind === 'group'))
     return node.typeLabel;
+  // In a risk tree the role is the tag, and the person's own type name stands in its place (owner 2026-11-25).
   const role = shownRiskRole(ctx, node);
-  if (role && !node.typeLabel) return t(riskRoleKey(role));
+  if (role) return reasonTypeLabel(node) ?? t(riskRoleKey(role));
   const key = relationLabelKey(ctx, node);
   const typed = reasonTypeLabel(node);
   // A reason with its own type name reads as one phrase: "Puoltava tosiasia", "Neutraali tavoite" (owner, S-15).

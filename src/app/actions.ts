@@ -5,6 +5,7 @@ import {
   SCORING_VERSION,
   canAttachReasonConcept,
   canReparent,
+  childRiskRole,
   childrenOf,
   createBlankProject,
   descendants,
@@ -17,6 +18,7 @@ import type { Node, Project, Stance } from '../domain/index.ts';
 import { translator } from '../lib/i18n/i18n.ts';
 import { newId, nowIso } from '../lib/providers.ts';
 import { fadeOutCards } from './fade.ts';
+import { riskNewTitleKey, shownRiskRole } from './derive.ts';
 import { buildFrame } from './projection.ts';
 import { getStore } from './store.ts';
 import type { AppState, LibrarySelection } from './store.ts';
@@ -55,7 +57,12 @@ export function addNode(relation: AddRelation, parentId?: string, semanticType?:
   store.select(parent);
   // A new neutral reason starts as an unrated note (owner 2026-11-10).
   const unrated = relation === 'neutral' && !semanticType ? true : undefined;
-  if (!store.dispatch({ type: 'node.add', id, parentId: parent, relation, semanticType, unrated }))
+  // In a risk tree a new node asks for what its role holds, as the buttons name it (WG-058, owner 2026-11-25).
+  const parentNode = before.project.nodes.find((n) => n.id === parent);
+  const parentRole = parentNode && !semanticType ? shownRiskRole(frameOf(before), parentNode) : null;
+  const role = parentRole ? childRiskRole(parentRole, relation) : null;
+  const title = role ? t()(riskNewTitleKey(role)) : undefined;
+  if (!store.dispatch({ type: 'node.add', id, parentId: parent, relation, semanticType, unrated, title }))
     return null;
   if (fourWay && oldFrame) {
     const project = store.get().project;
