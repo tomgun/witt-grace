@@ -11075,6 +11075,42 @@ body.witt-focus .canvas-quick-controls {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.doc-tab-slot {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+.doc-tab-slot.active {
+  background: var(--surface);
+  border-bottom: 2px solid var(--accent);
+}
+.doc-tab-slot.active .doc-tab {
+  border-bottom-color: transparent;
+}
+.doc-tab-slot.active:has(.doc-tab-close) .doc-tab {
+  padding-right: 4px;
+}
+.doc-tab-close {
+  align-self: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--subtle);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.doc-tab-close:hover,
+.doc-tab-close:focus-visible {
+  color: var(--ink);
+  background: var(--border);
+  outline: none;
+}
 .doc-tab-sketch {
   border-left: 1px solid var(--border);
 }

@@ -5,6 +5,7 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Added
+- The × that removes a diagram from the project is on the shown tab's own edge instead of among the buttons at the right, and is not shown where a diagram cannot be removed (WG-059, owner 2026-11-25).
 - Drawing on a sketchpad no longer rewrites the whole project in the browser's storage on every stroke: strokes that follow each other closely are written together, at most once a second, and what is held back is written when the page is hidden or closed (WG-063).
 - The host can share a diagram or leave it out during a collaboration too, in the collaboration dialog's list *Jaettavat kaaviot* (WG-063).
 - Owner 2026-11-24: the method section in everyday words: what credibility and influence mean is said where they are named (for or against the claim, how strongly on a scale of 1–5), with an example; the signed scale −5…+5 is no longer named on the home screen.

@@ -3,7 +3,8 @@
  *       projektiin adds a second diagram in a tab of its own and the row `#docTabs` appears; each tab keeps its
  *       own tree; the diagram and the project can be named; Tallenna tiedosto then downloads one
  *       `.witt-project.json` holding both diagrams and Tallenna tämä kaavio erikseen one `.witt.json`; a reload
- *       brings back both tabs and the project's name; removing a tab asks first and undo brings it back; opening
+ *       brings back both tabs and the project's name; the × that removes a diagram sits on the shown tab's own edge
+ *       and on no other tab; removing a tab asks first and undo brings it back; opening
  *       the project file replaces the project after a question; Liitä projektiin… adds the file's diagrams as new
  *       tabs without replacing anything; in a project a single diagram's file opens in a new tab without the
  *       replace question; the tabs are reachable by keyboard (arrows, Delete, Alt+arrows) and the focus follows
@@ -14,7 +15,8 @@
  *       forward by a press on a row (WG-059, UI_INVENTORY S-15)
  * test: tests/e2e/project-walk.spec.ts (desktop 1440×900)
  * red-against: a tab switch showing the other diagram's cards, a save that writes only the shown diagram while
- *              the menu says project, tabs lost on reload, a removed diagram gone for good, attach overwriting the
+ *              the menu says project, tabs lost on reload, a × beside the buttons far from the tab it
+ *              removes, a removed diagram gone for good, attach overwriting the
  *              diagram with the same id, a tab row on a one-diagram project, a project drawing written onto the
  *              person's own sketchpad, a saved project file without its drawings, undo in tab A removing the
  *              card just added in tab B, a history row that does nothing or lists another tab's changes
@@ -117,7 +119,10 @@ test('two diagrams as tabs: add, name, switch, save, reload, remove and undo, op
   await expect(page.locator('#projectName')).toHaveText('Hanke');
   await expect(tabTitles(page).nth(1)).toHaveText('Riskit');
 
-  // Removing asks first; cancelled it changes nothing; accepted, undo brings the diagram back.
+  // The × is on the shown tab's own edge, and only there; removing asks first; cancelled it changes nothing;
+  // accepted, undo brings the diagram back.
+  await expect(page.locator('.doc-tab-close')).toHaveCount(1);
+  await expect(page.locator('#docTab-1 + #btnTabClose')).toHaveCount(1);
   await page.locator('#btnTabClose').click();
   await expect(page.locator('#confirmText')).toContainText('Riskit');
   await page.locator('#confirmCancel').click();
@@ -126,7 +131,7 @@ test('two diagrams as tabs: add, name, switch, save, reload, remove and undo, op
   await page.locator('#confirmAccept').click();
   // A named project keeps its row with one diagram left, and that last diagram cannot be removed.
   await expect(page.locator('#docTabs [role="tab"]')).toHaveCount(1);
-  await expect(page.locator('#btnTabClose')).toBeDisabled();
+  await expect(page.locator('#btnTabClose')).toHaveCount(0);
   await expect(page.getByTestId('node-count')).toHaveText('2');
   // Kumoa belongs to the shown diagram, so the removal offers its own way back.
   await expect(page.getByTestId('notice')).toContainText('Kaavio ”Riskit” poistettu projektista.');

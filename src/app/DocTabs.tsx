@@ -88,31 +88,47 @@ export function DocTabs() {
       ) : null}
       <div className="doc-tabs-list" role="tablist" aria-label={t('projectTabs')} onKeyDown={onKey}>
         {workbook.documents.map((diagram, index) => (
-          <button
-            key={diagram.id}
-            type="button"
-            role="tab"
-            id={`docTab-${index}`}
-            className={`doc-tab${index === activeTab ? ' active' : ''}${
-              state.unsharedIds.includes(diagram.id) ? ' not-shared' : ''
-            }`}
-            aria-selected={index === activeTab}
-            tabIndex={index === activeTab ? 0 : -1}
-            data-doc-id={diagram.id}
-            data-mode={diagram.mode}
-            title={diagramLabel(diagram)}
-            aria-controls="workspaceMain"
-            onClick={() => show(index)}
-            onDoubleClick={() => void renameDiagram()}
-          >
-            <span className="doc-tab-type">
-              {t(diagram.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
-            </span>
-            <span className="doc-tab-title">{diagramLabel(diagram)}</span>
-            {state.unsharedIds.includes(diagram.id) ? (
-              <span className="doc-tab-unshared">{t('tabNotShared')}</span>
+          <span key={diagram.id} className={`doc-tab-slot${index === activeTab ? ' active' : ''}`}>
+            <button
+              type="button"
+              role="tab"
+              id={`docTab-${index}`}
+              className={`doc-tab${index === activeTab ? ' active' : ''}${
+                state.unsharedIds.includes(diagram.id) ? ' not-shared' : ''
+              }`}
+              aria-selected={index === activeTab}
+              tabIndex={index === activeTab ? 0 : -1}
+              data-doc-id={diagram.id}
+              data-mode={diagram.mode}
+              title={diagramLabel(diagram)}
+              aria-controls="workspaceMain"
+              onClick={() => show(index)}
+              onDoubleClick={() => void renameDiagram()}
+            >
+              <span className="doc-tab-type">
+                {t(diagram.mode === 'decision' ? 'modeDecision' : 'modeArgument')}
+              </span>
+              <span className="doc-tab-title">{diagramLabel(diagram)}</span>
+              {state.unsharedIds.includes(diagram.id) ? (
+                <span className="doc-tab-unshared">{t('tabNotShared')}</span>
+              ) : null}
+            </button>
+            {index === activeTab && !locked && count > 1 ? (
+              // On the shown tab's own edge (owner 2026-11-25): it is plain which diagram goes. Out of the tab
+              // order, as the tablist keeps one stop; Delete on the tab does the same from the keyboard.
+              <button
+                type="button"
+                id="btnTabClose"
+                className="doc-tab-close"
+                tabIndex={-1}
+                title={t('tabClose')}
+                aria-label={`${t('tabClose')}: ${diagramLabel(diagram)}`}
+                onClick={() => void remove()}
+              >
+                ×
+              </button>
             ) : null}
-          </button>
+          </span>
         ))}
       </div>
       {workbook.sketches.map((entry) => (
@@ -162,17 +178,6 @@ export function DocTabs() {
           onClick={() => void renameDiagram()}
         >
           ✎
-        </button>
-        <button
-          type="button"
-          id="btnTabClose"
-          className="doc-tab-action"
-          title={t('tabClose')}
-          aria-label={t('tabClose')}
-          disabled={locked || count < 2}
-          onClick={() => void remove()}
-        >
-          ×
         </button>
         <button
           type="button"
