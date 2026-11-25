@@ -224,9 +224,11 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
   const orientationName = t(
     view.orientation === 'vertical'
       ? 'topDown'
-      : view.orientation === 'four-way'
-        ? 'fourDirections'
-        : 'leftRight'
+      : view.orientation === 'top-left'
+        ? 'topLeftAligned'
+        : view.orientation === 'four-way'
+          ? 'fourDirections'
+          : 'leftRight'
   );
   const limited = view.depthLimit !== null || view.focus.mode !== 'all';
   const limitState = [
@@ -388,6 +390,7 @@ export function ViewDock({ frame, anchorId }: { frame: Frame; anchorId: string }
               }}
             >
               <option value="vertical">↓ {t('topDown')}</option>
+              <option value="top-left">↳ {t('topLeftAligned')}</option>
               <option value="horizontal">→ {t('leftRight')}</option>
               <option value="four-way">✣ {t('fourDirections')}</option>
             </select>

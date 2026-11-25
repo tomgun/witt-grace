@@ -3,13 +3,19 @@
 import type { KeyValueStore } from '../lib/storage.ts';
 import { readPreference, writePreference } from '../lib/storage.ts';
 import type { ExportLayers } from '../lib/export/snapshot.ts';
+import type { Orientation as DrawnOrientation } from '../domain/index.ts';
 
 export const VIEW_KEY = 'witt-view-v1';
 export const ZONES_KEY = 'witt-zones-v1';
 
 export type Presentation = 'tree' | 'table';
-export type Orientation = 'horizontal' | 'vertical' | 'four-way';
-export const ORIENTATIONS: Orientation[] = ['horizontal', 'vertical', 'four-way'];
+/** `top-left` (owner 2026-11-25): top to bottom with each parent above its first child, laid out from the tree
+ * like the four-way view and never written back; it is drawn as the top-down tree is. */
+export type Orientation = 'horizontal' | 'vertical' | 'four-way' | 'top-left';
+export const ORIENTATIONS: Orientation[] = ['horizontal', 'vertical', 'four-way', 'top-left'];
+/** The geometry a view orientation is drawn with: edges, keyboard moves and stored positions. */
+export const drawnOrientation = (orientation: Orientation): DrawnOrientation =>
+  orientation === 'top-left' ? 'vertical' : orientation;
 export type Workflow = 'explore' | 'evaluate';
 export type IndexMode = 'shared' | 'personal';
 export type FocusMode = 'all' | 'support' | 'oppose';

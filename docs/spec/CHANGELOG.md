@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, file(s), what changed, owner decision behind it.
 
+- 2026-11-25 — `UI_INVENTORY.md` — Owner: the left-aligned tree an AI draft opens in is handy for screenshots and could be a tree direction; *Näytä kaikki tekstit* turned it into the centred top-down tree. S-15 (WG-065): the view orientation `top-left` ↳ *Ylhäältä alas, vasemmalle tasattu*, laid out from the tree in the ordinary and the reading view and in the export.
 - 2026-11-25 — `UI_INVENTORY.md`, `GRACE_AND_DATA_MODEL.md` — Owner (2026-11-24/25): risk management as a side thread; supporting actions kept as their own kind (they support the goal, they do not hold back a risk); the type is named *Riskit* and its root is a goal. S-15 and G-01: `mode: 'risk'`, scored as an argument, with the roles of its nodes read from the tree for display; the home screen's risk example gets its supporting action back (WG-058, first part).
 - 2026-11-25 — `UI_INVENTORY.md` — Owner: the tab's close × would be easier to use on the chosen tab's own edge than at the right. S-15 (WG-059): `#btnTabClose` moves from the buttons after the tabs onto the shown tab's edge, and is not shown where a diagram cannot be removed.
 - 2026-11-24 — `UI_INVENTORY.md` — WG-063 (owner 2026-11-23: a diagram may be left out of a session): S-15: the share list is also in the running session's dialog for the host.

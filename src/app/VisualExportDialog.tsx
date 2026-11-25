@@ -21,7 +21,7 @@ import {
 import { Modal } from './dialogs.tsx';
 import type { Frame } from './projection.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
-import { exportLayers, LAYER_PRESETS } from './view.ts';
+import { drawnOrientation, exportLayers, LAYER_PRESETS } from './view.ts';
 import type { Translator } from '../lib/i18n/i18n.ts';
 
 /** Everything the export drawing needs from the current frame, with the app's own labels and chips. */
@@ -46,7 +46,8 @@ export function snapshotInput(frame: Frame, t: Translator, options: VisualExport
       contextIds: frame.projection.contextIds,
     },
     focusActive: view.focus.mode !== 'all',
-    orientation: view.orientation,
+    orientation: drawnOrientation(view.orientation),
+    leftAligned: view.orientation === 'top-left',
     fourWayOffsets: project.layout.fourWayOffsets,
     personal,
     lensFiltered: frame.lens.filtered,

@@ -7,10 +7,12 @@ import {
   edgeGeometry,
   fourWayProjection,
   fourWayVisualDirections,
+  LEFT_ALIGNED_TREE,
   marginalIndexEffects,
   marginalTargetEffects,
   rootNode,
   secondaryLinkPath,
+  tidyTree,
   viewPosition,
 } from '../../domain/index.ts';
 import type { Direction, Node, Orientation, Position, Project, Scores, Stance } from '../../domain/index.ts';
@@ -106,6 +108,9 @@ export interface SnapshotInput {
   /** `view.focus.mode !== 'all'`: nodes outside the focus are dimmed in a visible-scope export. */
   focusActive: boolean;
   orientation: Orientation;
+  /** The view's left-aligned tree (owner 2026-11-25): drawn top-down, laid out from the tree with each parent above
+   * its first child. */
+  leftAligned?: boolean;
   fourWayOffsets: Record<string, Position>;
   /** Personal index mode: edges take the assessor's own signed influence. */
   personal: boolean;
@@ -159,6 +164,11 @@ export function buildVisualSnapshot(input: SnapshotInput): ExportSnapshot {
     const compact = compactVisibleProjection(project.nodes, visible, orientation, CARD_W, exportH);
     for (const [id, pos] of compact.positions) coords.set(id, pos);
     directions = compact.groups;
+  } else if (input.leftAligned) {
+    const root = rootNode(project)?.id;
+    if (!root) throw new Error('No nodes in the selected export');
+    const laid = tidyTree(project.nodes, visible, root, LEFT_ALIGNED_TREE, () => ({ w: CARD_W, h: exportH }));
+    for (const [id, pos] of laid) coords.set(id, pos);
   } else if (orientation === 'four-way') {
     const root = rootNode(project)?.id;
     if (!root) throw new Error('No nodes in the selected export');

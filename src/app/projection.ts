@@ -11,12 +11,14 @@ import {
   withoutBranches,
   focusProjection,
   fourWayProjection,
+  LEFT_ALIGNED_TREE,
   fourWayVisualDirections,
   maxTreeDepth,
   projectLens,
   assessorSummary,
   respectExplicitCollapse,
   rootNode,
+  tidyTree,
   viewPosition,
 } from '../domain/index.ts';
 import type {
@@ -31,7 +33,7 @@ import type {
 } from '../domain/index.ts';
 import { recalculateImportance, viewedAssessorId } from './derive.ts';
 import type { DeriveContext, Importance } from './derive.ts';
-import { cardHeight } from './view.ts';
+import { cardHeight, drawnOrientation } from './view.ts';
 import { readingCard, readingFourWay, readingLayout } from './reading.ts';
 import type { ViewState } from './view.ts';
 import type { AppState } from './store.ts';
@@ -175,20 +177,18 @@ export function buildFrame(
       }
   } else for (const [id, size] of Object.entries(project.layout.nodeSizes ?? {})) sizes.set(id, { ...size });
   const sizeOf = (id: string): Size => sizes.get(id) ?? { w: CARD_W, h: cardH };
+  const drawn = drawnOrientation(view.orientation);
   if (reading && view.orientation === 'four-way') {
     const result = readingFourWay(project.nodes, projection.visibleIds, root.id, sizeOf);
     positions = result.positions;
     directions = result.groups;
   } else if (reading) {
     positions = readingLayout(project.nodes, projection.visibleIds, root.id, view.orientation, sizeOf);
+  } else if (view.orientation === 'top-left') {
+    // Laid out from the visible tree, so a collapsed branch or a depth limit closes its room by itself.
+    positions = tidyTree(project.nodes, projection.visibleIds, root.id, LEFT_ALIGNED_TREE, sizeOf);
   } else if (compact) {
-    const result = compactVisibleProjection(
-      project.nodes,
-      projection.visibleIds,
-      view.orientation,
-      CARD_W,
-      cardH
-    );
+    const result = compactVisibleProjection(project.nodes, projection.visibleIds, drawn, CARD_W, cardH);
     positions = result.positions;
     directions = result.groups;
   } else if (view.orientation === 'four-way') {
@@ -199,9 +199,8 @@ export function buildFrame(
       positions.set(id, offset ? { x: pos.x + Number(offset.x), y: pos.y + Number(offset.y) } : pos);
     }
     directions = fourWayVisualDirections(project.nodes, root.id, positions);
-  } else for (const n of project.nodes) positions.set(n.id, viewPosition(n.position, view.orientation));
-  const visualPosition = (node: Node) =>
-    positions.get(node.id) ?? viewPosition(node.position, view.orientation);
+  } else for (const n of project.nodes) positions.set(n.id, viewPosition(n.position, drawn));
+  const visualPosition = (node: Node) => positions.get(node.id) ?? viewPosition(node.position, drawn);
   const isNodeCollapsed = (node: Node) =>
     view.depthLimit === null
       ? !!node.collapsed

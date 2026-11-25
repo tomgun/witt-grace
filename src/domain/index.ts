@@ -2,6 +2,8 @@
 export * from './model.ts';
 export { parseProject, ParseError } from './parse.ts';
 export { riskRole, childRiskRole, riskRoleIsGood } from './risk.ts';
+export { LEFT_ALIGNED_TREE, tidyTree } from './tidyTree.ts';
+export type { TidyNode, TidyOptions } from './tidyTree.ts';
 export {
   childrenOf,
   rootNode,

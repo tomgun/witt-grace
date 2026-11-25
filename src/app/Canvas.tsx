@@ -63,15 +63,22 @@ import type { Frame } from './projection.ts';
 import { displayShortcut } from './shortcuts.ts';
 import type { Shortcuts } from './shortcuts.ts';
 import { getStore, useAppState, useTranslator } from './store.ts';
+import { drawnOrientation } from './view.ts';
 import type { Orientation } from './view.ts';
 
 /** The selection bar's height with its gap: the room it needs above a card, else it goes below. */
 const SELECTION_BAR_ROOM = 46;
-const ORIENTATION_ARROWS: Record<Orientation, string> = { horizontal: '→', vertical: '↓', 'four-way': '✣' };
+const ORIENTATION_ARROWS: Record<Orientation, string> = {
+  horizontal: '→',
+  vertical: '↓',
+  'four-way': '✣',
+  'top-left': '↳',
+};
 const ORIENTATION_KEYS = {
   horizontal: 'leftRight',
   vertical: 'topDown',
   'four-way': 'fourDirections',
+  'top-left': 'topLeftAligned',
 } as const;
 
 /** The height of the canvas that can be seen: on a phone the inspector is a sheet over its lower part, and a card
@@ -164,7 +171,8 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   const [liveSize, setLiveSize] = useState<{ id: string; size: Size } | null>(null);
   const sizeOf = (id: string): Size => (liveSize && liveSize.id === id ? liveSize.size : frame.sizeOf(id));
   // The reading view lays every orientation out as a tidy tree; four directions read left to right there.
-  const edgeOrientation = frame.reading && view.orientation === 'four-way' ? 'horizontal' : view.orientation;
+  const edgeOrientation =
+    frame.reading && view.orientation === 'four-way' ? 'horizontal' : drawnOrientation(view.orientation);
   const visualPosition = useCallback(
     (node: Node): Position => (live && live.id === node.id ? live.pos : frame.visualPosition(node)),
     [live, frame]
@@ -413,6 +421,11 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
       store.showMessage(t('compactDragHint'));
       return;
     }
+    // The left-aligned tree is laid out from the tree itself (owner 2026-11-25): a card has no place of its own there.
+    if (view.orientation === 'top-left') {
+      store.showMessage(t('alignedDragHint'));
+      return;
+    }
     const handle = e.currentTarget;
     const startX = e.clientX;
     const startY = e.clientY;
@@ -451,7 +464,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
           },
         });
       } else {
-        const doc = documentPosition(last, view.orientation);
+        const doc = documentPosition(last, drawnOrientation(view.orientation));
         store.dispatch({
           type: 'node.position',
           positions: { [node.id]: { x: clamp(doc.x, -100000, 100000), y: clamp(doc.y, -100000, 100000) } },
@@ -490,7 +503,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
         frame.projection.visibleIds,
         node.id,
         e.key,
-        view.orientation,
+        drawnOrientation(view.orientation),
         frame.positions
       );
       if (result.action === 'select') {
@@ -1166,7 +1179,7 @@ export function Canvas({ frame, shortcuts }: { frame: Frame; shortcuts: Shortcut
   const rootAt = rootCard ? visualPosition(rootCard) : null;
   const orientationName = t(ORIENTATION_KEYS[view.orientation]);
   const toggleOrientation = () => {
-    const order: Orientation[] = ['horizontal', 'vertical', 'four-way'];
+    const order: Orientation[] = ['horizontal', 'vertical', 'top-left', 'four-way'];
     store.setView({ orientation: order[(order.indexOf(view.orientation) + 1) % order.length] });
     store.requestFit();
   };

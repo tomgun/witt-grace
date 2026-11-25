@@ -1,7 +1,7 @@
 // The reading view (owner request 2026-11-10): every card shows its whole text, up to a line limit, and the visible
 // tree is laid out by each card's own height so nothing overlaps. Heights are estimated from the text, so layout and
 // rendering agree without measuring the DOM.
-import { fourWayProjection } from '../domain/index.ts';
+import { fourWayProjection, tidyTree } from '../domain/index.ts';
 import type { Direction, Node, Position, Size } from '../domain/index.ts';
 import type { Layers, Orientation } from './view.ts';
 
@@ -54,7 +54,8 @@ export function readingCard(
   return { h: Math.ceil(h), titleLines };
 }
 
-/** A tidy tree of the visible nodes: each subtree takes the room its cards need, parents centred on their children. */
+/** A tidy tree of the visible nodes by the cards' real sizes: parents centred on their children, or in the
+ * left-aligned tree (`top-left`) above their first child. */
 export function readingLayout(
   nodes: Node[],
   visibleIds: Set<string>,
@@ -62,48 +63,19 @@ export function readingLayout(
   orientation: Orientation,
   sizeOf: (id: string) => Size
 ): Map<string, Position> {
-  const children = new Map<string, Node[]>();
-  for (const n of nodes)
-    if (n.parentId && visibleIds.has(n.id)) {
-      if (!children.has(n.parentId)) children.set(n.parentId, []);
-      children.get(n.parentId)?.push(n);
-    }
-  const vertical = orientation === 'vertical';
-  // Across = the axis siblings stack on; along = the axis depth grows on.
-  const across = (id: string) => (vertical ? sizeOf(id).w : sizeOf(id).h);
-  const along = (id: string) => (vertical ? sizeOf(id).h : sizeOf(id).w);
-  const depthExtent: number[] = [];
-  const spans = new Map<string, number>();
-  const measure = (id: string, depth: number): number => {
-    depthExtent[depth] = Math.max(depthExtent[depth] ?? 0, along(id));
-    const kids = children.get(id) ?? [];
-    const block = kids.reduce((sum, k) => sum + measure(k.id, depth + 1), 0) + GAP_ACROSS * (kids.length - 1);
-    const span = Math.max(across(id), kids.length ? block : 0);
-    spans.set(id, span);
-    return span;
-  };
-  measure(rootId, 0);
-  const depthStart: number[] = [];
-  depthExtent.reduce((start, extent, depth) => {
-    depthStart[depth] = start;
-    return start + extent + (vertical ? GAP_ALONG / 2 : GAP_ALONG);
-  }, 0);
-  const positions = new Map<string, Position>();
-  const place = (id: string, start: number, depth: number) => {
-    const span = spans.get(id) ?? across(id);
-    const kids = children.get(id) ?? [];
-    const block = kids.reduce((sum, k) => sum + (spans.get(k.id) ?? 0), 0) + GAP_ACROSS * (kids.length - 1);
-    let cursor = start + (span - block) / 2;
-    for (const kid of kids) {
-      place(kid.id, cursor, depth + 1);
-      cursor += (spans.get(kid.id) ?? 0) + GAP_ACROSS;
-    }
-    const a = start + span / 2 - across(id) / 2;
-    const b = depthStart[depth] ?? 0;
-    positions.set(id, vertical ? { x: a, y: b } : { x: b, y: a });
-  };
-  place(rootId, 0, 0);
-  return positions;
+  const vertical = orientation === 'vertical' || orientation === 'top-left';
+  return tidyTree(
+    nodes,
+    visibleIds,
+    rootId,
+    {
+      vertical,
+      align: orientation === 'top-left' ? 'start' : 'centre',
+      gapAcross: GAP_ACROSS,
+      gapAlong: vertical ? GAP_ALONG / 2 : GAP_ALONG,
+    },
+    sizeOf
+  );
 }
 
 /**

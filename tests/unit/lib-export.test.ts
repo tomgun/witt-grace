@@ -1,11 +1,12 @@
 // must: the visual export reproduces the frozen prototype's `src/diagram-export.js` and app.js export flow: the SVG
 //       string byte for byte for every prototype example, orientation, layer preset and palette; the PNG size plan,
 //       tile grid and ZIP bytes; the PDF orientation, page grid, fit size and file bytes; the estimate line, the
-//       dialog defaults and the download names
+//       dialog defaults and the download names; the view's left-aligned tree (owner 2026-11-25) exports as laid out
 // test: tests/unit/lib-export.test.ts (parity through the prototype module; literal oracles for the app.js parts)
 // red-against: a colour, radius, font size or offset changed in the drawing, chips wrapped at another width, the
 //              pixel budget or tile edge changed, the 36 px page overlap dropped, a PDF offset table off by one,
-//              a ZIP header field misplaced, the ZIP note shown for a single PNG, a filename losing its ä
+//              a ZIP header field misplaced, the ZIP note shown for a single PNG, a filename losing its ä, the
+//              left-aligned tree exported from the stored positions
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -18,6 +19,8 @@ import {
   focusProjection,
   parseProject,
   signedInfluence,
+  LEFT_ALIGNED_TREE,
+  tidyTree,
 } from '../../src/domain/index.ts';
 import type { Node, Orientation, Project } from '../../src/domain/index.ts';
 import { FI, translator } from '../../src/lib/i18n/i18n.ts';
@@ -195,6 +198,29 @@ test('personal mode, focus dimming, compact visible scope and hidden recurring r
       snapshotInput(project, 'horizontal', PRESETS.text, { highlights: true }, { lensFiltered: true })
     );
     assert.equal(filtered.highlight, false);
+  }
+});
+
+test('the left-aligned tree exports as the view lays it out: each parent above its first child', () => {
+  for (const { name, project } of examples) {
+    const snapshot = Diagram.buildVisualSnapshot(
+      snapshotInput(project, 'vertical', PRESETS.text, {}, { leftAligned: true })
+    );
+    const root = project.nodes.find((n) => n.parentId === null)!;
+    const h = Diagram.exportLayoutHeight(PRESETS.text);
+    const laid = tidyTree(
+      project.nodes,
+      new Set(project.nodes.map((n) => n.id)),
+      root.id,
+      LEFT_ALIGNED_TREE,
+      () => ({ w: 252, h })
+    );
+    const at = new Map(snapshot.nodes.map((n) => [n.id, n]));
+    const origin = at.get(root.id)!;
+    for (const [id, pos] of laid) {
+      const node = at.get(id)!;
+      assert.deepEqual([node.x - origin.x, node.y - origin.y], [pos.x, pos.y], `${name} ${id}`);
+    }
   }
 });
 
